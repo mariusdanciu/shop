@@ -1,0 +1,138 @@
+html, body {
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  width:980px;
+  height: 100%;
+  margin: auto;
+  color: #9F9F9F;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 81.2%;
+  line-height: 1.5em;
+  
+  background-color: white;
+} 
+
+* {
+    outline: medium none;
+}
+
+h1 {
+    color: #FFFFFF;
+    display: inline-block;
+    font-weight: normal;
+    line-height: 1em;
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+ list-style-type: none;
+ padding: 0px;
+ margin: 0px;
+}
+
+li a {
+ font-size: 18px;
+ font-weight: 700;
+ text-decoration: none;
+ font-family: Arial,Helvetica,sans-serif;
+ width: 100%
+}
+
+h3 span {
+ color: #99AA88;
+}
+
+a:link    { color: #000000; }
+a:visited { color: #000000;  }
+a:hover   { color: #999999; }
+a:active  { color: #999999; }
+
+a.otherLink:link    { color:red; text-decoration:none; }
+a.otherLink:visited { color:red; text-decoration:none; }
+a.otherLink:hover   { color:green; text-decoration:none; }
+a.otherLink:active  { color:red; text-decoration:none; }
+
+.header {
+ height: 100px;
+}
+
+#site_name {
+ font-size: 32px;
+ font-weight: bold;
+ color: #FFC911;
+ margin-top: 40px;
+ margin-left: 10px;
+ font-family: 'Revalia', cursive;
+}
+
+.center {
+
+}
+
+.footer {
+ border-width: 1px; 
+ border-color: #aaaaaa; 
+ border-style: dashed;
+ height: 50px;
+}
+
+.content {
+ border-width: 1px; 
+ border-color: #aaaaaa; 
+ border-style: dashed;
+ width: 750px;
+ margin-left: 10px;
+ margin-top: 5px;
+ float: left;
+}
+
+div#featured-products_block_center ul {
+  overflow: hidden;
+  width: 951px;
+}
+
+div#featured-products_block_center ul li {
+  float: left;
+  margin: 4px 5px 0 0;
+  overflow: hidden;
+  position: relative;
+  width: 312px;
+}
+
+.ajax_block_product {
+  width:312px;
+  height:356px;
+}
+
+.price_tag {
+  position: absolute;
+  top: 300px;
+  text-align: right;
+  width:312px;
+  height:56px;
+  margin: 0 3px 0 0;
+  background: rgba(100, 100, 100, .3);
+}
+
+.price_tag_price {
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  text-align: right;
+  color: #eeeeee;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.price_tag_text {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  text-align: right;
+  color: #eeeeee;
+  font-size: 14px;
+  font-weight: bold;
+}
