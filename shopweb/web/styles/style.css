@@ -3,14 +3,12 @@ html, body {
   right: 0px;
   bottom: 0px;
   left: 0px;
-  width:980px;
+  max-width:980px;
   height: 100%;
   margin: auto;
-  color: #9F9F9F;
   font-family: Arial,Helvetica,sans-serif;
   font-size: 81.2%;
   line-height: 1.5em;
-  
   background-color: white;
 } 
 
@@ -18,31 +16,23 @@ html, body {
     outline: medium none;
 }
 
-h1 {
-    color: #FFFFFF;
-    display: inline-block;
-    font-weight: normal;
-    line-height: 1em;
-    margin: 0;
-    padding: 0;
-}
 
 ul {
- list-style-type: none;
- padding: 0px;
- margin: 0px;
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
 }
 
 li a {
- font-size: 18px;
- font-weight: 700;
- text-decoration: none;
- font-family: Arial,Helvetica,sans-serif;
- width: 100%
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none;
+  font-family: Arial,Helvetica,sans-serif;
+  width: 100%
 }
 
 h3 span {
- color: #99AA88;
+  color: #99AA88;
 }
 
 a:link    { color: #000000; }
@@ -56,16 +46,15 @@ a.otherLink:hover   { color:green; text-decoration:none; }
 a.otherLink:active  { color:red; text-decoration:none; }
 
 .header {
- height: 100px;
+  height: 100px;
 }
 
 #site_name {
- font-size: 32px;
- font-weight: bold;
- color: #FFC911;
- margin-top: 40px;
- margin-left: 10px;
- font-family: 'Revalia', cursive;
+  font-size: 32px;
+  font-weight: bold;
+  color: #FFC911;
+  margin-top: 40px;
+  margin-left: 10px;
 }
 
 .center {
@@ -73,36 +62,27 @@ a.otherLink:active  { color:red; text-decoration:none; }
 }
 
 .footer {
- border-width: 1px; 
- border-color: #aaaaaa; 
- border-style: dashed;
- height: 50px;
+  border-width: 1px; 
+  border-color: #aaaaaa; 
+  border-style: dashed;
+  height: 50px;
 }
 
-.content {
- border-width: 1px; 
- border-color: #aaaaaa; 
- border-style: dashed;
- width: 750px;
- margin-left: 10px;
- margin-top: 5px;
- float: left;
+.products_list {
 }
 
-div#featured-products_block_center ul {
+.products_list ul {
   overflow: hidden;
-  width: 951px;
 }
 
-div#featured-products_block_center ul li {
+.products_list ul li {
   float: left;
   margin: 4px 5px 0 0;
   overflow: hidden;
   position: relative;
-  width: 312px;
 }
 
-.ajax_block_product {
+.products_list ul li div {
   width:312px;
   height:356px;
 }
@@ -131,8 +111,18 @@ div#featured-products_block_center ul li {
   position: absolute;
   top: 10px;
   left: 10px;
-  text-align: right;
+  text-align: left;
   color: #eeeeee;
   font-size: 14px;
   font-weight: bold;
+}
+
+.product_detail_box {
+  position: relative;
+  background: #FFF;
+  padding: 20px;
+  width: auto;
+  width: 800px;
+  height: 400px;
+  margin: 20px auto;
 }

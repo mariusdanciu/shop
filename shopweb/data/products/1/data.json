@@ -1,5 +1,6 @@
 {
-  "name" : "Diam nonummy",
+  "id" : "1",
+  "title" : "Diam nonummy",
   "description" : "",
   "price" : 137.99,
   "images" : ["1.jpg"]

@@ -1,7 +1,7 @@
 (function() {
   $(function() {
    
-    $(".ajax_block_product").each(function( index ) {
+    $(".products_list ul li div").each(function( index ) {
       var me = $(this); 
       
       $(this).mouseenter(function(){
@@ -11,7 +11,11 @@
       $(this).mouseleave(function(){
         me.find('.price_tag').css( 'background', 'rgba(100, 100, 100, .3)' );
       });
+      
     });
   });
+  
+
+  
   
 })();
