@@ -12,4 +12,5 @@ object ProductDetail {
   def apply(id: String, title: String, price: Double, images: List[String]) = 
     new ProductDetail(id, title, None, price, images)
 }
+
 case class ProductDetail(id: String, title: String, description: Option[String], price: Double, images: List[String])

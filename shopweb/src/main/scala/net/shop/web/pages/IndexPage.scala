@@ -32,11 +32,11 @@ object IndexPage extends DynamicContent[Request] {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
-                case "li" > ((("class", "item") :: _) / childs) => <li>{ childs }</li>
+                case "li" > (a / childs) if (a hasClass "item") => <li>{ childs }</li>
                 case "a" > (attrs / childs) => <a id={ prod id } href={ "/product?pid=" + prod.id }>{ childs }</a>
-                case "div" > ((("class", "item_box") :: _) / childs) => <div title={ prod title } style={ "background-image: url('" + productImagePath(prod) + "')" }>{ childs }</div>
-                case "div" > ((a @ ("class", "price_tag_text") :: _) / _) => <div>{ prod title }</div> % a
-                case "div" > ((a @ ("class", "price_tag_price") :: _) / _) => <div>{ prod.price.toString }</div> % a
+                case "div" > (a / childs) if (a hasClass "item_box") => <div title={ prod title } style={ "background-image: url('" + productImagePath(prod) + "')" }>{ childs }</div>
+                case "div" > (a / _) if (a hasClass "price_tag_text") => <div>{ prod title }</div> % a
+                case "div" > (a / _) if (a hasClass "price_tag_price")  => <div>{ prod.price.toString }</div> % a
               }
             }
 

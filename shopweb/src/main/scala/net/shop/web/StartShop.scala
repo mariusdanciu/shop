@@ -2,13 +2,9 @@ package net.shop
 package web
 
 import net.shift.engine.ShiftApplication
-import net.shift.engine.ShiftApplication.rule
-import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http.AsyncResponse
-import net.shift.engine.http.HttpPredicates.path
-import net.shift.engine.http.ImageResponse
-import net.shift.engine.http.Request
-import net.shift.engine.http.TextResponse
+import net.shift.engine.ShiftApplication._
+import net.shift.engine.http._
+import HttpPredicates._
 import net.shift.engine.page.Html5
 import net.shift.engine.utils.ShiftUtils.cssFromFolder
 import net.shift.engine.utils.ShiftUtils.jpgFromFolder
@@ -17,9 +13,10 @@ import net.shift.netty.NettyServer
 import net.shift.template.DynamicContent
 import net.shop.backend.ProductsService
 import net.shop.backend.impl.FSProductsService
-import net.shop.web.pages.ProductDetailPage
-import pages.IndexPage
 import scalax.io.Resource
+import net.shop.web.pages._
+import scala.xml.Elem
+import net.shift.common.XmlUtils
 
 object StartShop extends App {
   import ShopUtils._
@@ -39,7 +36,7 @@ object ShopApplication extends ShiftApplication {
       jsFromFolder("web/scripts") |
       jpgFromFolder("web/images") |
       productsImages |
-      page("/product", "web/product.html", ProductDetailPage) |
+      page(ProductPageState.build _, "/product", "web/product.html", ProductDetailPage) |
       page("/", "web/index.html", IndexPage) |
       service(notFoundService)
 
@@ -53,7 +50,11 @@ object ShopUtils {
 
   def page(uri: String, filePath: String, snipets: DynamicContent[Request]) = for {
     _ <- path(uri)
-  } yield Html5(filePath, IndexPage)
+  } yield Html5(filePath, snipets)
+
+  def page[T](f: Request => T, uri: String, filePath: String, snipets: DynamicContent[T]) = for {
+    _ <- path(uri)
+  } yield Html5(f, filePath, snipets)
 
   def productsImages = for {
     "data" :: "products" :: id :: file :: Nil <- path
