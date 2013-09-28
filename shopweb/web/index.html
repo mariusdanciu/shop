@@ -1,38 +1,45 @@
 <html>
  <head>
-  <link href="/styles/magnific-popup.css" rel="stylesheet" type="text/css"/>
 
   <link href="/styles/style.css" rel="stylesheet" type="text/css"/>
-  
-  <script src="http://code.jquery.com/jquery-2.0.3.min.js" />
+  <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js" />
+  <script type="text/javascript" src="/scripts/productslist.js" />
+
  </head>
  
  <body>
  
- <div class="header">
-  <div id="site_name">B(u)y-Me</div>
- </div>
+   <div class="header">
+     <div id="site_name">B(u)y-Me</div>
 
-
- <div class="center">
-   <div class="products_list">
-      <ul>
-        <li data-snip="item">
-          <a>
-            <div class="item_box">
-              <div class="price_tag">
-                <div class="price_tag_text"></div>
-                <div class="price_tag_price"></div>
-              </div>
-            </div>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
+     <div id="cart_symbol">
+       <img src="/images/cart.png"/>
+     </div>   
   
-  <script src="/scripts/magnific-popup.js" />
-  <script src="/scripts/productslist.js" />
+     <div id="cart_popup">
+        <div id="cart_content">
+          Content in PopBox goes here :)
+        </div>
+     </div>
+   </div>
+
+
+   <div class="center">
+     <div class="products_list">
+       <ul>
+         <li data-snip="item">
+           <a>
+             <div class="item_box">
+               <div class="price_tag">
+                 <div class="price_tag_text"></div>
+                 <div class="price_tag_price"></div>
+               </div>
+             </div>
+           </a>
+         </li>
+       </ul>
+     </div>
+  </div>
 
  </body>
 </html>

@@ -7,7 +7,7 @@ import net.shift.engine.http._
 import HttpPredicates._
 import net.shift.engine.page.Html5
 import net.shift.engine.utils.ShiftUtils.cssFromFolder
-import net.shift.engine.utils.ShiftUtils.jpgFromFolder
+import net.shift.engine.utils.ShiftUtils.imagesFromFolder
 import net.shift.engine.utils.ShiftUtils.jsFromFolder
 import net.shift.netty.NettyServer
 import net.shift.template.DynamicContent
@@ -16,7 +16,7 @@ import net.shop.backend.impl.FSProductsService
 import scalax.io.Resource
 import net.shop.web.pages._
 import scala.xml.Elem
-import net.shift.common.XmlUtils
+import net.shift.common._
 
 object StartShop extends App {
   import ShopUtils._
@@ -34,7 +34,7 @@ object ShopApplication extends ShiftApplication {
   def servingRule =
     cssFromFolder("web/styles") |
       jsFromFolder("web/scripts") |
-      jpgFromFolder("web/images") |
+      imagesFromFolder("web/images") |
       productsImages |
       page(ProductPageState.build _, "/product", "web/product.html", ProductDetailPage) |
       page("/", "web/index.html", IndexPage) |

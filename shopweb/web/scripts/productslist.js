@@ -1,5 +1,6 @@
 (function() {
   $(function() {
+
    
     $(".products_list ul li div").each(function( index ) {
       var me = $(this); 
@@ -13,9 +14,26 @@
       });
       
     });
-  });
-  
 
-  
+    $("#cart_symbol").click(function(event) {
+      $('#cart_popup').show();
+      event.stopPropagation();
+    });
+    
+    $("#cart_popup").click(function(event) {
+      event.stopPropagation();
+    });
+
+    $(document).click(function() {
+      $('#cart_popup').hide();
+    });
+    
+    $(document).keyup(function(e) {
+     if (e.keyCode == 27) {
+       $('#cart_popup').hide();
+     }
+    });
+    
+  });
   
 })();
