@@ -20,19 +20,25 @@ class FSProductsService extends ProductsService {
     catching(classOf[java.io.FileNotFoundException]).withTry {
       Resource.fromFile("data/products/" + id + "/data.json").string
     } map {s => 
-    	 parse(s).extract[ProductDetail]
+      parse(s).extract[ProductDetail]
     }
   }
   
-  def allProducts(): Try[List[ProductDetail]] = {
+  def allProducts(): Try[Traversable[ProductDetail]] = {
     val prods = (for { 
       p <- Path.fromString("data/products").children().toList if (p.isDirectory)
     } yield {
       byId(p.simpleName)
     }).filter(_ isSuccess).map {
-      case Success(ProductDetail(id, title, _, price, images)) => ProductDetail(id, title, price, images)
+      case Success(p) => p
     }
     
     Success(prods)
+  }
+  
+  
+  def filter(f: ProductDetail => Boolean) : Try[Traversable[ProductDetail]] = allProducts() match {
+    case Success(prods) => Success(for (p <- prods if f(p)) yield p) 
+    case f => f 
   }
 }

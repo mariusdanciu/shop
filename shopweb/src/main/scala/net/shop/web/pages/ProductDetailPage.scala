@@ -1,21 +1,24 @@
 package net.shop
 package web.pages
 
+import scala.util.Failure
 import scala.util.Success
 import scala.xml._
+import scalax.io._
 import net.shift.engine.http.Request
+import net.shift.common._
+import net.shift.template._
+import net.shift.template.Binds._
 import net.shift.template.DynamicContent
 import net.shift.template.Snippet.snip
 import net.shop.backend.ProductDetail
 import net.shop.web.ShopApplication
-import net.shift.template._
-import Binds._
 import utils.ShopUtils._
-import scala.util.Failure
+import java.io.StringReader
 
 object ProductDetailPage extends DynamicContent[ProductPageState] {
 
-  def snippets = List(title, images)
+  def snippets = List(title, images, details)
 
   def reqSnip(name: String) = snip[ProductPageState](name) _
 
@@ -26,7 +29,7 @@ object ProductDetailPage extends DynamicContent[ProductPageState] {
           case Success(prod) => (ProductPageState(s.state.req, Some(prod)), bind(s.node) {
             case "span" > (_ / childs) => <h1>{ prod.title }</h1>
           });
-          case Failure(t) => (ProductPageState(s.state.req, None), NodeSeq.Empty);
+          case Failure(t) => (ProductPageState(s.state.req, None), <span>No product specified</span>);
         }
         case Nil => (ProductPageState(s.state.req, None), <span>No product specified</span>)
       }
@@ -47,6 +50,18 @@ object ProductDetailPage extends DynamicContent[ProductPageState] {
         case _ => (ProductPageState(s.state.req, None), NodeSeq.Empty);
       }
   }
+
+  val details = reqSnip("details") {
+    s =>
+      import JavaConverters.asInputConverter
+      (for {
+        p <- s.state.product
+      } yield {
+        (ProductPageState(s.state.req, Some(p)), XmlUtils.load(Resource.fromFile(s"data/products/${p.id}/desc.html")))
+      }) getOrElse
+        (ProductPageState(s.state.req, None), NodeSeq.Empty)
+  }
+
 }
 
 object ProductPageState {

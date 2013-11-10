@@ -5,12 +5,12 @@ import scala.util.Try
 
 trait ProductsService {
   def byId(id: String): Try[ProductDetail]
-  def allProducts(): Try[List[ProductDetail]]
+  def allProducts(): Try[Traversable[ProductDetail]]
+  def filter(f: ProductDetail => Boolean) : Try[Traversable[ProductDetail]]
 }
 
-object ProductDetail {
-  def apply(id: String, title: String, price: Double, images: List[String]) = 
-    new ProductDetail(id, title, None, price, images)
-}
+case class ProductDetail(id: String, title: String, price: Double, images: List[String])
 
-case class ProductDetail(id: String, title: String, description: Option[String], price: Double, images: List[String])
+case class CartItem(id: String, count: Int)
+
+case class Cart(items: List[CartItem])

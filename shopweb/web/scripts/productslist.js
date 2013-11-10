@@ -15,25 +15,9 @@
       
     });
 
-    $("#cart_symbol").click(function(event) {
-      $('#cart_popup').show();
-      event.stopPropagation();
-    });
-    
-    $("#cart_popup").click(function(event) {
-      event.stopPropagation();
-    });
+    cart.loadView();
 
-    $(document).click(function() {
-      $('#cart_popup').hide();
-    });
-    
-    $(document).keyup(function(e) {
-     if (e.keyCode == 27) {
-       $('#cart_popup').hide();
-     }
-    });
-    
+
   });
   
 })();

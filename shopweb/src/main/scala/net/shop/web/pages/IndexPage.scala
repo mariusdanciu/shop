@@ -43,7 +43,7 @@ object IndexPage extends DynamicContent[Request] {
           case Failure(t) => <p>error</p>
         }
 
-        (s.state, prods)
+        (s.state, prods.toList)
       }
   }
 
