@@ -11,34 +11,56 @@ import scalax.io._
 import scalax.file.PathMatcher._
 import scala.util.Success
 import scala.util.Failure
-
+import net.shift.common.Traversing
 
 class FSProductsService extends ProductsService {
   implicit val formats = DefaultFormats
-  
-  def byId(id: String): Try[ProductDetail] = {
+
+  def productById(id: String): Try[ProductDetail] = {
     catching(classOf[java.io.FileNotFoundException]).withTry {
-      Resource.fromFile("data/products/" + id + "/data.json").string
-    } map {s => 
+      Resource.fromFile(s"data/products/$id/data.json").string
+    } map { s =>
       parse(s).extract[ProductDetail]
     }
   }
-  
+
   def allProducts(): Try[Traversable[ProductDetail]] = {
-    val prods = (for { 
-      p <- Path.fromString("data/products").children().toList if (p.isDirectory)
+    val prods = (for {
+      p <- Path.fromString(s"data/products").children().toList if (p.isDirectory)
     } yield {
-      byId(p.simpleName)
+      productById(p.simpleName)
     }).filter(_ isSuccess).map {
       case Success(p) => p
     }
-    
+
     Success(prods)
   }
-  
-  
-  def filter(f: ProductDetail => Boolean) : Try[Traversable[ProductDetail]] = allProducts() match {
-    case Success(prods) => Success(for (p <- prods if f(p)) yield p) 
-    case f => f 
+
+  def categoryProducts(cat: String): Try[Traversable[ProductDetail]] =
+    allProducts.map { l => l.filter(p => p.categories.contains(cat)) }
+
+  def filter(f: ProductDetail => Boolean): Try[Traversable[ProductDetail]] = allProducts() match {
+    case Success(prods) => Success(for (p <- prods if f(p)) yield p)
+    case f => f
+  }
+
+  import Traversing._
+
+  def categoryById(id: String): Try[Category] = {
+    allCategories() match {
+      case Success(l) => l.find(c => c.id == id) match {
+        case Some(c) => Success(c)
+        case _ => Failure(new RuntimeException(s"Category $id not found"))
+      }
+      case Failure(f) => Failure(f)
+    }
+  }
+
+  def allCategories(): Try[Traversable[Category]] = {
+    (catching(classOf[java.io.FileNotFoundException]).withTry {
+      Resource.fromFile(s"data/categories/categories.json").string
+    } map { s =>
+      parse(s).extract[List[Category]]
+    })
   }
 }

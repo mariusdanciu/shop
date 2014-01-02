@@ -4,9 +4,8 @@
   <link href="/styles/style.css" rel="stylesheet" type="text/css"/>
   <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js" />
   <script type="text/javascript" src="/scripts/jquery.cookie.js" />
-  <script type="text/javascript" src="/scripts/purl.js" />
   <script type="text/javascript" src="/scripts/cart.js" />
-  <script type="text/javascript" src="/scripts/product.js" />
+  <script type="text/javascript" src="/scripts/categories.js" />
 
  </head>
  
@@ -23,39 +22,33 @@
 
 
    <div class="center">
-     <div data-snip="title" id="product_title">
+    
+    <div data-snip="title" id="product_title">
+
        <div id="title_text">
-         <span/>
+        <h1>Categorii</h1>
        </div>
 
        <div id="cart_symbol">
          <a href="#"><img src="/images/cart.png"/></a>
        </div>   
 
-       <div id="add_to_cart_box">
-         <a id="add_to_cart" href="#"><h1>Add to cart</h1></a>
-       </div> 
-       
      </div>
      
-     <div id="pleft">
-       <div data-snip="images">
-         <div class="detail_box">
-           <b:img/>
-         </div>
-         <ul>
-           <f:li>
-             <f:img class="thumb"/>
-           </f:li>
-         </ul>
-       </div>
+     <div class="item_list">
+       <ul>
+         <li data-snip="item">
+           <a>
+             <div class="item_box">
+               <div class="price_tag">
+                 <div class="price_tag_text"></div>
+               </div>
+             </div>
+           </a>
+         </li>
+       </ul>
      </div>
-     <div id="pright">
-       <div id="prod_details">
-         <span data-snip="details"/>
-       </div>
-     </div>
-   </div>
+  </div>
+
  </body>
 </html>
-

@@ -2,5 +2,6 @@
   "id" : "1",
   "title" : "Diam nonummy",
   "price" : 137.99,
+  "categories" : ["watches"],
   "images" : ["1.jpg"]
 }

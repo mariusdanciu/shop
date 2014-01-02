@@ -25,7 +25,7 @@ object ProductDetailPage extends DynamicContent[ProductPageState] {
   val title = reqSnip("title") {
     s =>
       s.state.req.param("pid") match {
-        case id :: _ => ShopApplication.productsService.byId(id) match {
+        case id :: _ => ShopApplication.productsService.productById(id) match {
           case Success(prod) => (ProductPageState(s.state.req, Some(prod)), bind(s.node) {
             case "span" > (_ / childs) => <h1>{ prod.title }</h1>
           });

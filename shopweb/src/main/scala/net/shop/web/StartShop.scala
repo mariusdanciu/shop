@@ -33,12 +33,14 @@ object ShopApplication extends ShiftApplication {
   def productsService: ProductsService = new FSProductsService
 
   def servingRule =
-    cssFromFolder("web/styles") |
-      jsFromFolder("web/scripts") |
-      imagesFromFolder("web/images") |
+    cssFromFolder(Path("web/styles")) |
+      jsFromFolder(Path("web/scripts")) |
+      imagesFromFolder(Path("web/images")) |
       productsImages |
-      page(ProductPageState.build _, "/product", "web/product.html", ProductDetailPage) |
-      page("/", "web/index.html", IndexPage) |
+      categoriesImages |
+      page("/", Path("web/categories.html"), CategoryPage) |
+      page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
+      page("products", Path("web/products.html"), ProductsPage) |
       getCart() |
       service(notFoundService)
 

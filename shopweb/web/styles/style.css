@@ -65,21 +65,22 @@ a:active  { color: #999999; text-decoration: none;}
   height: 50px;
 }
 
-.products_list {
+.item_list {
+  float: left;
 }
 
-.products_list ul {
+.item_list ul {
   overflow: hidden;
 }
 
-.products_list ul li {
+.item_list ul li {
   float: left;
   margin: 4px 5px 0 0;
   overflow: hidden;
   position: relative;
 }
 
-.products_list ul li div, .detail_box img {
+.item_list ul li div, .detail_box img {
   width:312px;
   height:356px;
 }
@@ -149,9 +150,11 @@ a:active  { color: #999999; text-decoration: none;}
 }
 
 #cart_symbol {
-  width: 64px;
-  height: 64px;
+  width: 32px;
+  height: 32px;
   float: right;
+  margin-top: 4px;
+  margin-right: 10px;
 }
 
 #cart_content {
@@ -172,7 +175,7 @@ a:active  { color: #999999; text-decoration: none;}
   position:absolute;
   z-index: 9999;
   right: 310px;
-  top: 120px;
+  top: 180px;
 }
 
 
@@ -224,3 +227,4 @@ a:active  { color: #999999; text-decoration: none;}
   margin-bottom: -6px; 
   margin-left: 80px;
 }
+

@@ -29,32 +29,43 @@ object ShopServices {
     resp(TextResponse("Sorry ... service not found"))
   }
 
-  def page(uri: String, filePath: String, snipets: DynamicContent[Request]) = for {
+  implicit val reqSelector = Selectors.bySnippetAttr[SnipState[Request]]
+  implicit val cartItemsSelector = Selectors.bySnippetAttr[SnipState[CartState]]
+
+  def page(uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
     _ <- path(uri)
   } yield Html5(filePath, snipets)
 
-  def page[T](f: Request => T, uri: String, filePath: String, snipets: DynamicContent[T]) = for {
+  def page[T](f: Request => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
     _ <- path(uri)
-  } yield Html5(f, filePath, snipets)
+  } yield {
+    Html5(f, filePath, snipets)(Selectors.bySnippetAttr[SnipState[T]])
+  }
 
   def productsImages = for {
-    "data" :: "products" :: id :: file :: Nil <- path
-  } yield service(resp => resp(new ImageResponse(Resource.fromFile("data/products/" + id + "/" + file), "image/jpg")))
+    Path("data" :: "products" :: id :: file :: Nil) <- path
+  } yield service(resp => 
+    resp(new ImageResponse(Resource.fromFile(s"data/products/$id/$file"), "image/jpg")))
+
+  def categoriesImages = for {
+    Path("data" :: "categories" :: file :: Nil) <- path
+  } yield service(resp => 
+    resp(new ImageResponse(Resource.fromFile(s"data/categories/$file"), "image/jpg")))
 
   def getCart() = for {
-    "getcart" :: Nil <- path
+    Path("getcart" :: Nil) <- path
   } yield serviceWithRequest(r => resp =>
     r.cookie("cart") match {
       case Some(c) => {
         implicit val formats = DefaultFormats
         val json = java.net.URLDecoder.decode(c.value, "UTF-8")
-        val template = XmlUtils.load(r.resource("web/templates/cartitem.html"))
-            
+        val template = XmlUtils.load(r.resource(Path("web/templates/cartitem.html")))
+
         val list = for {
           item <- parse(json).extract[Cart].items
-          prod <- ShopApplication.productsService.byId(item.id).toOption
+          prod <- ShopApplication.productsService.productById(item.id).toOption
         } yield {
-          new Html5(CartState(item.count, prod), Selectors.bySnippetAttr[SnipState[CartState]])(CartItemNode).resolve(template).toString
+          new Html5(CartState(item.count, prod), CartItemNode).resolve(template).toString
         }
         resp(JsonResponse(write(list)))
       }

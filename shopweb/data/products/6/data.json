@@ -2,5 +2,6 @@
   "id" : "6",
   "title" : "Breitling Chronomat Evolution Gold",
   "price" : 137.99,
+  "categories" : ["watches"],
   "images" : ["6.jpg"]
 }
