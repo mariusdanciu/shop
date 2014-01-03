@@ -6,11 +6,11 @@
       var me = $(this); 
       
       $(this).mouseenter(function(){
-        me.find('.price_tag').css( 'background', 'rgba(100, 100, 100, .7)' );
+        me.find('.info_tag').css( 'background', 'rgba(100, 100, 100, .7)' );
       });
    
       $(this).mouseleave(function(){
-        me.find('.price_tag').css( 'background', 'rgba(100, 100, 100, .3)' );
+        me.find('.info_tag').css( 'background', 'rgba(100, 100, 100, .3)' );
       });
       
     });

@@ -15,8 +15,12 @@ import net.shop.backend.ProductDetail
 import net.shop.web.ShopApplication
 import utils.ShopUtils._
 import java.io.StringReader
+import net.shift.loc.Loc
+import java.util.Locale
 
 object ProductDetailPage extends DynamicContent[ProductPageState] {
+
+  val ? = Loc.loc0(new Locale("ro")) _
 
   def snippets = List(title, images, details)
 
@@ -29,9 +33,9 @@ object ProductDetailPage extends DynamicContent[ProductPageState] {
           case Success(prod) => (ProductPageState(s.state.req, Some(prod)), bind(s.node) {
             case "span" > (_ / childs) => <h1>{ prod.title }</h1>
           });
-          case Failure(t) => (ProductPageState(s.state.req, None), <span>No product specified</span>);
+          case Failure(t) => (ProductPageState(s.state.req, None), <span>{?("no_product")}</span>);
         }
-        case Nil => (ProductPageState(s.state.req, None), <span>No product specified</span>)
+        case Nil => (ProductPageState(s.state.req, None), <span>{?("no_product")}</span>)
       }
   }
 

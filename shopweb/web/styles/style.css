@@ -67,6 +67,7 @@ a:active  { color: #999999; text-decoration: none;}
 
 .item_list {
   float: left;
+  width: 100%;
 }
 
 .item_list ul {
@@ -85,19 +86,19 @@ a:active  { color: #999999; text-decoration: none;}
   height:356px;
 }
 
-.price_tag {
+.info_tag {
   position: absolute;
-  top: 300px;
+  top: 280px;
   text-align: right;
   width:312px;
-  height:56px;
+  height:100%;
   margin: 0 3px 0 0;
-  background: rgba(100, 100, 100, .3);
+  background: rgba(100, 100, 100, .2);
 }
 
-.price_tag_price {
+.info_tag_price {
   position: absolute;
-  top: 30px;
+  top: 50px;
   right: 10px;
   text-align: right;
   color: #eeeeee;
@@ -105,14 +106,20 @@ a:active  { color: #999999; text-decoration: none;}
   font-weight: bold;
 }
 
-.price_tag_text {
+.info_tag_text {
   position: absolute;
   top: 10px;
   left: 10px;
   text-align: left;
   color: #eeeeee;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
+}
+
+.cat_tag {
+}
+
+.cat_text {
 }
 
 .thumb {
@@ -228,3 +235,21 @@ a:active  { color: #999999; text-decoration: none;}
   margin-left: 80px;
 }
 
+.error {
+  width: 100%;
+  height: 40px;
+  margin-top: 16px;
+}
+
+.error div {
+  left: 10px;
+  float: left;
+  position: relative;
+}
+
+.error span {
+  float: left;
+  margin-left: 20px;
+  margin-top: 20px;
+  font-size: 18px;
+}

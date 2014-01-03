@@ -1,0 +1,17 @@
+[
+ {
+   "code" : "100",
+   "name" : "no_categories",
+   "text" : "Categoriile nu pot fi obtinute"
+ },
+ {
+   "code" : "101",
+   "name" : "no_category",
+   "text" : "Categorie inexistenta"
+ },
+ {
+   "code" : "102",
+   "name" : "no_product",
+   "text" : "Produs inexistent"
+ }
+]

@@ -37,7 +37,10 @@ class FSProductsService extends ProductsService {
   }
 
   def categoryProducts(cat: String): Try[Traversable[ProductDetail]] =
-    allProducts.map { l => l.filter(p => p.categories.contains(cat)) }
+    (allProducts map { l => l.filter(p => p.categories.contains(cat)) }) match {
+      case s @ Success(t) if (!t.isEmpty) => s
+      case _ => Failure(new RuntimeException())
+    }
 
   def filter(f: ProductDetail => Boolean): Try[Traversable[ProductDetail]] = allProducts() match {
     case Success(prods) => Success(for (p <- prods if f(p)) yield p)

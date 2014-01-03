@@ -11,4 +11,6 @@ object ShopUtils {
   def categoryImagePath(cat: Category): String = s"/data/categories/${cat.image}"
   
   def augmentImagePath(id: String, prod: String): String = s"/data/products/$id/$prod"
+  
+  def errorTag(text: String) = <div class="error"><div><img src="images/exclamation.png"/></div><span>{ text }</span></div>
 }

@@ -5,7 +5,7 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-2.0.3.min.js" />
   <script type="text/javascript" src="/scripts/jquery.cookie.js" />
   <script type="text/javascript" src="/scripts/cart.js" />
-  <script type="text/javascript" src="/scripts/productslist.js" />
+  <script type="text/javascript" src="/scripts/products.js" />
 
  </head>
  
@@ -24,7 +24,10 @@
    <div class="center">
     
     <div data-snip="title" id="product_title">
-
+       <div id="title_text">
+         <span/>
+       </div>
+       
        <div id="cart_symbol">
          <a href="#"><img src="/images/cart.png"/></a>
        </div>   
@@ -36,9 +39,9 @@
          <li data-snip="item">
            <a>
              <div class="item_box">
-               <div class="price_tag">
-                 <div class="price_tag_text"></div>
-                 <div class="price_tag_price"></div>
+               <div class="info_tag">
+                 <div class="info_tag_text"></div>
+                 <div class="info_tag_price"></div>
                </div>
              </div>
            </a>
