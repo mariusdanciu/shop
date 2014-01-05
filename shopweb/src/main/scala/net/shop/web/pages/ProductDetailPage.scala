@@ -22,20 +22,39 @@ object ProductDetailPage extends DynamicContent[ProductPageState] {
 
   val ? = Loc.loc0(new Locale("ro")) _
 
-  def snippets = List(title, images, details)
+  def snippets = List(title, catlink, images, detailPrice, details)
 
   def reqSnip(name: String) = snip[ProductPageState](name) _
 
   val title = reqSnip("title") {
     s =>
-      s.state.req.param("pid") match {
+      val v = s.state.req.param("pid") match {
         case id :: _ => ShopApplication.productsService.productById(id) match {
-          case Success(prod) => (ProductPageState(s.state.req, Some(prod)), bind(s.node) {
-            case "span" > (_ / childs) => <h1>{ prod.title }</h1>
-          });
-          case Failure(t) => (ProductPageState(s.state.req, None), <span>{?("no_product")}</span>);
+          case Success(prod) => (ProductPageState(s.state.req, Some(prod)), <h1>{ prod.title }</h1>)
+          case Failure(t) => (ProductPageState(s.state.req, None), NodeSeq.Empty)
         }
-        case Nil => (ProductPageState(s.state.req, None), <span>{?("no_product")}</span>)
+        case Nil => (ProductPageState(s.state.req, None), NodeSeq.Empty)
+      }
+
+      (v._1, bind(s.node) {
+        case "span" > (_ / childs) => v._2
+      })
+  }
+
+  val catlink = reqSnip("catlink") {
+    s =>
+      {
+        val c = s.state.product match {
+          case Some(p) =>
+            p.categories.flatMap(e => {
+              ShopApplication.productsService.categoryById(e) match {
+                case Success(s) => (<a href={ s"/products?cat=${e}" }>{ s.title }</a> ++ <span>, </span>)
+                case _ => NodeSeq.Empty
+              }
+            }).toList.dropRight(1)
+          case _ => NodeSeq.Empty
+        }
+        (s.state, c)
       }
   }
 
@@ -51,8 +70,18 @@ object ProductDetailPage extends DynamicContent[ProductPageState] {
                 <li>{ <img src={ augmentImagePath(prod.id, i) } title={ prod.title }/> % a }</li>
               }
           })
-        case _ => (ProductPageState(s.state.req, None), NodeSeq.Empty);
+        case _ => (ProductPageState(s.state.req, None), errorTag(?("no_product").text));
       }
+  }
+
+  val detailPrice = reqSnip("detailPrice") {
+    s =>
+      (for {
+        p <- s.state.product
+      } yield {
+        (ProductPageState(s.state.req, Some(p)), Text(s"${p.price} RON"))
+      }) getOrElse
+        (ProductPageState(s.state.req, None), NodeSeq.Empty)
   }
 
   val details = reqSnip("details") {

@@ -3,5 +3,10 @@
   "id" : "watches",
   "title" : "Ceasuri de marca",
   "image" : "8.jpg"
+ },
+ {
+  "id" : "promotions",
+  "title" : "Promotii",
+  "image" : "8.jpg"
  }
 ]

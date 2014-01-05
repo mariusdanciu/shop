@@ -44,6 +44,8 @@ object ProductsPage extends DynamicContent[Request] {
         case "span" > (_ / childs) => <h1>{ v }</h1>
       })
   }
+  
+  
   val item = reqSnip("item") {
     s =>
       {

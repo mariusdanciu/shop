@@ -2,6 +2,6 @@
   "id" : "3",
   "title" : "Breitling Chrono Avenger M1",
   "price" : 177.99,
-  "categories" : ["watches"],
+  "categories" : ["watches", "promotions"],
   "images" : ["3-1.jpg","3-2.jpg", "3-3.jpg", "3-4.jpg", "3-5.jpg"]
 }

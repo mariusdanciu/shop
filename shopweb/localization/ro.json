@@ -13,5 +13,25 @@
    "code" : "102",
    "name" : "no_product",
    "text" : "Produs inexistent"
+ },
+ {
+   "code" : "103",
+   "name" : "add_to_cart",
+   "text" : "Adauga in cos"
+ },
+ {
+   "code" : "104",
+   "name" : "categories",
+   "text" : "Categorii"
+ },
+ {
+   "code" : "105",
+   "name" : "price",
+   "text" : "Pret"
+ },
+ {
+   "code" : "106",
+   "name" : "quantity",
+   "text" : "Cantitate"
  }
 ]
