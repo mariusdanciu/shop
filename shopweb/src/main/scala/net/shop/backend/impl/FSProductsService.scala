@@ -2,23 +2,26 @@ package net.shop
 package backend
 package impl
 
+import java.io.FileInputStream
+
+import scala.util.Failure
+import scala.util.Success
 import scala.util.Try
 import scala.util.control.Exception._
+
 import org.json4s._
 import org.json4s.native.JsonMethods._
+
 import scalax.file._
-import scalax.io._
 import scalax.file.PathMatcher._
-import scala.util.Success
-import scala.util.Failure
-import net.shift.common.Traversing
+import scalax.io._
 
 class FSProductsService extends ProductsService {
   implicit val formats = DefaultFormats
 
   def productById(id: String): Try[ProductDetail] = {
-    catching(classOf[java.io.FileNotFoundException]).withTry {
-      Resource.fromFile(s"data/products/$id/data.json").string
+    Try {
+      Resource.fromInputStream(new FileInputStream(s"data/products/$id/data.json")).string
     } map { s =>
       parse(s).extract[ProductDetail]
     }
@@ -47,8 +50,6 @@ class FSProductsService extends ProductsService {
     case f => f
   }
 
-  import Traversing._
-
   def categoryById(id: String): Try[Category] = {
     allCategories() match {
       case Success(l) => l.find(c => c.id == id) match {
@@ -60,10 +61,10 @@ class FSProductsService extends ProductsService {
   }
 
   def allCategories(): Try[Traversable[Category]] = {
-    (catching(classOf[java.io.FileNotFoundException]).withTry {
-      Resource.fromFile(s"data/categories/categories.json").string
+    Try {
+      Resource.fromInputStream(new FileInputStream(s"data/categories/categories.json")).string
     } map { s =>
       parse(s).extract[List[Category]]
-    })
+    }
   }
 }

@@ -19,8 +19,30 @@
        $('#cart_popup').hide();
      }
     });
-   
+    
+    $("#buy_step1").click(function(event) {
+      cart.showStep1Links();
+      event.stopPropagation();
+    });
+    
+    $("#buy_step_cancel").click(function(event) {
+      cart.showInitialLinks();
+      event.stopPropagation();
+    });
+    
     cart = {
+
+      computeTotal: function(){
+        var total = 0;
+        
+        $(".cart_item").each(function() {
+          var num = $(this).find("input").val();
+          var price = $(this).find(".cart_price").text();
+          total += num * price;
+        });
+        
+        $("#total").text(parseFloat(total).toFixed(2) + " RON");
+      },
 
       items : function(){
         var c = $.cookie("cart"); 
@@ -50,6 +72,25 @@
         } else {
           $.cookie("cart", JSON.stringify({ items : [{id: id, count: 1}] }));
         }
+        window.cart.loadView();
+      },
+   
+      setItemCount : function(id, count) {
+        var c = $.cookie("cart");
+        if (c) {
+          if (count === "") count = 1;
+          
+          var cart = $.parseJSON(c);
+          var a = cart.items;
+          for (i in a) {
+            if (a[i].id === id) {
+              a[i].count = parseInt(count);
+            }
+          }
+          $.cookie("cart", JSON.stringify(cart));
+          window.cart.computeTotal();
+          $(this).focus();
+        }
       },
    
       removeItem : function(id) {
@@ -60,7 +101,6 @@
           var na = [];
           for (i in a) {
             if (a[i].id != id) {
-              console.log(a[i].id + " " + id);
               na.push(a[i])
             }
           }
@@ -84,13 +124,30 @@
           	$(ul).append(li);
           }
           $( this ).append(ul);
+          window.cart.computeTotal();
         }).fail(function(msg, f) {
             alert(f);
         });
+      },
+      
+      showInitialLinks: function() {
+        $('#order').hide();
+        $('#buy_step1').show();
+        $('#buy_final').hide();
+        $('#buy_step_cancel').hide();
+      },
+
+      showStep1Links: function() {
+        $('#order').show();
+        $('#buy_step1').hide();
+        $('#buy_final').show();
+        $('#buy_step_cancel').show();
       }
 
    } 
    
+   cart.showInitialLinks();
+   cart.loadView();
   });
   
 })();

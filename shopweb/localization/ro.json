@@ -33,5 +33,31 @@
    "code" : "106",
    "name" : "quantity",
    "text" : "Cantitate"
+ },
+ {
+   "code" : "107",
+   "name" : "total",
+   "text" : "Total"
+ },
+ {
+   "code" : "108",
+   "name" : "buy",
+   "text" : "Cumpar"
+ },
+ {
+   "code" : "109",
+   "name" : "buy_step1",
+   "text" : "Pasul urmator >>"
+ },
+ {
+   "code" : "110",
+   "name" : "buy_final",
+   "text" : "Finalizeaza comanda"
+ },
+ {
+   "code" : "111",
+   "name" : "buy_cancel",
+   "text" : "Renunta"
  }
+ 
 ]

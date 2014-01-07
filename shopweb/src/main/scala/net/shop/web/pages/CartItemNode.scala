@@ -24,11 +24,11 @@ object CartItemNode extends DynamicContent[CartState] {
   val item = reqSnip("item") {
     s =>
       (s.state, bind(s.node) {
-        case "img" > (a / _) if a.hasClass("thumb")=> <img /> % a attr("src", productImagePath(s.state.prod)) e
-        case "span" > (a / _) if a.hasClass("cart_title") => <span>{s.state.prod.title}</span> % a
-        case "input" > (a / _) => <input/> % a attr("value", s.state.quantity toString) e
-        case "img" > (a / _) => <img /> % a attr("onClick", "cart.removeItem(" + s.state.prod.id + ")") e
-        case "span" > (a / _) if a.hasClass("cart_price") => <span>{s.state.prod.price}</span> % a
+        case "img" > (a / _) if a.hasClass("thumb") => <img/> % a attr ("src", productImagePath(s.state.prod)) e
+        case "span" > (a / _) if a.hasClass("cart_title") => <span>{ s.state.prod.title }</span> % a
+        case "input" > (a / _) => (<input/> % a attr ("value", s.state.quantity toString)) attr ("onkeyup", s"cart.setItemCount('${s.state.prod.id}', this.value)") e
+        case "img" > (a / _) => <img/> % a attr ("onClick", "cart.removeItem(" + s.state.prod.id + ")") e
+        case "span" > (a / _) if a.hasClass("cart_price") => <span>{ s.state.prod.price }</span> % a
       })
   }
 

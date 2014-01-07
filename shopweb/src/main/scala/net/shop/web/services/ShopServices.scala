@@ -50,7 +50,7 @@ object ShopServices {
   def categoriesImages = for {
     Path("data" :: "categories" :: file :: Nil) <- path
   } yield service(resp => 
-    resp(new ImageResponse(Resource.fromFile(s"data/categories/$file"), "image/jpg")))
+    resp(new ImageResponse(Resource.fromFile(s"data/categories/$file"), "image/png")))
 
   def getCart() = for {
     Path("getcart" :: Nil) <- path

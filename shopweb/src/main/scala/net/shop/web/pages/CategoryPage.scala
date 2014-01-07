@@ -19,13 +19,17 @@ import utils.ShopUtils._
 import loc._
 import java.util.Locale
 
-object CategoryPage extends DynamicContent[Request] {
+object CategoryPage extends Cart[Request] { self =>
 
   val ? = Loc.loc0(new Locale("ro")) _
-  
-  def snippets = List(item)
+
+  def snippets = List(cartPopup, item)
 
   def reqSnip(name: String) = snip[Request](name) _
+
+  val cartPopup = reqSnip("cart_popup") {
+    s => (s.state, cartTemplate(s.state, s.state))
+  }
 
   val item = reqSnip("item") {
     s =>
@@ -37,12 +41,12 @@ object CategoryPage extends DynamicContent[Request] {
                 bind(s.node) {
                   case "li" > (a / childs) if (a hasClass "item") => <li>{ childs }</li>
                   case "a" > (attrs / childs) => <a id={ cat id } href={ "/products?cat=" + cat.id }>{ childs }</a>
-                  case "div" > (a / childs) if (a hasClass "item_box") => <div title={ cat title } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div>
+                  case "div" > (a / childs) if (a hasClass "cat_box") => <div title={ cat title } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
                   case "div" > (a / _) if (a hasClass "info_tag_text") => <div>{ cat title }</div> % a
                 }
               }
 
-            case Failure(t) => <div class="error">{?("no_categories").text}</div>
+            case Failure(t) => <div class="error">{ ?("no_categories").text }</div>
           }
 
         (s.state, prods.toSeq)

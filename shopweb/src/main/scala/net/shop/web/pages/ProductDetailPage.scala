@@ -18,13 +18,17 @@ import java.io.StringReader
 import net.shift.loc.Loc
 import java.util.Locale
 
-object ProductDetailPage extends DynamicContent[ProductPageState] {
+object ProductDetailPage extends Cart[ProductPageState] {
 
   val ? = Loc.loc0(new Locale("ro")) _
 
-  def snippets = List(title, catlink, images, detailPrice, details)
+  def snippets = List(cartPopup, title, catlink, images, detailPrice, details)
 
   def reqSnip(name: String) = snip[ProductPageState](name) _
+
+  val cartPopup = reqSnip("cart_popup") {
+    s => (s.state, cartTemplate(s.state, s.state.req))
+  }
 
   val title = reqSnip("title") {
     s =>
