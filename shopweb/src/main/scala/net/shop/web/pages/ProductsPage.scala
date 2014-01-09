@@ -60,7 +60,7 @@ object ProductsPage extends Cart[Request] {
                   bind(s.node) {
                     case "li" > (a / childs) if (a hasClass "item") => <li>{ childs }</li>
                     case "a" > (attrs / childs) => <a id={ prod id } href={ s"/product?pid=${prod.id}" }>{ childs }</a>
-                    case "div" > (a / childs) if (a hasClass "item_box") => <div title={ prod title } style={ "background-image: url('" + productImagePath(prod) + "')" }>{ childs }</div>
+                    case "div" > (a / childs) if (a hasClass "item_box") => <div title={ prod title } style={ "background-image: url('" + productImagePath(prod) + "')" }>{ childs }</div> % a
                     case "div" > (a / _) if (a hasClass "info_tag_text") => <div>{ prod title }</div> % a
                     case "div" > (a / _) if (a hasClass "info_tag_price") => <div>{ s"${prod.price.toString} RON" }</div> % a
                   }

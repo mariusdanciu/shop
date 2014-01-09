@@ -79,40 +79,48 @@ a:active  { color: #999999; text-decoration: none;}
   position: relative;
 }
 
-.item_list ul li div, .detail_box img {
+.detail_box img {
   width:312px;
   height:356px;
 }
 
 .cat_box {
   border: 1px solid #dddddd;
+  width:312px;
+  height:356px;
+}
+
+.item_box {
+  width:312px;
+  height:356px;
 }
 
 .info_tag {
-  position: absolute;
-  top: 280px;
+  position: relative;
   text-align: right;
-  width:312px;
-  height:100%;
-  margin: 0 3px 0 0;
-  background: rgba(100, 100, 100, .3);
+  width:305px;
+  height:70px;
+  top: 280px;
+  margin: 3px;
+  background: rgba(255, 255, 255, .5);
+  box-shadow: 0px 0px 35px 1px #dddddd;
 }
 
 .info_tag_price {
-  position: absolute;
-  top: 50px;
+  position: relative;
+  top: 20px;
   right: 10px;
   text-align: right;
-  color: #eeeeee;
+  color: #000000;
   font-size: 22px;
 }
 
 .info_tag_text {
-  position: absolute;
+  position: relative;
   top: 10px;
   left: 10px;
   text-align: left;
-  color: #eeeeee;
+  color: #000000;
   font-size: 16px;
 }
 
@@ -121,7 +129,7 @@ a:active  { color: #999999; text-decoration: none;}
 
 .cat_text {
   font-size: 24px;
-  top: 26px;
+  top: 10px;
   color: #000000;
 }
 
