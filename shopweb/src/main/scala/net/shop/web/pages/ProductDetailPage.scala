@@ -1,33 +1,36 @@
 package net.shop
 package web.pages
 
+import java.io.BufferedInputStream
+import java.io.FileInputStream
 import scala.util.Failure
 import scala.util.Success
+import scala.util.Try
 import scala.xml._
-import scalax.io._
+import net.shift.engine._
+import net.shift.engine.http.Request._
 import net.shift.engine.http.Request
-import net.shift.common._
+import net.shift.loc.Loc
 import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.DynamicContent
 import net.shift.template.Snippet.snip
 import net.shop.backend.ProductDetail
 import net.shop.web.ShopApplication
-import utils.ShopUtils._
-import java.io.StringReader
-import net.shift.loc.Loc
-import java.util.Locale
+import net.shop.utils.ShopUtils._
+import scalax.io.JavaConverters
+import scalax.io.Resource
+import net.shift.common.XmlUtils
+import net.shift.common.Path
 
 object ProductDetailPage extends Cart[ProductPageState] {
-
-  val ? = Loc.loc0(new Locale("ro")) _
 
   def snippets = List(cartPopup, title, catlink, images, detailPrice, details)
 
   def reqSnip(name: String) = snip[ProductPageState](name) _
 
   val cartPopup = reqSnip("cart_popup") {
-    s => (s.state, cartTemplate(s.state, s.state.req))
+    s => cartTemplate(s.state, s.state.req) map { (s.state, _) }
   }
 
   val title = reqSnip("title") {
@@ -40,41 +43,38 @@ object ProductDetailPage extends Cart[ProductPageState] {
         case Nil => (ProductPageState(s.state.req, None), NodeSeq.Empty)
       }
 
-      (v._1, bind(s.node) {
+      bind(s.node) {
         case "span" > (_ / childs) => v._2
-      })
+      } map { (v._1, _) }
   }
 
   val catlink = reqSnip("catlink") {
     s =>
-      {
-        val c = s.state.product match {
-          case Some(p) =>
-            p.categories.flatMap(e => {
-              ShopApplication.productsService.categoryById(e) match {
-                case Success(s) => (<a href={ s"/products?cat=${e}" }>{ s.title }</a> ++ <span>, </span>)
-                case _ => NodeSeq.Empty
-              }
-            }).toList.dropRight(1)
-          case _ => NodeSeq.Empty
-        }
-        (s.state, c)
-      }
+      (s.state.product match {
+        case Success(p) =>
+          Try(p.categories.flatMap(e => {
+            ShopApplication.productsService.categoryById(e) match {
+              case Success(s) => (<a href={ s"/products?cat=${e}" }>{ s.title }</a> ++ <span>, </span>)
+              case _ => NodeSeq.Empty
+            }
+          }).toList.dropRight(1))
+        case _ => Success(NodeSeq.Empty)
+      }) map { (s.state, _) }
   }
 
   val images = reqSnip("images") {
     s =>
       s.state.product match {
-        case Some(prod) =>
-          (ProductPageState(s.state.req, Some(prod)), bind(s.node) {
-            case "b:img" > _ => <img src={ augmentImagePath(prod.id, prod.images.head) } title={ prod.title }></img>
+        case Success(prod) =>
+          bind(s.node) {
+            case "b:img" > _ => <img class="sel_img" src={ augmentImagePath(prod.id, prod.images.head) } title={ prod.title }></img>
             case "f:li" > (_ / childs) => childs
             case "f:img" > (a / childs) =>
               prod.images map { i =>
-                <li>{ <img src={ augmentImagePath(prod.id, i) } title={ prod.title }/> % a }</li>
+                <li><a class="small_img" href="#">{ <img src={ augmentImagePath(prod.id, i) } title={ prod.title }/> % a }</a></li>
               }
-          })
-        case _ => (ProductPageState(s.state.req, None), errorTag(?("no_product").text));
+          } map { b => (ProductPageState(s.state.req, Some(prod)), b) }
+        case _ => Success((ProductPageState(s.state.req, None), errorTag(Loc.loc0(s.state.req.language)("no_product").text)))
       }
   }
 
@@ -84,8 +84,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
         p <- s.state.product
       } yield {
         (ProductPageState(s.state.req, Some(p)), Text(s"${p.price} RON"))
-      }) getOrElse
-        (ProductPageState(s.state.req, None), NodeSeq.Empty)
+      })
   }
 
   val details = reqSnip("details") {
@@ -93,10 +92,11 @@ object ProductDetailPage extends Cart[ProductPageState] {
       import JavaConverters.asInputConverter
       (for {
         p <- s.state.product
+        input <- s.state.req.resource(Path(s"data/products/${p.id}/desc.html"))
+        n <- XmlUtils.load(input)
       } yield {
-        (ProductPageState(s.state.req, Some(p)), XmlUtils.load(Resource.fromFile(s"data/products/${p.id}/desc.html")))
-      }) getOrElse
-        (ProductPageState(s.state.req, None), NodeSeq.Empty)
+        (ProductPageState(s.state.req, Some(p)), n)
+      })
   }
 
 }
@@ -105,4 +105,4 @@ object ProductPageState {
   def build(req: Request): ProductPageState = new ProductPageState(req, None)
 }
 
-case class ProductPageState(req: Request, product: Option[ProductDetail])
+case class ProductPageState(req: Request, product: Try[ProductDetail])

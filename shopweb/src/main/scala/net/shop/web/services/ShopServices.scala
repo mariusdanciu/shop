@@ -1,27 +1,22 @@
 package net.shop.web.services
 
-import net.shift.engine.ShiftApplication.service
-import net.shift.engine.ShiftApplication.serviceWithRequest
-import net.shift.engine.http.AsyncResponse
-import net.shift.engine.http.HttpPredicates.path
-import net.shift.engine.http.ImageResponse
-import net.shift.engine.http.JsonResponse
-import net.shift.engine.http.Request
-import net.shift.engine.http.TextResponse
-import net.shift.engine.http.Html5Response
-import net.shift.engine.page.Html5
-import net.shift.template._
-import net.shift.common._
 import org.json4s._
 import org.json4s.native.JsonMethods._
-import native.Serialization.write
-import scalax.io.Resource
+import org.json4s.native.Serialization.write
+import net.shift.common._
+import net.shift.engine.ShiftApplication.service
+import net.shift.engine.http._
+import net.shift.engine.http.HttpPredicates._
+import net.shift.engine.page.Html5
+import net.shift.template._
 import net.shop.backend.Cart
-import net.shop.web._
-import pages._
-import ShopApplication._
-import net.shop.utils.ShopUtils._
 import net.shop.backend.ProductDetail
+import net.shop.utils.ShopUtils._
+import net.shop.web._
+import net.shop.web.ShopApplication._
+import net.shop.web.pages._
+import scalax.io.Resource
+import net.shift.engine.utils.ShiftUtils
 
 object ShopServices {
 
@@ -33,41 +28,45 @@ object ShopServices {
   implicit val cartItemsSelector = Selectors.bySnippetAttr[SnipState[CartState]]
 
   def page(uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
-    _ <- path(uri)
-  } yield Html5(filePath, snipets)
+    r <- path(uri)
+  } yield Html5(r, filePath, snipets)
 
   def page[T](f: Request => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
-    _ <- path(uri)
+    r <- path(uri)
   } yield {
-    Html5(f, filePath, snipets)(Selectors.bySnippetAttr[SnipState[T]])
+    Html5(r, f, filePath, snipets)(Selectors.bySnippetAttr[SnipState[T]])
   }
 
   def productsImages = for {
     Path("data" :: "products" :: id :: file :: Nil) <- path
-  } yield service(resp => 
+  } yield service(resp =>
     resp(new ImageResponse(Resource.fromFile(s"data/products/$id/$file"), "image/jpg")))
 
   def categoriesImages = for {
     Path("data" :: "categories" :: file :: Nil) <- path
-  } yield service(resp => 
+  } yield service(resp =>
     resp(new ImageResponse(Resource.fromFile(s"data/categories/$file"), "image/png")))
 
   def getCart() = for {
+    r <- req
     Path("getcart" :: Nil) <- path
-  } yield serviceWithRequest(r => resp =>
+  } yield service(resp =>
     r.cookie("cart") match {
       case Some(c) => {
         implicit val formats = DefaultFormats
         val json = java.net.URLDecoder.decode(c.value, "UTF-8")
-        val template = XmlUtils.load(r.resource(Path("web/templates/cartitem.html")))
-
-        val list = for {
-          item <- parse(json).extract[Cart].items
-          prod <- ShopApplication.productsService.productById(item.id).toOption
+        for {
+          input <- ShiftUtils.fromFile(Path("web/templates/cartitem.html"))
+          template <- XmlUtils.load(input)
         } yield {
-          new Html5(CartState(item.count, prod), CartItemNode).resolve(template).toString
+          val list = for {
+            item <- parse(json).extract[Cart].items
+            prod <- ShopApplication.productsService.productById(item.id).toOption
+          } yield {
+            new Html5(CartState(item.count, prod), r.language, CartItemNode).resolve(template).toString
+          }
+          resp(JsonResponse(write(list)))
         }
-        resp(JsonResponse(write(list)))
       }
       case _ => resp(JsonResponse("[]"))
     })

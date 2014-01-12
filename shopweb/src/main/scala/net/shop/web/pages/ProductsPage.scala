@@ -2,12 +2,10 @@ package net.shop
 package web.pages
 
 import java.util.Locale
-
 import scala.util.Failure
 import scala.util.Success
 import scala.xml._
 import scala.xml._
-
 import net.shift._
 import net.shift._
 import net.shift.engine.http._
@@ -22,14 +20,13 @@ import net.shop.web.ShopApplication
 import utils.ShopUtils._
 
 object ProductsPage extends Cart[Request] {
-  val ? = Loc.loc0(new Locale("ro")) _
 
   def snippets = List(cartPopup, title, item)
 
   def reqSnip(name: String) = snip[Request](name) _
 
   val cartPopup = reqSnip("cart_popup") {
-    s => (s.state, cartTemplate(s.state, s.state))
+    s => cartTemplate(s.state, s.state) map { (s.state, _) }
   }
 
   val title = reqSnip("title") {
@@ -44,9 +41,9 @@ object ProductsPage extends Cart[Request] {
         case Nil => NodeSeq.Empty
       }
 
-      (s.state, bind(s.node) {
+      bind(s.node) {
         case "span" > (_ / childs) => <h1>{ v }</h1>
-      })
+      } map { (s.state, _) }
   }
 
   val item = reqSnip("item") {
@@ -63,13 +60,16 @@ object ProductsPage extends Cart[Request] {
                     case "div" > (a / childs) if (a hasClass "item_box") => <div title={ prod title } style={ "background-image: url('" + productImagePath(prod) + "')" }>{ childs }</div> % a
                     case "div" > (a / _) if (a hasClass "info_tag_text") => <div>{ prod title }</div> % a
                     case "div" > (a / _) if (a hasClass "info_tag_price") => <div>{ s"${prod.price.toString} RON" }</div> % a
+                  } match {
+                    case Success(n) => n
                   }
+                  
                 }
 
-              case Failure(t) => errorTag(?("no_category").text)
+              case Failure(t) => errorTag(Loc.loc0(s.state.language)("no_category").text)
             }
           }
-        (s.state, prods.toSeq)
+        Success((s.state, prods.toSeq))
       }
   }
 

@@ -19,6 +19,8 @@ import scalax.io.Resource
 import scala.util.Success
 import net.shop.utils.ShopUtils._
 import net.shop.web.services.ShopServices
+import net.shift.loc.Language
+import State._
 
 object StartShop extends App {
 
@@ -32,8 +34,11 @@ object ShopApplication extends ShiftApplication {
 
   def productsService: ProductsService = new FSProductsService
 
-  def servingRule =
-    cssFromFolder(Path("web/styles")) |
+  def fixLang = initf[Request](_.withLanguage(Language("ro")))
+
+  def servingRule = for {
+    r <- fixLang
+    c <- cssFromFolder(Path("web/styles")) |
       jsFromFolder(Path("web/scripts")) |
       imagesFromFolder(Path("web/images")) |
       productsImages |
@@ -43,6 +48,7 @@ object ShopApplication extends ShiftApplication {
       page("products", Path("web/products.html"), ProductsPage) |
       getCart() |
       service(notFoundService)
+  } yield c
 
 }
 

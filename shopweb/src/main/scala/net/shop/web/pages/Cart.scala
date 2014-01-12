@@ -13,11 +13,13 @@ import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import scala.xml.NodeSeq
+import scala.util.Try
 
 trait Cart[T] extends DynamicContent[T] {
 
-  def cartTemplate(state: T, r: Request): NodeSeq = {
-    val template = XmlUtils.load(r.resource(Path("web/templates/cartpopup.html")))
-    new Html5(state, this)(Selectors.bySnippetAttr[SnipState[T]]).resolve(template)
-  }
+  def cartTemplate(state: T, r: Request): Try[NodeSeq] = for {
+    input <- r.resource(Path("web/templates/cartpopup.html"))
+    template <- XmlUtils.load(input)
+  } yield new Html5(state, r.language, this)(Selectors.bySnippetAttr[SnipState[T]]).resolve(template)
+
 }
