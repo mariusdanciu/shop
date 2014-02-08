@@ -178,6 +178,7 @@
       
       showCart: function() {
         $('#order').hide();
+        $('#cart_notice').hide();
         $('#buy_final').hide();
         $('#buy_step1').show();
         window.cart.loadView();

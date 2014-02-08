@@ -53,13 +53,15 @@ trait ShopServices extends ShiftUtils with Selectors {
 
   def productsImages = for {
     Path("data" :: "products" :: id :: file :: Nil) <- path
+    input <- fileOf(Path(s"data/products/$id/$file"))
   } yield service(resp =>
-    resp(new ImageResponse(Resource.fromFile(s"data/products/$id/$file"), "image/jpg")))
+    resp(new ImageResponse(input, "image/jpg")))
 
   def categoriesImages = for {
     Path("data" :: "categories" :: file :: Nil) <- path
+    input <- fileOf(Path(s"data/categories/$file"))
   } yield service(resp =>
-    resp(new ImageResponse(Resource.fromFile(s"data/categories/$file"), "image/png")))
+    resp(new ImageResponse(input, "image/png")))
 
   def getCart() = for {
     r <- req
