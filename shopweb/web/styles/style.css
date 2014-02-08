@@ -216,7 +216,7 @@ a:active  { color: #999999; text-decoration: none;}
   color: #FFC911;
 }
 
-.cart_footer {
+#cart_footer {
   margin-bottom: 20px;
   margin-top: 10px;
   position: relative;
@@ -225,18 +225,37 @@ a:active  { color: #999999; text-decoration: none;}
   float: left;
 }
 
-.cart_footer a {
+#cart_footer a {
   margin-right: 40px;
   float: right;
 }
 
-.cart_footer #total {
+#cart_footer #total {
   float: left;
   margin-left: 30px;
 }
 
-.cart_footer * {
+#cart_footer * {
   margin-top: 10px;
+}
+
+#cart_empty {
+  display: none;
+  height: 30px;
+  padding: 20px;
+  float: left;
+  position: relative;
+}
+
+#cart_notice {
+  display: none;
+  height: 30px;
+  padding: 20px;
+  float: left;
+  position: relative;
+  font-size: 16px;
+  font-weight: bold;
+  color: #009900;
 }
 
 #prod_details {

@@ -21,7 +21,7 @@ import utils.ShopUtils._
 
 object ProductsPage extends Cart[Request] {
 
-  def snippets = List(cartPopup, title, item)
+  override def snippets = List(cartPopup, title, item) ++ super.snippets
 
   def reqSnip(name: String) = snip[Request](name) _
 
@@ -63,7 +63,7 @@ object ProductsPage extends Cart[Request] {
                   } match {
                     case Success(n) => n
                   }
-                  
+
                 }
 
               case Failure(t) => errorTag(Loc.loc0(s.state.language)("no_category").text)

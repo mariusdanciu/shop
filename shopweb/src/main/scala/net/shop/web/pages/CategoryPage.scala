@@ -20,7 +20,7 @@ import scala.util.Failure
 
 object CategoryPage extends Cart[Request] { self =>
 
-  def snippets = List(cartPopup, item)
+  override def snippets = List(cartPopup, item) ++ super.snippets
 
   def reqSnip(name: String) = snip[Request](name) _
 
@@ -33,8 +33,7 @@ object CategoryPage extends Cart[Request] { self =>
       {
         val prods = ShopApplication.productsService.allCategories() match {
           case Success(list) =>
-            println(list)
-            val v = list flatMap { cat =>
+            list flatMap { cat =>
               (bind(s.node) {
                 case "li" > (a / childs) if (a hasClass "item") => <li>{ childs }</li>
                 case "a" > (attrs / childs) => <a id={ cat id } href={ "/products?cat=" + cat.id }>{ childs }</a>
@@ -45,8 +44,6 @@ object CategoryPage extends Cart[Request] { self =>
                 case Failure(f) => errorTag(f toString)
               }
             }
-            println(v)
-            v
           case Failure(t) => <div class="error">{ Loc.loc0(s.state.language)("no_categories").text }</div>
         }
 

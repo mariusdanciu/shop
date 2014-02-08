@@ -3,18 +3,17 @@ package backend
 package impl
 
 import java.io.FileInputStream
-
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
 import scala.util.control.Exception._
-
 import org.json4s._
 import org.json4s.native.JsonMethods._
-
 import scalax.file._
 import scalax.file.PathMatcher._
 import scalax.io._
+import net.shop.model.ProductDetail
+import net.shop.model.Category
 
 class FSProductsService extends ProductsService {
   implicit val formats = DefaultFormats

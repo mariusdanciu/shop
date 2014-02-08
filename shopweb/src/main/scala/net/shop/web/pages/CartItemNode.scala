@@ -3,19 +3,18 @@ package web.pages
 
 import scala.collection.immutable.Map
 import scala.xml._
-
 import net.shift._
 import net.shift._
-import net.shift.common.XmlUtils._
 import net.shift.template._
 import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shift.template.Snippet._
-import net.shop.backend.ProductDetail
 import utils.ShopUtils._
+import net.shift.common.XmlUtils
+import net.shop.model.ProductDetail
 
-object CartItemNode extends DynamicContent[CartState] {
+object CartItemNode extends DynamicContent[CartState] with XmlUtils {
 
   def snippets = List(item)
 

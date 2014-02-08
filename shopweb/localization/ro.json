@@ -58,6 +58,71 @@
    "code" : "111",
    "name" : "buy_cancel",
    "text" : "Renunta"
+ },
+ {
+   "code" : "112",
+   "name" : "order.first.name",
+   "text" : "Prenume"
+ },
+ {
+   "code" : "113",
+   "name" : "order.last.name",
+   "text" : "Nume"
+ },
+ {
+   "code" : "113",
+   "name" : "order.region",
+   "text" : "Judet/Sector"
+ },
+ {
+   "code" : "114",
+   "name" : "order.city",
+   "text" : "Localitatea"
+ },
+ {
+   "code" : "115",
+   "name" : "order.address",
+   "text" : "Adresa"
+ },
+ {
+   "code" : "116",
+   "name" : "order.email",
+   "text" : "E-Mail"
+ },
+ {
+   "code" : "117",
+   "name" : "order.phone",
+   "text" : "Telefon"
+ },
+ {
+   "code" : "118",
+   "name" : "invalid.name",
+   "text" : "Numele '%s' este nu este corect"
+ },
+ {
+   "code" : "119",
+   "name" : "invalid.email",
+   "text" : "Adresa de email nu este corecta"
+ },
+ {
+   "code" : "120",
+   "name" : "invalid.phone",
+   "text" : "Numarul de telefon nu este corect"
+ },
+ {
+   "code" : "121",
+   "name" : "field.required",
+   "text" : "Campul '%s' este obligatoriu"
+ },
+ {
+   "code" : "122",
+   "name" : "order.done",
+   "text" : "Multumim pentru comanda facuta. In scurt timp veti primi confirmarea prin email."
+ },
+ {
+   "code" : "123",
+   "name" : "cart.empty",
+   "text" : "Cosul este gol"
  }
  
 ]

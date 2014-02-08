@@ -1,31 +1,45 @@
 package net.shop.web.services
 
-import org.json4s._
-import org.json4s.native.JsonMethods._
+import scala.Option.option2Iterable
+import org.json4s.DefaultFormats
+import org.json4s.jvalue2extractable
+import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization.write
-import net.shift.common._
+import org.json4s.string2JsonInput
+import net.shift.common.Path
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http._
-import net.shift.engine.http.HttpPredicates._
+import net.shift.engine.http.AsyncResponse
+import net.shift.engine.http.ImageResponse
+import net.shift.engine.http.JsonResponse
+import net.shift.engine.http.Request
+import net.shift.engine.http.TextResponse
 import net.shift.engine.page.Html5
-import net.shift.template._
-import net.shop.backend.Cart
-import net.shop.backend.ProductDetail
-import net.shop.utils.ShopUtils._
-import net.shop.web._
-import net.shop.web.ShopApplication._
-import net.shop.web.pages._
-import scalax.io.Resource
 import net.shift.engine.utils.ShiftUtils
+import net.shift.template.DynamicContent
+import net.shift.template.Selectors
+import net.shift.template.SnipState
+import net.shop.web.ShopApplication
+import net.shop.web.pages.CartItemNode
+import net.shop.web.pages.CartState
+import scalax.io.Resource
+import net.shop.model.Cart
+import net.shop.web.form.OrderForm
+import net.shift.html.Success
+import net.shift.html.Failure
+import net.shift.js
+import net.shift.js.JsDsl
+import net.shift.js.JsStatement
+import net.shift.engine.http.JsResponse
+import net.shift.loc.Loc
 
-object ShopServices {
+trait ShopServices extends ShiftUtils with Selectors {
 
   def notFoundService(resp: AsyncResponse) {
     resp(TextResponse("Sorry ... service not found"))
   }
 
-  implicit val reqSelector = Selectors.bySnippetAttr[SnipState[Request]]
-  implicit val cartItemsSelector = Selectors.bySnippetAttr[SnipState[CartState]]
+  implicit val reqSelector = bySnippetAttr[SnipState[Request]]
+  implicit val cartItemsSelector = bySnippetAttr[SnipState[CartState]]
 
   def page(uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
     r <- path(uri)
@@ -34,7 +48,7 @@ object ShopServices {
   def page[T](f: Request => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
     r <- path(uri)
   } yield {
-    Html5(r, f, filePath, snipets)(Selectors.bySnippetAttr[SnipState[T]])
+    Html5(r, f, filePath, snipets)(bySnippetAttr[SnipState[T]])
   }
 
   def productsImages = for {
@@ -54,13 +68,12 @@ object ShopServices {
     r.cookie("cart") match {
       case Some(c) => {
         implicit val formats = DefaultFormats
-        val json = java.net.URLDecoder.decode(c.value, "UTF-8")
         for {
-          input <- ShiftUtils.fromFile(Path("web/templates/cartitem.html"))
-          template <- XmlUtils.load(input)
+          input <- fromFile(Path("web/templates/cartitem.html"))
+          template <- load(input)
         } yield {
           val list = for {
-            item <- parse(json).extract[Cart].items
+            item <- readCart(c.value).items
             prod <- ShopApplication.productsService.productById(item.id).toOption
           } yield {
             new Html5(CartState(item.count, prod), r.language, CartItemNode).resolve(template).toString
@@ -70,6 +83,40 @@ object ShopServices {
       }
       case _ => resp(JsonResponse("[]"))
     })
+
+  def order = for {
+    r <- req
+    Path("order" :: Nil) <- path
+  } yield service(resp => {
+    val params = r.params.map { case (k, v) => (k, v.head) }
+
+    import JsDsl._
+    OrderForm.form(r.language) validate params match {
+      case Success(o) =>
+        resp(JsResponse(
+          apply("cart.orderDone", Loc.loc0(r.language)("order.done").text) toJsString))
+      case Failure(msgs) => {
+
+        val js = func() {
+          JsStatement(
+            (for {
+              m <- msgs
+            } yield {
+              $(s"label[for='${m._1}']") ~
+                apply("css", "color", "#ff0000") ~
+                apply("attr", "title", m._2)
+            }): _*)
+        }.wrap.apply
+        resp(JsResponse(js.toJsString))
+      }
+    }
+
+  })
+
+  private def readCart(json: String): Cart = {
+    implicit val formats = DefaultFormats
+    parse(java.net.URLDecoder.decode(json, "UTF-8")).extract[Cart]
+  }
 }
 
 

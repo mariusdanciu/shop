@@ -15,17 +15,17 @@ import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.DynamicContent
 import net.shift.template.Snippet.snip
-import net.shop.backend.ProductDetail
 import net.shop.web.ShopApplication
 import net.shop.utils.ShopUtils._
 import scalax.io.JavaConverters
 import scalax.io.Resource
 import net.shift.common.XmlUtils
 import net.shift.common.Path
+import net.shop.model.ProductDetail
 
 object ProductDetailPage extends Cart[ProductPageState] {
 
-  def snippets = List(cartPopup, title, catlink, images, detailPrice, details)
+  override def snippets = List(cartPopup, title, catlink, images, detailPrice, details) ++ super.snippets
 
   def reqSnip(name: String) = snip[ProductPageState](name) _
 
@@ -93,7 +93,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
       (for {
         p <- s.state.product
         input <- s.state.req.resource(Path(s"data/products/${p.id}/desc.html"))
-        n <- XmlUtils.load(input)
+        n <- load(input)
       } yield {
         (ProductPageState(s.state.req, Some(p)), n)
       })

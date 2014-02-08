@@ -1,8 +1,8 @@
 package net.shop
 package utils
 
-import net.shop.backend.ProductDetail
-import net.shop.backend.Category
+import net.shop.model.ProductDetail
+import net.shop.model.Category
 
 object ShopUtils {
 

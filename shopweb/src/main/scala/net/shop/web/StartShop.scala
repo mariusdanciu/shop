@@ -1,26 +1,23 @@
 package net.shop
 package web
 
-import net.shift.common._
+import net.shift.common.State._
 import net.shift.engine.ShiftApplication
 import net.shift.engine.ShiftApplication._
-import net.shift.engine.http._
-import net.shift.engine.http.HttpPredicates._
-import net.shift.engine.page.Html5
-import net.shift.engine.utils.ShiftUtils.cssFromFolder
-import net.shift.engine.utils.ShiftUtils.imagesFromFolder
-import net.shift.engine.utils.ShiftUtils.jsFromFolder
+import net.shift.engine.utils.ShiftUtils
 import net.shift.netty.NettyServer
 import net.shift.template.DynamicContent
 import net.shop.backend.ProductsService
-import net.shop.backend.impl.FSProductsService
-import net.shop.web.pages._
-import scalax.io.Resource
-import scala.util.Success
 import net.shop.utils.ShopUtils._
 import net.shop.web.services.ShopServices
+import net.shop.backend.impl.FSProductsService
+import net.shift.engine.http.Request
 import net.shift.loc.Language
-import State._
+import net.shift.common.Path
+import net.shop.web.pages.CategoryPage
+import net.shop.web.pages.ProductPageState
+import net.shop.web.pages.ProductDetailPage
+import net.shop.web.pages.ProductsPage
 
 object StartShop extends App {
 
@@ -29,8 +26,7 @@ object StartShop extends App {
   NettyServer.start(8080, ShopApplication)
 }
 
-object ShopApplication extends ShiftApplication {
-  import ShopServices._
+object ShopApplication extends ShiftApplication  with ShopServices  {
 
   def productsService: ProductsService = new FSProductsService
 
@@ -47,6 +43,7 @@ object ShopApplication extends ShiftApplication {
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
       page("products", Path("web/products.html"), ProductsPage) |
       getCart() |
+      order |
       service(notFoundService)
   } yield c
 
