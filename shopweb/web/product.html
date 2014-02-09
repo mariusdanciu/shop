@@ -22,18 +22,15 @@
 
    <div class="center">
      <div data-snip="title" id="product_title">
+
+       <div id="cart_symbol">
+         <a href="#"><img src="/images/cart.png"/></a>
+       </div>  
+       
        <div id="title_text">
          <span/>
        </div>
 
-       <div id="cart_symbol">
-         <a href="#"><img src="/images/cart.png"/></a>
-       </div>   
-
-       <div id="add_to_cart_box">
-         <a id="add_to_cart" href="#" data-loc="add_to_cart"></a>
-       </div> 
-       
      </div>
      
      <div class="navigation">
@@ -55,11 +52,18 @@
        </div>
      </div>
      <div id="pright">
-       <div id="prod_details">
-         <div class="detailPrice">
-           <span data-snip="detailPrice"/>
+       <div class="prod_details">
+         <div class="prod_header">
+           <div class="detailPrice">
+             <span data-snip="detailPrice"/>
+           </div>
+           <div id="add_to_cart_box">
+             <a id="add_to_cart" href="#" data-loc="add_to_cart"></a>
+           </div> 
          </div>
-         <div data-snip="details"/>
+         <div class="prod_desc">
+           <div data-snip="details"/>
+         </div>
        </div>
      </div>
    </div>
