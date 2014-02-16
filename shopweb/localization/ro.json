@@ -123,6 +123,20 @@
    "code" : "123",
    "name" : "cart.empty",
    "text" : "Cosul este gol"
+ },
+ {
+   "code" : "124",
+   "name" : "order.items.required",
+   "text" : "Cel putin un produs este necesar pentru a face comanda"
+ },
+ {
+   "code" : "125",
+   "name" : "thank.you",
+   "text" : "Multumim pentru comanda facuta."
+ },
+ {
+   "code" : "126",
+   "name" : "order.id",
+   "text" : "Identificator comanda"
  }
- 
 ]

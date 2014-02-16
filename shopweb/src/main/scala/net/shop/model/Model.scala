@@ -8,5 +8,13 @@ case class Cart(items: List[CartItem])
 
 case class Category(id: String, title: String, image: String)
 
-case class Order(firstName: String, lastName: String, region: String, city: String, address: String, email: String, phone: String)
+case class Order(id: String,
+  firstName: String,
+  lastName: String,
+  region: String,
+  city: String,
+  address: String,
+  email: String,
+  phone: String,
+  items: List[(String, Int)])
 

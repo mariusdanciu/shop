@@ -86,34 +86,7 @@ trait ShopServices extends ShiftUtils with Selectors {
       case _ => resp(JsonResponse("[]"))
     })
 
-  def order = for {
-    r <- req
-    Path("order" :: Nil) <- path
-  } yield service(resp => {
-    val params = r.params.map { case (k, v) => (k, v.head) }
-
-    import JsDsl._
-    OrderForm.form(r.language) validate params match {
-      case Success(o) =>
-        resp(JsResponse(
-          apply("cart.orderDone", Loc.loc0(r.language)("order.done").text) toJsString))
-      case Failure(msgs) => {
-
-        val js = func() {
-          JsStatement(
-            (for {
-              m <- msgs
-            } yield {
-              $(s"label[for='${m._1}']") ~
-                apply("css", "color", "#ff0000") ~
-                apply("attr", "title", m._2)
-            }): _*)
-        }.wrap.apply
-        resp(JsResponse(js.toJsString))
-      }
-    }
-
-  })
+  def order = OrderService
 
   private def readCart(json: String): Cart = {
     implicit val formats = DefaultFormats
