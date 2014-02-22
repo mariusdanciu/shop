@@ -1,6 +1,7 @@
 package net.shop.backend
 
 import net.shop.model.Order
+import net.shift.loc.Language
 
 object OrderSubmitter extends OrderObservable {
 
@@ -29,4 +30,4 @@ trait OrderObserver {
 
 }
 
-case class OrderDocument(o: Order, doc: String)
+case class OrderDocument(l: Language, o: Order, doc: String)

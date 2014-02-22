@@ -18,15 +18,20 @@ import net.shop.web.pages.CategoryPage
 import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductsPage
+import net.shift.common.Log
+import net.shift.common.Config
 
-object StartShop extends App {
+object StartShop extends App with Log {
 
-  println("Starting shop application ...");
+  info("Starting I-Did application ...");
 
-  NettyServer.start(8080, ShopApplication)
+  Config load ()
+
+  println(Config.string("domain"))
+  NettyServer.start(Config.int("port"), ShopApplication)
 }
 
-object ShopApplication extends ShiftApplication  with ShopServices  {
+object ShopApplication extends ShiftApplication with ShopServices {
 
   def productsService: ProductsService = new FSProductsService
 
@@ -38,6 +43,7 @@ object ShopApplication extends ShiftApplication  with ShopServices  {
       jsFromFolder(Path("web/scripts")) |
       imagesFromFolder(Path("web/images")) |
       productsImages |
+      productsVariantImages |
       categoriesImages |
       page("/", Path("web/categories.html"), CategoryPage) |
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |

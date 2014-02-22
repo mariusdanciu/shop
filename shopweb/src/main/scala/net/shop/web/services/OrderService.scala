@@ -53,7 +53,7 @@ object OrderService extends HttpPredicates {
               apply("cart.orderDone", Loc.loc0(r.language)("order.done").text) toJsString))
           }
           future {
-            OrderPage.orderTemplate(OrderState(o, r, 0.0)) map { n => OrderSubmitter.placeOrder(OrderDocument(o, n toString)) }
+            OrderPage.orderTemplate(OrderState(o, r, 0.0)) map { n => OrderSubmitter.placeOrder(OrderDocument(r.language, o, n toString)) }
           }
         case Failure(msgs) => {
 

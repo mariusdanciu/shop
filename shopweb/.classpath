@@ -16,6 +16,7 @@
   <classpathentry kind="lib" path="/home/marius/.ivy2/cache/org.scala-lang/scalap/jars/scalap-2.10.0.jar"/>
   <classpathentry kind="lib" path="/home/marius/.ivy2/cache/org.scala-lang/scala-compiler/jars/scala-compiler-2.10.0.jar"/>
   <classpathentry kind="lib" path="/home/marius/.ivy2/cache/org.scala-lang/scala-reflect/jars/scala-reflect-2.10.0.jar"/>
+  <classpathentry kind="lib" path="/home/marius/.ivy2/cache/log4j/log4j/bundles/log4j-1.2.17.jar"/>
   <classpathentry kind="lib" path="/home/marius/.ivy2/local/shift/shift-template_2.10/0.1/jars/shift-template_2.10.jar"/>
   <classpathentry kind="lib" path="/home/marius/.ivy2/local/shift/shift-html_2.10/0.1/jars/shift-html_2.10.jar"/>
   <classpathentry kind="lib" path="/home/marius/.ivy2/local/shift/shift-netty_2.10/0.1/jars/shift-netty_2.10.jar"/>

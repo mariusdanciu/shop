@@ -67,12 +67,26 @@ object ProductDetailPage extends Cart[ProductPageState] {
       s.state.product match {
         case Success(prod) =>
           bind(s.node) {
-            case "b:img" > _ => <img class="sel_img" src={ augmentImagePath(prod.id, prod.images.head) } title={ prod.title }></img>
-            case "f:li" > (_ / childs) => childs
-            case "f:img" > (a / childs) =>
-              prod.images map { i =>
-                <li><a class="small_img" href="#">{ <img src={ augmentImagePath(prod.id, i) } title={ prod.title }/> % a }</a></li>
-              }
+            case "b:img" > _ =>
+              val list = NodeSeq.fromSeq(for {
+                p <- prod.images zipWithIndex
+              } yield {
+                val normal = imagePath(prod.id, p._1)
+                val large = imagePath(prod.id, "large", p._1)
+                val thumb = imagePath(prod.id, "thumb", p._1)
+                <a href="#" data-image={ normal } data-zoom-image={ large }>
+                  <img id={ s"img_${p._2}" } src={ thumb }/>
+                </a>
+              })
+
+              val path = imagePath(prod.id, prod.images.head)
+              val large = imagePath(prod.id, "large", prod.images.head)
+
+              <img id="sel_img" src={ path } title={ prod.title } data-zoom-image={ large }></img> ++
+                <div id="gallery">
+                  { list }
+                </div>
+
           } map { b => (ProductPageState(s.state.req, Some(prod)), b) }
         case _ => Success((ProductPageState(s.state.req, None), errorTag(Loc.loc0(s.state.req.language)("no_product").text)))
       }

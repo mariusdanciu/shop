@@ -31,8 +31,9 @@ import net.shift.js.JsDsl
 import net.shift.js.JsStatement
 import net.shift.engine.http.JsResponse
 import net.shift.loc.Loc
+import net.shift.common.PathUtils
 
-trait ShopServices extends ShiftUtils with Selectors {
+trait ShopServices extends PathUtils with ShiftUtils with Selectors {
 
   def notFoundService(resp: AsyncResponse) {
     resp(TextResponse("Sorry ... service not found"))
@@ -57,6 +58,12 @@ trait ShopServices extends ShiftUtils with Selectors {
   } yield service(resp =>
     resp(new ImageResponse(input, "image/jpg")))
 
+  def productsVariantImages = for {
+    Path("data" :: "products" :: id :: variant :: file :: Nil) <- path
+    input <- fileOf(Path(s"data/products/$id/$variant/$file"))
+  } yield service(resp =>
+    resp(new ImageResponse(input, "image/jpg")))
+
   def categoriesImages = for {
     Path("data" :: "categories" :: file :: Nil) <- path
     input <- fileOf(Path(s"data/categories/$file"))
@@ -71,7 +78,7 @@ trait ShopServices extends ShiftUtils with Selectors {
       case Some(c) => {
         implicit val formats = DefaultFormats
         for {
-          input <- fromFile(Path("web/templates/cartitem.html"))
+          input <- fromPath(Path("web/templates/cartitem.html"))
           template <- load(input)
         } yield {
           val list = for {

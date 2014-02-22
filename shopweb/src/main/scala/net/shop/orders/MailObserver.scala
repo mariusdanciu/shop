@@ -3,6 +3,8 @@ package orders
 
 import backend._
 import net.shop.model.Order
+import net.shift.common.Config
+import net.shift.loc.Loc
 
 object MailObserver extends OrderObserver {
   implicit def stringToSeq(single: String): Seq[String] = Seq(single)
@@ -12,7 +14,7 @@ object MailObserver extends OrderObserver {
       from = ("vanzari@handmade.ro", ""),
       to = "marius.danciu@gmail.com",
       bcc = "aleena.danciu@gmail.com",
-      subject = "Comanda Handmade",
+      subject = Loc.loc0(content.l)("order.subject").text,
       message = content.doc)
   }
 }
@@ -34,9 +36,9 @@ object send {
     mail.cc foreach (commonsMail.addCc(_))
     mail.bcc foreach (commonsMail.addBcc(_))
 
-    commonsMail.setHostName("smtp.googlemail.com")
-    commonsMail.setSmtpPort(465)
-    commonsMail.setAuthenticator(new DefaultAuthenticator("marius.danciu@gmail.com", "me@google"))
+    commonsMail.setHostName(Config.string("smtp.server"))
+    commonsMail.setSmtpPort(Config.int("smtp.port"))
+    commonsMail.setAuthenticator(new DefaultAuthenticator(Config.string("smtp.user"), Config.string("smtp.password")))
     commonsMail.setSSLOnConnect(true);
     commonsMail.setFrom(mail.from._1, mail.from._2).
       setSubject(mail.subject).
