@@ -11,16 +11,16 @@ object MailObserver extends OrderObserver {
 
   def onOrder(content: OrderDocument) {
     send a Mail(
-      from = ("vanzari@handmade.ro", ""),
-      to = "marius.danciu@gmail.com",
-      bcc = "aleena.danciu@gmail.com",
+      from = Config.string("smtp.from"),
+      to = content.o.email,
+      bcc = Config.list("smtp.bcc"),
       subject = Loc.loc0(content.l)("order.subject").text,
       message = content.doc)
   }
 }
 
 case class Mail(
-  from: (String, String),
+  from: String,
   to: Seq[String],
   cc: Seq[String] = Seq.empty,
   bcc: Seq[String] = Seq.empty,
@@ -40,7 +40,7 @@ object send {
     commonsMail.setSmtpPort(Config.int("smtp.port"))
     commonsMail.setAuthenticator(new DefaultAuthenticator(Config.string("smtp.user"), Config.string("smtp.password")))
     commonsMail.setSSLOnConnect(true);
-    commonsMail.setFrom(mail.from._1, mail.from._2).
+    commonsMail.setFrom(mail.from).
       setSubject(mail.subject).
       send()
   }

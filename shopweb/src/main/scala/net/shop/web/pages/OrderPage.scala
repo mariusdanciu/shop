@@ -28,34 +28,26 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   def reqSnip(name: String) = snip[OrderState](name) _
 
   def orderTemplate(state: OrderState): Try[NodeSeq] = for {
-    input <- state.req.resource(Path("web/templates/order.html"))
+    input <- state.req.resource(Path(s"web/templates/order_${state.req.language.language}.html"))
     template <- load(input)
   } yield new Html5(state, state.req.language, this)(bySnippetAttr[SnipState[OrderState]]).resolve(template)
 
   val info = reqSnip("info") {
     s =>
-      val n = (for {
-        id <- makeField(s.node, "order.id", s.state.o.id)
-        ln <- makeField(s.node, "order.last.name", s.state.o.lastName)
-        fn <- makeField(s.node, "order.first.name", s.state.o.firstName)
-        region <- makeField(s.node, "order.region", s.state.o.region)
-        city <- makeField(s.node, "order.city", s.state.o.city)
-        address <- makeField(s.node, "order.address", s.state.o.address)
-        email <- makeField(s.node, "order.email", s.state.o.email)
-        phone <- makeField(s.node, "order.phone", s.state.o.phone)
-      } yield { id ++ ln ++ fn ++ region ++ city ++ address ++ email ++ phone }) match {
-        case Success(n) => n
-        case Failure(f) => errorTag(f toString)
+      bind(s.node) {
+        case n > ((a @ Attrs(("id", "oid"))) / _) => <span>{ s.state.o.id }</span> % a
+        case n > ((a @ Attrs(("id", "lname"))) / _) => <span>{ s.state.o.lastName }</span> % a
+        case n > ((a @ Attrs(("id", "fname"))) / _) => <span>{ s.state.o.firstName }</span> % a
+        case n > ((a @ Attrs(("id", "region"))) / _) => <span>{ s.state.o.region }</span> % a
+        case n > ((a @ Attrs(("id", "city"))) / _) => <span>{ s.state.o.city }</span> % a
+        case n > ((a @ Attrs(("id", "address"))) / _) => <span>{ s.state.o.address }</span> % a
+        case n > ((a @ Attrs(("id", "email"))) / _) => <span>{ s.state.o.email }</span> % a
+        case n > ((a @ Attrs(("id", "phone"))) / _) => <span>{ s.state.o.phone }</span> % a
+      } match {
+        case Success(n) => Success((s.state, n))
+        case Failure(f) => Success((s.state, errorTag(f toString)))
       }
 
-      Success((s.state, n))
-  }
-
-  def makeField(node: NodeSeq, id: String, value: String) = {
-    bind(node) {
-      case n > ((a @ Attrs(("id", "field"))) / _) => <span data-loc={ id }></span> % a
-      case n > ((a @ Attrs(("id", "value"))) / _) => <span>{ value }</span> % a
-    }
   }
 
   val content = reqSnip("content") {

@@ -82,10 +82,6 @@ table tr th {
 .items {
 	clear: both;
 }
-
-#field {
-	color: #aaaaaa;
-}
 </style>
 </head>
 
@@ -94,23 +90,53 @@ table tr th {
 		<div>
 			<h1>I-Did</h1>
 			<br />
-			<h3 data-loc="thank.you"></h3>
+			<h3>Multumim pentru comnada facuta !</h3>
 		</div>
 		<div class="order_info">
-			<table style="width: 400px">
-				<tr data-snip="info">
-					<td align="left"><span id="field"></span></td>
-					<td align="left"><span id="value"></span></td>
+			<table style="width: 400px" data-snip="info">
+				<tr>
+					<td align="left"><span id="field">Identificator comanda</span></td>
+					<td align="left"><span id="oid"></span></td>
 				</tr>
+				<tr>
+					<td align="left"><span>Nume</span></td>
+					<td align="left"><span id="lname"></span></td>
+				</tr>
+				<tr>
+					<td align="left"><span>Prenume</span></td>
+					<td align="left"><span id="fname"></span></td>
+				</tr>
+				<tr>
+					<td align="left"><span>Judet/Sector</span></td>
+					<td align="left"><span id="region"></span></td>
+				</tr>
+				<tr>
+					<td align="left"><span>Localitatea</span></td>
+					<td align="left"><span id="city"></span></td>
+				</tr>
+				<tr>
+					<td align="left"><span>Adresa</span></td>
+					<td align="left"><span id="address"></span></td>
+				</tr>
+				<tr>
+					<td align="left"><span>E-Mail</span></td>
+					<td align="left"><span id="email"></span></td>
+				</tr>
+				<tr>
+					<td align="left"><span>Phone</span></td>
+					<td align="left"><span id="phone"></span></td>
+				</tr>
+
 			</table>
 		</div>
+		<br/>
 		<div class="items">
 			<table>
 				<tr>
 					<th>Produs</th>
 					<th>Denumire</th>
 					<th>Cantitate</th>
-					<th>Pret unitar</th>
+					<th>Pret unitar (RON)</th>
 				</tr>
 				<tr data-snip="content">
 					<td align="center"><img width="50" height="57" /></td>
@@ -120,12 +146,17 @@ table tr th {
 				</tr>
 			</table>
 			<div class="total">
-				<span data-loc="total"></span> <span data-snip="total"></span>
+				<h3>
+					Total <span data-snip="total"></span> RON
+				</h3>
 			</div>
 		</div>
 	</div>
 	<div>
-		<span data-loc="contact"></span><a href="www.idid.ro">www.idid.ro</a>
+		<span>Toate preturile includ TVA. Plata se va efectua la livrare.</span>
+		<br />
+		<span>Pentru informatii suplimentare contactati-ne pe</span>
+		<span><a href="www.idid.ro">www.idid.ro</a></span>
 	</div>
 </body>
 </html>

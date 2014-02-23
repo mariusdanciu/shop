@@ -135,16 +135,6 @@
    "text" : "Multumim pentru comanda facuta."
  },
  {
-   "code" : "126",
-   "name" : "order.id",
-   "text" : "Identificator comanda"
- },
- {
-   "code" : "127",
-   "name" : "contact",
-   "text" : "Pentru informatii suplimentare contactati-ne pe "
- },
- {
    "code" : "128",
    "name" : "order.subject",
    "text" : "Comanda I-Did"
