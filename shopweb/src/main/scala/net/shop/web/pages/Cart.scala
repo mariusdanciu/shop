@@ -18,7 +18,7 @@ import net.shop.web.form.OrderForm
 trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
 
   def snippets = List(order)
-  
+
   def cartTemplate(state: T, r: Request): Try[NodeSeq] = for {
     input <- r.resource(Path("web/templates/cartpopup.html"))
     template <- load(input)
@@ -27,8 +27,13 @@ trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
   def order = snip[T]("order") {
     s =>
       bind(s.node) {
-        case "form" > (a / _) => <form id="order_form">{ OrderForm.form(s.locale).html }</form>
+        case "form" > (a / _) => <form id="order_form">{ OrderForm.form(s.language).html }</form>
       } map ((s.state, _))
   }
+
+  def searchTemplate(state: T, r: Request): Try[NodeSeq] = for {
+    input <- r.resource(Path("web/templates/search.html"))
+    template <- load(input)
+  } yield new Html5(state, r.language, this)(bySnippetAttr[SnipState[T]]).resolve(template)
 
 }

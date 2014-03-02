@@ -25,26 +25,31 @@ object CategoryPage extends Cart[Request] { self =>
   def reqSnip(name: String) = snip[Request](name) _
 
   val cartPopup = reqSnip("cart_popup") {
-    s => cartTemplate(s.state, s.state) map { c => (s.state, c) }
+    s =>
+      val n = cartTemplate(s.state, s.state) match {
+        case Success(n) => n
+        case Failure(f) => errorTag(f toString)
+      }
+      Success((s.state, n))
   }
 
   val item = reqSnip("item") {
     s =>
       {
-        val prods = ShopApplication.productsService.allCategories() match {
+        val prods = ShopApplication.productsService.allCategories match {
           case Success(list) =>
             list flatMap { cat =>
               (bind(s.node) {
                 case "li" > (a / childs) if (a hasClass "item") => <li>{ childs }</li>
                 case "a" > (attrs / childs) => <a id={ cat id } href={ "/products?cat=" + cat.id }>{ childs }</a>
-                case "div" > (a / childs) if (a hasClass "cat_box") => <div title={ cat title } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
-                case "div" > (a / _) if (a hasClass "info_tag_text") => <div>{ cat title }</div> % a
+                case "div" > (a / childs) if (a hasClass "cat_box") => <div title={ cat.title_?(s.language) } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
+                case "div" > (a / _) if (a hasClass "info_tag_text") => <div>{ cat.title_?(s.language) }</div> % a
               }) match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)
               }
             }
-          case Failure(t) => <div class="error">{ Loc.loc0(s.state.language)("no_categories").text }</div>
+          case Failure(t) => <div class="error">{ Loc.loc0(s.language)("no_categories").text }</div>
         }
 
         Success(s.state, prods.toSeq)

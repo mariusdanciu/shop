@@ -3,17 +3,17 @@ html,body {
 	right: 0px;
 	bottom: 0px;
 	left: 0px;
-	max-width: 1270px;
-	height: 100%;
-	margin: auto;
-	font-family: 'Quicksand', sans-serif;
+	font-family: 'Lato', sans-serif;
 	font-size: 90%;
 	line-height: 1.5em;
 	background-color: white;
+	height: 100%;
 }
 
 * {
 	outline: medium none;
+	margin: 0;
+	font-weight: 300;
 }
 
 input {
@@ -64,8 +64,28 @@ a:active {
 	height: 100px;
 }
 
+.wrap {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -100px;
+}
+
 .center {
-	width: 100%;
+	max-width: 1270px;
+	margin: auto;
+}
+
+.footer {
+	clear: both;
+	height: 100px;
+	border-top: 1px solid #dddddd;
+}
+
+.footer .center {
+	font-size: 16px;
+	margin-top: 10px;
+	color: #777777;
 }
 
 #site_name {
@@ -75,24 +95,17 @@ a:active {
 	top: 40px;
 }
 
-.footer {
-	border-width: 1px;
-	border-color: #aaaaaa;
-	border-style: dashed;
-	height: 50px;
-}
-
-.item_list {
+#item_list {
 	float: left;
 	width: 100%;
 	margin-top: 30px;
 }
 
-.item_list ul {
+#item_list ul {
 	overflow: hidden;
 }
 
-.item_list ul li {
+#item_list ul li {
 	float: left;
 	margin: 4px 5px 0 0;
 	overflow: hidden;
@@ -151,7 +164,6 @@ a:active {
 
 .thumb {
 	width: 104px;
-	height: 104px;
 	float: left;
 }
 
@@ -171,10 +183,11 @@ a:active {
 #product_title {
 	width: 100%;
 	height: 40px;
+	margin-top: 80px;
 	float: right;
 	background-color: #000000;
 	color: #ffffff;
-	box-shadow: 0px 12px 13px 0px rgba(50, 50, 50, 0.3);
+	float: right;
 }
 
 #product_title #title_text {
@@ -220,11 +233,10 @@ a:active {
 	box-shadow: 0px 0px 15px 1px #dddddd;
 	border: 1px solid #aaaaaa;
 	border-radius: 10px;
-    float: left;
-    font-size: 16px;
-    font-weight: bold;
-    margin-left: 30px;
-    padding: 10px;
+	float: left;
+	font-size: 16px;
+	margin-left: 30px;
+	padding: 10px;
 }
 
 #cart_footer {
@@ -301,14 +313,23 @@ a:active {
 
 .cart_item {
 	float: left;
-	margin: 25px 25px 25px 25px;
+	margin-left: 25px;
 	overflow: hidden;
 	width: 250px;
+}
+
+.cart_item ul li {
+	margin-top: 5px;
 }
 
 .cart_item ul li img {
 	margin-bottom: -6px;
 	margin-left: 70px;
+}
+
+.cart_item ul li input {
+	width: 30px;
+	margin-left: 10px;
 }
 
 .error {
@@ -343,16 +364,16 @@ a:active {
 }
 
 .detailPrice {
-    float: left;
-    font-size: 32px;
-    margin-top: 10px;
+	float: left;
+	font-size: 32px;
+	margin-top: 10px;
 }
 
 #order {
 	float: left;
-	height: 200px;
-	padding: 45px 40px 20px; 20
-	px position: relative;
+	height: 250px;
+	padding: 20px 40px 20px 20px;
+	position: relative;
 	width: 400px;
 }
 
@@ -381,4 +402,27 @@ a:active {
 
 .active img {
 	border: 1px solid #dddddd !important;
+}
+
+#search {
+	position: relative;
+	float: right;
+	margin-right: 10px;
+}
+
+#search div {
+	float: left;
+	margin-top: 5px;
+}
+
+#search input {
+	background-color: #444444;
+	color: #ffffff;
+	border-radius: 10px;
+	width: 150px;
+}
+
+#search img {
+	margin-top: 3px;
+	margin-left: 5px;
 }

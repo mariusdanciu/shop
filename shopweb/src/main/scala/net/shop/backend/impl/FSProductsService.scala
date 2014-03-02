@@ -14,43 +14,48 @@ import scalax.file.PathMatcher._
 import scalax.io._
 import net.shop.model.ProductDetail
 import net.shop.model.Category
+import net.shift.common.TraversingSpec
+import net.shift.common.ApplicativeFunctor
 
-class FSProductsService extends ProductsService {
+class FSProductsService extends ProductsService with TraversingSpec {
   implicit val formats = DefaultFormats
 
-  def productById(id: String): Try[ProductDetail] = {
-    Try {
-      Resource.fromInputStream(new FileInputStream(s"data/products/$id/data.json")).string
-    } map { s =>
-      parse(s).extract[ProductDetail]
-    }
+  implicit val tryApplicative = new ApplicativeFunctor[Try] {
+    def unit[A](a: A): Try[A] = Try(a)
+    def fmap[A, B](f: A => B): Try[A] => Try[B] = ta => ta map f
+    def <*>[A, B](f: Try[A => B]): Try[A] => Try[B] = ta => ta.flatMap(a => f.map(fa => fa(a)))
   }
 
-  def allProducts(): Try[Traversable[ProductDetail]] = {
-    val prods = (for {
+  def productById(id: String): Try[ProductDetail] = Try {
+    Resource.fromInputStream(new FileInputStream(s"data/products/$id/data.json")).string
+  } map { s =>
+    parse(s).extract[ProductDetail]
+  }
+
+  def allProducts: Try[Traversable[ProductDetail]] = {
+    val l = (for {
       p <- Path.fromString(s"data/products").children().toList if (p.isDirectory)
     } yield {
       productById(p.simpleName)
-    }).filter(_ isSuccess).map {
-      case Success(p) => p
-    }
-
-    Success(prods)
+    })
+    listTraverse.sequence(l)
   }
-
   def categoryProducts(cat: String): Try[Traversable[ProductDetail]] =
-    (allProducts map { l => l.filter(p => p.categories.contains(cat)) }) match {
-      case s @ Success(t) if (!t.isEmpty) => s
-      case _ => Failure(new RuntimeException())
+    allProducts match {
+      case Success(all) =>
+        Success(for {
+          p <- all if (p.categories.contains(cat))
+        } yield p)
+      case f => f
     }
 
-  def filter(f: ProductDetail => Boolean): Try[Traversable[ProductDetail]] = allProducts() match {
+  def filter(f: ProductDetail => Boolean): Try[Traversable[ProductDetail]] = allProducts match {
     case Success(prods) => Success(for (p <- prods if f(p)) yield p)
     case f => f
   }
 
   def categoryById(id: String): Try[Category] = {
-    allCategories() match {
+    allCategories match {
       case Success(l) => l.find(c => c.id == id) match {
         case Some(c) => Success(c)
         case _ => Failure(new RuntimeException(s"Category $id not found"))
@@ -59,11 +64,36 @@ class FSProductsService extends ProductsService {
     }
   }
 
-  def allCategories(): Try[Traversable[Category]] = {
-    Try {
-      Resource.fromInputStream(new FileInputStream(s"data/categories/categories.json")).string
-    } map { s =>
-      parse(s).extract[List[Category]]
-    }
+  def allCategories: Try[Traversable[Category]] = Try {
+    Resource.fromInputStream(new FileInputStream(s"data/categories/categories.json")).string
+  } map { s =>
+    parse(s).extract[List[Category]]
   }
+
+  def searchProducts(text: String): Try[Traversable[ProductDetail]] = allProducts match {
+    case Success(all) => Success(all filter predicate(text))
+    case f => f
+  }
+
+  def predicate(text: String)(p: ProductDetail): Boolean = {
+    var found = !(for (t <- p.title.values if t.toLowerCase().contains(text.toLowerCase())) yield t).isEmpty
+    if (!found) {
+      found = !(for {
+        w <- text.split("\\s+")
+        k <- p.keyWords ++ resolveCategories(p) if (k.toLowerCase().contains(w.toLowerCase()))
+      } yield {
+        w
+      }).isEmpty
+    }
+    found
+  }
+
+  def resolveCategories(p: ProductDetail): List[String] = {
+    p.categories.flatMap(c => categoryById(c) match {
+      case Success(cat) => cat.title.values.toList
+      case _ => Nil
+    })
+  }
+
 }
+

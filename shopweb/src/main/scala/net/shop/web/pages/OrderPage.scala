@@ -58,8 +58,8 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
             ShopApplication.productsService.productById(id) match {
               case Success(prod) =>
                 (bind(s.node) {
-                  case "img" > (a / _) => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${ShopUtils.productImagePath(prod)}") e
-                  case "td" > (a / _) if (a hasClass "c1") => <td>{ prod.title }</td> % a
+                  case "img" > (a / _) => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${ShopUtils.imagePath(prod)}") e
+                  case "td" > (a / _) if (a hasClass "c1") => <td>{ prod.title_?(s.language) }</td> % a
                   case "td" > (a / _) if (a hasClass "c2") => <td>{ count }</td> % a
                   case "td" > (a / _) if (a hasClass "c3") => <td>{ prod.price }</td> % a
                 }) match {

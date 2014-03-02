@@ -1,7 +1,10 @@
 {
   "id" : "1",
-  "title" : "Diam nonummy",
+  "title" : {
+    "ro" : "Diam nonummy"
+  },
   "price" : 137.99,
   "categories" : ["watches"],
-  "images" : ["1.jpg"]
+  "images" : ["1.jpg"],
+  "keyWords" :["ceasuri"]
 }

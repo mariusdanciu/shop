@@ -1,7 +1,10 @@
 {
   "id" : "2",
-  "title" : "Breitling Chrono Avenger M1",
+  "title" : {
+    "ro" : "Breitling Chrono Avenger M1"
+  },
   "price" : 137.99,
   "categories" : ["watches"],
-  "images" : ["2.jpg"]
+  "images" : ["2.jpg"],
+  "keyWords" :["ceasuri","mana"]
 }

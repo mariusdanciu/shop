@@ -1,7 +1,5 @@
 (function() {
   $(function() {
-
-   
     $(".item_box").each(function( index ) {
       var me = $(this); 
       

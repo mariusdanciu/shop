@@ -1,17 +1,23 @@
 [
  {
   "id" : "watches",
-  "title" : "Ceasuri de marca",
+  "title" :	{
+    "ro" : "Ceasuri de marca"
+  },
   "image" : "ramafoto.png"
  },
  {
   "id" : "promotions",
-  "title" : "Promotii",
+  "title" : {
+    "ro" : "Promotii"
+  },
   "image" : "pernamelc.png"
  },
  {
   "id" : "toys",
-  "title" : "Jucarii",
+  "title" : {
+    "ro" : "Jucarii"
+  },
   "image" : "jucarii.png"
  }
 ]

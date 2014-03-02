@@ -1,7 +1,10 @@
 {
   "id" : "4",
-  "title" : "Breitling Chronomat Evolution Gold",
+  "title" : {
+    "ro" : "Breitling Chronomat Evolution Gold"
+  },
   "price" : 137.99,
   "categories" : ["watches"],
-  "images" : ["4.jpg"]
+  "images" : ["4.jpg"],
+  "keyWords" :["ceasuri"]
 }

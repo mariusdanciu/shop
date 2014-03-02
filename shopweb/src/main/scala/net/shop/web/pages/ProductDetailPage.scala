@@ -37,7 +37,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
     s =>
       val v = s.state.req.param("pid") match {
         case id :: _ => ShopApplication.productsService.productById(id) match {
-          case Success(prod) => (ProductPageState(s.state.req, Some(prod)), <h1>{ prod.title }</h1>)
+          case Success(prod) => (ProductPageState(s.state.req, Some(prod)), <h1>{ prod.title_?(s.language) }</h1>)
           case Failure(t) => (ProductPageState(s.state.req, None), NodeSeq.Empty)
         }
         case Nil => (ProductPageState(s.state.req, None), NodeSeq.Empty)
@@ -54,7 +54,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
         case Success(p) =>
           Try(p.categories.flatMap(e => {
             ShopApplication.productsService.categoryById(e) match {
-              case Success(s) => (<a href={ s"/products?cat=${e}" }>{ s.title }</a> ++ <span>, </span>)
+              case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.language) }</a> ++ <span>, </span>)
               case _ => NodeSeq.Empty
             }
           }).toList.dropRight(1))
@@ -82,7 +82,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
               val path = imagePath(prod.id, prod.images.head)
               val large = imagePath(prod.id, "large", prod.images.head)
 
-              <img id="sel_img" src={ path } title={ prod.title } data-zoom-image={ large }></img> ++
+              <img id="sel_img" src={ path } title={ prod.title_?(s.language) } data-zoom-image={ large }></img> ++
                 <div id="gallery">
                   { list }
                 </div>

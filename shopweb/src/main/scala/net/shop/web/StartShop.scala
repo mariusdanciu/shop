@@ -23,11 +23,11 @@ import net.shift.common.Config
 
 object StartShop extends App with Log {
 
-  info("Starting I-Did application ...");
+  info("Starting iDid application ...");
 
   Config load ()
 
-  println(Config.string("domain"))
+  println(Config.string("host"))
   NettyServer.start(Config.int("port"), ShopApplication)
 }
 

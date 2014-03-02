@@ -1,51 +1,68 @@
 <html>
- <head>
-  <link href="http://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet" type="text/css"/>
-  <link href="/styles/style.css" rel="stylesheet" type="text/css"/>
-  <script type="text/javascript" src="/scripts/jquery-2.0.3.min.js" />
-  <script type="text/javascript" src="/scripts/jquery.cookie.js" />
-  <script type="text/javascript" src="/scripts/cart.js" />
-  <script type="text/javascript" src="/scripts/categories.js" />
+<head>
+  <link href='http://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css' />
+  <link href="/styles/style.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="/scripts/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript" src="/scripts/jquery.cookie.js"></script>
+  <script type="text/javascript" src="/scripts/common.js"></script>
+  <script type="text/javascript" src="/scripts/categories.js"></script>
+</head>
 
- </head>
- 
- <body>
- 
-   <div class="header">
-     <div id="site_name"><a href="/">I-Did</a></div>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div id="site_name">
+        <a href="/">iDid</a>
+      </div>
 
-     <div data-snip="cart_popup" />
-   </div>
+      <div data-snip="cart_popup"></div>
+
+      <div data-snip="title" id="product_title">
+
+        <div id="cart_symbol">
+          <a href="#"><img src="/images/cart.png" /></a>
+        </div>
+
+        <div id="title_text">
+          <h1 data-loc="categories"></h1>
+        </div>
+        
+        <div id="search">
+          <div>
+            <input id="search_text" type="text" />
+          </div>
+          <img src="/images/search.png" />
+        </div>
+
+      </div>
+
+    </div>
 
 
-   <div class="center">
-    
-    <div data-snip="title" id="product_title">
+    <div class="center">
 
-       <div id="cart_symbol">
-         <a href="#"><img src="/images/cart.png"/></a>
-       </div>   
 
-       <div id="title_text">
-        <h1 data-loc="categories"/>
-       </div>
-
-     </div>
-     
-     <div class="item_list">
-       <ul>
-         <li data-snip="item">
-           <a>
-             <div class="cat_box">
-               <div class="info_tag cat_tag">
-                 <div class="info_tag_text cat_text"></div>
-               </div>
-             </div>
-           </a>
-         </li>
-       </ul>
-     </div>
+      <div id="item_list">
+        <ul>
+          <li data-snip="item"><a>
+              <div class="cat_box">
+                <div class="info_tag cat_tag">
+                  <div class="info_tag_text cat_text"></div>
+                </div>
+              </div>
+          </a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="center">
+      <ul>
+        <li>Copyright (c) 2014</li>
+        <li>Contact: office@idid.ro</li>
+      </ul>
+    </div>
   </div>
 
- </body>
+</body>
 </html>
