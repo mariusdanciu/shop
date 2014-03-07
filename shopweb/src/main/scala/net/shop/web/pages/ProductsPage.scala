@@ -62,6 +62,7 @@ object ProductsPage extends Cart[Request] {
                 case "div" > (a / _) if (a hasClass "info_tag_price") => <div>{ s"${prod.price.toString} RON" }</div> % a
               } match {
                 case Success(n) => n
+                case Failure(f) => errorTag(f toString)
               }
             }
           case Failure(t) => errorTag(Loc.loc0(s.language)("no_category").text)
