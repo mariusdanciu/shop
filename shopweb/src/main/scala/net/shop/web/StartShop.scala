@@ -27,7 +27,6 @@ object StartShop extends App with Log {
 
   Config load ()
 
-  println(Config.string("host"))
   NettyServer.start(Config.int("port"), ShopApplication)
 }
 
@@ -38,7 +37,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
   def fixLang = initf[Request](_.withLanguage(Language("ro")))
 
   def servingRule = for {
-    r <- fixLang
+    _ <- fixLang
     c <- cssFromFolder(Path("web/styles")) |
       jsFromFolder(Path("web/scripts")) |
       imagesFromFolder(Path("web/images")) |
