@@ -1,6 +1,6 @@
 name := "shopdatabase"
 
-organization := "shop"
+organization := "idid"
 
 version := "0.1"
 

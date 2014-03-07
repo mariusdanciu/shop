@@ -1,6 +1,6 @@
 name := "shop"
 
-organization := "shop"
+organization := "idid"
 
 version := "0.1"
 

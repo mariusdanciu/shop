@@ -20,9 +20,12 @@ import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductsPage
 import net.shift.common.Log
 import net.shift.common.Config
+import org.apache.log4j.PropertyConfigurator
 
 object StartShop extends App with Log {
 
+  PropertyConfigurator.configure("config/log4j.properties");
+  
   info("Starting iDid application ...");
 
   Config load ()
