@@ -25,27 +25,22 @@ import net.shop.model.ProductDetail
 
 object ProductDetailPage extends Cart[ProductPageState] {
 
-  override def snippets = List(cartPopup, title, catlink, images, detailPrice, details) ++ super.snippets
-
-  def reqSnip(name: String) = snip[ProductPageState](name) _
-
-  val cartPopup = reqSnip("cart_popup") {
-    s => cartTemplate(s.state, s.state.req) map { (s.state, _) }
-  }
+  override def snippets = List(title, catlink, images, detailPrice, details) ++ super.snippets
 
   val title = reqSnip("title") {
     s =>
       val v = s.state.req.param("pid") match {
         case id :: _ => ShopApplication.productsService.productById(id) match {
-          case Success(prod) => (ProductPageState(s.state.req, Some(prod)), <h1>{ prod.title_?(s.language) }</h1>)
-          case Failure(t) => (ProductPageState(s.state.req, None), NodeSeq.Empty)
+          case Success(prod) => (ProductPageState(s.state.req, Success(prod)), <h1>{ prod.title_?(s.language) }</h1>)
+          case Failure(t) => (ProductPageState.build(s.state.req), NodeSeq.Empty)
         }
-        case Nil => (ProductPageState(s.state.req, None), NodeSeq.Empty)
+        case Nil => (ProductPageState.build(s.state.req), NodeSeq.Empty)
       }
-
-      bind(s.node) {
+      val k = bind(s.node) {
         case "span" > (_ / childs) => v._2
       } map { (v._1, _) }
+      
+      k
   }
 
   val catlink = reqSnip("catlink") {
@@ -87,8 +82,8 @@ object ProductDetailPage extends Cart[ProductPageState] {
                   { list }
                 </div>
 
-          } map { b => (ProductPageState(s.state.req, Some(prod)), b) }
-        case _ => Success((ProductPageState(s.state.req, None), errorTag(Loc.loc0(s.state.req.language)("no_product").text)))
+          } map { b => (ProductPageState(s.state.req, Success(prod)), b) }
+        case _ => Success((ProductPageState.build(s.state.req), errorTag(Loc.loc0(s.state.req.language)("no_product").text)))
       }
   }
 
@@ -97,7 +92,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
       (for {
         p <- s.state.product
       } yield {
-        (ProductPageState(s.state.req, Some(p)), Text(s"${p.price} RON"))
+        (ProductPageState(s.state.req, Success(p)), Text(s"${p.price} RON"))
       })
   }
 
@@ -109,14 +104,14 @@ object ProductDetailPage extends Cart[ProductPageState] {
         input <- s.state.req.resource(Path(s"data/products/${p.id}/desc.html"))
         n <- load(input)
       } yield {
-        (ProductPageState(s.state.req, Some(p)), n)
+        (ProductPageState(s.state.req, Success(p)), n)
       })
   }
 
 }
 
 object ProductPageState {
-  def build(req: Request): ProductPageState = new ProductPageState(req, None)
+  def build(req: Request): ProductPageState = new ProductPageState(req, ShiftFailure[ProductDetail])
 }
 
-case class ProductPageState(req: Request, product: Try[ProductDetail])
+case class ProductPageState(req: Request, product: Try[ProductDetail]) 

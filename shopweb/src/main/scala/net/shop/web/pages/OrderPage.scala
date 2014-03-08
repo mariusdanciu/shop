@@ -27,10 +27,10 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
 
   def reqSnip(name: String) = snip[OrderState](name) _
 
-  def orderTemplate(state: OrderState): Try[NodeSeq] = for {
-    input <- state.req.resource(Path(s"web/templates/order_${state.req.language.language}.html"))
-    template <- load(input)
-  } yield new Html5(state, state.req.language, this)(bySnippetAttr[SnipState[OrderState]]).resolve(template)
+  implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
+
+  def orderTemplate(state: OrderState): Try[NodeSeq] =
+    Html5.runPageFromFile(state, state.req.language, Path(s"web/templates/order_${state.req.language.language}.html"), this).map(in => in._2)
 
   val info = reqSnip("info") {
     s =>

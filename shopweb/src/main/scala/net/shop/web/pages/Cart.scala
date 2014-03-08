@@ -14,26 +14,38 @@ import scala.xml.NodeSeq
 import scala.util.Try
 import net.shift.common.XmlUtils
 import net.shop.web.form.OrderForm
+import scala.util.Success
+import scala.util.Failure
+import utils.ShopUtils._
 
 trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
 
-  def snippets = List(order)
+  def snippets = List(header, footer, cartPopup, order)
 
-  def cartTemplate(state: T, r: Request): Try[NodeSeq] = for {
-    input <- r.resource(Path("web/templates/cartpopup.html"))
-    template <- load(input)
-  } yield new Html5(state, r.language, this)(bySnippetAttr[SnipState[T]]).resolve(template)
+  def reqSnip(name: String) = snip[T](name) _
 
-  def order = snip[T]("order") {
+  implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
+
+  val header = reqSnip("header") {
+    s =>
+      Html5.runPageFromFile(s.state, s.language, Path("web/templates/header.html"), this).map(in => (in._1.state, in._2))
+  }
+
+  val footer = reqSnip("footer") {
+    s =>
+      Html5.runPageFromFile(s.state, s.language, Path("web/templates/footer.html"), this).map(in => (in._1.state, in._2))
+  }
+
+  val cartPopup = reqSnip("cart_popup") {
+    s =>
+      Html5.runPageFromFile(s.state, s.language, Path("web/templates/cartpopup.html"), this).map(in => (in._1.state, in._2))
+  }
+
+  val order = snip[T]("order") {
     s =>
       bind(s.node) {
         case "form" > (a / _) => <form id="order_form">{ OrderForm.form(s.language).html }</form>
       } map ((s.state, _))
   }
-
-  def searchTemplate(state: T, r: Request): Try[NodeSeq] = for {
-    input <- r.resource(Path("web/templates/search.html"))
-    template <- load(input)
-  } yield new Html5(state, r.language, this)(bySnippetAttr[SnipState[T]]).resolve(template)
 
 }

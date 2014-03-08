@@ -22,17 +22,6 @@ object CategoryPage extends Cart[Request] { self =>
 
   override def snippets = List(cartPopup, item) ++ super.snippets
 
-  def reqSnip(name: String) = snip[Request](name) _
-
-  val cartPopup = reqSnip("cart_popup") {
-    s =>
-      val n = cartTemplate(s.state, s.state) match {
-        case Success(n) => n
-        case Failure(f) => errorTag(f toString)
-      }
-      Success((s.state, n))
-  }
-
   val item = reqSnip("item") {
     s =>
       {

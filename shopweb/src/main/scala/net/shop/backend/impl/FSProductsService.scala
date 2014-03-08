@@ -20,12 +20,6 @@ import net.shift.common.ApplicativeFunctor
 class FSProductsService extends ProductsService with TraversingSpec {
   implicit val formats = DefaultFormats
 
-  implicit val tryApplicative = new ApplicativeFunctor[Try] {
-    def unit[A](a: A): Try[A] = Try(a)
-    def fmap[A, B](f: A => B): Try[A] => Try[B] = ta => ta map f
-    def <*>[A, B](f: Try[A => B]): Try[A] => Try[B] = ta => ta.flatMap(a => f.map(fa => fa(a)))
-  }
-
   def productById(id: String): Try[ProductDetail] = Try {
     Resource.fromInputStream(new FileInputStream(s"data/products/$id/data.json")).string
   } map { s =>

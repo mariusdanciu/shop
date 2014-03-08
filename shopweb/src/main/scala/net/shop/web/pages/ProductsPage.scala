@@ -25,12 +25,6 @@ object ProductsPage extends Cart[Request] {
 
   override def snippets = List(cartPopup, title, item) ++ super.snippets
 
-  def reqSnip(name: String) = snip[Request](name) _
-
-  val cartPopup = reqSnip("cart_popup") {
-    s => cartTemplate(s.state, s.state) map { (s.state, _) }
-  }
-
   val title = reqSnip("title") {
     s =>
       val v = (s.state.param("cat"), s.state.param("search")) match {

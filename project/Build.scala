@@ -12,8 +12,8 @@ object ShopBuild extends Build {
   val distShopDB = TaskKey[File]("distShopDB", "")
   val dist = TaskKey[Unit]("dist", "")
   
-  val distShopWebSetting = distShopWeb <<= (target, managedClasspath in Runtime, packageBin in Compile) map {
-    (target, cp, pack) =>
+  val distShopWebSetting = distShopWeb <<= (target, managedClasspath in Runtime, publishLocal, packageBin in Compile) map {
+    (target, cp, _, pack) =>
 	    println("dist > shopweb")
 	    
 	    IO.delete(distDir)
@@ -24,16 +24,18 @@ object ShopBuild extends Build {
 	      IO.copyFile(jar.data, libDir / jar.data.name);
 	    }
 	    
-	    IO.copyDirectory ( new File("shopweb") / "web", distDir / "web");
-	    IO.copyDirectory ( new File("shopweb") / "config", distDir / "config");
-	    IO.copyDirectory ( new File("shopweb") / "data", distDir / "data");
-	    IO.copyDirectory ( new File("shopweb") / "localization", distDir / "localization");
+	    val showWebDir =  new File("shopweb") 
+	    
+	    IO.copyDirectory ( showWebDir / "web", distDir / "web");
+	    IO.copyDirectory ( showWebDir / "config", distDir / "config");
+	    IO.copyDirectory ( showWebDir / "data", distDir / "data");
+	    IO.copyDirectory ( showWebDir / "localization", distDir / "localization");
 	    
 	    pack
   }
   
-  val distShopDBSetting = distShopDB <<= (target, managedClasspath in Runtime, packageBin in Compile) map {
-    (target, cp, pack) => {
+  val distShopDBSetting = distShopDB <<= (target, managedClasspath in Runtime, publishLocal, packageBin in Compile) map {
+    (target, cp, _, pack) => {
         println("dist > shopdatabase")
 	    pack
     }

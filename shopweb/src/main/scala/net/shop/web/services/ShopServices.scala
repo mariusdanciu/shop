@@ -7,10 +7,11 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization.write
 import org.json4s.string2JsonInput
 import net.shift.common.Path
+import net.shift.common.PathUtils
+import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http.AsyncResponse
+import net.shift.engine.http._
 import net.shift.engine.http.ImageResponse
-import net.shift.engine.http.JsonResponse
 import net.shift.engine.http.Request
 import net.shift.engine.http.TextResponse
 import net.shift.engine.page.Html5
@@ -18,22 +19,17 @@ import net.shift.engine.utils.ShiftUtils
 import net.shift.template.DynamicContent
 import net.shift.template.Selectors
 import net.shift.template.SnipState
-import net.shop.web.ShopApplication
-import net.shop.web.pages.CartItemNode
-import net.shop.web.pages.CartState
-import scalax.io.Resource
 import net.shop.model.Cart
-import net.shop.web.form.OrderForm
-import net.shift.html.Success
-import net.shift.html.Failure
-import net.shift.js
-import net.shift.js.JsDsl
-import net.shift.js.JsStatement
-import net.shift.engine.http.JsResponse
-import net.shift.loc.Loc
-import net.shift.common.PathUtils
+import net.shop._
+import web.pages.CartState
+import web.pages.CartItemNode
+import scala.util.Success
+import net.shift.engine.http.JsonResponse
+import scala.util.Failure
+import net.shift.common.Log
+import net.shop.web.ShopApplication
 
-trait ShopServices extends PathUtils with ShiftUtils with Selectors {
+trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with Log {
 
   def notFoundService(resp: AsyncResponse) {
     resp(TextResponse("Sorry ... service not found"))
@@ -42,14 +38,14 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors {
   implicit val reqSelector = bySnippetAttr[SnipState[Request]]
   implicit val cartItemsSelector = bySnippetAttr[SnipState[CartState]]
 
-  def page(uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
+  def page[T](uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
     r <- path(uri)
-  } yield Html5(r, filePath, snipets)
+  } yield Html5.pageFromFile(r, r.language, filePath, snipets)
 
   def page[T](f: Request => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
     r <- path(uri)
   } yield {
-    Html5(r, f, filePath, snipets)(bySnippetAttr[SnipState[T]])
+    Html5.pageFromFile(f(r), r.language, filePath, snipets)(bySnippetAttr[SnipState[T]])
   }
 
   def productsImages = for {
@@ -77,18 +73,19 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors {
     r.cookie("cart") match {
       case Some(c) => {
         implicit val formats = DefaultFormats
-        for {
-          input <- fromPath(Path("web/templates/cartitem.html"))
-          template <- load(input)
+        implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
+
+        listTraverse.sequence(for {
+          item <- readCart(c.value).items
+          prod <- ShopApplication.productsService.productById(item.id).toOption
         } yield {
-          val list = for {
-            item <- readCart(c.value).items
-            prod <- ShopApplication.productsService.productById(item.id).toOption
-          } yield {
-            new Html5(CartState(item.count, prod), r.language, CartItemNode).resolve(template).toString
-          }
-          resp(JsonResponse(write(list)))
+          Html5.runPageFromFile(CartState(item.count, prod), r.language, Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
+        }) match {
+          case Success(list) =>
+            resp(JsonResponse(write(list)))
+          case Failure(t) => error("Cannot process cart", t)
         }
+
       }
       case _ => resp(JsonResponse("[]"))
     })
