@@ -41,13 +41,16 @@ object ShopBuild extends Build {
     }
   }
   
-  val distSetting = dist <<= (target, distShopWeb in shopweb, distShopDB in shopdatabase) map { (target, f, fdb) => {
+  val distSetting = dist <<= (target, scalaVersion, version, distShopWeb in shopweb, distShopDB in shopdatabase) map {
+    (target, sv, v, f, fdb) => {
       println("dist > shop")
       IO.copyFile(f, libDir / f.name);
       IO.copyFile(fdb, libDir / fdb.name);
       IO.copyFile(scriptsDir / "start.sh", distDir / "start.sh");
+      TarGzBuilder.makeTarGZ("target/idid_" + sv + "_" + v + "_.tar.gz")
     }
   }
+  
   
   lazy val root = Project(id = "shop", 
 		  				  base = file("."),
@@ -63,4 +66,45 @@ object ShopBuild extends Build {
       base = file("shopdatabase"),
       settings = Defaults.defaultSettings ++ Seq(distShopDBSetting))
 
+}
+
+
+object TarGzBuilder {
+  
+  import java.io._
+  import org.apache.commons.compress.archivers.tar._
+  import org.apache.commons.compress.compressors.gzip._
+  import org.apache.commons.io._
+  
+  
+  def makeTarGZ(name: String) {
+     val tOut = new TarArchiveOutputStream(new GzipCompressorOutputStream(new BufferedOutputStream(new FileOutputStream(new File(name)))))
+     try {
+       populateTarGz(tOut, "./dist")
+     } finally {
+       tOut.close();
+     } 
+  }
+  
+  
+  def populateTarGz(tOut: TarArchiveOutputStream, path: String, base: String = null) {
+    val f = new File(path);
+    val entryName = if (base == null) "idid" else (base + f.getName());
+    val tarEntry = new TarArchiveEntry(f, entryName);
+    tOut.putArchiveEntry(tarEntry);
+
+    if (f.isFile()) {
+      IOUtils.copy(new FileInputStream(f), tOut);
+      tOut.closeArchiveEntry();
+    } else {
+      tOut.closeArchiveEntry();
+      val children = f.listFiles();
+      if (children != null){
+        for (child <- children) {
+          populateTarGz(tOut, child.getAbsolutePath(), entryName + "/");
+        }
+      }
+    }
+  }
+  
 }
