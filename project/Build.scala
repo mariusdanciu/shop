@@ -74,7 +74,6 @@ object TarGzBuilder {
   import java.io._
   import org.apache.commons.compress.archivers.tar._
   import org.apache.commons.compress.compressors.gzip._
-  import org.apache.commons.io._
   
   
   def makeTarGZ(name: String) {
@@ -94,7 +93,7 @@ object TarGzBuilder {
     tOut.putArchiveEntry(tarEntry);
 
     if (f.isFile()) {
-      IOUtils.copy(new FileInputStream(f), tOut);
+      IO.transfer(f, tOut);
       tOut.closeArchiveEntry();
     } else {
       tOut.closeArchiveEntry();
