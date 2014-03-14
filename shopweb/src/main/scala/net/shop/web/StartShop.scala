@@ -21,6 +21,7 @@ import net.shop.web.pages.ProductsPage
 import net.shift.common.Log
 import net.shift.common.Config
 import org.apache.log4j.PropertyConfigurator
+import net.shop.backend.impl.CachingBackend
 
 object StartShop extends App with Log {
 
@@ -35,7 +36,7 @@ object StartShop extends App with Log {
 
 object ShopApplication extends ShiftApplication with ShopServices {
 
-  def productsService: ProductsService = new FSProductsService
+  def productsService: ProductsService = new CachingBackend(new FSProductsService)
 
   def fixLang = initf[Request](_.withLanguage(Language("ro")))
 

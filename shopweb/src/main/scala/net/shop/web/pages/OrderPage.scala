@@ -3,8 +3,6 @@ package net.shop.web.pages
 import scala.util.Try
 import scala.xml.{ NodeSeq, Text }
 import net.shift.common.Bind
-import net.shift.common.Bind
-import net.shift.common.Bind
 import net.shift.common.Path
 import net.shift.common.XmlUtils
 import net.shift.engine.http.Request
@@ -35,14 +33,14 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   val info = reqSnip("info") {
     s =>
       bind(s.node) {
-        case n > ((a @ Attrs(("id", "oid"))) / _) => <span>{ s.state.o.id }</span> % a
-        case n > ((a @ Attrs(("id", "lname"))) / _) => <span>{ s.state.o.lastName }</span> % a
-        case n > ((a @ Attrs(("id", "fname"))) / _) => <span>{ s.state.o.firstName }</span> % a
-        case n > ((a @ Attrs(("id", "region"))) / _) => <span>{ s.state.o.region }</span> % a
-        case n > ((a @ Attrs(("id", "city"))) / _) => <span>{ s.state.o.city }</span> % a
-        case n > ((a @ Attrs(("id", "address"))) / _) => <span>{ s.state.o.address }</span> % a
-        case n > ((a @ Attrs(("id", "email"))) / _) => <span>{ s.state.o.email }</span> % a
-        case n > ((a @ Attrs(("id", "phone"))) / _) => <span>{ s.state.o.phone }</span> % a
+        case n > (HasId("oid", a) / _) => <span>{ s.state.o.id }</span> % a
+        case n > (HasId("lname", a) / _) => <span>{ s.state.o.lastName }</span> % a
+        case n > (HasId("fname", a) / _) => <span>{ s.state.o.firstName }</span> % a
+        case n > (HasId("region", a) / _) => <span>{ s.state.o.region }</span> % a
+        case n > (HasId("city", a) / _) => <span>{ s.state.o.city }</span> % a
+        case n > (HasId("address", a)  / _) => <span>{ s.state.o.address }</span> % a
+        case n > (HasId("email", a) / _) => <span>{ s.state.o.email }</span> % a
+        case n > (HasId("phone", a) / _) => <span>{ s.state.o.phone }</span> % a
       } match {
         case Success(n) => Success((s.state, n))
         case Failure(f) => Success((s.state, errorTag(f toString)))
@@ -59,9 +57,9 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
               case Success(prod) =>
                 (bind(s.node) {
                   case "img" > (a / _) => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${ShopUtils.imagePath(prod)}") e
-                  case "td" > (a / _) if (a hasClass "c1") => <td>{ prod.title_?(s.language) }</td> % a
-                  case "td" > (a / _) if (a hasClass "c2") => <td>{ count }</td> % a
-                  case "td" > (a / _) if (a hasClass "c3") => <td>{ prod.price }</td> % a
+                  case "td" > (HasClass("c1", a) / _) => <td>{ prod.title_?(s.language) }</td> % a
+                  case "td" > (HasClass("c2", a) / _) => <td>{ count }</td> % a
+                  case "td" > (HasClass("c3", a) / _) => <td>{ prod.price }</td> % a
                 }) match {
                   case Success(n) => (acc._1 ++ n, acc._2 + prod.price * count)
                   case Failure(f) => (acc._1 ++ errorTag(f toString), 0.0)

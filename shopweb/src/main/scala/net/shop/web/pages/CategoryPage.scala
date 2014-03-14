@@ -20,7 +20,11 @@ import scala.util.Failure
 
 object CategoryPage extends Cart[Request] { self =>
 
-  override def snippets = List(cartPopup, item) ++ super.snippets
+  override def snippets = List(title, item) ++ super.snippets
+
+  val title = reqSnip("title") {
+    s => Success((s.state, <h1>{Loc.loc0(s.language)("categories").text}</h1>))
+  }
 
   val item = reqSnip("item") {
     s =>
@@ -32,7 +36,7 @@ object CategoryPage extends Cart[Request] { self =>
                 case "li" > (a / childs) if (a hasClass "item") => <li>{ childs }</li>
                 case "a" > (attrs / childs) => <a id={ cat id } href={ "/products?cat=" + cat.id }>{ childs }</a>
                 case "div" > (a / childs) if (a hasClass "cat_box") => <div title={ cat.title_?(s.language) } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
-                case "div" > (a / _) if (a hasClass "info_tag_text") => <div>{ cat.title_?(s.language) }</div> % a
+                case "div" > (HasClasses("info_tag_text" :: _, a) / _) => <div>{ cat.title_?(s.language) }</div> % a
               }) match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)

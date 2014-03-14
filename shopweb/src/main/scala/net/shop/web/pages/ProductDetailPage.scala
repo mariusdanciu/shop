@@ -36,11 +36,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
         }
         case Nil => (ProductPageState.build(s.state.req), NodeSeq.Empty)
       }
-      val k = bind(s.node) {
-        case "span" > (_ / childs) => v._2
-      } map { (v._1, _) }
-      
-      k
+     Success(v)
   }
 
   val catlink = reqSnip("catlink") {

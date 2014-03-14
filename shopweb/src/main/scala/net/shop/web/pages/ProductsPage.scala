@@ -23,7 +23,7 @@ import utils.ShopUtils._
 
 object ProductsPage extends Cart[Request] {
 
-  override def snippets = List(cartPopup, title, item) ++ super.snippets
+  override def snippets = List(title, item) ++ super.snippets
 
   val title = reqSnip("title") {
     s =>
@@ -33,13 +33,10 @@ object ProductsPage extends Cart[Request] {
             case Success(c) => Text(c.title.getOrElse(s.language.language, "???"))
             case _ => NodeSeq.Empty
           }
-        case (Nil, search :: _) => s""""$search""""
+        case (Nil, search :: _) => Text(s""""$search"""")
         case _ => NodeSeq.Empty
       }
-
-      bind(s.node) {
-        case "span" > (_ / childs) => <h1>{ v }</h1>
-      } map { (s.state, _) }
+      Success((s.state, <h1>{v}</h1>))
   }
 
   val item = reqSnip("item") {
@@ -49,11 +46,11 @@ object ProductsPage extends Cart[Request] {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
-                case "li" > (a / childs) if (a hasClass "item") => <li>{ childs }</li>
+                case "li" > (HasClass("item", a) / childs) => <li>{ childs }</li>
                 case "a" > (attrs / childs) => <a id={ prod id } href={ s"/product?pid=${prod.id}" }>{ childs }</a>
-                case "div" > (a / childs) if (a hasClass "item_box") => <div title={ prod title_? (s.language) } style={ "background-image: url('" + imagePath(prod) + "')" }>{ childs }</div> % a
-                case "div" > (a / _) if (a hasClass "info_tag_text") => <div>{ prod title_? (s.language) }</div> % a
-                case "div" > (a / _) if (a hasClass "info_tag_price") => <div>{ s"${prod.price.toString} RON" }</div> % a
+                case "div" > (HasClass("item_box", a) / childs) => <div title={ prod title_? (s.language) } style={ "background-image: url('" + imagePath(prod) + "')" }>{ childs }</div> % a
+                case "div" > (HasClass("info_tag_text", a) / childs) => <div>{ prod title_? (s.language) }</div> % a
+                case "div" > (HasClass("info_tag_price", a) / childs) => <div>{ s"${prod.price.toString} RON" }</div> % a
               } match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)
