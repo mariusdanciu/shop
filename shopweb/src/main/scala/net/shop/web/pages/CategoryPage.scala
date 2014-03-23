@@ -33,10 +33,10 @@ object CategoryPage extends Cart[Request] { self =>
           case Success(list) =>
             list flatMap { cat =>
               (bind(s.node) {
-                case "li" > (a / childs) if (a hasClass "item") => <li>{ childs }</li>
-                case "a" > (attrs / childs) => <a id={ cat id } href={ "/products?cat=" + cat.id }>{ childs }</a>
-                case "div" > (a / childs) if (a hasClass "cat_box") => <div title={ cat.title_?(s.language) } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
-                case "div" > (HasClasses("info_tag_text" :: _, a) / _) => <div>{ cat.title_?(s.language) }</div> % a
+                case "li" :/ a / childs if (a hasClass "item") => <li>{ childs }</li>
+                case "a" :/ attrs / childs => <a id={ cat id } href={ "/products?cat=" + cat.id }>{ childs }</a>
+                case "div" :/ a / childs if (a hasClass "cat_box") => <div title={ cat.title_?(s.language) } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
+                case "div" :/ HasClasses("info_tag_text" :: _, a) / _ => <div>{ cat.title_?(s.language) }</div> % a
               }) match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)

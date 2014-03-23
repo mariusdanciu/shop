@@ -44,7 +44,7 @@ trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
   val order = snip[T]("order") {
     s =>
       bind(s.node) {
-        case "form" > _ => <form id="order_form">{ OrderForm.form(s.language).html }</form>
+        case "form" :/ _ => <form id="order_form">{ OrderForm.form(s.language).html }</form>
       } map ((s.state, _))
   }
 

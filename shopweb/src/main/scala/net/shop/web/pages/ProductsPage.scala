@@ -46,11 +46,11 @@ object ProductsPage extends Cart[Request] {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
-                case "li" > (HasClass("item", a) / childs) => <li>{ childs }</li>
-                case "a" > (attrs / childs) => <a id={ prod id } href={ s"/product?pid=${prod.id}" }>{ childs }</a>
-                case "div" > (HasClass("item_box", a) / childs) => <div title={ prod title_? (s.language) } style={ "background-image: url('" + imagePath(prod) + "')" }>{ childs }</div> % a
-                case "div" > (HasClass("info_tag_text", a) / childs) => <div>{ prod title_? (s.language) }</div> % a
-                case "div" > (HasClass("info_tag_price", a) / childs) => <div>{ s"${prod.price.toString} RON" }</div> % a
+                case "li" :/ HasClass("item", a) / childs => <li>{ childs }</li>
+                case "a" :/ attrs / childs => <a id={ prod id } href={ s"/product?pid=${prod.id}" }>{ childs }</a>
+                case "div" :/ HasClass("item_box", a) / childs => <div title={ prod title_? (s.language) } style={ "background-image: url('" + imagePath(prod) + "')" }>{ childs }</div> % a
+                case "div" :/ HasClass("info_tag_text", a) / childs => <div>{ prod title_? (s.language) }</div> % a
+                case "div" :/ HasClass("info_tag_price", a) / childs => <div>{ s"${prod.price.toString} RON" }</div> % a
               } match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)

@@ -58,7 +58,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
       s.state.product match {
         case Success(prod) =>
           bind(s.node) {
-            case "b:img" > _ =>
+            case "b:img" :/  _ =>
               val list = NodeSeq.fromSeq(for {
                 p <- prod.images zipWithIndex
               } yield {
