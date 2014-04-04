@@ -38,7 +38,7 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
         case n :/ HasId("fname", a) / _ => <span>{ s.state.o.firstName }</span> % a
         case n :/ HasId("region", a) / _ => <span>{ s.state.o.region }</span> % a
         case n :/ HasId("city", a) / _ => <span>{ s.state.o.city }</span> % a
-        case n :/ HasId("address", a)  / _ => <span>{ s.state.o.address }</span> % a
+        case n :/ HasId("address", a) / _ => <span>{ s.state.o.address }</span> % a
         case n :/ HasId("email", a) / _ => <span>{ s.state.o.email }</span> % a
         case n :/ HasId("phone", a) / _ => <span>{ s.state.o.phone }</span> % a
       } match {
@@ -56,7 +56,7 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
             ShopApplication.productsService.productById(id) match {
               case Success(prod) =>
                 (bind(s.node) {
-                  case "img" :/ a / _ => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${ShopUtils.imagePath(prod)}") e
+                  case "img" :/ a / _ => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${ShopUtils.imagePath(prod.id, "thumb", prod.images.head)}") e
                   case "td" :/ HasClass("c1", a) / _ => <td>{ prod.title_?(s.language) }</td> % a
                   case "td" :/ HasClass("c2", a) / _ => <td>{ count }</td> % a
                   case "td" :/ HasClass("c3", a) / _ => <td>{ prod.price }</td> % a
