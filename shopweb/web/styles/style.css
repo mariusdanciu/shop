@@ -125,7 +125,6 @@ a:active {
 
 .info_tag {
 	position: relative;
-	text-align: right;
 	width: 305px;
 	height: 70px;
 	top: 280px;
@@ -136,19 +135,20 @@ a:active {
 
 .info_tag_price {
 	position: relative;
-	top: 20px;
-	right: 10px;
 	text-align: right;
+	top: 20px;
 	color: #000000;
 	font-size: 22px;
+	float: right;
+	right: 10px;
 }
 
-.info_tag_icons {
+.info_tag_cart {
 	position: relative;
 	top: 13px;
 	left: 10px;
 	text-align: left;
-	visibility: hidden;
+	display: none;
 	float: left;
 }
 
@@ -156,7 +156,6 @@ a:active {
 	position: relative;
 	top: 10px;
 	left: 10px;
-	text-align: left;
 	color: #000000;
 	font-size: 16px;
 }
@@ -218,7 +217,7 @@ a:active {
 
 #cart_content {
 	width: 420px;
-	max-height: 400px;
+	max-height: 460px;
 	padding: 20px;
 	float: left;
 	font-size: 16px;
