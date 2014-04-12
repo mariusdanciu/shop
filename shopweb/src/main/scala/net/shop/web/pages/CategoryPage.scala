@@ -23,7 +23,7 @@ object CategoryPage extends Cart[Request] { self =>
   override def snippets = List(title, item) ++ super.snippets
 
   val title = reqSnip("title") {
-    s => Success((s.state, <h1>{Loc.loc0(s.language)("categories").text}</h1>))
+    s => Success((s.state, <h1>{ Loc.loc0(s.language)("categories").text }</h1>))
   }
 
   val item = reqSnip("item") {
@@ -33,9 +33,8 @@ object CategoryPage extends Cart[Request] { self =>
           case Success(list) =>
             list flatMap { cat =>
               (bind(s.node) {
-                case "li" :/ a / childs if (a hasClass "item") => <li>{ childs }</li>
-                case "a" :/ attrs / childs => <a id={ cat id } href={ "/products?cat=" + cat.id }>{ childs }</a>
-                case "div" :/ a / childs if (a hasClass "cat_box") => <div title={ cat.title_?(s.language) } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
+                case "li" :/ HasClass("item", a) / childs => <li>{ childs }</li>
+                case "div" :/ HasClass("cat_box", a) / childs => <div id={ cat id } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
                 case "div" :/ HasClasses("info_tag_text" :: _, a) / _ => <div>{ cat.title_?(s.language) }</div> % a
               }) match {
                 case Success(n) => n
