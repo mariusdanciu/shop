@@ -40,10 +40,8 @@ object ShopApplication extends ShiftApplication with ShopServices {
 
   def productsService: ProductsService = new CachingBackend(new FSProductsService)
 
-  def fixLang = initf[Request](_.withLanguage(Language("ro")))
-
   def servingRule = for {
-    _ <- fixLang
+    _ <- withLanguage(Language("ro"))
     c <- cssFromFolder(Path("web/styles")) |
       jsFromFolder(Path("web/scripts")) |
       imagesFromFolder(Path("web/images")) |
