@@ -1,4 +1,5 @@
-package net.shop.web.services
+package net.shop
+package web.services
 
 import scala.Option.option2Iterable
 import org.json4s.DefaultFormats
@@ -28,6 +29,13 @@ import net.shift.engine.http.JsonResponse
 import scala.util.Failure
 import net.shift.common.Log
 import net.shop.web.ShopApplication
+import net.shop.web.pages.ProductsPage
+import scala.util.Try
+import net.shop.model.ProductDetail
+import net.shift.engine.http.JsResponse
+import net.shop.web.pages.ProductsQuery
+import net.shift.loc.Language
+import utils.ShopUtils._
 
 trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with Log {
 
@@ -40,7 +48,9 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
 
   def page[T](uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
     r <- path(uri)
-  } yield Html5.pageFromFile(r, r.language, filePath, snipets)
+  } yield {
+    Html5.pageFromFile(r, r.language, filePath, snipets)
+  }
 
   def page[T](f: Request => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
     r <- path(uri)
@@ -68,6 +78,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
 
   def getCart() = for {
     r <- req
+    lang <- language
     Path("getcart" :: Nil) <- path
   } yield service(resp =>
     r.cookie("cart") match {
@@ -77,7 +88,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
 
         listTraverse.sequence(for {
           item <- readCart(c.value).items
-          prod <- ShopApplication.productsService.productById(item.id).toOption
+          prod <- ShopApplication.productsService(lang).productById(item.id).toOption
         } yield {
           Html5.runPageFromFile(CartState(item.count, prod), r.language, Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
         }) match {
@@ -96,6 +107,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
     implicit val formats = DefaultFormats
     parse(java.net.URLDecoder.decode(json, "UTF-8")).extract[Cart]
   }
+
 }
 
 

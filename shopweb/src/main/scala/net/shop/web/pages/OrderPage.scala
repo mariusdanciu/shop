@@ -53,7 +53,7 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
       {
         val items: (NodeSeq, Double) = ((NodeSeq.Empty, 0.0) /: s.state.o.items) {
           case (acc, (id, count)) =>
-            ShopApplication.productsService.productById(id) match {
+            ShopApplication.productsService(s.language).productById(id) match {
               case Success(prod) =>
                 (bind(s.node) {
                   case "img" :/ a / _ => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${ShopUtils.imagePath(prod.id, "thumb", prod.images.head)}") e

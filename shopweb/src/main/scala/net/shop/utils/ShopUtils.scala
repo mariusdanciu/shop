@@ -17,5 +17,5 @@ object ShopUtils {
 
   def imagePath(variant:String, prod: ProductDetail): String = s"/data/products/${prod.id}/$variant/${prod.images.head}"
   
-  def errorTag(text: String) = <div class="error"><div><img src="images/exclamation.png"/></div><span>{ text }</span></div>
+  def errorTag(text: String) = <div class="error"><div><img src="/static/images/exclamation.png"/></div><span>{ text }</span></div>
 }

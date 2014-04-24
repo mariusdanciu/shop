@@ -6,7 +6,6 @@ import scala.util.Success
 import scala.util.Try
 import scala.xml._
 import scala.xml._
-
 import net.shift._
 import net.shift._
 import net.shift.engine.http._
@@ -20,20 +19,27 @@ import net.shift.template.Snippet._
 import net.shop.model.ProductDetail
 import net.shop.web.ShopApplication
 import utils.ShopUtils._
+import net.shift.common.State
+import net.shop.backend.SortSpec
+import net.shop.backend.NoSort
+import net.shop.backend.SortByName
+import net.shop.backend.SortByPrice
 
 object ProductsPage extends Cart[Request] {
 
-  override def snippets = List(title, item) ++ super.snippets
+  override def snippets = List(title, item) ++ cartSnips
+
+  val cartSnips = super.snippets
 
   val title = reqSnip("title") {
     s =>
       val v = (s.state.param("cat"), s.state.param("search")) match {
-        case (cat :: _, Nil) =>
-          ShopApplication.productsService.categoryById(cat) match {
+        case (Some(cat :: _), None) =>
+          ShopApplication.productsService(s.language).categoryById(cat) match {
             case Success(c) => Text(c.title.getOrElse(s.language.language, "???"))
             case _ => NodeSeq.Empty
           }
-        case (Nil, search :: _) => Text(s""""$search"""")
+        case (None, Some(search :: _)) => Text(s""""$search"""")
         case _ => NodeSeq.Empty
       }
       Success((s.state, <h1>{ v }</h1>))
@@ -42,7 +48,7 @@ object ProductsPage extends Cart[Request] {
   val item = reqSnip("item") {
     s =>
       {
-        val prods = fetch(s.state) match {
+        val prods = ProductsQuery.fetch (s.state) match {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
@@ -61,12 +67,22 @@ object ProductsPage extends Cart[Request] {
       }
   }
 
+}
+
+object ProductsQuery {
   def fetch(r: Request): Try[Traversable[ProductDetail]] = {
+    lazy val spec = toSortSpec(r)
     (r.param("cat"), r.param("search")) match {
-      case (cat :: _, Nil) => ShopApplication.productsService.categoryProducts(cat)
-      case (Nil, search :: _) => ShopApplication.productsService.searchProducts(search)
+      case (Some(cat :: _), None) => ShopApplication.productsService(r.language).categoryProducts(cat, spec)
+      case (None, Some(search :: _)) => ShopApplication.productsService(r.language).searchProducts(search, spec)
       case _ => Success(Nil)
     }
   }
 
+  def toSortSpec(r: Request): SortSpec = {
+    r.param("sort") match {
+      case Some(v :: _) => SortSpec.fromString(v)
+      case _ => NoSort
+    }
+  }
 }

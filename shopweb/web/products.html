@@ -1,20 +1,32 @@
 <html>
 <head>
 <link href='http://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css' />
-<link href="/styles/style.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="/scripts/jquery-2.0.3.min.js"></script>
-<script type="text/javascript" src="/scripts/jquery.cookie.js"></script>
-<script type="text/javascript" src="/scripts/common.js"></script>
-<script type="text/javascript" src="/scripts/products.js"></script>
+<link href="/static/styles/style.css" rel="stylesheet" type="text/css" />
+<link href="/static/styles/chosen.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/scripts/jquery-2.0.3.min.js"></script>
+<script type="text/javascript" src="/static/scripts/jquery.cookie.js"></script>
+<script type="text/javascript" src="/static/scripts/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="/static/scripts/common.js"></script>
+<script type="text/javascript" src="/static/scripts/purl.js"></script>
+<script type="text/javascript" src="/static/scripts/products.js"></script>
 </head>
 
 <body>
+
   <div class="wrap">
     <div data-snip="header"></div>
 
     <div class="center">
+
       <div class="navigation">
-        <a href="/" data-loc="categories"></a>
+        <a href="/" data-loc="categories"></a><span> | </span> <span data-loc="sort"></span> 
+        <select id="sortSelect" data-placeholder="...">
+          <option value=""></option>
+          <option value="bynameasc" data-loc="sort.by.name.asc"></option>
+          <option value="bynamedesc" data-loc="sort.by.name.desc"></option>
+          <option value="bypriceasc" data-loc="sort.by.price.asc"></option>
+          <option value="bypricedesc" data-loc="sort.by.price.desc"></option>
+        </select>
       </div>
 
       <div id="item_list">
@@ -24,7 +36,7 @@
               <div class="info_tag">
                 <div class="info_tag_text"></div>
                 <div class="info_tag_cart ">
-                  <img src="/images/cart.png" />
+                  <img src="/static/images/cart.png" />
                 </div>
                 <div class="info_tag_price"></div>
               </div>

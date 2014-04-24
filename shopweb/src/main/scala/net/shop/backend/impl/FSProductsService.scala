@@ -16,17 +16,18 @@ import net.shop.model.ProductDetail
 import net.shop.model.Category
 import net.shift.common.TraversingSpec
 import net.shift.common.ApplicativeFunctor
+import net.shift.loc.Language
 
-class FSProductsService extends ProductsService with TraversingSpec {
+case class FSProductsService(lang: Language) extends ProductsService with TraversingSpec {
   implicit val formats = DefaultFormats
 
-  def productById(id: String): Try[ProductDetail] = Try {
+  override def productById(id: String): Try[ProductDetail] = Try {
     Resource.fromInputStream(new FileInputStream(s"data/products/$id/data.json")).string
   } map { s =>
     parse(s).extract[ProductDetail]
   }
 
-  def allProducts: Try[Traversable[ProductDetail]] = {
+  override def allProducts: Try[Traversable[ProductDetail]] = {
     val l = (for {
       p <- Path.fromString(s"data/products").children().toList if (p.isDirectory)
     } yield {
@@ -34,21 +35,17 @@ class FSProductsService extends ProductsService with TraversingSpec {
     })
     listTraverse.sequence(l)
   }
-  def categoryProducts(cat: String): Try[Traversable[ProductDetail]] =
-    allProducts match {
+
+  override def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Traversable[ProductDetail]] =
+    sort(allProducts match {
       case Success(all) =>
         Success(for {
           p <- all if (p.categories.contains(cat))
         } yield p)
       case f => f
-    }
+    }, spec)
 
-  def filter(f: ProductDetail => Boolean): Try[Traversable[ProductDetail]] = allProducts match {
-    case Success(prods) => Success(for (p <- prods if f(p)) yield p)
-    case f => f
-  }
-
-  def categoryById(id: String): Try[Category] = {
+  override def categoryById(id: String): Try[Category] = {
     allCategories match {
       case Success(l) => l.find(c => c.id == id) match {
         case Some(c) => Success(c)
@@ -58,15 +55,29 @@ class FSProductsService extends ProductsService with TraversingSpec {
     }
   }
 
-  def allCategories: Try[Traversable[Category]] = Try {
+  override def allCategories: Try[Traversable[Category]] = Try {
     Resource.fromInputStream(new FileInputStream(s"data/categories/categories.json")).string
   } map { s =>
     parse(s).extract[List[Category]]
   }
 
-  def searchProducts(text: String): Try[Traversable[ProductDetail]] = allProducts match {
-    case Success(all) => Success(all filter predicate(text))
-    case f => f
+  override def searchProducts(text: String, spec: SortSpec = NoSort): Try[Traversable[ProductDetail]] = {
+    sort((allProducts match {
+      case Success(all) => Success(all filter predicate(text))
+      case f => f
+    }), spec)
+  }
+
+  def sort(in: => Try[Traversable[ProductDetail]], spec: SortSpec): Try[Traversable[ProductDetail]] = {
+    spec match {
+      case NoSort => in
+      case SortByName(dir) => in.map(seq => seq.toList.sortWith((a, b) =>
+        (for {
+          l <- a.title.get(lang.language)
+          r <- b.title.get(lang.language)
+        } yield if (dir) l < r else l > r).getOrElse(false)))
+      case SortByPrice(dir) => in.map(seq => seq.toList.sortWith((a, b) => if (dir) a.price < b.price else a.price > b.price))
+    }
   }
 
   def predicate(text: String)(p: ProductDetail): Boolean = {

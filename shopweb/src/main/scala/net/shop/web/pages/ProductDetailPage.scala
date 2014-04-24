@@ -1,12 +1,12 @@
 package net.shop
 package web.pages
 
-import java.io.BufferedInputStream
-import java.io.FileInputStream
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
 import scala.xml._
+import net.shift.common.Path
+import net.shift.common.XmlUtils
 import net.shift.engine._
 import net.shift.engine.http.Request._
 import net.shift.engine.http.Request
@@ -15,13 +15,10 @@ import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.DynamicContent
 import net.shift.template.Snippet.snip
-import net.shop.web.ShopApplication
-import net.shop.utils.ShopUtils._
-import scalax.io.JavaConverters
-import scalax.io.Resource
-import net.shift.common.XmlUtils
-import net.shift.common.Path
 import net.shop.model.ProductDetail
+import net.shop.utils.ShopUtils._
+import net.shop.web.ShopApplication
+import scalax.io.JavaConverters
 
 object ProductDetailPage extends Cart[ProductPageState] {
 
@@ -30,11 +27,11 @@ object ProductDetailPage extends Cart[ProductPageState] {
   val title = reqSnip("title") {
     s =>
       val v = s.state.req.param("pid") match {
-        case id :: _ => ShopApplication.productsService.productById(id) match {
+        case Some(id :: _) => ShopApplication.productsService(s.language).productById(id) match {
           case Success(prod) => (ProductPageState(s.state.req, Success(prod)), <h1>{ prod.title_?(s.language) }</h1>)
           case Failure(t) => (ProductPageState.build(s.state.req), NodeSeq.Empty)
         }
-        case Nil => (ProductPageState.build(s.state.req), NodeSeq.Empty)
+        case _ => (ProductPageState.build(s.state.req), NodeSeq.Empty)
       }
      Success(v)
   }
@@ -44,7 +41,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
       (s.state.product match {
         case Success(p) =>
           Try(p.categories.flatMap(e => {
-            ShopApplication.productsService.categoryById(e) match {
+            ShopApplication.productsService(s.language).categoryById(e) match {
               case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.language) }</a> ++ <span>, </span>)
               case _ => NodeSeq.Empty
             }

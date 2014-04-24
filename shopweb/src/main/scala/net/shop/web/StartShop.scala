@@ -22,13 +22,13 @@ import net.shift.common.Log
 import net.shift.common.Config
 import org.apache.log4j.PropertyConfigurator
 import net.shop.backend.impl.CachingBackend
-
 import scala.concurrent.ExecutionContext.Implicits.global
+import net.shop.web.pages.ProductsQuery
 
 object StartShop extends App with Log {
 
   PropertyConfigurator.configure("config/log4j.properties");
-  
+
   info("Starting iDid application ...");
 
   Config load ()
@@ -38,13 +38,17 @@ object StartShop extends App with Log {
 
 object ShopApplication extends ShiftApplication with ShopServices {
 
-  def productsService: ProductsService = new CachingBackend(new FSProductsService)
+  def productsService(lang: Language): ProductsService = new CachingBackend(FSProductsService(lang))
+
+  def ajaxServices = for {
+    r <- ajax
+    p <- page("products", Path("web/templates/productslist.html"), ProductsPage)
+  } yield p
 
   def servingRule = for {
     _ <- withLanguage(Language("ro"))
-    c <- cssFromFolder(Path("web/styles")) |
-      jsFromFolder(Path("web/scripts")) |
-      imagesFromFolder(Path("web/images")) |
+    c <- ajaxServices |
+      staticFiles(Path("web/static")) |
       productsImages |
       productsVariantImages |
       categoriesImages |

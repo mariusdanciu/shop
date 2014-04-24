@@ -138,5 +138,30 @@
    "code" : "128",
    "name" : "order.subject",
    "text" : "Comanda I-Did"
+ },
+ {
+   "code" : "129",
+   "name" : "sort",
+   "text" : "Ordoneaza dupa"
+ },
+ {
+   "code" : "130",
+   "name" : "sort.by.price.asc",
+   "text" : "Pret ascendent"
+ },
+ {
+   "code" : "131",
+   "name" : "sort.by.price.desc",
+   "text" : "Pret descendent"
+ },
+ {
+   "code" : "132",
+   "name" : "sort.by.name.asc",
+   "text" : "Nume ascendent"
+ },
+ {
+   "code" : "133",
+   "name" : "sort.by.name.desc",
+   "text" : "Nume descendent"
  }
 ]
