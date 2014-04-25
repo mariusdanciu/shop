@@ -17,6 +17,9 @@ import net.shop.web.form.OrderForm
 import scala.util.Success
 import scala.util.Failure
 import utils.ShopUtils._
+import net.shop.model.ProductDetail
+import scala.xml.{ Elem, Text }
+import scala.xml.Group
 
 trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
 
@@ -48,4 +51,8 @@ trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
       } map ((s.state, _))
   }
 
+  def priceTag(p: ProductDetail): Elem = p.onSalePrice match {
+    case Some(sale) => <span>{<span>{ sale }</span> ++ <strike>{ s"${p.price}" }</strike> ++ Text("RON")}</span>
+    case _ => <span>{ s"${p.price} RON" }</span>
+  }
 }

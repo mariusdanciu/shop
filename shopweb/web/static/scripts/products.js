@@ -39,7 +39,7 @@
 				me.find('.info_tag').css({
 					'background' : 'rgba(0, 0, 0, 1)'
 				});
-				me.find('.info_tag div').css({
+				me.find('.info_tag *').css({
 					'color' : '#ffffff'
 				});
 				me.find('.info_tag_cart').css({
@@ -55,7 +55,7 @@
 				me.find('.info_tag').css({
 					'background' : 'rgba(255, 255, 255, .5)'
 				});
-				me.find('.info_tag div').css({
+				me.find('.info_tag *').css({
 					'color' : '#000000'
 				});
 				me.find('.info_tag_cart').css({

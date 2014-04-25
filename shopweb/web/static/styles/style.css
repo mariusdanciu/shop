@@ -8,6 +8,7 @@ html,body {
 	line-height: 1.5em;
 	background-color: white;
 	height: 100%;
+	min-width: 1270px;
 }
 
 * {
@@ -182,6 +183,7 @@ a:active {
 }
 
 .center #pright {
+	min-width: 400px;
 	width: 910px;
 	float: left;
 	margin-left: 20px;

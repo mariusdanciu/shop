@@ -55,7 +55,7 @@ object ProductsPage extends Cart[Request] {
                 case "li" :/ HasClass("item", a) / childs => <li>{ childs }</li>
                 case "div" :/ HasClass("item_box", a) / childs => <div id={ prod id } title={ prod title_? (s.language) } style={ "background-image: url('" + imagePath(prod) + "')" }>{ childs }</div> % a
                 case "div" :/ HasClass("info_tag_text", a) / childs => <div>{ prod title_? (s.language) }</div> % a
-                case "div" :/ HasClass("info_tag_price", a) / childs => <div>{ s"${prod.price.toString} RON" }</div> % a
+                case "div" :/ HasClass("info_tag_price", a) / childs => priceTag(prod) % a
               } match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)

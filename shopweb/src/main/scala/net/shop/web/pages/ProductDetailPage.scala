@@ -85,9 +85,11 @@ object ProductDetailPage extends Cart[ProductPageState] {
       (for {
         p <- s.state.product
       } yield {
-        (ProductPageState(s.state.req, Success(p)), Text(s"${p.price} RON"))
+        (ProductPageState(s.state.req, Success(p)), priceTag(p))
       })
   }
+  
+
 
   val details = reqSnip("details") {
     s =>
