@@ -6,7 +6,7 @@ import net.shift.loc.Language
 case class ProductDetail(id: String,
   title: Map[String, String],
   price: Double,
-  onSalePrice : Option[Double],
+  oldPrice : Option[Double],
   categories: List[String],
   images: List[String],
   keyWords: List[String]) {

@@ -16,11 +16,11 @@ import net.shift.template.Binds._
 import net.shift.template.DynamicContent
 import net.shift.template.Snippet.snip
 import net.shop.model.ProductDetail
-import net.shop.utils.ShopUtils._
+import net.shop.utils.ShopUtils
 import net.shop.web.ShopApplication
 import scalax.io.JavaConverters
 
-object ProductDetailPage extends Cart[ProductPageState] {
+object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
 
   override def snippets = List(title, catlink, images, detailPrice, details) ++ super.snippets
 

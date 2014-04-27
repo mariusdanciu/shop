@@ -15,11 +15,11 @@ import net.shop.web.ShopApplication
 import scala.util.Success
 import net.shop.utils.ShopUtils
 import scala.util.Failure
-import ShopUtils._
 import Binds._
 import net.shift.common.Config
+import net.shop.utils.ShopUtils
 
-object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors {
+object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors with ShopUtils {
 
   override def snippets = List(info, content, total)
 
@@ -56,10 +56,10 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
             ShopApplication.productsService(s.language).productById(id) match {
               case Success(prod) =>
                 (bind(s.node) {
-                  case "img" :/ a / _ => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${ShopUtils.imagePath(prod.id, "thumb", prod.images.head)}") e
+                  case "img" :/ a / _ => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "thumb", prod.images.head)}") e
                   case "td" :/ HasClass("c1", a) / _ => <td>{ prod.title_?(s.language) }</td> % a
                   case "td" :/ HasClass("c2", a) / _ => <td>{ count }</td> % a
-                  case "td" :/ HasClass("c3", a) / _ => <td>{ prod.onSalePrice.getOrElse(prod.price) }</td> % a
+                  case "td" :/ HasClass("c3", a) / _ => <td>{ prod.price }</td> % a
                 }) match {
                   case Success(n) => (acc._1 ++ n, acc._2 + prod.price * count)
                   case Failure(f) => (acc._1 ++ errorTag(f toString), 0.0)

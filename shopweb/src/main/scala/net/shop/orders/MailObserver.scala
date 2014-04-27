@@ -5,12 +5,18 @@ import backend._
 import net.shop.model.Order
 import net.shift.common.Config
 import net.shift.loc.Loc
+import akka.actor.Actor
+import akka.actor.Props
+import akka.actor.ActorSystem
 
 object MailObserver extends OrderObserver {
   implicit def stringToSeq(single: String): Seq[String] = Seq(single)
 
+  val system = ActorSystem("idid")
+  val mailActor = system.actorOf(Props[MailActor], "mailActor")
+
   def onOrder(content: OrderDocument) {
-    send a Mail(
+    mailActor ! Mail(
       from = Config.string("smtp.from"),
       to = content.o.email,
       bcc = Config.list("smtp.bcc"),
@@ -27,8 +33,13 @@ case class Mail(
   subject: String,
   message: String)
 
-object send {
-  def a(mail: Mail) {
+class MailActor extends Actor {
+
+  def receive = {
+    case mail: Mail => sendMail(mail)
+  }
+
+  def sendMail(mail: Mail) {
     import org.apache.commons.mail._
 
     val commonsMail: Email = new HtmlEmail().setHtmlMsg(mail.message)

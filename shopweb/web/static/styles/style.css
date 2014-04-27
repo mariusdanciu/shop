@@ -444,3 +444,6 @@ a:active {
 	position: relative;
 }
 
+.detailPrice strike, .info_tag_price strike {
+	color: #ff5500;
+}

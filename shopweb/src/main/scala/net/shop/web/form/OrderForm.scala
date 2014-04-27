@@ -13,14 +13,13 @@ import net.shift.loc.Language
 import net.shift.loc.Loc
 import net.shop.model.Order
 import scala.util.Random
+import net.shop.utils.ShopUtils
 
-object OrderForm {
+object OrderForm extends ShopUtils {
   sealed trait EnvValue
   case class FormField(value: String) extends EnvValue
   case class OrderItems(l: List[(String, Int)]) extends EnvValue
 
-  val random = new Random(0)
-  
   def validName(name: String, err: String, title: String)(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
     val required = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
 
@@ -68,7 +67,7 @@ object OrderForm {
     }
 
   def form(implicit lang: Language) = {
-    val order = ((Order.apply _).curried)(("" /: Range.apply(0, 5))((acc, v) => acc + random.nextInt(9)))
+    val order = ((Order.apply _).curried)(uuid)
     val ? = Loc.loc0(lang) _
 
     Formlet(order) <*>

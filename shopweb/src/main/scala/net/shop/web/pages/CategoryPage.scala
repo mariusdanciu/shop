@@ -13,12 +13,12 @@ import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shift.template.Snippet._
-import utils.ShopUtils._
 import net.shop.web.ShopApplication
 import scala.util.Success
 import scala.util.Failure
+import net.shop.utils.ShopUtils
 
-object CategoryPage extends Cart[Request] { self =>
+object CategoryPage extends Cart[Request] with ShopUtils { self =>
 
   override def snippets = List(title, item) ++ super.snippets
 

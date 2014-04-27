@@ -3,9 +3,10 @@ package utils
 
 import net.shop.model.ProductDetail
 import net.shop.model.Category
+import scala.util.Random
 
-object ShopUtils {
-
+trait ShopUtils {
+  val random = new Random(System.currentTimeMillis())
   
   def categoryImagePath(cat: Category): String = s"/data/categories/${cat.image}"
   
@@ -18,4 +19,7 @@ object ShopUtils {
   def imagePath(variant:String, prod: ProductDetail): String = s"/data/products/${prod.id}/$variant/${prod.images.head}"
   
   def errorTag(text: String) = <div class="error"><div><img src="/static/images/exclamation.png"/></div><span>{ text }</span></div>
+  
+  def uuid = ("" /: Range.apply(0, 7))((acc, v) => acc + random.nextInt(9))
+  
 }

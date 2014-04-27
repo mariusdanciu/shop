@@ -8,7 +8,6 @@ import net.shift.engine.utils.ShiftUtils
 import net.shift.netty.NettyServer
 import net.shift.template.DynamicContent
 import net.shop.backend.ProductsService
-import net.shop.utils.ShopUtils._
 import net.shop.web.services.ShopServices
 import net.shop.backend.impl.FSProductsService
 import net.shift.engine.http.Request

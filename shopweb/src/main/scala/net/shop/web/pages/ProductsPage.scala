@@ -18,14 +18,14 @@ import net.shift.template.Snippet._
 import net.shift.template.Snippet._
 import net.shop.model.ProductDetail
 import net.shop.web.ShopApplication
-import utils.ShopUtils._
 import net.shift.common.State
 import net.shop.backend.SortSpec
 import net.shop.backend.NoSort
 import net.shop.backend.SortByName
 import net.shop.backend.SortByPrice
+import net.shop.utils.ShopUtils
 
-object ProductsPage extends Cart[Request] {
+object ProductsPage extends Cart[Request] with ShopUtils {
 
   override def snippets = List(title, item) ++ cartSnips
 

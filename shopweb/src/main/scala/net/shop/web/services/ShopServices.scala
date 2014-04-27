@@ -35,7 +35,6 @@ import net.shop.model.ProductDetail
 import net.shift.engine.http.JsResponse
 import net.shop.web.pages.ProductsQuery
 import net.shift.loc.Language
-import utils.ShopUtils._
 
 trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with Log {
 
