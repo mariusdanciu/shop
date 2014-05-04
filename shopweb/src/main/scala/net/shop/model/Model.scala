@@ -30,5 +30,8 @@ case class Order(id: String,
   address: String,
   email: String,
   phone: String,
-  items: List[(String, Int)])
+  items: List[(String, Int)]) {
+  
+  def ownerAsList = List(id, firstName, lastName, region, city, address, email, phone)
+}
 

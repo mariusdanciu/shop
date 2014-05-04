@@ -35,8 +35,9 @@ import net.shop.model.ProductDetail
 import net.shift.engine.http.JsResponse
 import net.shop.web.pages.ProductsQuery
 import net.shift.loc.Language
+import net.shift.common.DefaultLog
 
-trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with Log {
+trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog {
 
   def notFoundService(resp: AsyncResponse) {
     resp(TextResponse("Sorry ... service not found"))

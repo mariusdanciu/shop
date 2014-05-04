@@ -23,8 +23,9 @@ import org.apache.log4j.PropertyConfigurator
 import net.shop.backend.impl.CachingBackend
 import scala.concurrent.ExecutionContext.Implicits.global
 import net.shop.web.pages.ProductsQuery
+import net.shift.common.DefaultLog
 
-object StartShop extends App with Log {
+object StartShop extends App with DefaultLog {
 
   PropertyConfigurator.configure("config/log4j.properties");
 

@@ -1,42 +1,68 @@
 package net.shop
 package orders
 
+import java.text.SimpleDateFormat
+import java.util.Date
+
+import akka.actor.Actor
+import akka.actor.ActorSystem
+import akka.actor.Props
 import backend._
+import net.shift.common.DefaultLog
+import net.shift.common.Log
 import net.shop.model.Order
+import scalax.file.Path
 import net.shift.common.Config
 import net.shift.loc.Loc
-import akka.actor.Actor
-import akka.actor.Props
-import akka.actor.ActorSystem
 
-object MailObserver extends OrderObserver {
+object OrderListener extends OrderObserver {
   implicit def stringToSeq(single: String): Seq[String] = Seq(single)
 
   val system = ActorSystem("idid")
-  val mailActor = system.actorOf(Props[MailActor], "mailActor")
+  val orderActor = system.actorOf(Props[OrderActor], "orderActor")
 
   def onOrder(content: OrderDocument) {
-    mailActor ! Mail(
+    orderActor ! StoreOrderStats(content)
+    orderActor ! Mail(
       from = Config.string("smtp.from"),
       to = content.o.email,
       bcc = Config.list("smtp.bcc"),
       subject = Loc.loc0(content.l)("order.subject").text,
       message = content.doc)
   }
+
 }
 
+sealed trait OrderMsg
+case class StoreOrderStats(content: OrderDocument) extends OrderMsg
 case class Mail(
   from: String,
   to: Seq[String],
   cc: Seq[String] = Seq.empty,
   bcc: Seq[String] = Seq.empty,
   subject: String,
-  message: String)
+  message: String) extends OrderMsg
 
-class MailActor extends Actor {
+class OrderActor extends Actor with DefaultLog {
+  val dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+  val statsLog = new Log {
+    def loggerName = "stats"
+  }
 
   def receive = {
+    case StoreOrderStats(content) => writeStat(content.o)
     case mail: Mail => sendMail(mail)
+  }
+
+  def writeStat(o: Order) {
+    val moment = dateFormat.format(new Date())
+    for {
+      i <- o.items
+    } {
+      statsLog.info(o.ownerAsList ::: List(moment, i._1 toString, i._2 toString) mkString ("", ",", ""))
+    }
+
   }
 
   def sendMail(mail: Mail) {

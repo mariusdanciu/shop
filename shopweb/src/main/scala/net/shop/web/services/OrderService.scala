@@ -10,18 +10,16 @@ import net.shift.html._
 import net.shift.engine.http.JsResponse
 import net.shift.loc.Loc
 import net.shop.backend.OrderSubmitter
-import net.shop.orders.StoreObserver
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
 import backend._
-import net.shop.orders.MailObserver
+import net.shop.orders.OrderListener
 
 object OrderService extends HttpPredicates {
 
-  OrderSubmitter accept StoreObserver
-  OrderSubmitter accept MailObserver
+  OrderSubmitter accept OrderListener
 
   private def normalizeParams(params: Map[String, String]): Map[String, OrderForm.type#EnvValue] = {
     import OrderForm._
