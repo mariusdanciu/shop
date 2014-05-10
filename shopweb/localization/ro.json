@@ -163,5 +163,20 @@
    "code" : "133",
    "name" : "sort.by.name.desc",
    "text" : "Nume descendent"
+ },
+ {
+   "code" : "134",
+   "name" : "terms.and.conds",
+   "text" : "Am citit si sunt de acord cu termenii si conditiile iDid"
+ },
+ {
+   "code" : "135",
+   "name" : "terms.and.conds.err",
+   "text" : "Termenii si conditiile nu au fost acceptate"
+ },
+ {
+   "code" : "136",
+   "name" : "terms.link",
+   "text" : "Termeni si conditii"
  }
 ]

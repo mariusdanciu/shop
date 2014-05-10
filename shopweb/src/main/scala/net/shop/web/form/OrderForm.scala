@@ -5,7 +5,7 @@ import scala.xml.NodeSeq
 import net.shift.html.Failure
 import net.shift.html.Formlet
 import net.shift.html.Formlet.formToApp
-import net.shift.html.Formlet.inputText
+import net.shift.html.Formlet._
 import net.shift.html.Formlet.listSemigroup
 import net.shift.html.Success
 import net.shift.html.Validation
@@ -60,6 +60,12 @@ object OrderForm extends ShopUtils {
       case _ => Failure(List(("items", Loc.loc0(lang)("order.items.required").text)))
     }
 
+  def validTerms(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], Boolean] =
+    env => env.get("terms") match {
+      case Some(FormField("on")) => Success(true)
+      case _ => Failure(List(("terms", Loc.loc0(lang)("terms.and.conds.err").text)))
+    }
+
   def inputItems[Err](name: String)(f: Map[String, EnvValue] => Validation[Err, List[(String, Int)]]) =
     new Formlet[List[(String, Int)], Map[String, EnvValue], Err] {
       val validate = f
@@ -78,6 +84,7 @@ object OrderForm extends ShopUtils {
       inputText("address")(validName("address", "invalid.name", ?("order.address").text)) <*>
       inputText("email")(validEmail) <*>
       inputText("phone")(validPhone) <*>
+      inputCheck("terms", "true")(validTerms) <*>
       inputItems("items")(validItems)
   }
 }

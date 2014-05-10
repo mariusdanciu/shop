@@ -25,6 +25,26 @@ input {
 	font-family: 'Quicksand', sans-serif;
 }
 
+input[type=checkbox] {
+    display: none;
+}
+
+input[type="checkbox"]+label {    
+    background: url('/static/images/unchecked_checkbox.png') no-repeat;
+    height:26px;
+    width: 26px;
+    padding-right: 42px;
+    background-position:right; 
+}
+
+input[type="checkbox"]:checked+label {
+    background: url('/static/images/checked_checkbox.png') no-repeat;
+    height:26px;
+    width: 26px;    
+    background-position:right; 
+}
+
+
 ul {
 	list-style-type: none;
 	padding: 0px;
@@ -387,7 +407,7 @@ a:active {
 
 #order {
 	float: left;
-	height: 250px;
+	height: 280px;
 	padding: 20px 40px 20px 20px;
 	position: relative;
 	width: 400px;
@@ -410,6 +430,11 @@ a:active {
 	font-size: 16px;
 	position: relative;
 	top: 5px;
+}
+
+#order a {
+	font-size: 16px;
+	float: right;
 }
 
 #gallery img {
@@ -466,4 +491,9 @@ a:active {
 	top: 20px;
 	left: 10px;
 	width: 70px;
+}
+
+#terms_wrapper label {
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
