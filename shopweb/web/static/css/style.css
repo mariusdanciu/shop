@@ -44,6 +44,10 @@ input[type="checkbox"]:checked+label {
     background-position:right; 
 }
 
+label:hover {
+	cursor: pointer;
+}
+
 
 ul {
 	list-style-type: none;
@@ -63,16 +67,6 @@ h3 span {
 
 a:link {
 	color: #000000;
-	text-decoration: none;
-}
-
-.footer a:link {
-	color: #777777;
-	text-decoration: none;
-}
-
-.footer a:hover {
-	color: #999999;
 	text-decoration: none;
 }
 
@@ -118,9 +112,20 @@ a:active {
 
 .footer .center {
 	font-size: 16px;
-	margin-top: 10px;
 	color: #777777;
+	margin-top: 10px;
 }
+
+.footer * a {
+	color: #777777;
+	text-decoration: none;
+}
+
+.footer a:hover {
+	color: #999999;
+	text-decoration: none;
+}
+
 
 #site_name {
 	color: #FFC911;
@@ -493,7 +498,17 @@ a:active {
 	width: 70px;
 }
 
+#logo a {
+	color: #ffffff;
+}
+
+.terms {
+	margin-top: 30px;
+}
 #terms_wrapper label {
 	padding-top: 5px;
 	padding-bottom: 5px;
+}
+#search_text:hover {
+	background-color: #eeeeee;
 }

@@ -1,21 +1,21 @@
 package net.shop
 package web.services
 
+import scala.concurrent._
+import scala.concurrent.ExecutionContext.Implicits.global
+import backend._
 import net.shift.common.Path
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.HttpPredicates
-import net.shop.web.form.OrderForm
-import net.shift.js._
 import net.shift.html._
+import net.shift.js._
+import net.shop.backend.OrderSubmitter
+import net.shop.orders.OrderListener
+import net.shop.web.form.OrderForm
 import net.shift.engine.http.JsResponse
 import net.shift.loc.Loc
-import net.shop.backend.OrderSubmitter
-import scala.concurrent._
-import ExecutionContext.Implicits.global
 import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
-import backend._
-import net.shop.orders.OrderListener
 
 object OrderService extends HttpPredicates {
 
@@ -55,18 +55,17 @@ object OrderService extends HttpPredicates {
             v map { n => OrderSubmitter.placeOrder(OrderDocument(r.language, o, n toString)) }
           }
         case Failure(msgs) => {
-
-          val js = func() {
-            JsStatement(
-              (for {
-                m <- msgs
-              } yield {
-                $(s"label[for='${m._1}']") ~
-                  apply("css", "color", "#ff0000") ~
-                  apply("attr", "title", m._2)
-              }): _*)
-          }.wrap.apply
-          resp(JsResponse(js.toJsString))
+          resp(JsResponse(
+            func() {
+              JsStatement(
+                (for {
+                  m <- msgs
+                } yield {
+                  $(s"label[for='${m._1}']") ~
+                    apply("css", "color", "#ff0000") ~
+                    apply("attr", "title", m._2)
+                }): _*)
+            }.wrap.apply.toJsString))
         }
       }
     })

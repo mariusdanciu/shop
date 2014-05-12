@@ -64,8 +64,7 @@
 			},
 
 			cleanFormMessages : function() {
-				$('#order_form label').css("color", "#000000").removeAttr(
-						"title");
+				$('#order_form label').css("color", "#000000").removeAttr("title");
 			},
 
 			clear : function() {

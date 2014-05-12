@@ -24,6 +24,9 @@ import net.shop.backend.impl.CachingBackend
 import scala.concurrent.ExecutionContext.Implicits.global
 import net.shop.web.pages.ProductsQuery
 import net.shift.common.DefaultLog
+import net.shop.web.pages.Cart
+import net.shop.web.pages.CategoryPage
+import net.shop.web.pages.TermsPage
 
 object StartShop extends App with DefaultLog {
 
@@ -55,6 +58,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page("/", Path("web/categories.html"), CategoryPage) |
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
       page("products", Path("web/products.html"), ProductsPage) |
+      page("/terms", Path("web/terms.html"), TermsPage) |
       getCart() |
       order.get |
       service(notFoundService)
