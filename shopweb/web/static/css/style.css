@@ -26,28 +26,27 @@ input {
 }
 
 input[type=checkbox] {
-    display: none;
+	display: none;
 }
 
-input[type="checkbox"]+label {    
-    background: url('/static/images/unchecked_checkbox.png') no-repeat;
-    height:26px;
-    width: 26px;
-    padding-right: 42px;
-    background-position:right; 
+input[type="checkbox"]+label {
+	background: url('/static/images/unchecked_checkbox.png') no-repeat;
+	height: 26px;
+	width: 26px;
+	padding-right: 42px;
+	background-position: right;
 }
 
 input[type="checkbox"]:checked+label {
-    background: url('/static/images/checked_checkbox.png') no-repeat;
-    height:26px;
-    width: 26px;    
-    background-position:right; 
+	background: url('/static/images/checked_checkbox.png') no-repeat;
+	height: 26px;
+	width: 26px;
+	background-position: right;
 }
 
 label:hover {
 	cursor: pointer;
 }
-
 
 ul {
 	list-style-type: none;
@@ -89,6 +88,10 @@ a:active {
 	height: 60px;
 	background-color: #045584;
 	color: #ffffff;
+	position: fixed;
+	width: 100%;
+	z-index: 9999;
+	box-shadow: 0px 0px 30px 1px #444444;
 }
 
 .wrap {
@@ -101,22 +104,26 @@ a:active {
 .center {
 	max-width: 1270px;
 	margin: auto;
+	position: relative;
 }
 
 .footer {
 	clear: both;
-	height: 90px;
+	height: 99px;
 	border-top: 1px solid #dddddd;
 	background-color: #eeeeee;
+	position: relative;
 }
 
 .footer .center {
 	font-size: 16px;
 	color: #777777;
-	margin-top: 10px;
+	top: 10px;
+	position: relative;
 }
 
 .footer * a {
+	font-size: 16px;
 	color: #777777;
 	text-decoration: none;
 }
@@ -125,7 +132,6 @@ a:active {
 	color: #999999;
 	text-decoration: none;
 }
-
 
 #site_name {
 	color: #FFC911;
@@ -137,7 +143,6 @@ a:active {
 #item_list {
 	float: left;
 	width: 100%;
-	margin-top: 30px;
 }
 
 #item_list ul {
@@ -217,7 +222,6 @@ a:active {
 .center #pleft {
 	width: 340px;
 	float: left;
-	margin-top: 20px;
 }
 
 .center #pright {
@@ -248,6 +252,7 @@ a:active {
 	height: 32px;
 	float: left;
 	margin-top: 4px;
+	margin-left: 10px;
 }
 
 #cart_content {
@@ -267,10 +272,11 @@ a:active {
 	border: solid 1px #BBBBBB;
 	border-radius: 10px;
 	box-shadow: 0px 0px 27px #999;
-	position: absolute;
+	position: fixed;
 	z-index: 9999;
 	top: 60px;
 	color: #000000;
+	opacity: 0.95;
 }
 
 #add_to_cart_box {
@@ -400,7 +406,7 @@ a:active {
 	position: relative;
 	width: 100%;
 	height: 30px;
-	top: 6px;
+	margin-top: 66px;
 }
 
 .detailPrice {
@@ -468,7 +474,6 @@ a:active {
 	color: #000000;
 	border-radius: 10px;
 	width: 150px;
-	
 }
 
 #search img {
@@ -492,10 +497,10 @@ a:active {
 
 #logo {
 	position: relative;
-	float:left;	
-	top: 20px;
+	float: right;
+	bottom: 5px;
 	left: 10px;
-	width: 70px;
+	width: 100px;
 }
 
 #logo a {
@@ -505,10 +510,16 @@ a:active {
 .terms {
 	margin-top: 30px;
 }
+
 #terms_wrapper label {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+
 #search_text:hover {
 	background-color: #eeeeee;
+}
+
+.cat_content {
+	margin-top: 66px;
 }
