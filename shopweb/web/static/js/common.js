@@ -170,6 +170,9 @@
 					$('#cart_content').hide();
 					$('#cart_footer').hide();
 					$('#cart_empty').show();
+					if (f !== undefined) {
+					  f();
+				    }
 				} else {
 					$('#cart_empty').hide();
 
@@ -215,7 +218,6 @@
 			},
 
 			showCart : function() {
-				console.log("show");
 				window.cart.loadView(function() {
 					$('#order').hide();
 					$('#cart_notice').hide();
