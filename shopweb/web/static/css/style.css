@@ -464,7 +464,7 @@ a:active {
 
 #search div {
 	float: left;
-	margin-top: 5px;
+	margin-top: 6px;
 }
 
 #search input {
@@ -498,9 +498,9 @@ a:active {
 #logo {
 	position: relative;
 	float: right;
-	bottom: 5px;
+	bottom: 13px;
 	left: 10px;
-	width: 100px;
+	width: 120px;
 }
 
 #logo a {
