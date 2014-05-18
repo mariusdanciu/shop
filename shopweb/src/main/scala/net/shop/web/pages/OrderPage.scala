@@ -21,7 +21,7 @@ import net.shop.utils.ShopUtils
 
 object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors with ShopUtils {
 
-  override def snippets = List(info, content, total)
+  override def snippets = List(logo, info, content, total)
 
   def reqSnip(name: String) = snip[OrderState](name) _
 
@@ -30,6 +30,10 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   def orderTemplate(state: OrderState): Try[NodeSeq] =
     Html5.runPageFromFile(state, state.req.language, Path(s"web/templates/order_${state.req.language.language}.html"), this).map(in => in._2)
 
+ val logo = reqSnip("logo") {
+    s => Success((s.state, <img src={s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid-small.png"}/>))
+  }
+    
   val info = reqSnip("info") {
     s =>
       bind(s.node) {
