@@ -197,11 +197,16 @@
 						$(".cart_item ul li a").each(function(index) {
 							var me = $(this);
 							var id = me.attr("id").substring(4);
+							$('#q_'+id).on("keyup change", function(e) {
+								window.cart.setItemCount(id, $(this).text());
+								e.preventDefault();
+							});
 							me.click(function(e) {
 								window.cart.removeItem(id);
 								e.preventDefault();
 							});
 					    });
+						
 						if (f !== undefined) {
 						  f();
 						}

@@ -508,8 +508,11 @@ a:active {
 }
 
 .terms {
-	margin-top: 30px;
+	float: left;
+	font-size: 16px;
+	margin-top: 66px;
 }
+
 
 #terms_wrapper label {
 	padding-top: 5px;
