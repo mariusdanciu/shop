@@ -25,8 +25,8 @@
   <classpathentry kind="lib" path="/home/marius/.ivy2/cache/javax.mail/mail/jars/mail-1.4.5.jar"/>
   <classpathentry kind="lib" path="/home/marius/.ivy2/cache/javax.activation/activation/jars/activation-1.1.1.jar"/>
   <classpathentry kind="lib" path="/home/marius/.ivy2/cache/com.typesafe.akka/akka-actor_2.10/jars/akka-actor_2.10-2.4-SNAPSHOT.jar"/>
-  <classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
-  <classpathentry kind="lib" path="/home/marius/.ivy2/cache/com.typesafe/config/bundles/config-1.2.0.jar"/>
+  <classpathentry kind="lib" path="/home/marius/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.10.4.jar"/>
+  <classpathentry kind="lib" path="/home/marius/.ivy2/cache/com.typesafe/config/bundles/config-1.2.1.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path="bin"/>
 </classpath>

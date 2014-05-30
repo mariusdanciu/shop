@@ -1,51 +1,39 @@
-<html>
+<html data-template="common">
 <head>
-<link href='http://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css' />
-<link href="/static/css/style.css" rel="stylesheet" type="text/css" />
 <link href="/static/css/chosen.min.css" rel="stylesheet" type="text/css" />
 
-<script type="text/javascript" src="/static/js/jquery-2.0.3.min.js"></script>
-<script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
 <script type="text/javascript" src="/static/js/chosen.jquery.min.js"></script>
-<script type="text/javascript" src="/static/js/common.js"></script>
-<script type="text/javascript" src="/static/js/purl.js"></script>
 <script type="text/javascript" src="/static/js/products.js"></script>
 </head>
 
 <body>
 
-  <div class="wrap">
+  <div id="content" class="center">
+    <div class="navigation">
+      <a href="/" data-loc="categories"></a><span> | </span> <span data-loc="sort"></span> <select id="sortSelect" data-placeholder="...">
+        <option value=""></option>
+        <option value="bynameasc" data-loc="sort.by.name.asc"></option>
+        <option value="bynamedesc" data-loc="sort.by.name.desc"></option>
+        <option value="bypriceasc" data-loc="sort.by.price.asc"></option>
+        <option value="bypricedesc" data-loc="sort.by.price.desc"></option>
+      </select>
+    </div>
 
-    <div data-snip="header"></div>
-    <div class="center">
-      <div class="navigation">
-        <a href="/" data-loc="categories"></a><span> | </span> <span data-loc="sort"></span> 
-        <select id="sortSelect" data-placeholder="...">
-          <option value=""></option>
-          <option value="bynameasc" data-loc="sort.by.name.asc"></option>
-          <option value="bynamedesc" data-loc="sort.by.name.desc"></option>
-          <option value="bypriceasc" data-loc="sort.by.price.asc"></option>
-          <option value="bypricedesc" data-loc="sort.by.price.desc"></option>
-        </select>
-      </div>
-
-      <div id="item_list">
-        <ul>
-          <li data-snip="item">
-            <div class="item_box">
-              <div class="info_tag">
-                <div class="info_tag_text"></div>
-                <div class="info_tag_cart ">
-                  <img src="/static/images/cart.png" />
-                </div>
-                <div class="info_tag_price"></div>
+    <div id="item_list">
+      <ul>
+        <li data-snip="item">
+          <div class="item_box">
+            <div class="info_tag">
+              <div class="info_tag_text"></div>
+              <div class="info_tag_cart ">
+                <img src="/static/images/cart.png" />
               </div>
+              <div class="info_tag_price"></div>
             </div>
-          </li>
-        </ul>
-      </div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
-  <div data-snip="footer"></div>
 </body>
 </html>

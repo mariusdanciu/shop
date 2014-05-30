@@ -32,7 +32,6 @@ import net.shop.web.ShopApplication
 import net.shop.web.pages.ProductsPage
 import scala.util.Try
 import net.shop.model.ProductDetail
-import net.shift.engine.http.JsResponse
 import net.shop.web.pages.ProductsQuery
 import net.shift.loc.Language
 import net.shift.common.DefaultLog

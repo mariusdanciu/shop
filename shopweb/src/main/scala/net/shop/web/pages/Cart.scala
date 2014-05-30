@@ -22,26 +22,11 @@ import scala.xml.Group
 
 trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
 
-  def snippets = List(header, footer, cartPopup, order)
+  def snippets = List(order)
 
   def reqSnip(name: String) = snip[T](name) _
 
   implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
-
-  val header = reqSnip("header") {
-    s =>
-      Html5.runPageFromFile(s.state, s.language, Path("web/templates/header.html"), this).map(in => (in._1.state, in._2))
-  }
-
-  val footer = reqSnip("footer") {
-    s =>
-      Html5.runPageFromFile(s.state, s.language, Path("web/templates/footer.html"), this).map(in => (in._1.state, in._2))
-  }
-
-  val cartPopup = reqSnip("cart_popup") {
-    s =>
-      Html5.runPageFromFile(s.state, s.language, Path("web/templates/cartpopup.html"), this).map(in => (in._1.state, in._2))
-  }
 
   val order = snip[T]("order") {
     s =>
