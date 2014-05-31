@@ -30,10 +30,10 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   def orderTemplate(state: OrderState): Try[NodeSeq] =
     Html5.runPageFromFile(state, state.req.language, Path(s"web/templates/order_${state.req.language.language}.html"), this).map(in => in._2)
 
- val logo = reqSnip("logo") {
-    s => Success((s.state, <img src={s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid-small.png"}/>))
+  val logo = reqSnip("logo") {
+    s => Success((s.state, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid-small.png" }/>))
   }
-    
+
   val info = reqSnip("info") {
     s =>
       bind(s.node) {
@@ -56,18 +56,14 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
     s =>
       {
         val items: (NodeSeq, Double) = ((NodeSeq.Empty, 0.0) /: s.state.o.items) {
-          case (acc, (id, count)) =>
-            ShopApplication.productsService(s.language).productById(id) match {
-              case Success(prod) =>
-                (bind(s.node) {
-                  case "img" :/ a / _ => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "thumb", prod.images.head)}") e
-                  case "td" :/ HasClass("c1", a) / _ => <td>{ prod.title_?(s.language) }</td> % a
-                  case "td" :/ HasClass("c2", a) / _ => <td>{ count }</td> % a
-                  case "td" :/ HasClass("c3", a) / _ => <td>{ prod.price }</td> % a
-                }) match {
-                  case Success(n) => (acc._1 ++ n, acc._2 + prod.price * count)
-                  case Failure(f) => (acc._1 ++ errorTag(f toString), 0.0)
-                }
+          case (acc, (prod, count)) =>
+            (bind(s.node) {
+              case "img" :/ a / _ => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "thumb", prod.images.head)}") e
+              case "td" :/ HasClass("c1", a) / _ => <td>{ prod.title_?(s.language) }</td> % a
+              case "td" :/ HasClass("c2", a) / _ => <td>{ count }</td> % a
+              case "td" :/ HasClass("c3", a) / _ => <td>{ prod.price }</td> % a
+            }) match {
+              case Success(n) => (acc._1 ++ n, acc._2 + prod.price * count)
               case Failure(f) => (acc._1 ++ errorTag(f toString), 0.0)
             }
         }

@@ -178,5 +178,10 @@
    "code" : "136",
    "name" : "terms.link",
    "text" : "Termeni si conditii"
+ },
+ {
+   "code" : "137",
+   "name" : "order.fail",
+   "text" : "Ne cerem scuze. Comanda nu poate fi procesata momentan."
  }
 ]

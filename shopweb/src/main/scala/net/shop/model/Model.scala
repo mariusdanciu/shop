@@ -6,11 +6,11 @@ import net.shift.loc.Language
 case class ProductDetail(id: String,
   title: Map[String, String],
   price: Double,
-  oldPrice : Option[Double],
+  oldPrice: Option[Double],
   categories: List[String],
   images: List[String],
   keyWords: List[String]) {
-  
+
   def title_?(l: Language) = title.getOrElse(l.language, "???")
 }
 
@@ -31,8 +31,8 @@ case class Order(id: String,
   email: String,
   phone: String,
   terms: Boolean,
-  items: List[(String, Int)]) {
-  
+  items: List[(ProductDetail, Int)]) {
+
   def ownerAsList = List(id, firstName, lastName, region, city, address, email, phone)
 }
 

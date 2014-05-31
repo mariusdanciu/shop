@@ -510,7 +510,7 @@ a:active {
 .terms {
 	float: left;
 	font-size: 16px;
-	margin-top: 66px;
+	margin-top: 80px;
 }
 
 
@@ -525,4 +525,18 @@ a:active {
 
 .cat_content {
 	margin-top: 66px;
+}
+
+#notice {
+    background-color: #B43104;
+    border: 1px solid #8A2908;
+    color: #F7BE81;
+    font-size: 20px;
+    height: 28px;
+    padding-top: 5px;
+    position: relative;
+    text-align: center;
+    top: 60px;
+    width: 100%;
+    display: none;
 }

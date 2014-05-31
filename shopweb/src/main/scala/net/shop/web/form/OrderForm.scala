@@ -14,11 +14,12 @@ import net.shift.loc.Loc
 import net.shop.model.Order
 import scala.util.Random
 import net.shop.utils.ShopUtils
+import net.shop.model.ProductDetail
 
 object OrderForm extends ShopUtils {
   sealed trait EnvValue
   case class FormField(value: String) extends EnvValue
-  case class OrderItems(l: List[(String, Int)]) extends EnvValue
+  case class OrderItems(l: List[(ProductDetail, Int)]) extends EnvValue
 
   def validName(name: String, err: String, title: String)(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
     val required = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
@@ -54,9 +55,9 @@ object OrderForm extends ShopUtils {
     }
   }
 
-  def validItems(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], List[(String, Int)]] =
+  def validItems(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], List[(ProductDetail, Int)]] =
     env => env.get("items") match {
-      case Some(OrderItems(n)) => Success(n)
+      case Some(OrderItems(l)) => Success(l)
       case _ => Failure(List(("items", Loc.loc0(lang)("order.items.required").text)))
     }
 
@@ -66,8 +67,8 @@ object OrderForm extends ShopUtils {
       case _ => Failure(List(("terms", Loc.loc0(lang)("terms.and.conds.err").text)))
     }
 
-  def inputItems[Err](name: String)(f: Map[String, EnvValue] => Validation[Err, List[(String, Int)]]) =
-    new Formlet[List[(String, Int)], Map[String, EnvValue], Err] {
+  def inputItems(name: String)(f: Map[String, EnvValue] => Validation[List[(String, String)], List[(ProductDetail, Int)]]) =
+    new Formlet[List[(ProductDetail, Int)], Map[String, EnvValue], List[(String, String)]] {
       val validate = f
       override def html = NodeSeq.Empty;
     }
