@@ -12,7 +12,7 @@ import net.shift.js._
 import net.shop.backend.OrderSubmitter
 import net.shop.orders.OrderListener
 import net.shop.web.form.OrderForm
-import net.shift.engine.http.JSResponse
+import net.shift.engine.http.JsResponse
 import net.shift.loc.Loc
 import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
@@ -47,7 +47,7 @@ object OrderService extends HttpPredicates {
       (OrderForm.form(r.language) validate normalizeParams(params)) match {
         case Success(o) =>
           future {
-            resp(JSResponse(
+            resp(JsResponse(
               apply("cart.orderDone", Loc.loc0(r.language)("order.done").text) toJsString))
           }
           future {
@@ -55,7 +55,7 @@ object OrderService extends HttpPredicates {
             v map { n => OrderSubmitter.placeOrder(OrderDocument(r.language, o, n toString)) }
           }
         case Failure(msgs) => {
-          resp(JSResponse(
+          resp(JsResponse(
             func() {
               JsStatement(
                 (for {
