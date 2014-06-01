@@ -184,4 +184,10 @@
    "name" : "order.fail",
    "text" : "Ne cerem scuze. Comanda nu poate fi procesata momentan."
  }
+ ,
+ {
+   "code" : "138",
+   "name" : "connect.fail",
+   "text" : "Serverul nu poate fi contactat momentan. Verificati conecsiunea la internet."
+ }
 ]

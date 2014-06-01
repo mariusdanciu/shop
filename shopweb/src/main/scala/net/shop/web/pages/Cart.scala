@@ -19,10 +19,11 @@ import scala.util.Failure
 import net.shop.model.ProductDetail
 import scala.xml.{ Elem, Text }
 import scala.xml.Group
+import net.shift.loc.Loc
 
 trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
 
-  def snippets = List(order)
+  def snippets = List(order, connectError)
 
   def reqSnip(name: String) = snip[T](name) _
 
@@ -36,7 +37,11 @@ trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
   }
 
   def priceTag(p: ProductDetail): Elem = p.oldPrice match {
-    case Some(old) => <span>{<span>{ p.price }</span> ++ <strike>{ old }</strike> <span>RON</span>}</span>
+    case Some(old) => <span>{ <span>{ p.price }</span> ++ <strike>{ old }</strike> <span>RON</span> }</span>
     case _ => <span>{ s"${p.price} RON" }</span>
+  }
+
+  val connectError = snip[T]("connect_error") {
+    s => Success((s.state, <div id="notice_connect_e">{ Loc.loc0(s.language)("connect.fail").text }</div>))
   }
 }

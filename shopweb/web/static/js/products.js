@@ -5,14 +5,22 @@
 		$("#sortSelect").chosen({
 			"disable_search" : true
 		});
-		
-		$('#sortSelect').on('change', function(evt, params) {
-			var cat = $.url().param("cat");
-			$("#item_list").load(normUrl("/products", $(this).val()), function() {
-			  refreshList();
-			});
-		})
-		
+
+		$('#sortSelect').on(
+				'change',
+				function(evt, params) {
+					$("#item_list").load(
+							normUrl("/products", $(this).val()),
+							function(response, status, xhr) {
+								if (status == "error") {
+									$("#notice_connect_e").show().delay(5000)
+											.fadeOut("slow");
+								} else {
+									refreshList();
+								}
+							});
+				})
+
 	});
 
 	var normUrl = function(url, sort) {
