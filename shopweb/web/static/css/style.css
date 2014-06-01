@@ -527,16 +527,32 @@ a:active {
 	margin-top: 66px;
 }
 
-#notice {
+#notice_e {
     background-color: #B43104;
     border: 1px solid #8A2908;
     color: #F7BE81;
     font-size: 20px;
     height: 28px;
     padding-top: 5px;
-    position: relative;
+    position: fixed;
     text-align: center;
     top: 60px;
     width: 100%;
     display: none;
+    z-index: 9999;
+}
+
+#notice_i {
+    background-color: #4B8A08;
+    border: 1px solid #38610B;
+    color: #ffffff;
+    font-size: 20px;
+    height: 28px;
+    padding-top: 5px;
+    position: fixed;
+    text-align: center;
+    top: 60px;
+    width: 100%;
+    display: none;
+    z-index: 9999;
 }

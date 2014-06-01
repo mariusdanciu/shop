@@ -59,13 +59,6 @@
 
 		cart = {
 
-			orderDone : function(msg) {
-				$('#cart_notice').show();
-				$('#cart_notice').text(msg);
-				window.cart.clear();
-				$('#cart_empty').hide();
-			},
-
 			cleanFormMessages : function() {
 				$('#order_form label').css("color", "#000000").removeAttr("title");
 			},

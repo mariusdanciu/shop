@@ -60,7 +60,16 @@ object OrderService extends HttpPredicates {
           case net.shift.html.Success(o) =>
             future {
               resp(JsResponse(
-                apply("cart.orderDone", Loc.loc0(r.language)("order.done").text) toJsString))
+                func() {
+                  JsStatement(
+                    apply("cart.hideCart"),
+                    apply("window.cart.clear"),
+                    $(s"#notice_i") ~
+                      apply("text", Loc.loc0(r.language)("order.done").text) ~
+                      apply("show") ~
+                      apply("delay", "5000") ~
+                      apply("fadeOut", "slow"))
+                }.wrap.apply.toJsString))
             }
             future {
               val v = OrderPage.orderTemplate(OrderState(o, r, 0.0))
@@ -86,7 +95,7 @@ object OrderService extends HttpPredicates {
             func() {
               JsStatement(
                 apply("cart.hideCart"),
-                $(s"#notice") ~
+                $(s"#notice_e") ~
                   apply("text", Loc.loc0(r.language)("order.fail").text) ~
                   apply("show") ~
                   apply("delay", "5000") ~
