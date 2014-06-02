@@ -52,6 +52,7 @@
 					if (e.which == 13) {
 						var text = $("#search_text").val();
 						window.location.href = '/products?search=' + text;
+					}
 				});
 
 		$("#gosearch").click(function(e) {
