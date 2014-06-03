@@ -188,6 +188,6 @@
  {
    "code" : "138",
    "name" : "connect.fail",
-   "text" : "Serverul nu poate fi contactat momentan. Verificati conecsiunea la internet."
+   "text" : "Serverul nu poate fi contactat momentan. Verificati conexiunea la internet."
  }
 ]
