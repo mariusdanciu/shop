@@ -55,6 +55,18 @@ object OrderForm extends ShopUtils {
     }
   }
 
+  def validCnp(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
+    val required = Failure(List(("cnp", Loc.loc(lang)("field.required", Seq(Loc.loc0(lang)("order.cnp").text)).text)))
+
+    env.get("cnp") match {
+      case Some(FormField(n)) if n.isEmpty() => required
+      case Some(FormField(cnp)) => if (cnp.size == 13 && cnp.matches("""[0-9]+"""))
+        Success(cnp)
+      else Failure(List(("cnp", Loc.loc(lang)("invalid.cnp", Seq(cnp)).text)))
+      case _ => required
+    }
+  }
+
   def validItems(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], List[(ProductDetail, Int)]] =
     env => env.get("items") match {
       case Some(OrderItems(l)) => Success(l)
@@ -80,6 +92,7 @@ object OrderForm extends ShopUtils {
     Formlet(order) <*>
       inputText("lname")(validName("lname", "invalid.name", ?("order.last.name").text)) <*>
       inputText("fname")(validName("fname", "invalid.name", ?("order.first.name").text)) <*>
+      inputText("cnp")(validCnp) <*>
       inputText("region")(validName("region", "invalid.name", ?("order.region").text)) <*>
       inputText("city")(validName("city", "invalid.name", ?("order.city").text)) <*>
       inputText("address")(validName("address", "invalid.name", ?("order.address").text)) <*>

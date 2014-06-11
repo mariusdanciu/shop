@@ -218,14 +218,12 @@
 			showStep1Links : function() {
 				$('#order').show();
 				$('#buy_step1').hide();
-				$('#buy_final').show();
 			},
 
 			showCart : function() {
 				window.cart.loadView(function() {
 					$('#order').hide();
 					$('#cart_notice').hide();
-					$('#buy_final').hide();
 					$('#buy_step1').show();
 					$('#cart_popup').show();
 				});
@@ -236,7 +234,6 @@
 				$('#cart_popup').hide();
 				$('#cart_notice').hide();
 				$('#order').hide();
-				$('#buy_final').hide();
 				$('#buy_step1').show();
 			}
 

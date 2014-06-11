@@ -25,6 +25,7 @@ case class Category(id: String, val title: Map[String, String], image: String) {
 case class Order(id: String,
   firstName: String,
   lastName: String,
+  cnp: String,
   region: String,
   city: String,
   address: String,
@@ -33,6 +34,7 @@ case class Order(id: String,
   terms: Boolean,
   items: List[(ProductDetail, Int)]) {
 
-  def ownerAsList = List(id, firstName, lastName, region, city, address, email, phone)
+  def ownerAsList = List(id, firstName, lastName, cnp, region, city, address, email, phone)
+  
 }
 
