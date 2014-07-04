@@ -1,5 +1,6 @@
 (function() {
 	$(function() {
+		$("#menu").tabify();
 
 		$("#cart_symbol").click(function(event) {
 			cart.showCart();
@@ -27,8 +28,11 @@
 			event.preventDefault();
 		});
 
-		$('#buy_final').click(function(event) {
-			var obj = $("#order_form").serializeArray();
+		$('#buy_final, #c_buy_final_comp').click(function(event) {
+			var clicked = $(this).attr("id");
+			var form = (clicked !== "c_buy_final_comp")? "#order_form" : "#order_form_company";
+			
+			var obj = $(form).serializeArray();
 			var items = cart.items();
 			for (e in items) {
 				obj.push({
@@ -63,7 +67,7 @@
 		cart = {
 
 			cleanFormMessages : function() {
-				$('#order_form label').css("color", "#000000").removeAttr(
+				$('#order_form label, #order_form_company label').css("color", "#000000").removeAttr(
 						"title");
 			},
 

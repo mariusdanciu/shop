@@ -100,7 +100,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
       case _ => resp(JsonResponse("[]"))
     })
 
-  def order = OrderService
+  def orderService = OrderService
 
   private def readCart(json: String): Cart = {
     implicit val formats = DefaultFormats

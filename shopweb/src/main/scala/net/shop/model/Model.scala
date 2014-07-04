@@ -22,10 +22,13 @@ case class Category(id: String, val title: Map[String, String], image: String) {
   def title_?(l: Language) = title.getOrElse(l.language, "???")
 }
 
+sealed trait Submiter
+
+case class Person(firstName: String, lastName: String) extends Submiter
+case class Company(companyName: String, cif: String, regCom: String, bank: String, bankAccount: String) extends Submiter
+
 case class Order(id: String,
-  firstName: String,
-  lastName: String,
-  cnp: String,
+  submiter: Submiter,
   region: String,
   city: String,
   address: String,
@@ -34,7 +37,5 @@ case class Order(id: String,
   terms: Boolean,
   items: List[(ProductDetail, Int)]) {
 
-  def ownerAsList = List(id, firstName, lastName, cnp, region, city, address, email, phone)
-  
 }
 

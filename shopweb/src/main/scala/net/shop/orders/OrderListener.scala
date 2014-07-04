@@ -60,7 +60,7 @@ class OrderActor extends Actor with DefaultLog {
     for {
       i <- o.items
     } {
-      statsLog.info(o.ownerAsList ::: List(moment, i._1 toString, i._2 toString) mkString ("", ",", ""))
+      statsLog.info(List(moment, i._1 toString, i._2 toString) mkString ("", ",", ""))
     }
 
   }

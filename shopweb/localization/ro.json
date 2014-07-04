@@ -142,7 +142,7 @@
  {
    "code" : "127",
    "name" : "thank.you",
-   "text" : "Multumim pentru comanda facuta."
+   "text" : "Multumim pentru comanda facuta !"
  },
  {
    "code" : "128",
@@ -198,5 +198,57 @@
    "code" : "138",
    "name" : "connect.fail",
    "text" : "Serverul nu poate fi contactat momentan. Verificati conexiunea la internet."
+ },
+ {
+   "code" : "139",
+   "name" : "order.company.name",
+   "text" : "Nume firma"
+ },
+ {
+   "code" : "141",
+   "name" : "order.company.cif",
+   "text" : "CIF"
+ },
+ {
+   "code" : "142",
+   "name" : "order.company.reg.com",
+   "text" : "Reg. Com."
+ },
+ {
+   "code" : "143",
+   "name" : "order.company.bank",
+   "text" : "Banca"
+ },
+ {
+   "code" : "144",
+   "name" : "order.company.bank.account",
+   "text" : "Cont bancar"
+ },
+ {
+   "code" : "145",
+   "name" : "order.id",
+   "text" : "Identificator comanda"
+ },
+ {
+   "code" : "146",
+   "name" : "order.data.product",
+   "text" : "Produs"
+ },
+ {
+   "code" : "147",
+   "name" : "order.data.name",
+   "text" : "Denumire"
+ },
+ {
+   "code" : "148",
+   "name" : "order.data.quantity",
+   "text" : "Cantitate"
+ },
+ {
+   "code" : "149",
+   "name" : "order.data.price",
+   "text" : "Pret unitar (RON)"
  }
+ 
+ 
 ]

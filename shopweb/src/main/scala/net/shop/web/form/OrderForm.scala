@@ -15,13 +15,15 @@ import net.shop.model.Order
 import scala.util.Random
 import net.shop.utils.ShopUtils
 import net.shop.model.ProductDetail
+import net.shop.model.Person
+import net.shop.model.Company
 
 object OrderForm extends ShopUtils {
   sealed trait EnvValue
   case class FormField(value: String) extends EnvValue
   case class OrderItems(l: List[(ProductDetail, Int)]) extends EnvValue
 
-  def validName(name: String, err: String, title: String)(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
+  def validName(name: String, title: String)(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
     val required = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
 
     env.get(name) match {
@@ -31,38 +33,28 @@ object OrderForm extends ShopUtils {
     }
   }
 
-  def validEmail(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
-    val required = Failure(List(("email", Loc.loc(lang)("field.required", Seq(Loc.loc0(lang)("order.email").text)).text)))
+  def validEmail(name: String, id: String)(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
+    val required = Failure(List((id, Loc.loc(lang)("field.required", Seq(Loc.loc0(lang)("order.email").text)).text)))
 
-    env.get("email") match {
+    env.get(name) match {
       case Some(FormField(n)) if n.isEmpty() => required
       case Some(FormField(email)) => if (email.matches("""([\w\.\_]+)@([\w\.]+)"""))
         Success(email)
-      else Failure(List(("email", Loc.loc(lang)("invalid.email", Seq(email)).text)))
+      else
+        Failure(List((id, Loc.loc(lang)("invalid.email", Seq(email)).text)))
       case _ => required
     }
   }
 
-  def validPhone(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
-    val required = Failure(List(("phone", Loc.loc(lang)("field.required", Seq(Loc.loc0(lang)("order.phone").text)).text)))
+  def validPhone(name: String, id: String)(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
+    val required = Failure(List((id, Loc.loc(lang)("field.required", Seq(Loc.loc0(lang)("order.phone").text)).text)))
 
-    env.get("phone") match {
+    env.get(name) match {
       case Some(FormField(n)) if n.isEmpty() => required
       case Some(FormField(phone)) => if (phone.matches("""[0-9]+"""))
         Success(phone)
-      else Failure(List(("phone", Loc.loc(lang)("invalid.phone", Seq(phone)).text)))
-      case _ => required
-    }
-  }
-
-  def validCnp(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
-    val required = Failure(List(("cnp", Loc.loc(lang)("field.required", Seq(Loc.loc0(lang)("order.cnp").text)).text)))
-
-    env.get("cnp") match {
-      case Some(FormField(n)) if n.isEmpty() => required
-      case Some(FormField(cnp)) => if (cnp.size == 13 && cnp.matches("""[0-9]+"""))
-        Success(cnp)
-      else Failure(List(("cnp", Loc.loc(lang)("invalid.cnp", Seq(cnp)).text)))
+      else
+        Failure(List((id, Loc.loc(lang)("invalid.phone", Seq(phone)).text)))
       case _ => required
     }
   }
@@ -73,10 +65,10 @@ object OrderForm extends ShopUtils {
       case _ => Failure(List(("items", Loc.loc0(lang)("order.items.required").text)))
     }
 
-  def validTerms(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], Boolean] =
+  def validTerms(id: String)(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], Boolean] =
     env => env.get("terms") match {
       case Some(FormField("on")) => Success(true)
-      case _ => Failure(List(("terms", Loc.loc0(lang)("terms.and.conds.err").text)))
+      case _ => Failure(List((id, Loc.loc0(lang)("terms.and.conds.err").text)))
     }
 
   def inputItems(name: String)(f: Map[String, EnvValue] => Validation[List[(String, String)], List[(ProductDetail, Int)]]) =
@@ -89,17 +81,44 @@ object OrderForm extends ShopUtils {
     val order = ((Order.apply _).curried)(uuid)
     val ? = Loc.loc0(lang) _
 
+    val person = (Person.apply _).curried
+    val personFormlet = Formlet(person) <*>
+      inputText("lname")(validName("fname", ?("order.first.name").text)) <*>
+      inputText("fname")(validName("lname", ?("order.last.name").text))
+
     Formlet(order) <*>
-      inputText("lname")(validName("lname", "invalid.name", ?("order.last.name").text)) <*>
-      inputText("fname")(validName("fname", "invalid.name", ?("order.first.name").text)) <*>
-      inputText("cnp")(validCnp) <*>
-      inputText("region")(validName("region", "invalid.name", ?("order.region").text)) <*>
-      inputText("city")(validName("city", "invalid.name", ?("order.city").text)) <*>
-      inputText("address")(validName("address", "invalid.name", ?("order.address").text)) <*>
-      inputText("email")(validEmail) <*>
-      inputText("phone")(validPhone) <*>
-      inputCheck("terms", "true")(validTerms) <*>
+      personFormlet <*>
+      inputText("region")(validName("region", ?("order.region").text)) <*>
+      inputText("city")(validName("city", ?("order.city").text)) <*>
+      inputText("address")(validName("address",  ?("order.address").text)) <*>
+      inputText("email")(validEmail("email", "email")) <*>
+      inputText("phone")(validPhone("phone", "phone")) <*>
+      inputCheck("terms", "true")(validTerms("terms")) <*>
       inputItems("items")(validItems)
   }
+
+  def companyForm(implicit lang: Language) = {
+    val order = ((Order.apply _).curried)(uuid)
+    val ? = Loc.loc0(lang) _
+
+    val company = (Company.apply _).curried
+    val companyFormlet = Formlet(company) <*>
+      inputText("cname")(validName("cname",  ?("order.company.name").text)) <*>
+      inputText("cif")(validName("cif", ?("order.company.cif").text)) <*>
+      inputText("cregcom")(validName("cregcom", ?("order.company.reg.com").text)) <*>
+      inputText("cbank")(validName("cbank", ?("order.company.bank").text)) <*>
+      inputText("cbankaccount")(validName("cbankaccount",  ?("order.company.bank.account").text))
+
+    Formlet(order) <*>
+      companyFormlet <*>
+      inputText("cregion")(validName("cregion", ?("order.region").text)) <*>
+      inputText("ccity")(validName("ccity", ?("order.city").text)) <*>
+      inputText("caddress")(validName("caddress", ?("order.address").text)) <*>
+      inputText("cemail")(validEmail("cemail", "cemail")) <*>
+      inputText("cphone")(validPhone("cphone", "cphone")) <*>
+      inputCheck("cterms", "true")(validTerms("cterms")) <*>
+      inputItems("items")(validItems)
+  }
+
 }
 

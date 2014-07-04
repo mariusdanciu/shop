@@ -60,7 +60,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page("products", Path("web/products.html"), ProductsPage) |
       page("/terms", Path("web/terms.html"), TermsPage) |
       getCart() |
-      order.get |
+      orderService.order |
       service(notFoundService)
   } yield c
 

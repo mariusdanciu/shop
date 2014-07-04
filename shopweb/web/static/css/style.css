@@ -52,12 +52,12 @@ ul {
 	list-style-type: none;
 	padding: 0px;
 	margin: 0px;
+	float: left;
 }
 
 li a {
 	font-size: 18px;
 	text-decoration: none;
-	width: 100%
 }
 
 h3 span {
@@ -419,7 +419,7 @@ a:active {
 	float: left;
 	padding: 20px 40px 20px 20px;
 	position: relative;
-	width: 400px;
+	width: 440px;
 }
 
 #order input {
@@ -511,7 +511,6 @@ a:active {
 	margin-top: 80px;
 }
 
-
 #terms_wrapper label {
 	padding-top: 5px;
 	padding-bottom: 5px;
@@ -525,32 +524,68 @@ a:active {
 	margin-top: 66px;
 }
 
-#notice_e, #notice_connect_e {
-    background-color: #B43104;
-    border: 1px solid #8A2908;
-    color: #ffffff;
-    font-size: 20px;
-    height: 28px;
-    padding-top: 5px;
-    position: fixed;
-    text-align: center;
-    top: 60px;
-    width: 100%;
-    display: none;
-    z-index: 9999;
+#notice_e,#notice_connect_e {
+	background-color: #B43104;
+	border: 1px solid #8A2908;
+	color: #ffffff;
+	font-size: 20px;
+	height: 28px;
+	padding-top: 5px;
+	position: fixed;
+	text-align: center;
+	top: 60px;
+	width: 100%;
+	display: none;
+	z-index: 9999;
 }
 
 #notice_i {
-    background-color: #4B8A08;
-    border: 1px solid #38610B;
-    color: #ffffff;
-    font-size: 20px;
-    height: 28px;
-    padding-top: 5px;
-    position: fixed;
-    text-align: center;
-    top: 60px;
-    width: 100%;
-    display: none;
-    z-index: 9999;
+	background-color: #4B8A08;
+	border: 1px solid #38610B;
+	color: #ffffff;
+	font-size: 20px;
+	height: 28px;
+	padding-top: 5px;
+	position: fixed;
+	text-align: center;
+	top: 60px;
+	width: 100%;
+	display: none;
+	z-index: 9999;
+}
+
+.menu {
+	padding: 0;
+	clear: both;
+}
+
+.menu li {
+	display: inline;
+	float: left;
+}
+
+.menu li a {
+	float: left;
+	background: #ffffff;
+	padding: 10px;
+	text-decoration: none;
+	color: #000;
+	border-radius: 10px 10px 0px 0px;
+}
+
+.menu li.active a {
+	background: #f3f3f3;
+	float: left;
+	border-radius: 10px 10px 0px 0px;
+}
+
+.content {
+	float: left;
+	clear: both;
+	background: #f3f3f3;
+	border-radius: 0px 10px 10px 10px;
+}
+
+#order #pf, #pj {
+	padding: 20px;
 }

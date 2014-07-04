@@ -10,7 +10,7 @@ import net.shift.engine.page.Html5
 import net.shift.loc.Language
 import net.shift.template._
 import Snippet.snip
-import net.shop.model.Order
+import net.shop.model._
 import net.shop.web.ShopApplication
 import scala.util.Success
 import net.shop.utils.ShopUtils
@@ -30,24 +30,49 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   def orderTemplate(state: OrderState): Try[NodeSeq] =
     Html5.runPageFromFile(state, state.req.language, Path(s"web/templates/order_${state.req.language.language}.html"), this).map(in => in._2)
 
+  def orderCompanyTemplate(state: OrderState): Try[NodeSeq] =
+    Html5.runPageFromFile(state, state.req.language, Path(s"web/templates/order_company_${state.req.language.language}.html"), this).map(in => in._2)
+
   val logo = reqSnip("logo") {
     s => Success((s.state, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid-small.png" }/>))
   }
 
   val info = reqSnip("info") {
     s =>
-      bind(s.node) {
-        case n :/ HasId("oid", a) / _ => <span>{ s.state.o.id }</span> % a
-        case n :/ HasId("lname", a) / _ => <span>{ s.state.o.lastName }</span> % a
-        case n :/ HasId("fname", a) / _ => <span>{ s.state.o.firstName }</span> % a
-        case n :/ HasId("region", a) / _ => <span>{ s.state.o.region }</span> % a
-        case n :/ HasId("city", a) / _ => <span>{ s.state.o.city }</span> % a
-        case n :/ HasId("address", a) / _ => <span>{ s.state.o.address }</span> % a
-        case n :/ HasId("email", a) / _ => <span>{ s.state.o.email }</span> % a
-        case n :/ HasId("phone", a) / _ => <span>{ s.state.o.phone }</span> % a
-      } match {
-        case Success(n) => Success((s.state, n))
-        case Failure(f) => Success((s.state, errorTag(f toString)))
+      s.state.o match {
+        case Order(id, Person(fn, ln), region, city, address, email, phone, _, _) =>
+          bind(s.node) {
+            case n :/ HasId("oid", a) / _ => <span>{ id }</span> % a
+            case n :/ HasId("lname", a) / _ => <span>{ ln }</span> % a
+            case n :/ HasId("fname", a) / _ => <span>{ fn }</span> % a
+            case n :/ HasId("region", a) / _ => <span>{ region }</span> % a
+            case n :/ HasId("city", a) / _ => <span>{ city }</span> % a
+            case n :/ HasId("address", a) / _ => <span>{ address }</span> % a
+            case n :/ HasId("email", a) / _ => <span>{ email }</span> % a
+            case n :/ HasId("phone", a) / _ => <span>{ phone }</span> % a
+          } match {
+            case Success(n) => Success((s.state, n))
+            case Failure(f) => Success((s.state, errorTag(f toString)))
+          }
+
+        case Order(id, Company(cn, cif, regCom, bank, account), region, city, address, email, phone, _, _) =>
+          bind(s.node) {
+            case n :/ HasId("oid", a) / _ => <span>{ id }</span> % a
+            case n :/ HasId("cname", a) / _ => <span>{ cn }</span> % a
+            case n :/ HasId("cif", a) / _ => <span>{ cif }</span> % a
+            case n :/ HasId("cregcom", a) / _ => <span>{ regCom }</span> % a
+            case n :/ HasId("cbank", a) / _ => <span>{ bank }</span> % a
+            case n :/ HasId("cbankaccount", a) / _ => <span>{ account}</span> % a
+            case n :/ HasId("cregion", a) / _ => <span>{ region }</span> % a
+            case n :/ HasId("ccity", a) / _ => <span>{ city }</span> % a
+            case n :/ HasId("caddress", a) / _ => <span>{ address }</span> % a
+            case n :/ HasId("cemail", a) / _ => <span>{ email }</span> % a
+            case n :/ HasId("cphone", a) / _ => <span>{ phone }</span> % a
+          } match {
+            case Success(n) => Success((s.state, n))
+            case Failure(f) => Success((s.state, errorTag(f toString)))
+          }
+
       }
 
   }

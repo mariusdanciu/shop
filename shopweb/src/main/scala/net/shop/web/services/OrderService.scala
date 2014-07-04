@@ -21,6 +21,8 @@ import net.shift.engine.http.JsResponse
 import net.shift.loc.Loc
 import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
+import net.shop.model.Company
+import net.shop.model.Person
 
 object OrderService extends HttpPredicates {
 
@@ -46,7 +48,7 @@ object OrderService extends HttpPredicates {
     }
   }
 
-  def get = {
+  def order = {
     for {
       r <- req
       Path("order" :: Nil) <- path
@@ -56,39 +58,49 @@ object OrderService extends HttpPredicates {
       import JsDsl._
 
       normalizeParams(r.language, params) match {
-        case Success(norm) => (OrderForm.form(r.language) validate norm) match {
-          case net.shift.html.Success(o) =>
-            future {
+        case Success(norm) =>
+
+          val v = if (norm.contains("cif")) OrderForm.companyForm(r.language) else OrderForm.form(r.language)
+
+          (v validate norm) match {
+            case net.shift.html.Success(o) =>
+              future {
+                resp(JsResponse(
+                  func() {
+                    JsStatement(
+                      apply("cart.hideCart"),
+                      apply("window.cart.clear"),
+                      $(s"#notice_i") ~
+                        apply("text", Loc.loc0(r.language)("order.done").text) ~
+                        apply("show") ~
+                        apply("delay", "5000") ~
+                        apply("fadeOut", "slow"))
+                  }.wrap.apply.toJsString))
+              }
+              future {
+                (o.submiter match {
+                  case c: Company =>
+                    OrderPage.orderCompanyTemplate(OrderState(o, r, 0.0))
+                  case c: Person =>
+                    OrderPage.orderTemplate(OrderState(o, r, 0.0))
+                }) map { n => OrderSubmitter.placeOrder(OrderDocument(r.language, o, n toString)) }
+
+              }
+            case net.shift.html.Failure(msgs) => {
+              println(msgs)
               resp(JsResponse(
                 func() {
                   JsStatement(
-                    apply("cart.hideCart"),
-                    apply("window.cart.clear"),
-                    $(s"#notice_i") ~
-                      apply("text", Loc.loc0(r.language)("order.done").text) ~
-                      apply("show") ~
-                      apply("delay", "5000") ~
-                      apply("fadeOut", "slow"))
+                    (for {
+                      m <- msgs
+                    } yield {
+                      $(s"label[for='${m._1}']") ~
+                        apply("css", "color", "#ff0000") ~
+                        apply("attr", "title", m._2)
+                    }): _*)
                 }.wrap.apply.toJsString))
             }
-            future {
-              val v = OrderPage.orderTemplate(OrderState(o, r, 0.0))
-              v map { n => OrderSubmitter.placeOrder(OrderDocument(r.language, o, n toString)) }
-            }
-          case net.shift.html.Failure(msgs) => {
-            resp(JsResponse(
-              func() {
-                JsStatement(
-                  (for {
-                    m <- msgs
-                  } yield {
-                    $(s"label[for='${m._1}']") ~
-                      apply("css", "color", "#ff0000") ~
-                      apply("attr", "title", m._2)
-                  }): _*)
-              }.wrap.apply.toJsString))
           }
-        }
 
         case Failure(t) =>
           resp(JsResponse(
