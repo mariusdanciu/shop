@@ -111,20 +111,20 @@ a:active {
 	clear: both;
 	height: 99px;
 	border-top: 1px solid #dddddd;
-	background-color: #eeeeee;
+	background-color: #333333;
 	position: relative;
 }
 
 .footer .center {
 	font-size: 16px;
-	color: #777777;
+	color: #ffffff;
 	top: 10px;
 	position: relative;
 }
 
 .footer * a {
 	font-size: 16px;
-	color: #777777;
+	color: #ffffff;
 	text-decoration: none;
 }
 
