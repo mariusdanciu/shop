@@ -78,7 +78,7 @@ object OrderService extends HttpPredicates {
                   }.wrap.apply.toJsString))
               }
               future {
-                (o.submiter match {
+                (o.submitter match {
                   case c: Company =>
                     OrderPage.orderCompanyTemplate(OrderState(o, r, 0.0))
                   case c: Person =>

@@ -3,7 +3,6 @@ package orders
 
 import java.text.SimpleDateFormat
 import java.util.Date
-
 import akka.actor.Actor
 import akka.actor.ActorSystem
 import akka.actor.Props
@@ -14,6 +13,8 @@ import net.shop.model.Order
 import scalax.file.Path
 import net.shift.common.Config
 import net.shift.loc.Loc
+import net.shop.model._
+import Formatters._
 
 object OrderListener extends OrderObserver {
   implicit def stringToSeq(single: String): Seq[String] = Seq(single)
@@ -44,7 +45,6 @@ case class Mail(
   message: String) extends OrderMsg
 
 class OrderActor extends Actor with DefaultLog {
-  val dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
   val statsLog = new Log {
     def loggerName = "stats"
@@ -56,13 +56,7 @@ class OrderActor extends Actor with DefaultLog {
   }
 
   def writeStat(o: Order) {
-    val moment = dateFormat.format(new Date())
-    for {
-      i <- o.items
-    } {
-      statsLog.info(List(moment, i._1 toString, i._2 toString) mkString ("", ",", ""))
-    }
-
+    statsLog.info(Formatter.format(o.toOrderLog) + ",")
   }
 
   def sendMail(mail: Mail) {
@@ -82,3 +76,5 @@ class OrderActor extends Actor with DefaultLog {
       send()
   }
 }
+
+
