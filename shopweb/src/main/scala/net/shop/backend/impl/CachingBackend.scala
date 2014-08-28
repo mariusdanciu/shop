@@ -9,7 +9,7 @@ import scala.util.Failure
 import net.shop.backend.NoSort
 import net.shop.backend.SortSpec
 
-class CachingBackend(serv: ProductsService) extends ProductsService {
+case class CachingBackend(serv: ProductsService) extends ProductsService {
 
   lazy val products = serv.allProducts
   lazy val categories = serv.allCategories

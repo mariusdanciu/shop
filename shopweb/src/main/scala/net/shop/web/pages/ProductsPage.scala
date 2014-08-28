@@ -35,7 +35,7 @@ object ProductsPage extends Cart[Request] with ShopUtils {
     s =>
       val v = (s.state.param("cat"), s.state.param("search")) match {
         case (Some(cat :: _), None) =>
-          ShopApplication.productsService(s.language).categoryById(cat) match {
+          ShopApplication.productsService.categoryById(cat) match {
             case Success(c) => Text(c.title.getOrElse(s.language.language, "???"))
             case _ => NodeSeq.Empty
           }
@@ -73,15 +73,15 @@ object ProductsQuery {
   def fetch(r: Request): Try[Traversable[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
     (r.param("cat"), r.param("search")) match {
-      case (Some(cat :: _), None) => ShopApplication.productsService(r.language).categoryProducts(cat, spec)
-      case (None, Some(search :: _)) => ShopApplication.productsService(r.language).searchProducts(search, spec)
+      case (Some(cat :: _), None) => ShopApplication.productsService.categoryProducts(cat, spec)
+      case (None, Some(search :: _)) => ShopApplication.productsService.searchProducts(search, spec)
       case _ => Success(Nil)
     }
   }
 
   def toSortSpec(r: Request): SortSpec = {
     r.param("sort") match {
-      case Some(v :: _) => SortSpec.fromString(v)
+      case Some(v :: _) => SortSpec.fromString(v, r.language)
       case _ => NoSort
     }
   }

@@ -87,7 +87,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
 
         listTraverse.sequence(for {
           item <- readCart(c.value).items
-          prod <- ShopApplication.productsService(lang).productById(item.id).toOption
+          prod <- ShopApplication.productsService.productById(item.id).toOption
         } yield {
           Html5.runPageFromFile(CartState(item.count, prod), r.language, Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
         }) match {

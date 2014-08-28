@@ -41,7 +41,7 @@ object StartShop extends App with DefaultLog {
 
 object ShopApplication extends ShiftApplication with ShopServices {
 
-  def productsService(lang: Language): ProductsService = new CachingBackend(FSProductsService(lang))
+  lazy val productsService: ProductsService = CachingBackend(FSProductsService)
 
   def ajaxServices = for {
     r <- ajax

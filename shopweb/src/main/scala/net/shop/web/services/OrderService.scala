@@ -36,7 +36,7 @@ object OrderService extends HttpPredicates {
       case (Success(acc), (k, v)) if (k startsWith "item") =>
         val dk = k drop 5
 
-        ShopApplication.productsService(lang).productById(dk) map { prod =>
+        ShopApplication.productsService.productById(dk) map { prod =>
           (acc get "items") match {
             case Some(OrderItems(l)) => acc + ("items" -> OrderItems(l ++ List((prod, v.toInt))))
             case _ => acc + ("items" -> OrderItems(List((prod, v.toInt))))
@@ -80,9 +80,9 @@ object OrderService extends HttpPredicates {
               future {
                 (o.submitter match {
                   case c: Company =>
-                    OrderPage.orderCompanyTemplate(OrderState(o, r, 0.0))
+                    OrderPage.orderCompanyTemplate(OrderState(o.toOrderLog, r.language))
                   case c: Person =>
-                    OrderPage.orderTemplate(OrderState(o, r, 0.0))
+                    OrderPage.orderTemplate(OrderState(o.toOrderLog, r.language))
                 }) map { n => OrderSubmitter.placeOrder(OrderDocument(r.language, o, n toString)) }
 
               }

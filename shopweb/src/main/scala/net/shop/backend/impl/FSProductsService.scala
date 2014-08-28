@@ -18,7 +18,7 @@ import net.shift.common.TraversingSpec
 import net.shift.common.ApplicativeFunctor
 import net.shift.loc.Language
 
-case class FSProductsService(lang: Language) extends ProductsService with TraversingSpec {
+object FSProductsService extends ProductsService with TraversingSpec {
   implicit val formats = DefaultFormats
 
   override def productById(id: String): Try[ProductDetail] = Try {
@@ -68,15 +68,15 @@ case class FSProductsService(lang: Language) extends ProductsService with Traver
     }), spec)
   }
 
-  def sort(in: => Try[Traversable[ProductDetail]], spec: SortSpec): Try[Traversable[ProductDetail]] = {
+  private def sort(in: => Try[Traversable[ProductDetail]], spec: SortSpec): Try[Traversable[ProductDetail]] = {
     spec match {
       case NoSort => in
-      case SortByName(dir) => in.map(seq => seq.toList.sortWith((a, b) =>
+      case SortByName(dir, lang) => in.map(seq => seq.toList.sortWith((a, b) =>
         (for {
           l <- a.title.get(lang.language)
           r <- b.title.get(lang.language)
         } yield if (dir) l < r else l > r).getOrElse(false)))
-      case SortByPrice(dir) => in.map(seq => seq.toList.sortWith((a, b) => if (dir) a.price < b.price else a.price > b.price))
+      case SortByPrice(dir, lang) => in.map(seq => seq.toList.sortWith((a, b) => if (dir) a.price < b.price else a.price > b.price))
     }
   }
 

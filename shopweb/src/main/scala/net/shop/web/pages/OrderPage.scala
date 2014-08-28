@@ -28,10 +28,10 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
 
   def orderTemplate(state: OrderState): Try[NodeSeq] =
-    Html5.runPageFromFile(state, state.req.language, Path(s"web/templates/order_${state.req.language.language}.html"), this).map(in => in._2)
+    Html5.runPageFromFile(state, state.lang, Path(s"web/templates/order_${state.lang.language}.html"), this).map(in => in._2)
 
   def orderCompanyTemplate(state: OrderState): Try[NodeSeq] =
-    Html5.runPageFromFile(state, state.req.language, Path(s"web/templates/order_company_${state.req.language.language}.html"), this).map(in => in._2)
+    Html5.runPageFromFile(state, state.lang, Path(s"web/templates/order_company_${state.lang.language}.html"), this).map(in => in._2)
 
   val logo = reqSnip("logo") {
     s => Success((s.state, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid-small.png" }/>))
@@ -40,7 +40,7 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   val info = reqSnip("info") {
     s =>
       s.state.o match {
-        case Order(id, Person(fn, ln), region, city, address, email, phone, _, _) =>
+        case OrderLog(id, time, Person(fn, ln), region, city, address, email, phone, _) =>
           bind(s.node) {
             case n :/ HasId("oid", a) / _ => <span>{ id }</span> % a
             case n :/ HasId("lname", a) / _ => <span>{ ln }</span> % a
@@ -55,14 +55,14 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
             case Failure(f) => Success((s.state, errorTag(f toString)))
           }
 
-        case Order(id, Company(cn, cif, regCom, bank, account), region, city, address, email, phone, _, _) =>
+        case OrderLog(id, time, Company(cn, cif, regCom, bank, account), region, city, address, email, phone, _) =>
           bind(s.node) {
             case n :/ HasId("oid", a) / _ => <span>{ id }</span> % a
             case n :/ HasId("cname", a) / _ => <span>{ cn }</span> % a
             case n :/ HasId("cif", a) / _ => <span>{ cif }</span> % a
             case n :/ HasId("cregcom", a) / _ => <span>{ regCom }</span> % a
             case n :/ HasId("cbank", a) / _ => <span>{ bank }</span> % a
-            case n :/ HasId("cbankaccount", a) / _ => <span>{ account}</span> % a
+            case n :/ HasId("cbankaccount", a) / _ => <span>{ account }</span> % a
             case n :/ HasId("cregion", a) / _ => <span>{ region }</span> % a
             case n :/ HasId("ccity", a) / _ => <span>{ city }</span> % a
             case n :/ HasId("caddress", a) / _ => <span>{ address }</span> % a
@@ -80,27 +80,32 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   val content = reqSnip("content") {
     s =>
       {
-        val items: (NodeSeq, Double) = ((NodeSeq.Empty, 0.0) /: s.state.o.items) {
-          case (acc, (prod, count)) =>
-            (bind(s.node) {
-              case "img" :/ a / _ => <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "thumb", prod.images.head)}") e
-              case "td" :/ HasClass("c1", a) / _ => <td>{ prod.title_?(s.language) }</td> % a
-              case "td" :/ HasClass("c2", a) / _ => <td>{ count }</td> % a
-              case "td" :/ HasClass("c3", a) / _ => <td>{ prod.price }</td> % a
-            }) match {
-              case Success(n) => (acc._1 ++ n, acc._2 + prod.price * count)
-              case Failure(f) => (acc._1 ++ errorTag(f toString), 0.0)
+        val items = (NodeSeq.Empty /: s.state.o.items) {
+          case (acc, prod) =>
+            ShopApplication.productsService.productById(prod.id) match {
+              case Success(p) =>
+                (bind(s.node) {
+                  case "img" :/ a / _ =>
+                    <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "thumb", p.images.head)}") e
+                  case "td" :/ HasClass("c1", a) / _ => <td>{ p.title_?(s.language) }</td> % a
+                  case "td" :/ HasClass("c2", a) / _ => <td>{ prod.quantity }</td> % a
+                  case "td" :/ HasClass("c3", a) / _ => <td>{ p.price }</td> % a
+                }) match {
+                  case Success(n) => acc ++ n
+                  case Failure(f) => acc ++ errorTag(f toString)
+                }
+              case Failure(f) => errorTag(f getMessage)
             }
         }
 
-        Success((s.state.copy(total = items._2), items._1))
+        Success(s.state, items)
       }
   }
 
   val total = reqSnip("total") {
-    s => Success((s.state, Text(s.state.total.formatted("%.2f"))))
+    s => Success((s.state, Text(s.state.o.total.formatted("%.2f"))))
   }
 }
 
-case class OrderState(o: Order, req: Request, total: Double)
+case class OrderState(o: OrderLog, lang: Language)
 

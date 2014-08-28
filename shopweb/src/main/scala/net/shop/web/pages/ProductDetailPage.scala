@@ -27,7 +27,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
   val title = reqSnip("title") {
     s =>
       val v = s.state.req.param("pid") match {
-        case Some(id :: _) => ShopApplication.productsService(s.language).productById(id) match {
+        case Some(id :: _) => ShopApplication.productsService.productById(id) match {
           case Success(prod) => (ProductPageState(s.state.req, Success(prod)), <h1>{ prod.title_?(s.language) }</h1>)
           case Failure(t) => (ProductPageState.build(s.state.req), NodeSeq.Empty)
         }
@@ -41,7 +41,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
       (s.state.product match {
         case Success(p) =>
           Try(p.categories.flatMap(e => {
-            ShopApplication.productsService(s.language).categoryById(e) match {
+            ShopApplication.productsService.categoryById(e) match {
               case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.language) }</a> ++ <span>, </span>)
               case _ => NodeSeq.Empty
             }

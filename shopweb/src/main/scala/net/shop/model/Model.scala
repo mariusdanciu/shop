@@ -51,7 +51,10 @@ case class OrderLog(id: String,
   address: String,
   email: String,
   phone: String,
-  items: List[ProductLog])
+  items: List[ProductLog]) {
+
+  def total = (0.0 /: items)((a, i) => a + i.price * i.quantity)
+}
 
 case class ProductLog(id: String, price: Double, quantity: Int)
 
