@@ -96,7 +96,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
       import JavaConverters.asInputConverter
       (for {
         p <- s.state.product
-        input <- s.state.req.resource(Path(s"data/products/${p.id}/desc.html"))
+        input <- s.state.req.resource(Path(s"data/products/${p.id}/desc_${s.language}.html"))
         n <- load(input)
       } yield {
         (ProductPageState(s.state.req, Success(p)), n)
