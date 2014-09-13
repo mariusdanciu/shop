@@ -1,32 +1,27 @@
 package net.shop
 package web
 
-import net.shift.common.State._
-import net.shift.engine.ShiftApplication
-import net.shift.engine.ShiftApplication._
-import net.shift.engine.utils.ShiftUtils
-import net.shift.netty.NettyServer
-import net.shift.template.DynamicContent
-import net.shop.backend.ProductsService
-import net.shop.web.services.ShopServices
-import net.shop.backend.impl.FSProductsService
-import net.shift.engine.http.Request
-import net.shift.loc.Language
-import net.shift.common.Path
-import net.shop.web.pages.CategoryPage
-import net.shop.web.pages.ProductPageState
-import net.shop.web.pages.ProductDetailPage
-import net.shop.web.pages.ProductsPage
-import net.shift.common.Log
-import net.shift.common.Config
-import org.apache.log4j.PropertyConfigurator
-import net.shop.backend.impl.CachingBackend
 import scala.concurrent.ExecutionContext.Implicits.global
-import net.shop.web.pages.ProductsQuery
+
+import org.apache.log4j.PropertyConfigurator
+
+import net.shift.common.Config
 import net.shift.common.DefaultLog
-import net.shop.web.pages.Cart
+import net.shift.common.Path
+import net.shift.engine.ShiftApplication
+import net.shift.engine.ShiftApplication.rule
+import net.shift.engine.ShiftApplication.service
+import net.shift.loc.Language
+import net.shift.netty.NettyServer
+import net.shop.persistence.Persistence
+import net.shop.persistence.file.CachingBackend
+import net.shop.persistence.file.FSProductsService
 import net.shop.web.pages.CategoryPage
+import net.shop.web.pages.ProductDetailPage
+import net.shop.web.pages.ProductPageState
+import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.TermsPage
+import net.shop.web.services.ShopServices
 
 object StartShop extends App with DefaultLog {
 
@@ -41,16 +36,22 @@ object StartShop extends App with DefaultLog {
 
 object ShopApplication extends ShiftApplication with ShopServices {
 
-  lazy val productsService: ProductsService = CachingBackend(FSProductsService)
+  lazy val persistence: Persistence = CachingBackend(FSProductsService)
 
-  def ajaxServices = for {
+  def ajaxProductsList = for {
     r <- ajax
     p <- page("products", Path("web/templates/productslist.html"), ProductsPage)
   } yield p
 
+  def ajaxProductDetail = for {
+    r <- ajax
+    p <- page(ProductPageState.build _, "productquickview", Path("web/templates/productquickview.html"), ProductDetailPage)
+  } yield p
+
   def servingRule = for {
     _ <- withLanguage(Language("ro"))
-    c <- ajaxServices |
+    c <- ajaxProductsList |
+      ajaxProductDetail |
       staticFiles(Path("web/static")) |
       productsImages |
       productsVariantImages |
@@ -58,7 +59,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page("/", Path("web/categories.html"), CategoryPage) |
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
       page("products", Path("web/products.html"), ProductsPage) |
-      page("/terms", Path("web/terms.html"), TermsPage) |
+      page("terms", Path("web/terms.html"), TermsPage) |
       getCart() |
       orderService.order |
       service(notFoundService)

@@ -1,19 +1,18 @@
 package net.shop
-package backend
+package persistence
 
 import scala.util.Try
 import net.shop.model.ProductDetail
 import net.shop.model.Category
 import net.shift.loc.Language
 
-trait ProductsService {
+trait Persistence {
   def productById(id: String): Try[ProductDetail]
-  def allProducts: Try[Traversable[ProductDetail]]
-  def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Traversable[ProductDetail]]
-  def searchProducts(text: String, spec: SortSpec = NoSort): Try[Traversable[ProductDetail]]
-
+  def allProducts: Try[Iterator[ProductDetail]]
+  def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]]
+  def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]]
   def categoryById(id: String): Try[Category]
-  def allCategories: Try[Traversable[Category]]
+  def allCategories: Try[Iterator[Category]]
 }
 
 object SortSpec {

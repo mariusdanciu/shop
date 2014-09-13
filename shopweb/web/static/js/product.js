@@ -8,11 +8,6 @@
 			event.stopPropagation();
 		});
 
-		$(".small_img").click(function(event) {
-			zoomFunc($(event.target));
-			event.stopPropagation();
-		});
-
 		$("#sel_img").elevateZoom({
 			gallery : 'detail_box',
 			cursor : 'pointer',
@@ -21,12 +16,6 @@
 			loadingIcon : '/images/ajax-loader.gif',
 			scrollZoom : true,
 			borderSize: 1
-		});
-
-		$("#sel_img").bind("click", function(e) {
-			var ez = $('#sel_img').data('elevateZoom');
-			$.fancybox(ez.getGalleryList());
-			return false;
 		});
 
 	});

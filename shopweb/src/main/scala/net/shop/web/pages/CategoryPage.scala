@@ -29,7 +29,7 @@ object CategoryPage extends Cart[Request] with ShopUtils { self =>
   val item = reqSnip("item") {
     s =>
       {
-        val prods = ShopApplication.productsService.allCategories match {
+        val prods = ShopApplication.persistence.allCategories match {
           case Success(list) =>
             list flatMap { cat =>
               (bind(s.node) {

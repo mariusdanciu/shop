@@ -19,10 +19,10 @@ import net.shift.template.Snippet._
 import net.shop.model.ProductDetail
 import net.shop.web.ShopApplication
 import net.shift.common.State
-import net.shop.backend.SortSpec
-import net.shop.backend.NoSort
-import net.shop.backend.SortByName
-import net.shop.backend.SortByPrice
+import net.shop.persistence.SortSpec
+import net.shop.persistence.NoSort
+import net.shop.persistence.SortByName
+import net.shop.persistence.SortByPrice
 import net.shop.utils.ShopUtils
 
 object ProductsPage extends Cart[Request] with ShopUtils {
@@ -35,7 +35,7 @@ object ProductsPage extends Cart[Request] with ShopUtils {
     s =>
       val v = (s.state.param("cat"), s.state.param("search")) match {
         case (Some(cat :: _), None) =>
-          ShopApplication.productsService.categoryById(cat) match {
+          ShopApplication.persistence.categoryById(cat) match {
             case Success(c) => Text(c.title.getOrElse(s.language.language, "???"))
             case _ => NodeSeq.Empty
           }
@@ -48,7 +48,7 @@ object ProductsPage extends Cart[Request] with ShopUtils {
   val item = reqSnip("item") {
     s =>
       {
-        val prods = ProductsQuery.fetch (s.state) match {
+        val prods = ProductsQuery.fetch(s.state) match {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
@@ -70,12 +70,12 @@ object ProductsPage extends Cart[Request] with ShopUtils {
 }
 
 object ProductsQuery {
-  def fetch(r: Request): Try[Traversable[ProductDetail]] = {
+  def fetch(r: Request): Try[Iterator[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
     (r.param("cat"), r.param("search")) match {
-      case (Some(cat :: _), None) => ShopApplication.productsService.categoryProducts(cat, spec)
-      case (None, Some(search :: _)) => ShopApplication.productsService.searchProducts(search, spec)
-      case _ => Success(Nil)
+      case (Some(cat :: _), None) => ShopApplication.persistence.categoryProducts(cat, spec)
+      case (None, Some(search :: _)) => ShopApplication.persistence.searchProducts(search, spec)
+      case _ => Success(Iterator.empty)
     }
   }
 

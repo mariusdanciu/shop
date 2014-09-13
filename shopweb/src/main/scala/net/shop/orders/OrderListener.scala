@@ -6,7 +6,7 @@ import java.util.Date
 import akka.actor.Actor
 import akka.actor.ActorSystem
 import akka.actor.Props
-import backend._
+import persistence._
 import net.shift.common.DefaultLog
 import net.shift.common.Log
 import net.shop.model.Order

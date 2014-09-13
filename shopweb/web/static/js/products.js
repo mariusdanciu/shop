@@ -1,5 +1,8 @@
 (function() {
 	$(function() {
+		
+		$.blockUI.defaults.baseZ = 90;
+		
 		refreshList();
 
 		$("#sortSelect").chosen({
@@ -36,6 +39,14 @@
 		return url;
 	};
 
+	var closeDialog = function() {
+		$.unblockUI();
+    	setTimeout(function(){
+    		$("#product_dialog").empty();
+    		$(".zoomContainer").remove();
+    	}, 400); 
+	}
+	
 	var refreshList = function() {
 		$(".item_box").each(function(index) {
 			var me = $(this);
@@ -79,12 +90,61 @@
 			});
 
 			me.click(function(event) {
+				
 				var pid = me.attr("id");
-				window.location.href = "/product?pid=" + pid;
+				var loc = "/productquickview?pid=" + pid;
+				$("#product_dialog").load(loc,
+						function(response, status, xhr) {
+							if (status == "error") {
+								$("#notice_connect_e").show().delay(5000)
+										.fadeOut("slow");
+							} else {
+
+								$("#sel_img").elevateZoom({
+									gallery : 'detail_box',
+									cursor : 'pointer',
+									galleryActiveClass : 'active',
+									imageCrossfade : true,
+									loadingIcon : '/images/ajax-loader.gif',
+									scrollZoom : true,
+									borderSize: 1
+								});
+								
+								$('#add_to_cart').click(function(event) {
+									closeDialog();
+									cart.addItem(pid);
+									cart.showCart();
+									event.stopPropagation();
+								});
+								
+						        $.blockUI({ 
+						        	message: $("#product_dialog"),
+						            css: { 
+						                top:  ($(window).height() - 650) /2 + 'px', 
+						                left: ($(window).width() - 1000) /2 + 'px', 
+						                width: '1000px',
+						                border: 'none',
+						                cursor: null
+						            },
+						            overlayCSS:  {
+										cursor: null
+									}
+						        }); 
+						        
+						        
+						        $( ".blockOverlay, #close_dialog" ).bind( "click", function(event) {
+						        	closeDialog();
+						        });
+							}
+						});
+				
+				
+				
+				// window.location.href = "/product?pid=" + pid;
 				event.stopPropagation();
 			});
 
 		});
 	}
-
+	
 })();

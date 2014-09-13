@@ -1,4 +1,4 @@
-package net.shop.backend
+package net.shop.orders
 
 import net.shop.model.Order
 import net.shift.loc.Language

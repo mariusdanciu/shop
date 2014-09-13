@@ -1,6 +1,6 @@
 package net.shop
-package backend
-package impl
+package persistence
+package file
 
 import java.io.FileInputStream
 import scala.util.Failure
@@ -18,7 +18,7 @@ import net.shift.common.TraversingSpec
 import net.shift.common.ApplicativeFunctor
 import net.shift.loc.Language
 
-object FSProductsService extends ProductsService with TraversingSpec {
+object FSProductsService extends Persistence with TraversingSpec {
   implicit val formats = DefaultFormats
 
   override def productById(id: String): Try[ProductDetail] = Try {
@@ -27,16 +27,16 @@ object FSProductsService extends ProductsService with TraversingSpec {
     parse(s).extract[ProductDetail]
   }
 
-  override def allProducts: Try[Traversable[ProductDetail]] = {
+  override def allProducts: Try[Iterator[ProductDetail]] = {
     val l = (for {
       p <- Path.fromString(s"data/products").children().toList if (p.isDirectory)
     } yield {
       productById(p.simpleName)
     })
-    listTraverse.sequence(l)
+    listTraverse.sequence(l) map { _.iterator }
   }
 
-  override def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Traversable[ProductDetail]] =
+  override def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] =
     sort(allProducts match {
       case Success(all) =>
         Success(for {
@@ -55,28 +55,28 @@ object FSProductsService extends ProductsService with TraversingSpec {
     }
   }
 
-  override def allCategories: Try[Traversable[Category]] = Try {
+  override def allCategories: Try[Iterator[Category]] = Try {
     Resource.fromInputStream(new FileInputStream(s"data/categories/categories.json")).string
   } map { s =>
-    parse(s).extract[List[Category]]
+    parse(s).extract[List[Category]].iterator
   }
 
-  override def searchProducts(text: String, spec: SortSpec = NoSort): Try[Traversable[ProductDetail]] = {
+  override def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = {
     sort((allProducts match {
       case Success(all) => Success(all filter predicate(text))
       case f => f
     }), spec)
   }
 
-  private def sort(in: => Try[Traversable[ProductDetail]], spec: SortSpec): Try[Traversable[ProductDetail]] = {
+  private def sort(in: => Try[Iterator[ProductDetail]], spec: SortSpec): Try[Iterator[ProductDetail]] = {
     spec match {
       case NoSort => in
       case SortByName(dir, lang) => in.map(seq => seq.toList.sortWith((a, b) =>
         (for {
           l <- a.title.get(lang.language)
           r <- b.title.get(lang.language)
-        } yield if (dir) l < r else l > r).getOrElse(false)))
-      case SortByPrice(dir, lang) => in.map(seq => seq.toList.sortWith((a, b) => if (dir) a.price < b.price else a.price > b.price))
+        } yield if (dir) l < r else l > r).getOrElse(false)).iterator)
+      case SortByPrice(dir, lang) => in.map(seq => seq.toList.sortWith((a, b) => if (dir) a.price < b.price else a.price > b.price).iterator)
     }
   }
 

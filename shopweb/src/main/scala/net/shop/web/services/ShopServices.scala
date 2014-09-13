@@ -54,7 +54,8 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   def page[T](f: Request => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
     r <- path(uri)
   } yield {
-    Html5.pageFromFile(f(r), r.language, filePath, snipets)(bySnippetAttr[SnipState[T]])
+    val v = Html5.pageFromFile(f(r), r.language, filePath, snipets)(bySnippetAttr[SnipState[T]])
+    v
   }
 
   def productsImages = for {
@@ -87,7 +88,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
 
         listTraverse.sequence(for {
           item <- readCart(c.value).items
-          prod <- ShopApplication.productsService.productById(item.id).toOption
+          prod <- ShopApplication.persistence.productById(item.id).toOption
         } yield {
           Html5.runPageFromFile(CartState(item.count, prod), r.language, Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
         }) match {

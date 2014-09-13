@@ -82,7 +82,7 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
       {
         val items = (NodeSeq.Empty /: s.state.o.items) {
           case (acc, prod) =>
-            ShopApplication.productsService.productById(prod.id) match {
+            ShopApplication.persistence.productById(prod.id) match {
               case Success(p) =>
                 (bind(s.node) {
                   case "img" :/ a / _ =>

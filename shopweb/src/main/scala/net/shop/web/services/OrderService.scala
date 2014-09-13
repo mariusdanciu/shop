@@ -6,14 +6,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-import backend._
+import persistence._
 import net.shift.common.Path
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.HttpPredicates
 import net.shift.html._
 import net.shift.js._
 import net.shift.loc.Language
-import net.shop.backend.OrderSubmitter
+import net.shop.orders.OrderSubmitter
 import net.shop.orders.OrderListener
 import net.shop.web.ShopApplication
 import net.shop.web.form.OrderForm
@@ -23,6 +23,7 @@ import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
 import net.shop.model.Company
 import net.shop.model.Person
+import net.shop.orders.OrderDocument
 
 object OrderService extends HttpPredicates {
 
@@ -36,7 +37,7 @@ object OrderService extends HttpPredicates {
       case (Success(acc), (k, v)) if (k startsWith "item") =>
         val dk = k drop 5
 
-        ShopApplication.productsService.productById(dk) map { prod =>
+        ShopApplication.persistence.productById(dk) map { prod =>
           (acc get "items") match {
             case Some(OrderItems(l)) => acc + ("items" -> OrderItems(l ++ List((prod, v.toInt))))
             case _ => acc + ("items" -> OrderItems(List((prod, v.toInt))))
@@ -87,7 +88,6 @@ object OrderService extends HttpPredicates {
 
               }
             case net.shift.html.Failure(msgs) => {
-              println(msgs)
               resp(JsResponse(
                 func() {
                   JsStatement(

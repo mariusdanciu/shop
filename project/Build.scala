@@ -64,7 +64,7 @@ object ShopBuild extends Build {
 
   lazy val shopdatabase = Project(id = "shopdatabase", 
       base = file("shopdatabase"),
-      settings = Defaults.defaultSettings ++ Seq(distShopDBSetting))
+      settings = Defaults.defaultSettings ++ Seq(distShopDBSetting)) dependsOn (shopweb)
 
 }
 
