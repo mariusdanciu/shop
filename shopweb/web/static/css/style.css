@@ -617,6 +617,10 @@ a:active {
 	position: relative;
 }
 
+#close_dialog:hover {
+	cursor: pointer;
+}
+
 #title_dialog {
 	float: left;
 	position: relative;
