@@ -54,7 +54,6 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
 
   val productLink = reqSnip("productlink") {
     s =>
-      println("productlink " + s)
       (s.state.product match {
         case Success(p) =>
           for {
