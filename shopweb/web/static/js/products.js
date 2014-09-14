@@ -127,7 +127,8 @@
 						                cursor: null
 						            },
 						            overlayCSS:  {
-										cursor: null
+										cursor: null,
+										backgroundColor: '#dddddd'
 									}
 						        }); 
 						        

@@ -248,6 +248,11 @@
    "code" : "149",
    "name" : "order.data.price",
    "text" : "Pret unitar (RON)"
+ },
+ {
+   "code" : "150",
+   "name" : "product.page",
+   "text" : "Pagina produsului"
  }
  
  

@@ -629,3 +629,10 @@ a:active {
 #content_dialog {
 	clear: both;
 }
+
+#dialog_footer {
+	clear: both;
+	float: right;
+	padding: 10px;
+	font-size: 16px;
+}

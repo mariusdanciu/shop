@@ -22,20 +22,20 @@ import scalax.io.JavaConverters
 
 object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
 
-  override def snippets = List(title, catlink, images, detailPrice, details) ++ super.snippets
+  override def snippets = List(title, catlink, productLink, images, detailPrice, details) ++ super.snippets
 
   val title = reqSnip("title") {
     s =>
       val v = s.state.req.param("pid") match {
         case Some(id :: _) => ShopApplication.persistence.productById(id) match {
           case Success(prod) => (ProductPageState(s.state.req, Success(prod)), <h1>{ prod.title_?(s.language) }</h1>)
-          case Failure(t) => 
-            t printStackTrace()
+          case Failure(t) =>
+            t printStackTrace ()
             (ProductPageState.build(s.state.req), NodeSeq.Empty)
         }
         case _ => (ProductPageState.build(s.state.req), NodeSeq.Empty)
       }
-     Success(v)
+      Success(v)
   }
 
   val catlink = reqSnip("catlink") {
@@ -52,12 +52,30 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
       }) map { (s.state, _) }
   }
 
+  val productLink = reqSnip("productlink") {
+    s =>
+      println("productlink " + s)
+      (s.state.product match {
+        case Success(p) =>
+          for {
+            prod <- s.state.product
+            el <- bind(s.node) {
+              case "a" :/ _ => <a href={ s"/product?pid=${prod.id}" }>{ Loc.loc0(s.language)("product.page").text }</a>
+            }
+          } yield {
+            el
+          }
+
+        case _ => Success(<p>Not found {s.state.product}</p>)
+      }) map { (s.state, _) }
+  }
+
   val images = reqSnip("images") {
     s =>
       s.state.product match {
         case Success(prod) =>
           bind(s.node) {
-            case "b:img" :/  _ =>
+            case "b:img" :/ _ =>
               val list = NodeSeq.fromSeq(for {
                 p <- prod.images zipWithIndex
               } yield {
@@ -90,8 +108,6 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
         (ProductPageState(s.state.req, Success(p)), priceTag(p))
       })
   }
-  
-
 
   val details = reqSnip("details") {
     s =>
