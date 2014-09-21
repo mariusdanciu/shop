@@ -4,12 +4,12 @@ package persistence.file
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-
 import net.shop.model.Category
 import net.shop.model.ProductDetail
 import net.shop.persistence.NoSort
 import net.shop.persistence.Persistence
 import net.shop.persistence.SortSpec
+import net.shift.engine.ShiftFailure
 
 case class CachingBackend(serv: Persistence) extends Persistence {
 
@@ -45,4 +45,9 @@ case class CachingBackend(serv: Persistence) extends Persistence {
   override def allCategories = categories map (_ iterator)
 
   override def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = serv.searchProducts(text, spec)
+
+  def createProducts(prod: ProductDetail*): Try[Seq[String]] = serv.createProducts(prod:_*)
+
+  def createCategories(cats: Category*): Try[Seq[String]] = serv.createCategories(cats:_*)
+
 }

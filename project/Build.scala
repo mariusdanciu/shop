@@ -8,6 +8,7 @@ object ShopBuild extends Build {
   val libDir = distDir / "lib"
   val scriptsDir = new File("./scripts")
 
+  val distShopApi = TaskKey[File]("distShopApi", "")
   val distShopWeb = TaskKey[File]("distShopWeb", "")
   val distShopDB = TaskKey[File]("distShopDB", "")
   val dist = TaskKey[Unit]("dist", "")
@@ -33,6 +34,13 @@ object ShopBuild extends Build {
 	    
 	    pack
   }
+
+  val distShopApiSetting = distShopApi <<= (target, managedClasspath in Runtime, publishLocal, packageBin in Compile) map {
+    (target, cp, _, pack) => {
+        println("dist > shopapi")
+	    pack
+    }
+  }
   
   val distShopDBSetting = distShopDB <<= (target, managedClasspath in Runtime, publishLocal, packageBin in Compile) map {
     (target, cp, _, pack) => {
@@ -41,11 +49,12 @@ object ShopBuild extends Build {
     }
   }
   
-  val distSetting = dist <<= (target, scalaVersion, version, distShopWeb in shopweb, distShopDB in shopdatabase) map {
-    (target, sv, v, f, fdb) => {
+  val distSetting = dist <<= (target, scalaVersion, version, distShopApi in shopapi, distShopWeb in shopweb, distShopDB in shopdatabase) map {
+    (target, sv, v, api, web, db) => {
       println("dist > shop")
-      IO.copyFile(f, libDir / f.name);
-      IO.copyFile(fdb, libDir / fdb.name);
+      IO.copyFile(api, libDir / api.name);
+      IO.copyFile(web, libDir / web.name);
+      IO.copyFile(db, libDir / db.name);
       IO.copyFile(scriptsDir / "start.sh", distDir / "start.sh");
       TarGzBuilder.makeTarGZ("target/idid_" + sv + "_" + v + "_.tar.gz")
     }
@@ -53,18 +62,24 @@ object ShopBuild extends Build {
   
   
   lazy val root = Project(id = "shop", 
-		  				  base = file("."),
-		  				  settings = Defaults.defaultSettings ++ Seq(distSetting, 
-		  				      distShopWebSetting, 
-		  				      distShopDBSetting)) aggregate (shopweb, shopdatabase)
+      base = file("."),
+      settings = Defaults.defaultSettings ++ Seq(distSetting, 
+         distShopApiSetting,
+         distShopWebSetting, 
+         distShopDBSetting)) aggregate (shopapi, shopweb, shopdatabase)
+
+  lazy val shopapi = Project(id = "shopapi", 
+      base = file("shopapi"), 
+      settings = Defaults.defaultSettings ++ Seq(distShopApiSetting))
+
 
   lazy val shopweb = Project(id = "shopweb", 
       base = file("shopweb"), 
-      settings = Defaults.defaultSettings ++ Seq(distShopWebSetting))
+      settings = Defaults.defaultSettings ++ Seq(distShopWebSetting)) dependsOn (shopapi)
 
   lazy val shopdatabase = Project(id = "shopdatabase", 
       base = file("shopdatabase"),
-      settings = Defaults.defaultSettings ++ Seq(distShopDBSetting)) dependsOn (shopweb)
+      settings = Defaults.defaultSettings ++ Seq(distShopDBSetting)) dependsOn (shopapi)
 
 }
 

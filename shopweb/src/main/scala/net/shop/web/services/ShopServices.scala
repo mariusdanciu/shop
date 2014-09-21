@@ -58,12 +58,6 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
     v
   }
 
-  def productsImages = for {
-    Path("data" :: "products" :: id :: file :: Nil) <- path
-    input <- fileOf(Path(s"data/products/$id/$file"))
-  } yield service(resp =>
-    resp(new ImageResponse(input, "image/jpg")))
-
   def productsVariantImages = for {
     Path("data" :: "products" :: id :: variant :: file :: Nil) <- path
     input <- fileOf(Path(s"data/products/$id/$variant/$file"))

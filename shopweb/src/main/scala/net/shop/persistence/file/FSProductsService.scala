@@ -17,6 +17,7 @@ import net.shop.model.Category
 import net.shift.common.TraversingSpec
 import net.shift.common.ApplicativeFunctor
 import net.shift.loc.Language
+import net.shift.engine.ShiftFailure
 
 object FSProductsService extends Persistence with TraversingSpec {
   implicit val formats = DefaultFormats
@@ -99,6 +100,11 @@ object FSProductsService extends Persistence with TraversingSpec {
       case _ => Nil
     })
   }
+  
+  def createProducts(prod: ProductDetail*): Try[Seq[String]] = new ShiftFailure("Not supported")
 
+  def createCategories(cats: Category*): Try[Seq[String]] = new ShiftFailure("Not supported")
+
+  
 }
 

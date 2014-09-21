@@ -1,6 +1,6 @@
-package net.shop.mongodb
+package net.shop
+package mongodb
 
-import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
 
@@ -8,12 +8,9 @@ import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
 
-import net.shift.engine.ShiftFailure
-import net.shop.model.Category
-import net.shop.model.ProductDetail
-import net.shop.persistence.NoSort
-import net.shop.persistence.Persistence
-import net.shop.persistence.SortSpec
+import net.shop.api._
+import net.shop.api.persistence._
+import ShopError._
 
 object MongoDBPersistence extends Persistence {
 
@@ -24,14 +21,14 @@ object MongoDBPersistence extends Persistence {
   db("products").ensureIndex(MongoDBObject("title.ro" -> 1))
   db("products").ensureIndex(MongoDBObject("keywords" -> 1))
   db("products").ensureIndex(MongoDBObject("categories" -> 1))
-  
+
   def productById(id: String): Try[ProductDetail] = try {
     db("products").findOne(MongoDBObject("_id.$oid" -> id)) match {
       case Some(obj) => Success(mongoToProduct(obj))
-      case _ => Failure(ShiftFailure("Item " + id + " not found"))
+      case _ => fail("Item " + id + " not found")
     }
   } catch {
-    case e: Exception => Failure(e)
+    case e: Exception => fail(e)
   }
 
   def allProducts: Try[Iterator[ProductDetail]] = try {
@@ -39,7 +36,7 @@ object MongoDBPersistence extends Persistence {
       mongoToProduct(p)
     })
   } catch {
-    case e: Exception => Failure(e)
+    case e: Exception => fail(e)
   }
 
   def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = try {
@@ -47,7 +44,7 @@ object MongoDBPersistence extends Persistence {
       mongoToProduct(p)
     })
   } catch {
-    case e: Exception => Failure(e)
+    case e: Exception => fail(e)
   }
 
   def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = try {
@@ -62,16 +59,16 @@ object MongoDBPersistence extends Persistence {
         mongoToProduct(p)
       })
   } catch {
-    case e: Exception => Failure(e)
+    case e: Exception => fail(e)
   }
 
   def categoryById(id: String): Try[Category] = try {
     db("categories").findOne(MongoDBObject("_id.$oid" -> id)) match {
       case Some(obj) => Success(mongoToCategory(obj))
-      case _ => Failure(ShiftFailure("Item " + id + " not found"))
+      case _ => fail("Item " + id + " not found")
     }
   } catch {
-    case e: Exception => Failure(e)
+    case e: Exception => fail(e)
   }
 
   def allCategories: Try[Iterator[Category]] = try {
@@ -79,7 +76,42 @@ object MongoDBPersistence extends Persistence {
       mongoToCategory(p)
     })
   } catch {
-    case e: Exception => Failure(e)
+    case e: Exception => fail(e)
+  }
+
+  def createProducts(prod: ProductDetail*): Try[Seq[String]] = try {
+    val mongos = prod.map(p => productToMongo(p))
+    db("products").insert(mongos: _*)
+    Success(mongos map { p => p.get("_id").getOrElse("?").toString() })
+  } catch {
+    case e: Exception => fail(e)
+  }
+
+  def createCategories(cats: Category*): Try[Seq[String]] = try {
+    val mongos = cats.map(p => categoryToMongo(p))
+    db("categories").insert(mongos: _*)
+    Success(mongos map { p => p.get("_id").toString })
+  } catch {
+    case e: Exception => fail(e)
+  }
+
+  private def productToMongo(obj: ProductDetail): MongoDBObject = {
+    val db = MongoDBObject.newBuilder
+    db += "title" -> MongoDBObject(obj.title.toList)
+    db += ("price" -> obj.price)
+    obj.oldPrice map { p => db += ("oldPrice" -> obj.oldPrice) }
+    db += ("soldCount" -> obj.soldCount)
+    db += "categories" -> obj.categories
+    db += "images" -> obj.images
+    db += "keyWords" -> obj.images
+    db.result
+  }
+
+  private def categoryToMongo(obj: Category): MongoDBObject = {
+    val db = MongoDBObject.newBuilder
+    db += "title" -> MongoDBObject(obj.title.toList)
+    db += ("image" -> obj.image)
+    db.result
   }
 
   private def mongoToProduct(obj: DBObject): ProductDetail =
@@ -87,6 +119,7 @@ object MongoDBPersistence extends Persistence {
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
       price = obj.getAsOrElse[Double]("price", 0.0),
       oldPrice = obj.getAs[Double]("oldPrice"),
+      soldCount = obj.getAs[Int]("soldCOunt") getOrElse 0,
       categories = obj.getAsOrElse[List[String]]("categories", Nil),
       images = obj.getAsOrElse[List[String]]("images", Nil),
       keyWords = obj.getAsOrElse[List[String]]("keywords", Nil))

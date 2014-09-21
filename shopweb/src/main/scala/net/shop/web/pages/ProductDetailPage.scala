@@ -78,7 +78,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
               val list = NodeSeq.fromSeq(for {
                 p <- prod.images zipWithIndex
               } yield {
-                val normal = imagePath(prod.id, p._1)
+                val normal = imagePath(prod.id, "normal", p._1)
                 val large = imagePath(prod.id, "large", p._1)
                 val thumb = imagePath(prod.id, "thumb", p._1)
                 <a href="#" data-image={ normal } data-zoom-image={ large }>
@@ -86,7 +86,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
                 </a>
               })
 
-              val path = imagePath(prod.id, prod.images.head)
+              val path = imagePath(prod.id, "normal", prod.images.head)
               val large = imagePath(prod.id, "large", prod.images.head)
 
               <img id="sel_img" src={ path } title={ prod.title_?(s.language) } data-zoom-image={ large }></img> ++

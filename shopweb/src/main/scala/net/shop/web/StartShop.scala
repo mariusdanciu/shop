@@ -53,7 +53,6 @@ object ShopApplication extends ShiftApplication with ShopServices {
     c <- ajaxProductsList |
       ajaxProductDetail |
       staticFiles(Path("web/static")) |
-      productsImages |
       productsVariantImages |
       categoriesImages |
       page("/", Path("web/categories.html"), CategoryPage) |
