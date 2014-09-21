@@ -115,7 +115,7 @@ object MongoDBPersistence extends Persistence {
   }
 
   private def mongoToProduct(obj: DBObject): ProductDetail =
-    ProductDetail(id = obj.getAs[ObjectId]("_id").get.toString,
+    ProductDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
       price = obj.getAsOrElse[Double]("price", 0.0),
       oldPrice = obj.getAs[Double]("oldPrice"),
@@ -125,7 +125,7 @@ object MongoDBPersistence extends Persistence {
       keyWords = obj.getAsOrElse[List[String]]("keywords", Nil))
 
   private def mongoToCategory(obj: DBObject): Category =
-    Category(id = obj.getAs[ObjectId]("_id").get.toString,
+    Category(id = obj.getAs[ObjectId]("_id").map(_.toString),
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
       image = obj.getAsOrElse[String]("image", "?"))
 }

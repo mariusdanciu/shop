@@ -5,6 +5,7 @@
   },
   "price" : 132.99,
   "categories" : ["watches"],
+  "soldCount" : 0,
   "images" : ["5.jpg"],
   "keyWords" :["ceasuri","mana"]
 }

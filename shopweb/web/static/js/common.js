@@ -126,7 +126,6 @@
 						} ]
 					}));
 				}
-				window.cart.loadView();
 			},
 
 			setItemCount : function(id, count) {
@@ -199,7 +198,7 @@
 							var me = $(this);
 							var id = me.attr("id").substring(4);
 							$('#q_' + id).on("keyup change", function(e) {
-								window.cart.setItemCount(id, $(this).text());
+								window.cart.setItemCount(id, $(this).val());
 								e.preventDefault();
 							});
 							me.click(function(e) {

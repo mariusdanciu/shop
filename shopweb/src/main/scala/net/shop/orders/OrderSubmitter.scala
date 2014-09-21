@@ -1,6 +1,6 @@
 package net.shop.orders
 
-import net.shop.model.Order
+import net.shop.api.Order
 import net.shift.loc.Language
 
 object OrderSubmitter extends OrderObservable {

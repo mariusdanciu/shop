@@ -5,6 +5,7 @@
   },
   "price" : 137.99,
   "categories" : ["watches"],
+  "soldCount" : 0,
   "images" : ["6.jpg"],
   "keyWords" :["ceasuri"]
 }

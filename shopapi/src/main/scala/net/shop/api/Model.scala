@@ -1,10 +1,11 @@
 package net.shop
 package api
 
-import net.shift.loc.Language
 import java.util.Date
 
-case class ProductDetail(id: String,
+import net.shift.loc.Language
+
+case class ProductDetail(id: Option[String] = None,
   title: Map[String, String],
   price: Double,
   oldPrice: Option[Double],
@@ -13,17 +14,20 @@ case class ProductDetail(id: String,
   images: List[String],
   keyWords: List[String]) {
 
+  def stringId = id getOrElse "?"
+
   def title_?(l: Language) = title.getOrElse(l.language, "???")
 
-  def toProductLog(quantity: Int) = ProductLog(id, price, quantity)
+  def toProductLog(quantity: Int) = ProductLog(stringId, price, quantity)
 }
 
 case class CartItem(id: String, count: Int)
 
 case class Cart(items: List[CartItem])
 
-case class Category(id: String, val title: Map[String, String], image: String) {
+case class Category(id: Option[String] = None, val title: Map[String, String], image: String) {
   def title_?(l: Language) = title.getOrElse(l.language, "???")
+  def stringId = id getOrElse "?"
 }
 
 sealed trait Submitter

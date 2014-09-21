@@ -21,8 +21,8 @@ import net.shift.engine.http.JsResponse
 import net.shift.loc.Loc
 import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
-import net.shop.model.Company
-import net.shop.model.Person
+import net.shop.api.Company
+import net.shop.api.Person
 import net.shop.orders.OrderDocument
 
 object OrderService extends HttpPredicates {

@@ -11,12 +11,12 @@ import net.shift.html.Success
 import net.shift.html.Validation
 import net.shift.loc.Language
 import net.shift.loc.Loc
-import net.shop.model.Order
+import net.shop.api.Order
 import scala.util.Random
 import net.shop.utils.ShopUtils
-import net.shop.model.ProductDetail
-import net.shop.model.Person
-import net.shop.model.Company
+import net.shop.api.ProductDetail
+import net.shop.api.Person
+import net.shop.api.Company
 
 object OrderForm extends ShopUtils {
   sealed trait EnvValue

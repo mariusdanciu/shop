@@ -1,8 +1,8 @@
 package net.shop
 package utils
 
-import net.shop.model.ProductDetail
-import net.shop.model.Category
+import net.shop.api.ProductDetail
+import net.shop.api.Category
 import scala.util.Random
 
 trait ShopUtils {
@@ -12,7 +12,7 @@ trait ShopUtils {
   
   def imagePath(id: String, variant: String, prod: String): String = s"/data/products/$id/$variant/$prod"
 
-  def imagePath(variant:String, prod: ProductDetail): String = s"/data/products/${prod.id}/$variant/${prod.images.head}"
+  def imagePath(variant:String, prod: ProductDetail): String = s"/data/products/${prod.stringId}/$variant/${prod.images.head}"
   
   def errorTag(text: String) = <div class="error"><div><img src="/static/images/exclamation.png"/></div><span>{ text }</span></div>
   

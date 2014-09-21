@@ -1,6 +1,8 @@
 package net.shop
 package model
 
+import api._
+
 object Formatters {
 
   implicit object JsonOrderWriter extends Formatter[OrderLog] {

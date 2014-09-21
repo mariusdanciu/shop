@@ -4,11 +4,11 @@ package persistence.file
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-import net.shop.model.Category
-import net.shop.model.ProductDetail
-import net.shop.persistence.NoSort
-import net.shop.persistence.Persistence
-import net.shop.persistence.SortSpec
+import net.shop.api.Category
+import net.shop.api.ProductDetail
+import net.shop.api.persistence.NoSort
+import net.shop.api.persistence.Persistence
+import net.shop.api.persistence.SortSpec
 import net.shift.engine.ShiftFailure
 
 case class CachingBackend(serv: Persistence) extends Persistence {
@@ -21,7 +21,9 @@ case class CachingBackend(serv: Persistence) extends Persistence {
     ((Nil: List[Category]) /: t)((a, e) => e :: a)
   }
 
-  override def productById(id: String): Try[ProductDetail] = filter(p => p.id == id).map { l => l.next }
+  override def productById(id: String): Try[ProductDetail] = {
+   filter(p => p.stringId == id).map { l => l.next }
+  }
 
   override def allProducts: Try[Iterator[ProductDetail]] = products map { _ iterator }
 
@@ -35,7 +37,7 @@ case class CachingBackend(serv: Persistence) extends Persistence {
   override def categoryById(id: String): Try[Category] = {
     categories match {
       case Success(cats) =>
-        cats.find(_.id == id) match {
+        cats.find(_.stringId == id) match {
           case Some(c) => Success(c)
           case _ => Failure(new Exception("Category not found"))
         }

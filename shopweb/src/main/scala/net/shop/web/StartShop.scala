@@ -13,7 +13,7 @@ import net.shift.engine.ShiftApplication.rule
 import net.shift.engine.ShiftApplication.service
 import net.shift.loc.Language
 import net.shift.netty.NettyServer
-import net.shop.persistence.Persistence
+import net.shop.api.persistence.Persistence
 import net.shop.persistence.file.CachingBackend
 import net.shop.persistence.file.FSProductsService
 import net.shop.web.pages.CategoryPage

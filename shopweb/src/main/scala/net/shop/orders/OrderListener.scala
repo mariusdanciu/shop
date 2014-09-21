@@ -1,20 +1,15 @@
 package net.shop
 package orders
 
-import java.text.SimpleDateFormat
-import java.util.Date
 import akka.actor.Actor
 import akka.actor.ActorSystem
 import akka.actor.Props
-import persistence._
+import net.shift.common.Config
 import net.shift.common.DefaultLog
 import net.shift.common.Log
-import net.shop.model.Order
-import scalax.file.Path
-import net.shift.common.Config
-import net.shift.loc.Loc
-import net.shop.model._
-import Formatters._
+import net.shift.loc._
+import net.shop.api._
+import net.shop.model.Formatters._
 
 object OrderListener extends OrderObserver {
   implicit def stringToSeq(single: String): Seq[String] = Seq(single)

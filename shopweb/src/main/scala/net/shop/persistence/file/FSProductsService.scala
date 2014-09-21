@@ -12,12 +12,17 @@ import org.json4s.native.JsonMethods._
 import scalax.file._
 import scalax.file.PathMatcher._
 import scalax.io._
-import net.shop.model.ProductDetail
-import net.shop.model.Category
+import net.shop.api.ProductDetail
+import net.shop.api.Category
 import net.shift.common.TraversingSpec
 import net.shift.common.ApplicativeFunctor
 import net.shift.loc.Language
 import net.shift.engine.ShiftFailure
+import net.shop.api.persistence.Persistence
+import net.shop.api.persistence.NoSort
+import net.shop.api.persistence.SortByName
+import net.shop.api.persistence.SortByPrice
+import net.shop.api.persistence.SortSpec
 
 object FSProductsService extends Persistence with TraversingSpec {
   implicit val formats = DefaultFormats
@@ -48,7 +53,7 @@ object FSProductsService extends Persistence with TraversingSpec {
 
   override def categoryById(id: String): Try[Category] = {
     allCategories match {
-      case Success(l) => l.find(c => c.id == id) match {
+      case Success(l) => l.find(c => c.stringId == id) match {
         case Some(c) => Success(c)
         case _ => Failure(new RuntimeException(s"Category $id not found"))
       }

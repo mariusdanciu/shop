@@ -4,6 +4,7 @@
     "ro" : "Breitling Chronomat Evolution Gold"
   },
   "price" : 137.99,
+  "soldCount" : 0,
   "categories" : ["watches"],
   "images" : ["4.jpg"],
   "keyWords" :["ceasuri"]

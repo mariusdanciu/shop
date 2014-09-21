@@ -20,7 +20,7 @@ import net.shift.engine.utils.ShiftUtils
 import net.shift.template.DynamicContent
 import net.shift.template.Selectors
 import net.shift.template.SnipState
-import net.shop.model.Cart
+import net.shop.api.Cart
 import net.shop._
 import web.pages.CartState
 import web.pages.CartItemNode
@@ -31,7 +31,7 @@ import net.shift.common.Log
 import net.shop.web.ShopApplication
 import net.shop.web.pages.ProductsPage
 import scala.util.Try
-import net.shop.model.ProductDetail
+import net.shop.api.ProductDetail
 import net.shop.web.pages.ProductsQuery
 import net.shift.loc.Language
 import net.shift.common.DefaultLog

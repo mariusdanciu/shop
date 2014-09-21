@@ -16,13 +16,13 @@ import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shift.template.Snippet._
-import net.shop.model.ProductDetail
+import net.shop.api.ProductDetail
 import net.shop.web.ShopApplication
 import net.shift.common.State
-import net.shop.persistence.SortSpec
-import net.shop.persistence.NoSort
-import net.shop.persistence.SortByName
-import net.shop.persistence.SortByPrice
+import net.shop.api.persistence.SortSpec
+import net.shop.api.persistence.NoSort
+import net.shop.api.persistence.SortByName
+import net.shop.api.persistence.SortByPrice
 import net.shop.utils.ShopUtils
 
 object ProductsPage extends Cart[Request] with ShopUtils {
@@ -53,7 +53,7 @@ object ProductsPage extends Cart[Request] with ShopUtils {
             list flatMap { prod =>
               bind(s.node) {
                 case "li" :/ HasClass("item", a) / childs => <li>{ childs }</li>
-                case "div" :/ HasClass("item_box", a) / childs => <div id={ prod id } title={ prod title_? (s.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
+                case "div" :/ HasClass("item_box", a) / childs => <div id={ prod stringId } title={ prod title_? (s.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
                 case "div" :/ HasClass("info_tag_text", a) / childs => <div>{ prod title_? (s.language) }</div> % a
                 case "div" :/ HasClass("info_tag_price", a) / childs => priceTag(prod) % a
               } match {

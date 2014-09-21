@@ -18,6 +18,9 @@ import scala.util.Failure
 import Binds._
 import net.shift.common.Config
 import net.shop.utils.ShopUtils
+import net.shop.api.OrderLog
+import net.shop.api.Person
+import net.shop.api.Company
 
 object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors with ShopUtils {
 

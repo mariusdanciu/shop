@@ -15,7 +15,7 @@ import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.DynamicContent
 import net.shift.template.Snippet.snip
-import net.shop.model.ProductDetail
+import net.shop.api.ProductDetail
 import net.shop.utils.ShopUtils
 import net.shop.web.ShopApplication
 import scalax.io.JavaConverters
@@ -29,9 +29,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
       val v = s.state.req.param("pid") match {
         case Some(id :: _) => ShopApplication.persistence.productById(id) match {
           case Success(prod) => (ProductPageState(s.state.req, Success(prod)), <h1>{ prod.title_?(s.language) }</h1>)
-          case Failure(t) =>
-            t printStackTrace ()
-            (ProductPageState.build(s.state.req), NodeSeq.Empty)
+          case Failure(t) => (ProductPageState.build(s.state.req), NodeSeq.Empty)
         }
         case _ => (ProductPageState.build(s.state.req), NodeSeq.Empty)
       }
@@ -59,13 +57,13 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
           for {
             prod <- s.state.product
             el <- bind(s.node) {
-              case "a" :/ _ => <a href={ s"/product?pid=${prod.id}" }>{ Loc.loc0(s.language)("product.page").text }</a>
+              case "a" :/ _ => <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.language)("product.page").text }</a>
             }
           } yield {
             el
           }
 
-        case _ => Success(<p>Not found {s.state.product}</p>)
+        case _ => Success(<p>Not found { s.state.product }</p>)
       }) map { (s.state, _) }
   }
 
@@ -78,16 +76,16 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
               val list = NodeSeq.fromSeq(for {
                 p <- prod.images zipWithIndex
               } yield {
-                val normal = imagePath(prod.id, "normal", p._1)
-                val large = imagePath(prod.id, "large", p._1)
-                val thumb = imagePath(prod.id, "thumb", p._1)
+                val normal = imagePath(prod.stringId, "normal", p._1)
+                val large = imagePath(prod.stringId, "large", p._1)
+                val thumb = imagePath(prod.stringId, "thumb", p._1)
                 <a href="#" data-image={ normal } data-zoom-image={ large }>
                   <img id={ s"img_${p._2}" } src={ thumb }/>
                 </a>
               })
 
-              val path = imagePath(prod.id, "normal", prod.images.head)
-              val large = imagePath(prod.id, "large", prod.images.head)
+              val path = imagePath(prod.stringId, "normal", prod.images.head)
+              val large = imagePath(prod.stringId, "large", prod.images.head)
 
               <img id="sel_img" src={ path } title={ prod.title_?(s.language) } data-zoom-image={ large }></img> ++
                 <div id="gallery">
@@ -113,7 +111,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
       import JavaConverters.asInputConverter
       (for {
         p <- s.state.product
-        input <- s.state.req.resource(Path(s"data/products/${p.id}/desc_${s.language}.html"))
+        input <- s.state.req.resource(Path(s"data/products/${p.stringId}/desc_${s.language}.html"))
         n <- load(input)
       } yield {
         (ProductPageState(s.state.req, Success(p)), n)

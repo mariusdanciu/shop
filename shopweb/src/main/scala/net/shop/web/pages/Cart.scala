@@ -16,7 +16,7 @@ import net.shift.common.XmlUtils
 import net.shop.web.form.OrderForm
 import scala.util.Success
 import scala.util.Failure
-import net.shop.model.ProductDetail
+import net.shop.api.ProductDetail
 import scala.xml.{ Elem, Text }
 import scala.xml.Group
 import net.shift.loc.Loc
