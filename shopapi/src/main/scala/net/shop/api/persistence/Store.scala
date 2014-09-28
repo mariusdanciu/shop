@@ -2,7 +2,6 @@ package net.shop.api
 package persistence
 
 import scala.util.Try
-import net.shift.loc.Language
 import scala.util.Failure
 
 object ShopError {
@@ -27,7 +26,7 @@ trait Persistence {
 }
 
 object SortSpec {
-  def fromString(v: String, lang: Language): SortSpec =
+  def fromString(v: String, lang: String): SortSpec =
     if (v == null) NoSort
     else if (v == "bynameasc") SortByName(true, lang)
     else if (v == "bynamedesc") SortByName(false, lang)
@@ -37,6 +36,6 @@ object SortSpec {
 }
 sealed trait SortSpec
 case object NoSort extends SortSpec
-case class SortByName(direction: Boolean, lang: Language) extends SortSpec
-case class SortByPrice(direction: Boolean, lang: Language) extends SortSpec
+case class SortByName(direction: Boolean, lang: String) extends SortSpec
+case class SortByPrice(direction: Boolean, lang: String) extends SortSpec
 

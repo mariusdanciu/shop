@@ -3,7 +3,6 @@ package api
 
 import java.util.Date
 
-import net.shift.loc.Language
 
 case class ProductDetail(id: Option[String] = None,
   title: Map[String, String],
@@ -16,7 +15,7 @@ case class ProductDetail(id: Option[String] = None,
 
   def stringId = id getOrElse "?"
 
-  def title_?(l: Language) = title.getOrElse(l.language, "???")
+  def title_?(l: String) = title.getOrElse(l, "???")
 
   def toProductLog(quantity: Int) = ProductLog(stringId, price, quantity)
 }
@@ -26,7 +25,7 @@ case class CartItem(id: String, count: Int)
 case class Cart(items: List[CartItem])
 
 case class Category(id: Option[String] = None, val title: Map[String, String], image: String) {
-  def title_?(l: Language) = title.getOrElse(l.language, "???")
+  def title_?(l: String) = title.getOrElse(l, "???")
   def stringId = id getOrElse "?"
 }
 

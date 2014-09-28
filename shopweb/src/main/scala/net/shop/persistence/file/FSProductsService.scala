@@ -16,7 +16,6 @@ import net.shop.api.ProductDetail
 import net.shop.api.Category
 import net.shift.common.TraversingSpec
 import net.shift.common.ApplicativeFunctor
-import net.shift.loc.Language
 import net.shift.engine.ShiftFailure
 import net.shop.api.persistence.Persistence
 import net.shop.api.persistence.NoSort
@@ -79,8 +78,8 @@ object FSProductsService extends Persistence with TraversingSpec {
       case NoSort => in
       case SortByName(dir, lang) => in.map(seq => seq.toList.sortWith((a, b) =>
         (for {
-          l <- a.title.get(lang.language)
-          r <- b.title.get(lang.language)
+          l <- a.title.get(lang)
+          r <- b.title.get(lang)
         } yield if (dir) l < r else l > r).getOrElse(false)).iterator)
       case SortByPrice(dir, lang) => in.map(seq => seq.toList.sortWith((a, b) => if (dir) a.price < b.price else a.price > b.price).iterator)
     }

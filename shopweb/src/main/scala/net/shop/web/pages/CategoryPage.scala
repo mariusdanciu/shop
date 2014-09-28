@@ -35,7 +35,7 @@ object CategoryPage extends Cart[Request] with ShopUtils { self =>
               (bind(s.node) {
                 case "li" :/ HasClass("item", a) / childs => <li>{ childs }</li>
                 case "div" :/ HasClass("cat_box", a) / childs => <div id={ cat stringId } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
-                case "div" :/ HasClasses("info_tag_text" :: _, a) / _ => <div>{ cat.title_?(s.language) }</div> % a
+                case "div" :/ HasClasses("info_tag_text" :: _, a) / _ => <div>{ cat.title_?(s.language.language) }</div> % a
               }) match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)

@@ -53,8 +53,8 @@ object ProductsPage extends Cart[Request] with ShopUtils {
             list flatMap { prod =>
               bind(s.node) {
                 case "li" :/ HasClass("item", a) / childs => <li>{ childs }</li>
-                case "div" :/ HasClass("item_box", a) / childs => <div id={ prod stringId } title={ prod title_? (s.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
-                case "div" :/ HasClass("info_tag_text", a) / childs => <div>{ prod title_? (s.language) }</div> % a
+                case "div" :/ HasClass("item_box", a) / childs => <div id={ prod stringId } title={ prod title_? (s.language.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
+                case "div" :/ HasClass("info_tag_text", a) / childs => <div>{ prod title_? (s.language.language) }</div> % a
                 case "div" :/ HasClass("info_tag_price", a) / childs => priceTag(prod) % a
               } match {
                 case Success(n) => n
@@ -81,7 +81,7 @@ object ProductsQuery {
 
   def toSortSpec(r: Request): SortSpec = {
     r.param("sort") match {
-      case Some(v :: _) => SortSpec.fromString(v, r.language)
+      case Some(v :: _) => SortSpec.fromString(v, r.language.language)
       case _ => NoSort
     }
   }
