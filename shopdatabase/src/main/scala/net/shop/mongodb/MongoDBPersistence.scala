@@ -90,17 +90,19 @@ object MongoDBPersistence extends Persistence {
   def createCategories(cats: Category*): Try[Seq[String]] = try {
     val mongos = cats.map(p => categoryToMongo(p))
     db("categories").insert(mongos: _*)
-    Success(mongos map { p => p.get("_id").toString })
+    Success(mongos map { p => p.getOrElse("_id", "?").toString })
   } catch {
     case e: Exception => fail(e)
   }
 
   private def productToMongo(obj: ProductDetail): MongoDBObject = {
+    println(obj.categories)
     val db = MongoDBObject.newBuilder
     db += "title" -> MongoDBObject(obj.title.toList)
     db += ("price" -> obj.price)
     obj.oldPrice map { p => db += ("oldPrice" -> obj.oldPrice) }
-    db += ("soldCount" -> obj.soldCount)
+    
+    db += "soldCount" -> obj.soldCount
     db += "categories" -> obj.categories
     db += "images" -> obj.images
     db += "keyWords" -> obj.images

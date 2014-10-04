@@ -86,8 +86,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
         } yield {
           Html5.runPageFromFile(CartState(item.count, prod), r.language, Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
         }) match {
-          case Success(list) =>
-            resp(JsonResponse(write(list)))
+          case Success(list) => resp(JsonResponse(write(list)))
           case Failure(t) => error("Cannot process cart", t)
         }
 

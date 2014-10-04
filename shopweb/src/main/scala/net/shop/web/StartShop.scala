@@ -2,9 +2,7 @@ package net.shop
 package web
 
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import org.apache.log4j.PropertyConfigurator
-
 import net.shift.common.Config
 import net.shift.common.DefaultLog
 import net.shift.common.Path
@@ -22,6 +20,7 @@ import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.TermsPage
 import net.shop.web.services.ShopServices
+import net.shop.mongodb.MongoDBPersistence
 
 object StartShop extends App with DefaultLog {
 
@@ -36,7 +35,7 @@ object StartShop extends App with DefaultLog {
 
 object ShopApplication extends ShiftApplication with ShopServices {
 
-  lazy val persistence: Persistence = CachingBackend(FSProductsService)
+  lazy val persistence: Persistence = CachingBackend(MongoDBPersistence)
 
   def ajaxProductsList = for {
     r <- ajax

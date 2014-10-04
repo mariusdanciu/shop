@@ -609,7 +609,7 @@ a:active {
 }
 
 .zoomContainer {
-	z-index: 9999;
+	z-index: 999;
 }
 
 #close_dialog {
