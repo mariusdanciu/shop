@@ -40,7 +40,16 @@ object MongoDBPersistence extends Persistence {
   }
 
   def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = try {
-    Success(for { p <- db("products").find("categories" $in List(cat)) } yield {
+
+    val query = spec match {
+      case SortByName(true, _) => db("products").find("categories" $in List(cat)).sort(MongoDBObject("title" -> 1))
+      case SortByName(false, _) => db("products").find("categories" $in List(cat)).sort(MongoDBObject("title" -> -1))
+      case SortByPrice(true, _) => db("products").find("categories" $in List(cat)).sort(MongoDBObject("price" -> 1))
+      case SortByPrice(false, _) => db("products").find("categories" $in List(cat)).sort(MongoDBObject("price" -> -1))
+      case _ => db("products").find("categories" $in List(cat))
+    }
+
+    Success(for { p <- query } yield {
       mongoToProduct(p)
     })
   } catch {
@@ -99,9 +108,10 @@ object MongoDBPersistence extends Persistence {
     println(obj.categories)
     val db = MongoDBObject.newBuilder
     db += "title" -> MongoDBObject(obj.title.toList)
+    db += "description" -> MongoDBObject(obj.description.toList)
+    db += "properties" -> MongoDBObject(obj.properties.toList)
     db += ("price" -> obj.price)
     obj.oldPrice map { p => db += ("oldPrice" -> obj.oldPrice) }
-    
     db += "soldCount" -> obj.soldCount
     db += "categories" -> obj.categories
     db += "images" -> obj.images
@@ -119,6 +129,8 @@ object MongoDBPersistence extends Persistence {
   private def mongoToProduct(obj: DBObject): ProductDetail =
     ProductDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
+      description = obj.getAsOrElse[Map[String, String]]("description", Map.empty),
+      properties = obj.getAsOrElse[Map[String, String]]("properties", Map.empty),
       price = obj.getAsOrElse[Double]("price", 0.0),
       oldPrice = obj.getAs[Double]("oldPrice"),
       soldCount = obj.getAs[Int]("soldCOunt") getOrElse 0,

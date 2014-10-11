@@ -52,9 +52,6 @@
 			var me = $(this);
 
 			me.mouseenter(function() {
-				me.css({
-					'cursor' : 'pointer'
-				});
 				me.find('.info_tag').css({
 					'background' : 'rgba(0, 0, 0, 1)'
 				});
@@ -68,9 +65,6 @@
 			});
 
 			me.mouseleave(function() {
-				me.css({
-					'cursor' : 'hand'
-				});
 				me.find('.info_tag').css({
 					'background' : 'rgba(255, 255, 255, .5)'
 				});
@@ -88,12 +82,12 @@
 				cart.showCart();
 				event.stopPropagation();
 			});
-
-			me.click(function(event) {
-				
-				var pid = me.attr("id");
-				var loc = "/productquickview?pid=" + pid;
-				$("#product_dialog").load(loc,
+    
+    		var pid = me.attr("id");
+			if (pid !== undefined) {
+			  me.click(function(event) {
+				  var loc = "/productquickview?pid=" + pid;
+				  $("#product_dialog").load(loc,
 						function(response, status, xhr) {
 							if (status == "error") {
 								$("#notice_connect_e").show().delay(5000)
@@ -138,13 +132,9 @@
 						        });
 							}
 						});
-				
-				
-				
-				// window.location.href = "/product?pid=" + pid;
 				event.stopPropagation();
 			});
-
+			}
 		});
 	}
 	

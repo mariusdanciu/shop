@@ -6,6 +6,8 @@ import java.util.Date
 
 case class ProductDetail(id: Option[String] = None,
   title: Map[String, String],
+  description: Map[String, String],
+  properties: Map[String, String],
   price: Double,
   oldPrice: Option[Double],
   soldCount: Int,

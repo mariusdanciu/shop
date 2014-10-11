@@ -41,6 +41,8 @@ object Main extends App with PathUtils {
 
         ProductDetail(
           title = Map("ro" -> "Diam nonummy"),
+          description = Map("ro" -> "<p>Diam nonummy</p>"),
+          properties = Map.empty,
           price = 137.99,
           oldPrice = None,
           soldCount = 0,
@@ -50,6 +52,8 @@ object Main extends App with PathUtils {
 
         ProductDetail(
           title = Map("ro" -> "Chrono Avenger M12"),
+          description = Map("ro" -> "<p>Chrono Avenger M12</p>"),
+          properties = Map.empty,
           price = 137.99,
           oldPrice = None,
           soldCount = 0,
@@ -59,6 +63,8 @@ object Main extends App with PathUtils {
 
         ProductDetail(
           title = Map("ro" -> "Breitling Chrono Avenger M1"),
+          description = Map("ro" -> "<p>Chrono Avenger M12</p>"),
+          properties = Map.empty,
           price = 89.99,
           oldPrice = Some(177.4),
           soldCount = 0,
@@ -68,6 +74,8 @@ object Main extends App with PathUtils {
 
         ProductDetail(
           title = Map("ro" -> "Breitling Chronomat Evolution Gold"),
+          description = Map("ro" -> "<p>Chrono Avenger M12</p>"),
+          properties = Map.empty,
           price = 127.99,
           oldPrice = None,
           soldCount = 0,
@@ -76,6 +84,8 @@ object Main extends App with PathUtils {
           keyWords = List("ceasuri")),
 
         ProductDetail(title = Map("ro" -> "Breitling Chronomat Evolution Gold 2"),
+          description = Map("ro" -> "<p>Chrono Avenger M12</p>"),
+          properties = Map.empty,
           price = 127.99,
           oldPrice = None,
           soldCount = 0,
@@ -85,6 +95,8 @@ object Main extends App with PathUtils {
 
         ProductDetail(
           title = Map("ro" -> "Breitling Chronomat Evolution Gold 3"),
+          description = Map("ro" -> "<p>Chrono Avenger M12</p>"),
+          properties = Map.empty,
           price = 127.99,
           oldPrice = None,
           soldCount = 0,
@@ -94,6 +106,8 @@ object Main extends App with PathUtils {
 
         ProductDetail(
           title = Map("ro" -> "Breitling Chronomat Evolution Gold 4"),
+          description = Map("ro" -> "<p>Chrono Avenger M12</p>"),
+          properties = Map.empty,
           price = 127.99,
           oldPrice = None,
           soldCount = 0,
@@ -103,6 +117,8 @@ object Main extends App with PathUtils {
 
         ProductDetail(
           title = Map("ro" -> "Breitling Chronomat Evolution Gold 5"),
+          description = Map("ro" -> "<p>Chrono Avenger M12</p>"),
+          properties = Map.empty,
           price = 127.99,
           oldPrice = None,
           soldCount = 0,
@@ -112,6 +128,8 @@ object Main extends App with PathUtils {
 
         ProductDetail(
           title = Map("ro" -> "Breitling Chronomat Evolution Gold 6"),
+          description = Map("ro" -> "<p>Chrono Avenger M12</p>"),
+          properties = Map.empty,
           price = 127.99,
           oldPrice = None,
           soldCount = 0,

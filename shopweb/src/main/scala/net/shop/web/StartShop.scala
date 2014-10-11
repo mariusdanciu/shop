@@ -21,6 +21,7 @@ import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.TermsPage
 import net.shop.web.services.ShopServices
 import net.shop.mongodb.MongoDBPersistence
+import net.shift.engine.ShiftFailure
 
 object StartShop extends App with DefaultLog {
 
@@ -37,6 +38,13 @@ object ShopApplication extends ShiftApplication with ShopServices {
 
   lazy val persistence: Persistence = CachingBackend(MongoDBPersistence)
 
+  def logReq = for {
+    r <- req
+  } yield {
+    log.debug("Request: " + r.uri)
+    r
+  }
+
   def ajaxProductsList = for {
     r <- ajax
     p <- page("products", Path("web/templates/productslist.html"), ProductsPage)
@@ -48,6 +56,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
   } yield p
 
   def servingRule = for {
+    _ <- logReq
     _ <- withLanguage(Language("ro"))
     c <- ajaxProductsList |
       ajaxProductDetail |
@@ -60,6 +69,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page("terms", Path("web/terms.html"), TermsPage) |
       getCart() |
       orderService.order |
+      createProduct |
       service(notFoundService)
   } yield c
 

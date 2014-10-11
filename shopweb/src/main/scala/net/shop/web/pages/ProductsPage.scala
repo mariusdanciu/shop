@@ -27,7 +27,7 @@ import net.shop.utils.ShopUtils
 
 object ProductsPage extends Cart[Request] with ShopUtils {
 
-  override def snippets = List(title, item) ++ cartSnips
+  override def snippets = List(title, item, itemAdd) ++ cartSnips
 
   val cartSnips = super.snippets
 
@@ -43,6 +43,13 @@ object ProductsPage extends Cart[Request] with ShopUtils {
         case _ => NodeSeq.Empty
       }
       Success((s.state, <h1>{ v }</h1>))
+  }
+
+  val itemAdd = reqSnip("itemadd") {
+    s =>
+      {
+        Success((s.state, s.node))
+      }
   }
 
   val item = reqSnip("item") {

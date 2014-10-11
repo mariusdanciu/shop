@@ -35,6 +35,7 @@ import net.shop.api.ProductDetail
 import net.shop.web.pages.ProductsQuery
 import net.shift.loc.Language
 import net.shift.common.DefaultLog
+import net.shift.engine.ShiftFailure
 
 trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog {
 
@@ -54,8 +55,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   def page[T](f: Request => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
     r <- path(uri)
   } yield {
-    val v = Html5.pageFromFile(f(r), r.language, filePath, snipets)(bySnippetAttr[SnipState[T]])
-    v
+    Html5.pageFromFile(f(r), r.language, filePath, snipets)(bySnippetAttr[SnipState[T]])
   }
 
   def productsVariantImages = for {
@@ -79,15 +79,17 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
       case Some(c) => {
         implicit val formats = DefaultFormats
         implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
-
         listTraverse.sequence(for {
           item <- readCart(c.value).items
           prod <- ShopApplication.persistence.productById(item.id).toOption
         } yield {
+          println("got " + prod)
           Html5.runPageFromFile(CartState(item.count, prod), r.language, Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
         }) match {
           case Success(list) => resp(JsonResponse(write(list)))
-          case Failure(t) => error("Cannot process cart", t)
+          case Failure(t) =>
+            log.error("Failed processing cart ",  t)
+            resp(JsonResponse(write(Nil)))
         }
 
       }
@@ -101,6 +103,13 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
     parse(java.net.URLDecoder.decode(json, "UTF-8")).extract[Cart]
   }
 
+  def createProduct = for {
+    r <- POST
+    Path("create" :: "product" :: Nil) <- path
+    _ <- jsonContent
+  } yield {
+    service(_(Resp.created))
+  }
 }
 
 

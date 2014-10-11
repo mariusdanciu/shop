@@ -167,6 +167,12 @@ a:active {
 	height: 356px;
 }
 
+.item_box:hover {
+	box-shadow: inset 0px 0px 40px 1px #dddddd;
+	cursor: pointer;
+}
+
+
 .info_tag {
 	position: relative;
 	width: 305px;
@@ -636,3 +642,8 @@ a:active {
 	padding: 10px;
 	font-size: 16px;
 }
+
+.item_box .add_item {
+    margin-left: 100px;
+    margin-top: 114px;
+} 

@@ -26,75 +26,67 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
 
   val title = reqSnip("title") {
     s =>
-      val v = s.state.req.param("pid") match {
+      s.state.req.param("pid") match {
         case Some(id :: _) => ShopApplication.persistence.productById(id) match {
-          case Success(prod) => (ProductPageState(s.state.req, Success(prod)), <h1>{ prod.title_?(s.language.language) }</h1>)
-          case Failure(t) => (ProductPageState.build(s.state.req), NodeSeq.Empty)
+          case Success(prod) => Success(ProductPageState(s.state.req, Success(prod)), <h1>{ prod.title_?(s.language.language) }</h1>)
+          case Failure(t) => Success(s.state, errorTag(Loc.loc0(s.language)("no_product").text))
         }
-        case _ => (ProductPageState.build(s.state.req), NodeSeq.Empty)
+        case _ => Success(s.state, errorTag(Loc.loc0(s.language)("no_product").text))
       }
-      Success(v)
   }
 
   val catlink = reqSnip("catlink") {
     s =>
-      (s.state.product match {
-        case Success(p) =>
-          Try(p.categories.flatMap(e => {
-            ShopApplication.persistence.categoryById(e) match {
-              case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.language.language) }</a> ++ <span>, </span>)
-              case _ => NodeSeq.Empty
-            }
-          }).toList.dropRight(1))
-        case _ => Success(NodeSeq.Empty)
-      }) map { (s.state, _) }
+      ((s.state.product map { p =>
+        (p.categories.flatMap(e => {
+          ShopApplication.persistence.categoryById(e) match {
+            case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.language.language) }</a> ++ <span>, </span>)
+            case _ => NodeSeq.Empty
+          }
+        }).toList.dropRight(1))
+      }) map { l => (s.state, NodeSeq.fromSeq(l)) }).recover { case _ => (s.state, NodeSeq.Empty) }
   }
 
   val productLink = reqSnip("productlink") {
     s =>
-      (s.state.product match {
-        case Success(p) =>
-          for {
-            prod <- s.state.product
-            el <- bind(s.node) {
-              case "a" :/ _ => <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.language)("product.page").text }</a>
-            }
-          } yield {
-            el
+      ((s.state.product flatMap { p =>
+        for {
+          prod <- s.state.product
+          el <- bind(s.node) {
+            case "a" :/ _ => <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.language)("product.page").text }</a>
           }
-
-        case _ => Success(<p>Not found { s.state.product }</p>)
-      }) map { (s.state, _) }
+        } yield {
+          el
+        }
+      }) map { (s.state, _) }).recover { case _ => (s.state, NodeSeq.Empty) }
   }
 
   val images = reqSnip("images") {
     s =>
-      s.state.product match {
-        case Success(prod) =>
-          bind(s.node) {
-            case "b:img" :/ _ =>
-              val list = NodeSeq.fromSeq(for {
-                p <- prod.images zipWithIndex
-              } yield {
-                val normal = imagePath(prod.stringId, "normal", p._1)
-                val large = imagePath(prod.stringId, "large", p._1)
-                val thumb = imagePath(prod.stringId, "thumb", p._1)
-                <a href="#" data-image={ normal } data-zoom-image={ large }>
-                  <img id={ s"img_${p._2}" } src={ thumb }/>
-                </a>
-              })
+      (s.state.product flatMap { prod =>
+        bind(s.node) {
+          case "b:img" :/ _ =>
+            val list = NodeSeq.fromSeq(for {
+              p <- prod.images zipWithIndex
+            } yield {
+              val normal = imagePath(prod.stringId, "normal", p._1)
+              val large = imagePath(prod.stringId, "large", p._1)
+              val thumb = imagePath(prod.stringId, "thumb", p._1)
+              <a href="#" data-image={ normal } data-zoom-image={ large }>
+                <img id={ s"img_${p._2}" } src={ thumb }/>
+              </a>
+            })
 
-              val path = imagePath(prod.stringId, "normal", prod.images.head)
-              val large = imagePath(prod.stringId, "large", prod.images.head)
+            val path = imagePath(prod.stringId, "normal", prod.images.head)
+            val large = imagePath(prod.stringId, "large", prod.images.head)
 
-              <img id="sel_img" src={ path } title={ prod.title_?(s.language.language) } data-zoom-image={ large }></img> ++
-                <div id="gallery">
-                  { list }
-                </div>
+            <img id="sel_img" src={ path } title={ prod.title_?(s.language.language) } data-zoom-image={ large }></img> ++
+              <div id="gallery">
+                { list }
+              </div>
 
-          } map { b => (ProductPageState(s.state.req, Success(prod)), b) }
-        case _ => Success((ProductPageState.build(s.state.req), errorTag(Loc.loc0(s.state.req.language)("no_product").text)))
-      }
+        } map { b => (ProductPageState(s.state.req, Success(prod)), b) }
+      }).recover { case _ => (s.state, NodeSeq.Empty) }
   }
 
   val detailPrice = reqSnip("detailPrice") {
@@ -103,7 +95,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
         p <- s.state.product
       } yield {
         (ProductPageState(s.state.req, Success(p)), priceTag(p))
-      })
+      }).recover { case _ => (s.state, NodeSeq.Empty) }
   }
 
   val details = reqSnip("details") {
@@ -115,7 +107,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
         n <- load(input)
       } yield {
         (ProductPageState(s.state.req, Success(p)), n)
-      })
+      }).recover { case _ => (s.state, NodeSeq.Empty) }
   }
 
 }
