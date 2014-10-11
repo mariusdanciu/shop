@@ -105,7 +105,6 @@ object MongoDBPersistence extends Persistence {
   }
 
   private def productToMongo(obj: ProductDetail): MongoDBObject = {
-    println(obj.categories)
     val db = MongoDBObject.newBuilder
     db += "title" -> MongoDBObject(obj.title.toList)
     db += "description" -> MongoDBObject(obj.description.toList)

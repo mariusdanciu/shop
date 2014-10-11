@@ -83,7 +83,6 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
           item <- readCart(c.value).items
           prod <- ShopApplication.persistence.productById(item.id).toOption
         } yield {
-          println("got " + prod)
           Html5.runPageFromFile(CartState(item.count, prod), r.language, Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
         }) match {
           case Success(list) => resp(JsonResponse(write(list)))
