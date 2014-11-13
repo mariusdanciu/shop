@@ -16,14 +16,56 @@
 							normUrl("/products", $(this).val()),
 							function(response, status, xhr) {
 								if (status == "error") {
-									$("#notice_connect_e").show().delay(5000)
-											.fadeOut("slow");
+									$("#notice_connect_e").show().delay(5000).fadeOut("slow");
 								} else {
 									refreshList();
 								}
 							});
 				})
-
+		
+		Dropzone.autoDiscover = false;
+		
+		$( ".close_dialog" ).bind( "click", function(event) {
+			closeDialog();
+		});
+		
+		var uploadZone = new Dropzone("#upload_dialog", { 
+		   uploadMultiple: true,
+		   autoProcessQueue:false,
+           parallelUploads: 100,
+           maxFiles: 100,
+           addRemoveLinks: true
+		});
+ 
+        $("#create_product").click(function(event) {
+           alert("save");
+           event.stopPropagation();
+           event.preventDefault();
+        });
+        
+		$("#itemadd").click(function(event) {
+	        uploadZone.removeAllFiles(true);
+	        $.blockUI({ 
+	        	message: $("#product_create_dialog"),
+	            css: { 
+	                top:  '120px', 
+	                left: ($(window).width() - 1000) /2 + 'px', 
+	                width: '1050px',
+	                border: 'none',
+	                cursor: null
+	            },
+		        overlayCSS:  {
+					cursor: null,
+					backgroundColor: '#dddddd'
+				}
+	        });
+	    });				
+	    
+	    
+	    $("#textzone").jqte({
+	      source: false
+	    }); 
+	    
 	});
 
 	var normUrl = function(url, sort) {
@@ -50,31 +92,6 @@
 	var refreshList = function() {
 		$(".item_box").each(function(index) {
 			var me = $(this);
-
-			me.mouseenter(function() {
-				me.find('.info_tag').css({
-					'background' : 'rgba(0, 0, 0, 1)'
-				});
-				me.find('.info_tag span, .info_tag div').css({
-					'color' : '#ffffff'
-				});
-				me.find('.info_tag_cart').css({
-					'display' : 'inline'
-				});
-
-			});
-
-			me.mouseleave(function() {
-				me.find('.info_tag').css({
-					'background' : 'rgba(255, 255, 255, .5)'
-				});
-				me.find('.info_tag span, .info_tag div').css({
-					'color' : '#000000'
-				});
-				me.find('.info_tag_cart').css({
-					'display' : 'none'
-				});
-			});
 
 			me.find('.info_tag_cart').click(function(event) {
 				var pid = me.attr("id");
@@ -114,7 +131,7 @@
 						        $.blockUI({ 
 						        	message: $("#product_dialog"),
 						            css: { 
-						                top:  ($(window).height() - 650) /2 + 'px', 
+						                top:  '150px', 
 						                left: ($(window).width() - 1000) /2 + 'px', 
 						                width: '1000px',
 						                border: 'none',
@@ -127,15 +144,15 @@
 						        }); 
 						        
 						        
-						        $( ".blockOverlay, #close_dialog" ).bind( "click", function(event) {
+						        $( ".close_dialog" ).bind( "click", function(event) {
 						        	closeDialog();
 						        });
 							}
 						});
 				event.stopPropagation();
-			});
+			  });
 			}
 		});
 	}
-	
+				
 })();

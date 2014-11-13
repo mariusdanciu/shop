@@ -17,7 +17,7 @@ html,body {
 	font-weight: 300;
 }
 
-input {
+textarea, input, select {
 	font-size: 16px;
 	height: 26px;
 	border: 1px solid #bbbbbb;
@@ -168,10 +168,27 @@ a:active {
 }
 
 .item_box:hover {
+    border-radius: 10px;
 	box-shadow: inset 0px 0px 40px 1px #dddddd;
 	cursor: pointer;
 }
 
+.item_box:hover > .info_tag {
+    background : #000000;
+}
+
+
+.item_box:hover > .info_tag div {
+	color: #ffffff;
+}
+
+.item_box:hover > .info_tag .info_tag_cart {
+	display: inline;
+}
+
+.item_box:hover > .info_tag span {
+	color: #ffffff;
+}
 
 .info_tag {
 	position: relative;
@@ -432,7 +449,7 @@ a:active {
 	width: 440px;
 }
 
-#order input {
+.upload_dialog_fields input, .select_row select, #order input {
 	float: right;
 	font-size: 16px;
 	height: 26px;
@@ -444,11 +461,51 @@ a:active {
 	height: 35px;
 }
 
-#order form label {
+#upload_dialog label, #order form label {
 	text-align: right;
 	font-size: 16px;
 	position: relative;
 	top: 5px;
+}
+
+.upload_dialog_fields #fields {
+    float: left;
+    width: 410px;
+    position: relative;
+}
+
+.upload_dialog_fields #fields .row {
+	width: 100%;
+	height: 35px;
+}
+
+.upload_dialog_fields #fields .select_row {
+	width: 100%;
+	height: 154px;
+}
+
+.upload_dialog_fields #fields .select_row select {
+	height: 140px;
+}
+
+.upload_dialog_fields {
+    padding-top: 10px;
+    float: left;
+    position: relative;
+}
+
+.upload_dialog_fields textarea {
+   width: 100%;
+   height: 100%;
+   resize: none;
+}
+
+#create_textzone {
+   height: 100px;
+   float: left;
+   width: 580px;
+   margin-left: 10px;
+   height: 250px;
 }
 
 #order a {
@@ -600,7 +657,7 @@ a:active {
 	padding: 20px;
 }
 
-#product_dialog {
+#product_dialog, #product_create_dialog {
 	display: none;
 	padding: 10px;
 }
@@ -618,25 +675,25 @@ a:active {
 	z-index: 999;
 }
 
-#close_dialog {
+.close_dialog {
 	float: right;
 	position: relative;
 }
 
-#close_dialog:hover {
+.close_dialog:hover {
 	cursor: pointer;
 }
 
-#title_dialog {
+.title_dialog {
 	float: left;
 	position: relative;
 }
 
-#content_dialog {
+.content_dialog {
 	clear: both;
 }
 
-#dialog_footer {
+.dialog_footer {
 	clear: both;
 	float: right;
 	padding: 10px;

@@ -40,7 +40,7 @@ object OrderService extends HttpPredicates {
         ShopApplication.persistence.productById(dk) map { prod =>
           (acc get "items") match {
             case Some(OrderItems(l)) => acc + ("items" -> OrderItems(l ++ List((prod, v.toInt))))
-            case _ => acc + ("items" -> OrderItems(List((prod, v.toInt))))
+            case _                   => acc + ("items" -> OrderItems(List((prod, v.toInt))))
           }
 
         }
@@ -65,7 +65,7 @@ object OrderService extends HttpPredicates {
 
           (v validate norm) match {
             case net.shift.html.Success(o) =>
-              future {
+              Future {
                 resp(JsResponse(
                   func() {
                     JsStatement(
@@ -78,7 +78,7 @@ object OrderService extends HttpPredicates {
                         apply("fadeOut", "slow"))
                   }.wrap.apply.toJsString))
               }
-              future {
+              Future {
                 (o.submitter match {
                   case c: Company =>
                     OrderPage.orderCompanyTemplate(OrderState(o.toOrderLog, r.language))
