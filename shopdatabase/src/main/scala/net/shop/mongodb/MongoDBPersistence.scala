@@ -25,7 +25,7 @@ object MongoDBPersistence extends Persistence {
   def productById(id: String): Try[ProductDetail] = try {
     db("products").findOne(MongoDBObject("_id.$oid" -> id)) match {
       case Some(obj) => Success(mongoToProduct(obj))
-      case _ => fail("Item " + id + " not found")
+      case _         => fail("Item " + id + " not found")
     }
   } catch {
     case e: Exception => fail(e)
@@ -42,11 +42,11 @@ object MongoDBPersistence extends Persistence {
   def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = try {
 
     val query = spec match {
-      case SortByName(true, _) => db("products").find("categories" $in List(cat)).sort(MongoDBObject("title" -> 1))
-      case SortByName(false, _) => db("products").find("categories" $in List(cat)).sort(MongoDBObject("title" -> -1))
-      case SortByPrice(true, _) => db("products").find("categories" $in List(cat)).sort(MongoDBObject("price" -> 1))
+      case SortByName(true, _)   => db("products").find("categories" $in List(cat)).sort(MongoDBObject("title" -> 1))
+      case SortByName(false, _)  => db("products").find("categories" $in List(cat)).sort(MongoDBObject("title" -> -1))
+      case SortByPrice(true, _)  => db("products").find("categories" $in List(cat)).sort(MongoDBObject("price" -> 1))
       case SortByPrice(false, _) => db("products").find("categories" $in List(cat)).sort(MongoDBObject("price" -> -1))
-      case _ => db("products").find("categories" $in List(cat))
+      case _                     => db("products").find("categories" $in List(cat))
     }
 
     Success(for { p <- query } yield {
@@ -74,7 +74,7 @@ object MongoDBPersistence extends Persistence {
   def categoryById(id: String): Try[Category] = try {
     db("categories").findOne(MongoDBObject("_id.$oid" -> id)) match {
       case Some(obj) => Success(mongoToCategory(obj))
-      case _ => fail("Item " + id + " not found")
+      case _         => fail("Item " + id + " not found")
     }
   } catch {
     case e: Exception => fail(e)

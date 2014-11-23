@@ -2,18 +2,28 @@ package net.shop
 package web.services
 
 import scala.Option.option2Iterable
+import scala.util.Failure
+import scala.util.Success
+
 import org.json4s.DefaultFormats
 import org.json4s.jvalue2extractable
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization.write
 import org.json4s.string2JsonInput
+
+import net.shift.common.DefaultLog
 import net.shift.common.Path
 import net.shift.common.PathUtils
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http._
+import net.shift.engine.http.AsyncResponse
+import net.shift.engine.http.BinaryPart
 import net.shift.engine.http.ImageResponse
+import net.shift.engine.http.JsonResponse
+import net.shift.engine.http.POST
 import net.shift.engine.http.Request
+import net.shift.engine.http.Resp
+import net.shift.engine.http.TextPart
 import net.shift.engine.http.TextResponse
 import net.shift.engine.page.Html5
 import net.shift.engine.utils.ShiftUtils
@@ -21,21 +31,10 @@ import net.shift.template.DynamicContent
 import net.shift.template.Selectors
 import net.shift.template.SnipState
 import net.shop.api.Cart
-import net.shop._
-import web.pages.CartState
-import web.pages.CartItemNode
-import scala.util.Success
-import net.shift.engine.http.JsonResponse
-import scala.util.Failure
-import net.shift.common.Log
+import net.shop.tryApplicative
 import net.shop.web.ShopApplication
-import net.shop.web.pages.ProductsPage
-import scala.util.Try
-import net.shop.api.ProductDetail
-import net.shop.web.pages.ProductsQuery
-import net.shift.loc.Language
-import net.shift.common.DefaultLog
-import net.shift.engine.ShiftFailure
+import net.shop.web.pages.CartItemNode
+import net.shop.web.pages.CartState
 
 trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog {
 
@@ -87,7 +86,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
         }) match {
           case Success(list) => resp(JsonResponse(write(list)))
           case Failure(t) =>
-            log.error("Failed processing cart ",  t)
+            log.error("Failed processing cart ", t)
             resp(JsonResponse(write(Nil)))
         }
 
@@ -102,13 +101,8 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
     parse(java.net.URLDecoder.decode(json, "UTF-8")).extract[Cart]
   }
 
-  def createProduct = for {
-    r <- POST
-    Path("create" :: "product" :: Nil) <- path
-    _ <- jsonContent
-  } yield {
-    service(_(Resp.created))
-  }
+  def createProduct = ProductCreateService.createProduct
+  
 }
 
 

@@ -67,8 +67,7 @@
 		cart = {
 
 			cleanFormMessages : function() {
-				$('#order_form label, #order_form_company label').css("color", "#000000").removeAttr(
-						"title");
+				$('#order_form label, #order_form_company label').css("color", "#000000").removeAttr("title");
 			},
 
 			clear : function() {

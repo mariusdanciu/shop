@@ -23,7 +23,7 @@ object OrderListener extends OrderObserver {
       from = Config.string("smtp.from"),
       to = content.o.email,
       bcc = Config.list("smtp.bcc"),
-      subject = Loc.loc0(content.l)("order.subject").text,
+      subject = Loc.loc0(content.l)("subject").text,
       message = content.doc)
   }
 

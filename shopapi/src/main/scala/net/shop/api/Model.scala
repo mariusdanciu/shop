@@ -3,17 +3,16 @@ package api
 
 import java.util.Date
 
-
 case class ProductDetail(id: Option[String] = None,
-  title: Map[String, String],
-  description: Map[String, String],
-  properties: Map[String, String],
-  price: Double,
-  oldPrice: Option[Double],
-  soldCount: Int,
-  categories: List[String],
-  images: List[String],
-  keyWords: List[String]) {
+                         title: Map[String, String],
+                         description: Map[String, String],
+                         properties: Map[String, String],
+                         price: Double,
+                         oldPrice: Option[Double],
+                         soldCount: Int,
+                         categories: List[String],
+                         images: List[String],
+                         keyWords: List[String]) {
 
   def stringId = id getOrElse "?"
 
@@ -37,27 +36,27 @@ case class Person(firstName: String, lastName: String) extends Submitter
 case class Company(companyName: String, cif: String, regCom: String, bank: String, bankAccount: String) extends Submitter
 
 case class Order(id: String,
-  submitter: Submitter,
-  region: String,
-  city: String,
-  address: String,
-  email: String,
-  phone: String,
-  terms: Boolean,
-  items: List[(ProductDetail, Int)]) {
+                 submitter: Submitter,
+                 region: String,
+                 city: String,
+                 address: String,
+                 email: String,
+                 phone: String,
+                 terms: Boolean,
+                 items: List[(ProductDetail, Int)]) {
 
   def toOrderLog = OrderLog(id, new Date(), submitter, region, city, address, email, phone, items map { i => i._1.toProductLog(i._2) })
 }
 
 case class OrderLog(id: String,
-  time: Date,
-  submitter: Submitter,
-  region: String,
-  city: String,
-  address: String,
-  email: String,
-  phone: String,
-  items: List[ProductLog]) {
+                    time: Date,
+                    submitter: Submitter,
+                    region: String,
+                    city: String,
+                    address: String,
+                    email: String,
+                    phone: String,
+                    items: List[ProductLog]) {
 
   lazy val total = (0.0 /: items)((a, i) => a + i.price * i.quantity)
 }

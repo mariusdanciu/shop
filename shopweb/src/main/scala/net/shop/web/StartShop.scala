@@ -32,6 +32,8 @@ object StartShop extends App with DefaultLog {
   Config load ()
 
   NettyServer.start(Config.int("port"), ShopApplication)
+  
+  println("Server started.")
 }
 
 object ShopApplication extends ShiftApplication with ShopServices {

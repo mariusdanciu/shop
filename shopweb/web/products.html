@@ -2,7 +2,6 @@
 <head>
 <link href="/static/css/chosen.min.css" rel="stylesheet" type="text/css" />
 <link href="/static/css/basic.css" rel="stylesheet" type="text/css" />
-<link href="/static/css/dropzone.css" rel="stylesheet" type="text/css" />
 <link href="/static/css/jquery-te-1.4.0.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="/static/js/chosen.jquery.min.js"></script>
@@ -10,7 +9,6 @@
 <script type="text/javascript" src="/static/js/blockui.js"></script>
 
 <script type="text/javascript" src="/static/js/products.js"></script>
-<script type="text/javascript" src="/static/js/dropzone.js"></script>
 <script type="text/javascript" src="/static/js/jquery-te-1.4.0.min.js"></script>
 </head>
 
@@ -38,34 +36,52 @@
           <img src="/static/images/close.png" />
         </div>
         <div class="content_dialog">
-          <form action="/product/image/upload" class="dropzone" id="upload_dialog">
-            <div class="upload_dialog_fields">
+
+          <form action="/product/create" id="upload_form" method="POST">
+          
+            <div class="upload_form_fields">
+
+              <ul id="create_product_tab">
+                <li class="active"><a href="#fields">Datele produsului</a></li>
+                <li><a href="#create_textzone">Descriere</a></li>
+                <li><a href="#files">Fisiere</a></li>
+              </ul>
+
           	  <div id="fields">
-          	    <div class="row">
-          	      <label for="create_title" data-loc="product.title"></label><input id="create_title" type="text"/>
-          	    </div>
-          	    <div class="row">
-          	      <label for="create_price" data-loc="product.price"></label><input id="create_price" type="number"/>
-          	    </div>
-          	    <div class="select_row">
-          	      <label for="create_select_cat" data-loc="product.categories"></label>
-                  <select id="create_select_cat" multiple="multiple">
-                    <option value="volvo">Volvo</option>
-                    <option value="saab">Saab</option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="audi">Audi</option>
-                  </select>
+          	    <div class="column">
+	          	    <div class="row">
+	          	      <label for="create_title" data-loc="title"></label><input id="create_title" type="text" name="create_title"/>
+	          	    </div>
+	          	    <div class="row">
+	          	      <label for="create_price" data-loc="price"></label><input id="create_price" type="number" name="create_price"/>
+	          	    </div>
+	          	    <div class="select_row">
+	          	      <label for="create_categories" data-loc="categories"></label>
+	                  <select id="create_categories" multiple="multiple" data-snip="catlist" name="create_categories"></select>
+	                </div>
+	                <div class="row">
+	                  <label for="create_keywords" data-loc="keywords"></label>
+	                  <input id="create_keywords" type="text" name="create_keywords"/>
+	                </div>
                 </div>
-                <div class="row">
-                  <label for="create_keywords" data-loc="product.keywords"></label><input id="create_keywords" type="text"/>
+                <div class="column">
+                  <div class="column"><img id="add_prop" class="clickable" src="/static/images/plus.png"/></div>
+                  <div id="prop_fields" class="column">
+                  </div>
                 </div>
               </div>
+              
               <div id="create_textzone">
-                <textarea class="editor" id="textzone"></textarea>
+              	<div class="row">
+                  <label for="create_description" data-loc="description"></label>
+                </div>
+                <textarea class="editor" id="create_description" name="create_description"></textarea>
+              </div>
+              
+              <div id="files">
+                 <input type="file" id="fileselect" name="files" multiple="multiple" />
               </div>
             </div>
-            <div class="dropzone-previews"></div>
-            <div class="dz-message" data-loc="product.drag.files"></div>
          </form>
        </div>
        <div class="dialog_footer">
@@ -98,3 +114,7 @@
 
 </body>
 </html>
+
+
+
+

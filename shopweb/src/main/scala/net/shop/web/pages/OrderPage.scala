@@ -89,7 +89,7 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
               case Success(p) =>
                 (bind(s.node) {
                   case "img" :/ a / _ =>
-                    <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "thumb", p.images.head)}") e
+                    <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "normal", p.images.head)}") e
                   case "td" :/ HasClass("c1", a) / _ => <td>{ p.title_?(s.language.language) }</td> % a
                   case "td" :/ HasClass("c2", a) / _ => <td>{ prod.quantity }</td> % a
                   case "td" :/ HasClass("c3", a) / _ => <td>{ p.price }</td> % a

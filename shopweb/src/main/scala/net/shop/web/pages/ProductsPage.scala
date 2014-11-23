@@ -27,7 +27,7 @@ import net.shop.utils.ShopUtils
 
 object ProductsPage extends Cart[Request] with ShopUtils {
 
-  override def snippets = List(title, item, itemAdd) ++ cartSnips
+  override def snippets = List(title, item, itemAdd, catList) ++ cartSnips
 
   val cartSnips = super.snippets
 
@@ -37,19 +37,16 @@ object ProductsPage extends Cart[Request] with ShopUtils {
         case (Some(cat :: _), None) =>
           ShopApplication.persistence.categoryById(cat) match {
             case Success(c) => Text(c.title.getOrElse(s.language.language, "???"))
-            case _ => NodeSeq.Empty
+            case _          => NodeSeq.Empty
           }
         case (None, Some(search :: _)) => Text(s""""$search"""")
-        case _ => NodeSeq.Empty
+        case _                         => NodeSeq.Empty
       }
       Success((s.state, <h1>{ v }</h1>))
   }
 
   val itemAdd = reqSnip("itemadd") {
-    s =>
-      {
-        Success((s.state, s.node))
-      }
+    s => Success((s.state, s.node))
   }
 
   val item = reqSnip("item") {
@@ -59,9 +56,9 @@ object ProductsPage extends Cart[Request] with ShopUtils {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
-                case "li" :/ HasClass("item", a) / childs => <li>{ childs }</li>
-                case "div" :/ HasClass("item_box", a) / childs => <div id={ prod stringId } title={ prod title_? (s.language.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
-                case "div" :/ HasClass("info_tag_text", a) / childs => <div>{ prod title_? (s.language.language) }</div> % a
+                case "li" :/ HasClass("item", a) / childs            => <li>{ childs }</li>
+                case "div" :/ HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.language.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
+                case "div" :/ HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.language.language) }</div> % a
                 case "div" :/ HasClass("info_tag_price", a) / childs => priceTag(prod) % a
               } match {
                 case Success(n) => n
@@ -74,22 +71,36 @@ object ProductsPage extends Cart[Request] with ShopUtils {
       }
   }
 
+  val catList = reqSnip("catlist") {
+    s =>
+      ShopApplication.persistence.allCategories match {
+        case Success(list) =>
+          s.node match {
+            case e: Elem =>
+              val v = list.map(c => (<option value={ c.id getOrElse "?" }>{ c.title_?(s.language.language) }</option>)).toSeq
+              Success((s.state, e.wrap(NodeSeq.fromSeq(v))))
+            case _ => Success((s.state, NodeSeq.Empty))
+          }
+        case Failure(t) => Success((s.state, errorTag(Loc.loc0(s.language)("no_category").text)))
+      }
+  }
+
 }
 
 object ProductsQuery {
   def fetch(r: Request): Try[Iterator[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
     (r.param("cat"), r.param("search")) match {
-      case (Some(cat :: _), None) => ShopApplication.persistence.categoryProducts(cat, spec)
+      case (Some(cat :: _), None)    => ShopApplication.persistence.categoryProducts(cat, spec)
       case (None, Some(search :: _)) => ShopApplication.persistence.searchProducts(search, spec)
-      case _ => Success(Iterator.empty)
+      case _                         => Success(Iterator.empty)
     }
   }
 
   def toSortSpec(r: Request): SortSpec = {
     r.param("sort") match {
       case Some(v :: _) => SortSpec.fromString(v, r.language.language)
-      case _ => NoSort
+      case _            => NoSort
     }
   }
 }

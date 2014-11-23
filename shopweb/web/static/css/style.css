@@ -17,6 +17,10 @@ html,body {
 	font-weight: 300;
 }
 
+b {
+  font-weight: bold;
+}
+
 textarea, input, select {
 	font-size: 16px;
 	height: 26px;
@@ -449,7 +453,7 @@ a:active {
 	width: 440px;
 }
 
-.upload_dialog_fields input, .select_row select, #order input {
+.upload_form_fields input, .select_row select, #order input {
 	float: right;
 	font-size: 16px;
 	height: 26px;
@@ -461,51 +465,54 @@ a:active {
 	height: 35px;
 }
 
-#upload_dialog label, #order form label {
+#upload_form label, #order form label {
 	text-align: right;
 	font-size: 16px;
 	position: relative;
 	top: 5px;
 }
 
-.upload_dialog_fields #fields {
+.upload_form_fields #fields {
     float: left;
-    width: 410px;
+    width: 100%;
     position: relative;
+    top: 10px;
+    max-height: 400px;
+    overflow: auto;
 }
 
-.upload_dialog_fields #fields .row {
-	width: 100%;
+.upload_form_fields .row {
+	width: 400px;
 	height: 35px;
+	margin-right: 10px;
 }
 
-.upload_dialog_fields #fields .select_row {
-	width: 100%;
+.upload_form_fields #fields .select_row {
+	width: 400px;
 	height: 154px;
+	margin-right: 10px;
 }
 
-.upload_dialog_fields #fields .select_row select {
+.upload_form_fields #fields .select_row select {
 	height: 140px;
 }
 
-.upload_dialog_fields {
-    padding-top: 10px;
+.upload_form_fields {
+    padding: 0 0 20px;
     float: left;
     position: relative;
 }
 
-.upload_dialog_fields textarea {
+.upload_form_fields textarea {
    width: 100%;
    height: 100%;
    resize: none;
 }
 
 #create_textzone {
-   height: 100px;
    float: left;
-   width: 580px;
-   margin-left: 10px;
-   height: 250px;
+   width: 100%;
+   height: 300px;
 }
 
 #order a {
@@ -698,9 +705,64 @@ a:active {
 	float: right;
 	padding: 10px;
 	font-size: 16px;
+	margin-top: 10px;
 }
 
 .item_box .add_item {
     margin-left: 100px;
     margin-top: 114px;
 } 
+
+#create_product_tab { 
+  padding: 0;
+  position: relative;
+  clear: both;
+}
+
+#create_product_tab li { 
+  display: inline;
+}
+
+#create_product_tab li a {
+ padding: 10px;
+ float:left;
+ border-right: 1px solid #cccccc;
+ border-bottom: none;
+ text-decoration: none;
+ color: #000;
+ background: #eeeeee;
+}
+
+#create_product_tab li.active a {
+ background: #cccccc;
+ border-radius: 10px 10px 0px 0px;
+}
+
+#files {
+  float: left;
+  clear: both;
+  height: 100px;
+  position: relative;
+  margin-top: 10px;
+  width: 100#;
+}
+
+.column {
+  position: relative;
+  float: left;
+}
+
+#prop_fields .row {
+  width: 300px;
+  margin-left: 10px;
+}
+
+#prop_fields input {
+  width: 120px;
+  float: left;
+  margin-right: 10px;
+}
+
+.clickable:hover {
+  cursor: pointer;
+}

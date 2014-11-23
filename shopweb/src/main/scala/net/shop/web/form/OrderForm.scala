@@ -34,7 +34,7 @@ object OrderForm extends ShopUtils {
   }
 
   def validEmail(name: String, id: String)(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
-    val required = Failure(List((id, Loc.loc(lang)("field.required", Seq(Loc.loc0(lang)("order.email").text)).text)))
+    val required = Failure(List((id, Loc.loc(lang)("field.required", Seq(Loc.loc0(lang)("email").text)).text)))
 
     env.get(name) match {
       case Some(FormField(n)) if n.isEmpty() => required
@@ -47,7 +47,7 @@ object OrderForm extends ShopUtils {
   }
 
   def validPhone(name: String, id: String)(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], String] = env => {
-    val required = Failure(List((id, Loc.loc(lang)("field.required", Seq(Loc.loc0(lang)("order.phone").text)).text)))
+    val required = Failure(List((id, Loc.loc(lang)("field.required", Seq(Loc.loc0(lang)("phone").text)).text)))
 
     env.get(name) match {
       case Some(FormField(n)) if n.isEmpty() => required
@@ -83,14 +83,14 @@ object OrderForm extends ShopUtils {
 
     val person = (Person.apply _).curried
     val personFormlet = Formlet(person) <*>
-      inputText("lname")(validName("fname", ?("order.first.name").text)) <*>
-      inputText("fname")(validName("lname", ?("order.last.name").text))
+      inputText("lname")(validName("fname", ?("first.name").text)) <*>
+      inputText("fname")(validName("lname", ?("last.name").text))
 
     Formlet(order) <*>
       personFormlet <*>
-      inputText("region")(validName("region", ?("order.region").text)) <*>
-      inputText("city")(validName("city", ?("order.city").text)) <*>
-      inputText("address")(validName("address",  ?("order.address").text)) <*>
+      inputText("region")(validName("region", ?("region").text)) <*>
+      inputText("city")(validName("city", ?("city").text)) <*>
+      inputText("address")(validName("address",  ?("address").text)) <*>
       inputText("email")(validEmail("email", "email")) <*>
       inputText("phone")(validPhone("phone", "phone")) <*>
       inputCheck("terms", "true")(validTerms("terms")) <*>
@@ -103,17 +103,17 @@ object OrderForm extends ShopUtils {
 
     val company = (Company.apply _).curried
     val companyFormlet = Formlet(company) <*>
-      inputText("cname")(validName("cname",  ?("order.company.name").text)) <*>
-      inputText("cif")(validName("cif", ?("order.company.cif").text)) <*>
-      inputText("cregcom")(validName("cregcom", ?("order.company.reg.com").text)) <*>
-      inputText("cbank")(validName("cbank", ?("order.company.bank").text)) <*>
-      inputText("cbankaccount")(validName("cbankaccount",  ?("order.company.bank.account").text))
+      inputText("cname")(validName("cname",  ?("company.name").text)) <*>
+      inputText("cif")(validName("cif", ?("company.cif").text)) <*>
+      inputText("cregcom")(validName("cregcom", ?("company.reg.com").text)) <*>
+      inputText("cbank")(validName("cbank", ?("company.bank").text)) <*>
+      inputText("cbankaccount")(validName("cbankaccount",  ?("company.bank.account").text))
 
     Formlet(order) <*>
       companyFormlet <*>
-      inputText("cregion")(validName("cregion", ?("order.region").text)) <*>
-      inputText("ccity")(validName("ccity", ?("order.city").text)) <*>
-      inputText("caddress")(validName("caddress", ?("order.address").text)) <*>
+      inputText("cregion")(validName("cregion", ?("region").text)) <*>
+      inputText("ccity")(validName("ccity", ?("city").text)) <*>
+      inputText("caddress")(validName("caddress", ?("address").text)) <*>
       inputText("cemail")(validEmail("cemail", "cemail")) <*>
       inputText("cphone")(validPhone("cphone", "cphone")) <*>
       inputCheck("cterms", "true")(validTerms("cterms")) <*>
