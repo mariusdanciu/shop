@@ -38,7 +38,7 @@ object StartShop extends App with DefaultLog {
 
 object ShopApplication extends ShiftApplication with ShopServices {
 
-  lazy val persistence: Persistence = CachingBackend(MongoDBPersistence)
+  lazy val persistence: Persistence = MongoDBPersistence
 
   def logReq = for {
     r <- req
@@ -72,6 +72,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       getCart() |
       orderService.order |
       createProduct |
+      deleteProduct |
       service(notFoundService)
   } yield c
 

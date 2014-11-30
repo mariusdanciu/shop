@@ -109,6 +109,6 @@ object FSProductsService extends Persistence with TraversingSpec {
 
   def createCategories(cats: Category*): Try[Seq[String]] = new ShiftFailure("Not supported")
 
-  
+  def deleteProducts(prod: String*): Try[Int] = new ShiftFailure("Not supported")
 }
 

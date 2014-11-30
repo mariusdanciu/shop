@@ -20,7 +20,7 @@ import net.shift.engine.http.AsyncResponse
 import net.shift.engine.http.BinaryPart
 import net.shift.engine.http.ImageResponse
 import net.shift.engine.http.JsonResponse
-import net.shift.engine.http.POST
+import net.shift.engine.http._
 import net.shift.engine.http.Request
 import net.shift.engine.http.Resp
 import net.shift.engine.http.TextPart
@@ -102,7 +102,16 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   }
 
   def createProduct = ProductCreateService.createProduct
-  
+
+  def deleteProduct = for {
+    r <- DELETE
+    Path("product" :: "delete" :: id :: Nil) <- path
+  } yield {
+    ShopApplication.persistence.deleteProducts(id) match {
+      case Success(num) => service(_(Resp.ok))
+      case Failure(t) => service(_(Resp.notFound))
+    }
+  }
 }
 
 

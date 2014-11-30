@@ -10,7 +10,7 @@ import com.mongodb.casbah.commons.MongoDBObject
 
 import net.shop.api._
 import net.shop.api.persistence._
-import ShopError._
+import net.shop.api.persistence.ShopError._
 
 object MongoDBPersistence extends Persistence {
 
@@ -23,9 +23,9 @@ object MongoDBPersistence extends Persistence {
   db("products").ensureIndex(MongoDBObject("categories" -> 1))
 
   def productById(id: String): Try[ProductDetail] = try {
-    db("products").findOne(MongoDBObject("_id.$oid" -> id)) match {
-      case Some(obj) => Success(mongoToProduct(obj))
-      case _         => fail("Item " + id + " not found")
+    db("products").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
+      case Some(obj) => println(obj); Success(mongoToProduct(obj))
+      case _         => println("Not here"); fail("Item " + id + " not found")
     }
   } catch {
     case e: Exception => fail(e)
@@ -84,6 +84,13 @@ object MongoDBPersistence extends Persistence {
     Success(for { p <- db("categories").find() } yield {
       mongoToCategory(p)
     })
+  } catch {
+    case e: Exception => fail(e)
+  }
+
+  def deleteProducts(ids: String*): Try[Int] = try {
+    val num = (0 /: ids)((acc, id) => db("products").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
+    Success(num)
   } catch {
     case e: Exception => fail(e)
   }

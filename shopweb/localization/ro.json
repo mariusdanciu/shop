@@ -61,37 +61,37 @@
  },
  {
    "code" : "112",
-   "name" : "order.first.name",
+   "name" : "first.name",
    "text" : "Prenume"
  },
  {
    "code" : "113",
-   "name" : "order.last.name",
+   "name" : "last.name",
    "text" : "Nume"
  },
  {
    "code" : "113",
-   "name" : "order.region",
+   "name" : "region",
    "text" : "Judet/Sector"
  },
  {
    "code" : "114",
-   "name" : "order.city",
+   "name" : "city",
    "text" : "Localitatea"
  },
  {
    "code" : "115",
-   "name" : "order.address",
+   "name" : "address",
    "text" : "Adresa"
  },
  {
    "code" : "116",
-   "name" : "order.email",
+   "name" : "email",
    "text" : "E-Mail"
  },
  {
    "code" : "117",
-   "name" : "order.phone",
+   "name" : "phone",
    "text" : "Telefon"
  },
  {
@@ -116,7 +116,7 @@
  },
  {
    "code" : "122",
-   "name" : "order.cnp",
+   "name" : "cnp",
    "text" : "CNP"
  },
  {
@@ -146,7 +146,7 @@
  },
  {
    "code" : "128",
-   "name" : "order.subject",
+   "name" : "subject",
    "text" : "Comanda I-Did"
  },
  {
@@ -201,27 +201,27 @@
  },
  {
    "code" : "139",
-   "name" : "order.company.name",
+   "name" : "company.name",
    "text" : "Nume firma"
  },
  {
    "code" : "141",
-   "name" : "order.company.cif",
+   "name" : "company.cif",
    "text" : "CIF"
  },
  {
    "code" : "142",
-   "name" : "order.company.reg.com",
+   "name" : "company.reg.com",
    "text" : "Reg. Com."
  },
  {
    "code" : "143",
-   "name" : "order.company.bank",
+   "name" : "company.bank",
    "text" : "Banca"
  },
  {
    "code" : "144",
-   "name" : "order.company.bank.account",
+   "name" : "company.bank.account",
    "text" : "Cont bancar"
  },
  {
@@ -231,29 +231,70 @@
  },
  {
    "code" : "146",
-   "name" : "order.data.product",
+   "name" : "product",
    "text" : "Produs"
  },
  {
-   "code" : "147",
-   "name" : "order.data.name",
-   "text" : "Denumire"
- },
- {
    "code" : "148",
-   "name" : "order.data.quantity",
+   "name" : "quantity",
    "text" : "Cantitate"
  },
  {
    "code" : "149",
-   "name" : "order.data.price",
+   "name" : "unit.price",
    "text" : "Pret unitar (RON)"
  },
  {
    "code" : "150",
    "name" : "product.page",
    "text" : "Pagina produsului"
+ },
+ {
+   "code" : "151",
+   "name" : "new.product",
+   "text" : "Produs nou"
+ },
+ {
+   "code" : "152",
+   "name" : "title",
+   "text" : "Denumire"
+ },
+ {
+   "code" : "153",
+   "name" : "price",
+   "text" : "Pret"
+ },
+ {
+   "code" : "155",
+   "name" : "keywords",
+   "text" : "Cuvinte cheie"
+ },
+ {
+   "code" : "156",
+   "name" : "drag.files",
+   "text" : "Trage fisierele aici"
+ },
+ {
+   "code" : "157",
+   "name" : "create.product",
+   "text" : "Creaza produsul"
+ },
+ {
+   "code" : "158",
+   "name" : "description",
+   "text" : "Descriere"
+ },
+ {
+   "code" : "159",
+   "name" : "properties",
+   "text" : "Proprietati"
+ },
+ {
+   "code" : "160",
+   "name" : "specs",
+   "text" : "Specificatii"
  }
+ 
  
  
 ]

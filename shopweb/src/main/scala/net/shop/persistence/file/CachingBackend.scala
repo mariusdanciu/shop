@@ -13,16 +13,16 @@ import net.shift.engine.ShiftFailure
 
 case class CachingBackend(serv: Persistence) extends Persistence {
 
-  lazy val products = for (t <- serv.allProducts) yield {
+  private var products = for (t <- serv.allProducts) yield {
     ((Nil: List[ProductDetail]) /: t)((a, e) => e :: a)
   }
 
-  lazy val categories = for (t <- serv.allCategories) yield {
+  private val categories = for (t <- serv.allCategories) yield {
     ((Nil: List[Category]) /: t)((a, e) => e :: a)
   }
 
   override def productById(id: String): Try[ProductDetail] = {
-   filter(p => p.stringId == id).map { l => l.next }
+    filter(p => p.stringId == id).map { l => l.next }
   }
 
   override def allProducts: Try[Iterator[ProductDetail]] = products map { _ iterator }
@@ -31,7 +31,7 @@ case class CachingBackend(serv: Persistence) extends Persistence {
 
   def filter(f: ProductDetail => Boolean): Try[Iterator[ProductDetail]] = allProducts match {
     case Success(prods) => Success(for (p <- prods if f(p)) yield p)
-    case f => f
+    case f              => f
   }
 
   override def categoryById(id: String): Try[Category] = {
@@ -39,7 +39,7 @@ case class CachingBackend(serv: Persistence) extends Persistence {
       case Success(cats) =>
         cats.find(_.stringId == id) match {
           case Some(c) => Success(c)
-          case _ => Failure(new Exception("Category not found"))
+          case _       => Failure(new Exception("Category not found"))
         }
       case Failure(f) => Failure(f)
     }
@@ -48,8 +48,16 @@ case class CachingBackend(serv: Persistence) extends Persistence {
 
   override def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = serv.searchProducts(text, spec)
 
-  def createProducts(prod: ProductDetail*): Try[Seq[String]] = serv.createProducts(prod:_*)
+  def createProducts(prod: ProductDetail*): Try[Seq[String]] = serv.createProducts(prod: _*)
 
-  def createCategories(cats: Category*): Try[Seq[String]] = serv.createCategories(cats:_*)
+  def createCategories(cats: Category*): Try[Seq[String]] = serv.createCategories(cats: _*)
 
+  def deleteProducts(ids: String*): Try[Int] = {
+    serv.deleteProducts(ids: _*) match {
+      case Success(num) =>
+        products = products.map { list => list.filter { p => !ids.contains(p.id) } }
+        Success(num)
+      case f => f
+    }
+  }
 }

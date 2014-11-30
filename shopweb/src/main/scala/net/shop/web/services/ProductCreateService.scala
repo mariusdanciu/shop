@@ -31,6 +31,8 @@ import net.shift.html.Validation
 import net.shift.js._
 import net.shift.engine.http.JsResponse
 import JsDsl._
+import net.shift.engine.ShiftApplication
+import net.shop.web.ShopApplication
 
 object ProductCreateService extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog {
 
@@ -45,10 +47,21 @@ object ProductCreateService extends PathUtils with ShiftUtils with Selectors wit
     mp <- multipartForm
   } yield {
     extract(r.language, mp) match {
-      case net.shift.html.Success(o) =>
-        println(o)
-        service(_(Resp.created))
-      case net.shift.html.Failure(msgs) =>
+      case (files, net.shift.html.Success(o)) =>
+        val cpy = o.copy(images = Set(files.map(f => f._2):_*).toList)
+        println(cpy)
+        ShopApplication.persistence.createProducts(cpy) match {
+          case scala.util.Success(p) =>
+            files.map { f =>
+              scalax.file.Path.fromString(s"data/products/${p.head}/${f._1}").write(f._3)
+            }
+            service(_(Resp.created))
+          case scala.util.Failure(t) =>
+            error("Cannot create product ", t)
+            service(_(Resp.created))
+        }
+
+      case (_, net.shift.html.Failure(msgs)) =>
         println(msgs)
         service(_(JsResponse(
           func() {
@@ -66,7 +79,7 @@ object ProductCreateService extends PathUtils with ShiftUtils with Selectors wit
 
   }
 
-  private def extract(implicit loc: Language, multipart: MultiPartBody): Validation[ValidationError, ProductDetail] = {
+  private def extract(implicit loc: Language, multipart: MultiPartBody): (List[(String, String, Array[Byte])], Validation[ValidationError, ProductDetail]) = {
 
     val (bins, text) = multipart.parts partition {
       case BinaryPart(h, content) => true
@@ -77,7 +90,7 @@ object ProductCreateService extends PathUtils with ShiftUtils with Selectors wit
     val files = extractBins(bins)
 
     files.foreach(f => println(f._1))
-    
+
     val product = ((ProductDetail.apply _).curried)(None)
     val ? = Loc.loc0(loc) _
 
@@ -92,7 +105,7 @@ object ProductCreateService extends PathUtils with ShiftUtils with Selectors wit
       inputFile("images")(validateDefault("images", Nil)) <*>
       inputSelect("create_keywords", Nil)(validateListField("create_keywords", ?("keywords").text))
 
-    productFormlet validate params
+    (files, productFormlet validate params)
   }
 
   def validateProps(title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, ValidationMap] = env => {
@@ -145,18 +158,19 @@ object ProductCreateService extends PathUtils with ShiftUtils with Selectors wit
     case (acc, _) => acc
   }
 
-  def extractBins(bins: List[MultiPart]) = ((Nil: List[(String, Array[Byte])]) /: bins.zipWithIndex) {
-    case (acc, (BinaryPart(h, content), idx)) =>
+  def extractBins(bins: List[MultiPart]) = ((Nil: List[(String, String, Array[Byte])]) /: bins) {
+    case (acc, BinaryPart(h, content)) =>
       (for {
         cd <- h.get("Content-Disposition")
-        FileSplit(name, ext) <- cd.params.get("filename")
+        FileSplit(n, ext) <- cd.params.get("filename")
+        FileSplit(name, _) <- Some(n)
       } yield {
-        acc ++ List(if (name.endsWith(".thumb"))
-          (s"thumb/$idx.$ext", content)
-        else if (name.endsWith(".normal"))
-          (s"normal/$idx.$ext", content)
+        acc ++ List(if (n.endsWith(".thumb"))
+          (s"thumb/$name.$ext", s"$name.$ext", content)
+        else if (n.endsWith(".normal"))
+          (s"normal/$name.$ext", s"$name.$ext", content)
         else
-          (s"large/$idx.$ext", content))
+          (s"large/$name.$ext", s"$name.$ext", content))
       }) getOrElse acc
     case (acc, _) => acc
   }

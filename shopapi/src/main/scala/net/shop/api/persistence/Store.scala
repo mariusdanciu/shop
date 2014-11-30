@@ -22,6 +22,7 @@ trait Persistence {
   def categoryById(id: String): Try[Category]
   def allCategories: Try[Iterator[Category]]
   def createProducts(prod: ProductDetail*): Try[Seq[String]]
+  def deleteProducts(prod: String*): Try[Int]
   def createCategories(prod: Category*): Try[Seq[String]]
 }
 

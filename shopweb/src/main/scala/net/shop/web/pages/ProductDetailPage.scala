@@ -18,7 +18,8 @@ import net.shift.template.Snippet.snip
 import net.shop.api.ProductDetail
 import net.shop.utils.ShopUtils
 import net.shop.web.ShopApplication
-import scalax.io.JavaConverters
+import scalax.io._
+import java.io.StringReader
 
 object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
 
@@ -26,12 +27,16 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
 
   val title = reqSnip("title") {
     s =>
-      s.state.req.param("pid") match {
-        case Some(id :: _) => ShopApplication.persistence.productById(id) match {
-          case Success(prod) => Success(ProductPageState(s.state.req, Success(prod)), <h1>{ prod.title_?(s.language.language) }</h1>)
-          case Failure(t) => Success(s.state, errorTag(Loc.loc0(s.language)("no_product").text))
+      {
+        s.state.req.param("pid") match {
+          case Some(id :: _) => ShopApplication.persistence.productById(id) match {
+            case Success(prod) => Success(ProductPageState(s.state.req, Success(prod)), <h1>{ prod.title_?(s.language.language) }</h1>)
+            case Failure(t) =>
+              println("Not found ", t)
+              Success(s.state, errorTag(Loc.loc0(s.language)("no_product").text))
+          }
+          case _ => Success(s.state, errorTag(Loc.loc0(s.language)("no_product").text))
         }
-        case _ => Success(s.state, errorTag(Loc.loc0(s.language)("no_product").text))
       }
   }
 
@@ -41,7 +46,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
         (p.categories.flatMap(e => {
           ShopApplication.persistence.categoryById(e) match {
             case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.language.language) }</a> ++ <span>, </span>)
-            case _ => NodeSeq.Empty
+            case _            => NodeSeq.Empty
           }
         }).toList.dropRight(1))
       }) map { l => (s.state, NodeSeq.fromSeq(l)) }).recover { case _ => (s.state, NodeSeq.Empty) }
@@ -98,16 +103,22 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
       }).recover { case _ => (s.state, NodeSeq.Empty) }
   }
 
+  private def option2Try[T](o: Option[T]): Try[T] = o match {
+    case Some(v) => Success(v)
+    case _       => ShiftFailure("Empty")
+  }
+
   val details = reqSnip("details") {
     s =>
-      import JavaConverters.asInputConverter
-      (for {
-        p <- s.state.product
-        input <- s.state.req.resource(Path(s"data/products/${p.stringId}/desc_${s.language}.html"))
-        n <- load(input)
-      } yield {
-        (ProductPageState(s.state.req, Success(p)), n)
-      }).recover { case _ => (s.state, NodeSeq.Empty) }
+      {
+        (for {
+          p <- s.state.product
+          desc <- option2Try(p.description.get(s.language.language))
+          n <- load(s"<div>$desc</div>")
+        } yield {
+          (ProductPageState(s.state.req, Success(p)), n)
+        }).recover { case _ => (s.state, NodeSeq.Empty) }
+      }
   }
 
 }
