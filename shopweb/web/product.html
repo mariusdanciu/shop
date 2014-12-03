@@ -28,8 +28,20 @@
               <span data-snip="detailPrice"></span>
             </div>
           </div>
-          <div class="prod_desc">
+          <ul id="product_details_tab">
+            <li class="active"><a href="#prod_desc" data-loc="description"></a></li>
+            <li><a href="#prod_specs" data-loc="specs"></a></li>
+          </ul>
+          <div id="prod_desc" class="prod_desc">
             <div data-snip="details"></div>
+          </div>
+          <div id="prod_specs" class="prod_specs">
+            <div data-snip="specs">
+              <div class="row">
+             	<div class="column1"><span class="prop_name"></span></div>
+             	<div class="column2"><span class="prop_value"></span></div>
+             </div>
+            </div>
           </div>
         </div>
       </div>

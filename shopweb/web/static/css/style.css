@@ -271,7 +271,6 @@ a:active {
 	width: 910px;
 	float: left;
 	margin-left: 20px;
-	margin-top: 20px;
 }
 
 .quickview #pright {
@@ -374,7 +373,6 @@ a:active {
 
 .prod_details {
 	float: left;
-	margin-top: 20px;
 	font-size: 16px;
 	width: 100%;
 }
@@ -384,9 +382,10 @@ a:active {
 	height: 40px;
 	float: left;
 	border-bottom: 1px solid #dddddd;
+	margin-bottom: 10px;
 }
 
-.prod_desc {
+.prod_desc, .prod_specs {
 	width: 100%;
 	float: left;
 	margin-top: 10px;
@@ -501,6 +500,26 @@ a:active {
 	height: 35px;
 	margin-right: 10px;
 }
+
+.prod_specs .row {
+	width: 600px;
+	height: 35px;
+}
+
+.prod_specs .column1 {
+	width: 150px;
+	border-right: 1px solid #cccccc;
+	float: left;
+	margin-right: 10px;
+	position: relative;
+}
+
+.prod_specs .column2 {
+	width: 430px;
+	float: left;
+	position: relative;
+}
+
 
 .upload_form_fields #fields .select_row {
 	width: 400px;
@@ -709,6 +728,7 @@ a:active {
 .title_dialog {
 	float: left;
 	position: relative;
+	height: 50px;
 }
 
 .content_dialog {
@@ -728,28 +748,30 @@ a:active {
     margin-top: 114px;
 } 
 
-#create_product_tab { 
+#create_product_tab, #product_details_tab { 
   padding: 0;
   position: relative;
   clear: both;
 }
 
-#create_product_tab li { 
+#create_product_tab li, #product_details_tab li { 
   display: inline;
 }
 
-#create_product_tab li a {
+#create_product_tab li a, #product_details_tab li a {
  padding: 10px;
  float:left;
- border-right: 1px solid #cccccc;
- border-bottom: none;
  text-decoration: none;
  color: #000;
- background: #eeeeee;
+ border-bottom: 1px solid #999999;
 }
 
-#create_product_tab li.active a {
- background: #cccccc;
+#create_product_tab li.active a, #product_details_tab li.active a {
+ border-top: 1px solid;
+ border-left: 1px solid;
+ border-right: 1px solid;
+ border-bottom: none;
+ border-color: #999999;
  border-radius: 10px 10px 0px 0px;
 }
 

@@ -21,9 +21,9 @@ import net.shop.web.ShopApplication
 import scalax.io._
 import java.io.StringReader
 
-object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
+object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlUtils {
 
-  override def snippets = List(title, catlink, productLink, images, detailPrice, details) ++ super.snippets
+  override def snippets = List(title, catlink, productLink, images, detailPrice, details, specs) ++ super.snippets
 
   val title = reqSnip("title") {
     s =>
@@ -116,6 +116,27 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
           desc <- option2Try(p.description.get(s.language.language))
           n <- load(s"<div>$desc</div>")
         } yield {
+          (ProductPageState(s.state.req, Success(p)), n)
+        }).recover { case _ => (s.state, NodeSeq.Empty) }
+      }
+  }
+
+  val specs = reqSnip("specs") {
+    s =>
+      {
+        (for {
+          p <- s.state.product
+        } yield {
+          val n = (NodeSeq.Empty /: p.properties) {
+            case (acc, (k, v)) =>
+              (bind(s.node) {
+                case HasClass("prop_name", a)  => Text(k)
+                case HasClass("prop_value", a) => Text(v)
+              }) match {
+                case Success(n) => acc ++ n
+                case _          => NodeSeq.Empty
+              }
+          }
           (ProductPageState(s.state.req, Success(p)), n)
         }).recover { case _ => (s.state, NodeSeq.Empty) }
       }

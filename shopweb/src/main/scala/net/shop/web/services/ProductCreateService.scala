@@ -48,7 +48,7 @@ object ProductCreateService extends PathUtils with ShiftUtils with Selectors wit
   } yield {
     extract(r.language, mp) match {
       case (files, net.shift.html.Success(o)) =>
-        val cpy = o.copy(images = Set(files.map(f => f._2):_*).toList)
+        val cpy = o.copy(images = Set(files.map(f => f._2): _*).toList)
         println(cpy)
         ShopApplication.persistence.createProducts(cpy) match {
           case scala.util.Success(p) =>
@@ -128,6 +128,7 @@ object ProductCreateService extends PathUtils with ShiftUtils with Selectors wit
   def validateListField(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, ValidationList] = env => {
     val failed = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
     env.get(name) match {
+      case Some(n :: Nil) if !n.isEmpty => Success(n.split("\\s*,\\s*").toList)
       case Some(n) if !n.isEmpty => Success(n)
       case Some(n) if n.isEmpty  => failed
       case _                     => failed
@@ -153,10 +154,12 @@ object ProductCreateService extends PathUtils with ShiftUtils with Selectors wit
         Header(_, _, par) <- h.get("Content-Disposition")
         name <- par.get("name")
       } yield {
-        acc.get(name).map(v => acc + (name -> (v ++ List(content)))) getOrElse (acc + (name -> content.split("\\s*,\\s*").toList))
+        acc.get(name).map(v => acc + (name -> (v ++ List(content)))) getOrElse (acc + (name -> List(content)))
       }) getOrElse acc
     case (acc, _) => acc
   }
+
+  def split(content: String) = content.split("\\s*,\\s*").toList
 
   def extractBins(bins: List[MultiPart]) = ((Nil: List[(String, String, Array[Byte])]) /: bins) {
     case (acc, BinaryPart(h, content)) =>

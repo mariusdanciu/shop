@@ -162,7 +162,7 @@
               $.blockUI({
                 message : $("#product_dialog"),
                 css : {
-                  top : '150px',
+                  top : '100px',
                   left : ($(window).width() - 1000) / 2 + 'px',
                   width : '1000px',
                   border : 'none',
@@ -174,6 +174,8 @@
                 }
               });
 
+              $('#product_details_tab').tabify();
+              
               $(".close_dialog").bind("click", function(event) {
                 closeDialog();
               });

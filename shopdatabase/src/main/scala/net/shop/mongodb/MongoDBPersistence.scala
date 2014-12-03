@@ -72,7 +72,7 @@ object MongoDBPersistence extends Persistence {
   }
 
   def categoryById(id: String): Try[Category] = try {
-    db("categories").findOne(MongoDBObject("_id.$oid" -> id)) match {
+    db("categories").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
       case Some(obj) => Success(mongoToCategory(obj))
       case _         => fail("Item " + id + " not found")
     }

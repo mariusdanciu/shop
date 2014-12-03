@@ -1,6 +1,8 @@
 (function() {
 	$(function() {
 
+        $('#product_details_tab').tabify();
+
 		$("#add_to_cart").click(function(event) {
 			var pid = $.url().param("pid");
 			cart.addItem(pid);
