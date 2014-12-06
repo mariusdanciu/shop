@@ -293,6 +293,31 @@
    "code" : "160",
    "name" : "specs",
    "text" : "Specificatii"
+ },
+ {
+   "code" : "161",
+   "name" : "product.info",
+   "text" : "Informatii despre produs"
+ },
+ {
+   "code" : "162",
+   "name" : "files",
+   "text" : "Fisiere"
+ },
+ {
+   "code" : "163",
+   "name" : "edit",
+   "text" : "Editeaza"
+ },
+ {
+   "code" : "164",
+   "name" : "add.specs",
+   "text" : "Adauga specificatii"
+ },
+ {
+   "code" : "165",
+   "name" : "discount.price",
+   "text" : "Pret redus"
  }
  
  

@@ -41,13 +41,16 @@
           
             <div class="upload_form_fields">
 
-              <ul id="create_product_tab">
-                <li class="active"><a href="#fields">Datele produsului</a></li>
-                <li><a href="#create_textzone">Descriere</a></li>
-                <li><a href="#files">Fisiere</a></li>
-              </ul>
+  			  <div class="tab_select">
+                <ul id="create_product_tab" class="create_product_tab">
+                  <li class="active"><a href="#fields" data-loc="product.info"></a></li>
+                  <li><a href="#create_specs" data-loc="specs"></a></li>
+                  <li><a href="#create_textzone" data-loc="description"></a></li>
+                  <li><a href="#files" data-loc="files"></a></li>
+                </ul>
+              </div>
 
-          	  <div id="fields">
+          	  <div id="fields" class="fields">
           	    <div class="column">
 	          	    <div class="row">
 	          	      <label for="create_title" data-loc="title"></label><input id="create_title" type="text" name="create_title"/>
@@ -64,17 +67,18 @@
 	                  <input id="create_keywords" type="text" name="create_keywords"/>
 	                </div>
                 </div>
-                <div class="column specs">
+              </div>
+              
+              <div id="create_specs" class="form_specs">
                   <div class="row">
-                    <div class="specs_title" data-loc="specs"></div>
+                    <div class="specs_title" data-loc="add.specs"></div>
                     <img id="add_prop" class="clickable" src="/static/images/plus.png"/>
                   </div>
                   <div id="prop_fields" class="row">
                   </div>
-                </div>
               </div>
               
-              <div id="create_textzone">
+              <div id="create_textzone" class="form_textzone">
               	<div class="row">
                   <label for="create_description" data-loc="description"></label>
                 </div>
@@ -84,6 +88,7 @@
               <div id="files">
                  <input type="file" id="fileselect" name="files" multiple="multiple" />
               </div>
+              
             </div>
          </form>
        </div>

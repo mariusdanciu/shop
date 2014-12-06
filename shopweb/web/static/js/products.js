@@ -54,7 +54,8 @@
     });
 
     $("#create_description").jqte({
-      br: false
+      br: false,
+      source: false
     });
 
     $("#add_prop")
@@ -175,7 +176,13 @@
               });
 
               $('#product_details_tab').tabify();
+              $('#edit_product_tab').tabify();
               
+              $("#edit_description").jqte({
+                br: false,
+                source: false
+              });
+
               $(".close_dialog").bind("click", function(event) {
                 closeDialog();
               });

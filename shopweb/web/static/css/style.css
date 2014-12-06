@@ -52,6 +52,11 @@ label:hover {
 	cursor: pointer;
 }
 
+label {
+  position: relative;
+  top: 5px;
+}
+
 ul {
 	list-style-type: none;
 	padding: 0px;
@@ -381,7 +386,6 @@ a:active {
 	width: 100%;
 	height: 40px;
 	float: left;
-	border-bottom: 1px solid #dddddd;
 	margin-bottom: 10px;
 }
 
@@ -483,10 +487,9 @@ a:active {
 	text-align: right;
 	font-size: 16px;
 	position: relative;
-	top: 5px;
 }
 
-.upload_form_fields #fields {
+.upload_form_fields .fields {
     float: left;
     width: 100%;
     position: relative;
@@ -499,6 +502,10 @@ a:active {
 	width: 400px;
 	height: 35px;
 	margin-right: 10px;
+}
+
+.form_specs .row {
+ 	width: 600px;
 }
 
 .prod_specs .row {
@@ -521,13 +528,13 @@ a:active {
 }
 
 
-.upload_form_fields #fields .select_row {
+.upload_form_fields .fields .select_row {
 	width: 400px;
 	height: 154px;
 	margin-right: 10px;
 }
 
-.upload_form_fields #fields .select_row select {
+.upload_form_fields .fields .select_row select {
 	height: 140px;
 }
 
@@ -543,10 +550,18 @@ a:active {
    resize: none;
 }
 
-#create_textzone {
+.form_textzone {
    float: left;
    width: 100%;
    height: 300px;
+}
+
+.form_specs {
+   float: left;
+   width: 100%;
+   max-height: 400px;
+   min-height: 200px;
+   overflow: auto;
 }
 
 #order a {
@@ -748,31 +763,32 @@ a:active {
     margin-top: 114px;
 } 
 
-#create_product_tab, #product_details_tab { 
+.create_product_tab, #product_details_tab { 
   padding: 0;
   position: relative;
   clear: both;
 }
 
-#create_product_tab li, #product_details_tab li { 
+.create_product_tab li, #product_details_tab li { 
   display: inline;
 }
 
-#create_product_tab li a, #product_details_tab li a {
+.create_product_tab li a, #product_details_tab li a {
  padding: 10px;
  float:left;
  text-decoration: none;
- color: #000;
+ color: #999999;
  border-bottom: 1px solid #999999;
 }
 
-#create_product_tab li.active a, #product_details_tab li.active a {
+.create_product_tab li.active a, #product_details_tab li.active a {
  border-top: 1px solid;
  border-left: 1px solid;
  border-right: 1px solid;
  border-bottom: none;
  border-color: #999999;
  border-radius: 10px 10px 0px 0px;
+ color: #000000;
 }
 
 #files {
@@ -783,6 +799,16 @@ a:active {
   margin-top: 10px;
   width: 100#;
 }
+
+#edit {
+  float: left;
+  clear: both;
+  height: 100px;
+  position: relative;
+  margin-top: 10px;
+  width: 100#;
+}
+
 
 .column {
   position: relative;
@@ -800,11 +826,15 @@ a:active {
 }
 
 #prop_fields input {
-  width: 120px;
+  width: 220px;
   float: left;
   margin-right: 10px;
 }
 
 .clickable:hover {
   cursor: pointer;
+}
+
+.tab_select {
+  float: left;
 }

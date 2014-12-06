@@ -24,10 +24,13 @@
             <span data-snip="detailPrice"></span>
           </div>
         </div>
-        <ul id="product_details_tab">
-           <li class="active"><a href="#prod_desc" data-loc="description"></a></li>
-           <li><a href="#prod_specs" data-loc="specs"></a></li>
-        </ul>
+        <div class="tab_select">
+          <ul id="product_details_tab">
+            <li class="active"><a href="#prod_desc" data-loc="description"></a></li>
+            <li><a href="#prod_specs" data-loc="specs"></a></li>
+            <li><a href="#edit" data-loc="edit"></a></li>
+          </ul>
+        </div>
         <div id="prod_desc" class="prod_desc">
           <div data-snip="details"></div>
         </div>
@@ -38,6 +41,57 @@
              	<div class="column2"><span class="prop_value"></span></div>
              </div>
           </div>
+        </div>
+        <div id="edit">
+ 
+          <form action="/product/create" id="edit_form" method="POST">
+          
+            <div class="upload_form_fields">
+
+  			  <div class="tab_select">
+                <ul id="edit_product_tab" class="create_product_tab">
+                  <li class="active"><a href="#edit_fields" data-loc="product.info"></a></li>
+                  <li><a href="#edit_specs" data-loc="specs"></a></li>
+                  <li><a href="#edit_textzone" data-loc="description"></a></li>
+                </ul>
+              </div>
+
+          	  <div id="edit_fields" class="fields">
+          	    <div class="column">
+	          	    <div class="row">
+	          	      <label for="edit_title" data-loc="title"></label><input id="edit_title" type="text" name="edit_title"/>
+	          	    </div>
+	          	    <div class="row">
+	          	      <label for="edit_price" data-loc="price"></label><input id="edit_price" type="number" name="edit_price"/>
+	          	    </div>
+	          	    <div class="row">
+	          	      <label for="edit_discount_price" data-loc="discount.price"></label><input id="edit_discount_price" type="number" name="edit_discount_price"/>
+	          	    </div>
+	          	    <div class="select_row">
+	          	      <label for="edit_categories" data-loc="categories"></label>
+	                  <select id="edit_categories" multiple="multiple" data-snip="catlist" name="edit_categories"></select>
+	                </div>
+	                <div class="row">
+	                  <label for="edit_keywords" data-loc="keywords"></label>
+	                  <input id="edit_keywords" type="text" name="edit_keywords"/>
+	                </div>
+                </div>
+              </div>
+              <div id="edit_specs" class="form_specs">
+                  <div class="row">
+                    <div class="specs_title" data-loc="add.specs"></div>
+                    <img id="edit_add_prop" class="clickable" src="/static/images/plus.png"/>
+                  </div>
+                  <div id="edit_prop_fields" class="row"></div>
+			  </div>              
+              <div id="edit_textzone" class="form_textzone">
+              	<div class="row">
+                  <label for="edit_description" data-loc="description"></label>
+                </div>
+                <textarea class="editor" id="edit_description" name="create_description"></textarea>
+              </div>
+            </div>
+         </form> 
         </div>
       </div>
     </div>
