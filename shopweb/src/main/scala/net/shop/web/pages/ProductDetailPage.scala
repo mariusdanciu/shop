@@ -5,7 +5,6 @@ import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
 import scala.xml._
-import net.shift.common.Path
 import net.shift.common.XmlUtils
 import net.shift.engine._
 import net.shift.engine.http.Request._
@@ -18,12 +17,11 @@ import net.shift.template.Snippet.snip
 import net.shop.api.ProductDetail
 import net.shop.utils.ShopUtils
 import net.shop.web.ShopApplication
-import scalax.io._
-import java.io.StringReader
+import net.shift.common.NodeOps._
 
 object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlUtils {
 
-  override def snippets = List(title, catlink, productLink, images, detailPrice, details, specs) ++ super.snippets
+  override def snippets = List(title, catlink, productLink, images, detailPrice, details, specs, edit) ++ super.snippets
 
   val title = reqSnip("title") {
     s =>
@@ -142,6 +140,42 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
       }
   }
 
+  val edit = reqSnip("edit") {
+    s =>
+      {
+        (for {
+          p <- s.state.product
+        } yield {
+          val title = p.title.get(s.language.language).getOrElse("")
+          val desc = p.description.get(s.language.language).getOrElse("")
+          (bind(s.node) {
+            case HasId("edit_title", attrs)          => node("input", attrs.attrs + ("value" -> title))
+            case HasId("edit_price", attrs)          => node("input", attrs.attrs + ("value" -> p.price.toString()))
+            case HasId("edit_discount_price", attrs) => node("input", attrs.attrs + ("value" -> p.oldPrice.map(_.toString()).getOrElse("")))
+            case HasId("edit_categories", attrs) => node("select", attrs.attrs) wrap {
+              val myCats = p.categories.toSet
+              ShopApplication.persistence.allCategories match {
+                case Success(cats) => NodeSeq.fromSeq((for { c <- cats } yield {
+                  val opt = node("option", Map("value" -> c.stringId)).wrap(Text(title))
+                  if (myCats.contains(c.stringId)) {
+                    (opt attr ("selected", "true")).e
+                  } else {
+                    opt.e
+                  }
+                }).toSeq)
+                case _ => node("select", attrs.attrs)
+              }
+            }
+            case HasId("edit_keywords", attrs) => node("input", attrs.attrs + ("value" -> p.keyWords.mkString(", ")))
+            case HasId("edit_description", attrs) => node("textarea", attrs.attrs) wrap Text(desc)
+          }) match {
+            case Success(n) => (ProductPageState(s.state.req, Success(p)), n)
+            case _          => (ProductPageState(s.state.req, Success(p)), s.node)
+          }
+        }).recover { case _ => (s.state, NodeSeq.Empty) }
+      }
+  }
+
 }
 
 object ProductPageState {
@@ -149,3 +183,4 @@ object ProductPageState {
 }
 
 case class ProductPageState(req: Request, product: Try[ProductDetail]) 
+
