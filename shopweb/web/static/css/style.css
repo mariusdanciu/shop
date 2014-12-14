@@ -3,7 +3,6 @@ html,body {
 	right: 0px;
 	bottom: 0px;
 	left: 0px;
-	font-family: 'Lato', sans-serif;
 	font-size: 90%;
 	line-height: 1.5em;
 	background-color: white;
@@ -14,6 +13,7 @@ html,body {
 * {
 	outline: medium none;
 	margin: 0;
+	font-family: 'Lato', sans-serif;
 	font-weight: 300;
 }
 
@@ -26,7 +26,6 @@ textarea, input, select {
 	height: 26px;
 	border: 1px solid #bbbbbb;
 	box-shadow: 0px 0px 15px 1px #dddddd;
-	font-family: 'Quicksand', sans-serif;
 }
 
 input[type=checkbox] {
@@ -472,10 +471,9 @@ a:active {
 }
 
 .upload_form_fields input, .select_row select, #order input {
-	float: right;
 	font-size: 16px;
 	height: 26px;
-	width: 280px;
+	width: 250px;
 }
 
 #order form div {
@@ -492,24 +490,31 @@ a:active {
 .upload_form_fields .fields {
     float: left;
     width: 100%;
-    position: relative;
-    top: 10px;
     max-height: 400px;
     overflow: auto;
 }
 
+.upload_form_fields .fields input, .upload_form_fields .fields select {
+    float: right;
+}
+
 .upload_form_fields .row {
-	width: 400px;
+	width: 100%;
 	height: 35px;
 	margin-right: 10px;
 }
 
+.upload_form_fields .row img {
+    position: relative;
+    top: 5px;
+}
+
 .form_specs .row {
- 	width: 600px;
+ 	width: 100%;
 }
 
 .prod_specs .row {
-	width: 600px;
+	width: 100%;
 	height: 35px;
 }
 
@@ -529,7 +534,7 @@ a:active {
 
 
 .upload_form_fields .fields .select_row {
-	width: 400px;
+	width: 100%;
 	height: 154px;
 	margin-right: 10px;
 }
@@ -553,7 +558,7 @@ a:active {
 .form_textzone {
    float: left;
    width: 100%;
-   height: 300px;
+   height: 330px;
 }
 
 .form_specs {
@@ -752,10 +757,16 @@ a:active {
 
 .dialog_footer {
 	clear: both;
-	float: right;
-	padding: 10px;
+	position: relative;
+	float: left;
 	font-size: 16px;
 	margin-top: 10px;
+	margin-bottom: 10px;
+	width: 100%;
+}
+
+.dialog_footer div {
+	float: right;
 }
 
 .item_box .add_item {
@@ -803,7 +814,6 @@ a:active {
 #edit {
   float: left;
   clear: both;
-  height: 100px;
   position: relative;
   margin-top: 10px;
   width: 100#;
@@ -822,7 +832,7 @@ a:active {
 }
 
 .specs .row {
-  width: 300px;
+  width: 100%;
 }
 
 #prop_fields input {
@@ -837,4 +847,21 @@ a:active {
 
 .tab_select {
   float: left;
+}
+
+.tab_content {
+  position: relative;
+  top: 20px;
+  width: 100%;
+  float: left;
+}
+
+.horiz_right {
+  float: right;
+  margin-left: 10px;
+}
+
+#save_product {
+  font-size: 18px;
+  margin-top: 10px;
 }

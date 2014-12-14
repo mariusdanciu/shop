@@ -28,13 +28,13 @@
           <ul id="product_details_tab">
             <li class="active"><a href="#prod_desc" data-loc="description"></a></li>
             <li><a href="#prod_specs" data-loc="specs"></a></li>
-            <li><a href="#edit" data-loc="edit"></a></li>
+            <li id="edit_tab"><a href="#edit" data-loc="edit"></a></li>
           </ul>
         </div>
-        <div id="prod_desc" class="prod_desc">
+        <div id="prod_desc" class="prod_desc tab_content">
           <div data-snip="details"></div>
         </div>
-        <div id="prod_specs" class="prod_specs">
+        <div id="prod_specs" class="prod_specs tab_content">
           <div data-snip="specs">
              <div class="row">
              	<div class="column1"><span class="prop_name"></span></div>
@@ -42,21 +42,24 @@
              </div>
           </div>
         </div>
-        <div id="edit">
+        <div id="edit" class="tab_content">
  
-          <form action="/product/edit" id="edit_form" method="POST">
+          <form id="edit_form" method="POST" data-snip="edit">
           
-            <div class="upload_form_fields" data-snip="edit">
+            <div class="upload_form_fields" >
 
   			  <div class="tab_select">
                 <ul id="edit_product_tab" class="create_product_tab">
                   <li class="active"><a href="#edit_fields" data-loc="product.info"></a></li>
                   <li><a href="#edit_specs" data-loc="specs"></a></li>
                   <li><a href="#edit_textzone" data-loc="description"></a></li>
+                  <li><a href="#edit_files" data-loc="files"></a></li>
                 </ul>
               </div>
-
-          	  <div id="edit_fields" class="fields">
+              
+              <div class="horiz_right" id="save_product"><a href="#" data-loc="save"></a></div>
+              
+          	  <div id="edit_fields" class="fields tab_content">
           	    <div class="column">
 	          	    <div class="row">
 	          	      <label for="edit_title" data-loc="title"></label><input id="edit_title" type="text" name="edit_title"/>
@@ -77,18 +80,25 @@
 	                </div>
                 </div>
               </div>
-              <div id="edit_specs" class="form_specs">
-                  <div class="row">
+              <div id="edit_specs" class="form_specs tab_content">
+                  <div>
                     <div class="specs_title" data-loc="add.specs"></div>
                     <img id="edit_add_prop" class="clickable" src="/static/images/plus.png"/>
                   </div>
-                  <div id="edit_prop_fields" class="row"></div>
+                  <div class="edit_props_sample">
+                      <k:input type='text' name='pkey'/>
+                      <v:input type='text' name='pval'/>
+                      <img class='clickable' src='/static/images/minus.png'/>
+                  </div>
 			  </div>              
-              <div id="edit_textzone" class="form_textzone">
+              <div id="edit_textzone" class="form_textzone tab_content">
               	<div class="row">
                   <label for="edit_description" data-loc="description"></label>
                 </div>
-                <textarea class="editor" id="edit_description" name="create_description"></textarea>
+                <textarea class="editor" id="edit_description" name="edit_description"></textarea>
+              </div>
+              <div id="edit_files" class="tab_content">
+                 <input type="file" id="fileselect" name="files" multiple="multiple" />
               </div>
             </div>
          </form> 
@@ -96,7 +106,7 @@
       </div>
     </div>
     <div class="dialog_footer">
-      <div data-snip="productlink">
+      <div class="horiz_right" data-snip="productlink">
          <a href="#"></a>
       </div>
     </div>

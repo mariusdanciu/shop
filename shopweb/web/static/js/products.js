@@ -29,32 +29,14 @@
     $('#create_product_tab').tabify();
 
     $("#create_product").click(function(event) {
-
-      $("#upload_form").each(function() {
-        var formData = new FormData(this);
-
-        $('#upload_form label').css("color", "#000000").removeAttr("title");
-        $.ajax({
-          url : "/product/create",
-          type : "POST",
-          cache : false,
-          contentType : false,
-          processData : false,
-          data : formData
-        }).fail(function(msg, f) {
-          $("#notice_connect_e").show().delay(5000).fadeOut("slow");
-        }).success(function(msg, f) {
-          closeDialog();
-          reloadProducts();
-        });
-      });
-
+      saveProduct("#upload_form");
       event.stopPropagation();
       event.preventDefault();
     });
-
+    
     $("#create_description").jqte({
       br: false,
+      b: false,
       source: false
     });
 
@@ -62,8 +44,7 @@
         .click(
             function(event) {
               var div = $("<div class='row'></div>");
-              div
-                  .append("<input type='text' name='pkey'/><input type='text' name='pval'/>");
+              div.append("<input type='text' name='pkey'/><input type='text' name='pval'/>");
               var remove = $("<img class='clickable' src='/static/images/minus.png'/>");
               remove.click(function(e) {
                 div.remove();
@@ -115,7 +96,32 @@
       $("#notice_connect_e").show().delay(5000).fadeOut("slow");
     });
   }
-
+  
+  var saveProduct = function(formId) {
+    $(formId).each(function() {
+      var frm = this;
+      var formData = new FormData(frm);
+      
+      $(formId + ' label').css("color", "#000000").removeAttr("title");
+      $.ajax({
+        url : $(frm).attr('action'),
+        type : "POST",
+        cache : false,
+        contentType : false,
+        processData : false,
+        data : formData,
+        statusCode: {
+          201: function() {
+            closeDialog();
+            reloadProducts();
+          }
+        }
+      }).fail(function(msg, f) {
+        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+      })
+    });
+  };
+  
   var refreshList = function() {
     $(".item_box").each(function(index) {
       var me = $(this);
@@ -160,6 +166,12 @@
                 event.stopPropagation();
               });
 
+              $("#save_product").click(function(event) {
+                saveProduct("#edit_form", "/product/update");
+                event.stopPropagation();
+                event.preventDefault();
+              });
+              
               $.blockUI({
                 message : $("#product_dialog"),
                 css : {

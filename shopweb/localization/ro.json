@@ -318,8 +318,10 @@
    "code" : "165",
    "name" : "discount.price",
    "text" : "Pret redus"
+ },
+ {
+   "code" : "166",
+   "name" : "save",
+   "text" : "Salveaza"
  }
- 
- 
- 
 ]

@@ -24,8 +24,8 @@ object MongoDBPersistence extends Persistence {
 
   def productById(id: String): Try[ProductDetail] = try {
     db("products").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
-      case Some(obj) => println(obj); Success(mongoToProduct(obj))
-      case _         => println("Not here"); fail("Item " + id + " not found")
+      case Some(obj) => Success(mongoToProduct(obj))
+      case _         => fail("Item " + id + " not found")
     }
   } catch {
     case e: Exception => fail(e)
@@ -103,6 +103,25 @@ object MongoDBPersistence extends Persistence {
     case e: Exception => fail(e)
   }
 
+  def updateProducts(prod: ProductDetail*): Try[Seq[String]] = try {
+    val builder = db("products").initializeOrderedBulkOperation
+
+    val ids = for {
+      p <- prod
+      id <- p.id
+    } yield {
+      builder.find(MongoDBObject("_id" -> new ObjectId(id))).update(MongoDBObject {
+        "$set" -> productToMongo(p)
+      })
+      id
+    }
+
+    builder.execute()
+    Success(ids)
+  } catch {
+    case e: Exception => fail(e)
+  }
+
   def createCategories(cats: Category*): Try[Seq[String]] = try {
     val mongos = cats.map(p => categoryToMongo(p))
     db("categories").insert(mongos: _*)
@@ -116,12 +135,12 @@ object MongoDBPersistence extends Persistence {
     db += "title" -> MongoDBObject(obj.title.toList)
     db += "description" -> MongoDBObject(obj.description.toList)
     db += "properties" -> MongoDBObject(obj.properties.toList)
-    db += ("price" -> obj.price)
-    obj.oldPrice map { p => db += ("oldPrice" -> obj.oldPrice) }
+    db += "price" -> obj.price
+    db += "oldPrice" -> obj.oldPrice
     db += "soldCount" -> obj.soldCount
     db += "categories" -> obj.categories
     db += "images" -> obj.images
-    db += "keyWords" -> obj.images
+    db += "keywords" -> obj.keyWords
     db.result
   }
 

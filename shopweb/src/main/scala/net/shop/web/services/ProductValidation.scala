@@ -51,6 +51,13 @@ trait ProductValidation {
     }
   }
 
+  def validateOptional[T](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[ValidationError, Option[T]] = env => {
+    env.get(name) match {
+      case Some(n :: _) if !n.isEmpty => Success(f(n))
+      case _                          => Success(None)
+    }
+  }
+
   def validateDefault[S](name: String, v: S)(implicit lang: Language): ValidationInput => Validation[ValidationError, S] =
     env => Success(v)
 

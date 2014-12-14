@@ -101,17 +101,11 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
     parse(java.net.URLDecoder.decode(json, "UTF-8")).extract[Cart]
   }
 
-  def createProduct = ProductCreateService.createProduct
+  def createProduct = ProductWriteService.createProduct
 
-  def deleteProduct = for {
-    r <- DELETE
-    Path("product" :: "delete" :: id :: Nil) <- path
-  } yield {
-    ShopApplication.persistence.deleteProducts(id) match {
-      case Success(num) => service(_(Resp.ok))
-      case Failure(t) => service(_(Resp.notFound))
-    }
-  }
+  def updateProduct =  ProductWriteService.updateProduct
+
+  def deleteProduct =  ProductWriteService.deleteProduct
 }
 
 

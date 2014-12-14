@@ -73,6 +73,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       orderService.order |
       createProduct |
       deleteProduct |
+      updateProduct |
       service(notFoundService)
   } yield c
 
