@@ -20,6 +20,9 @@
 			borderSize: 1
 		});
 
+    var content = $("#prod_desc").text();
+    $("#prod_desc").html(textile.convert(content));
+		
 	});
 
 })();

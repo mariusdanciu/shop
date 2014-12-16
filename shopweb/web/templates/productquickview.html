@@ -85,17 +85,24 @@
                     <div class="specs_title" data-loc="add.specs"></div>
                     <img id="edit_add_prop" class="clickable" src="/static/images/plus.png"/>
                   </div>
-                  <div class="edit_props_sample">
+                  <div id="edit_prop_fields" class="row">
+                    <div class="edit_props_sample">
                       <k:input type='text' name='pkey'/>
                       <v:input type='text' name='pval'/>
                       <img class='clickable' src='/static/images/minus.png'/>
+                    </div>
                   </div>
 			  </div>              
               <div id="edit_textzone" class="form_textzone tab_content">
               	<div class="row">
                   <label for="edit_description" data-loc="description"></label>
+                  <div id="edit_toggle_desc" class="clickable right">
+                     <div class="toggle_text" data-loc="view"></div>
+                     <div class="toggle_text hidden" data-loc="edit"></div>
+                  </div>
                 </div>
-                <textarea class="editor" id="edit_description" name="edit_description"></textarea>
+                <textarea class="edit_toggle" id="edit_description" name="edit_description"></textarea>
+                <div class="edit_toggle preview" id="edit_description_view" ></div>
               </div>
               <div id="edit_files" class="tab_content">
                  <input type="file" id="fileselect" name="files" multiple="multiple" />

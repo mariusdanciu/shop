@@ -323,5 +323,10 @@
    "code" : "166",
    "name" : "save",
    "text" : "Salveaza"
+ },
+ {
+   "code" : "167",
+   "name" : "view",
+   "text" : "Vizualizeaza"
  }
 ]

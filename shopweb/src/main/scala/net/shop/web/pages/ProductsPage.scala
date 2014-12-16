@@ -56,10 +56,10 @@ object ProductsPage extends Cart[Request] with ShopUtils {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
-                case "li" :/ HasClass("item", a) / childs            => <li>{ childs }</li>
-                case "div" :/ HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.language.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
-                case "div" :/ HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.language.language) }</div> % a
-                case "div" :/ HasClass("info_tag_price", a) / childs => priceTag(prod) % a
+                case "li" - HasClass("item", a) / childs            => <li>{ childs }</li>
+                case "div" - HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.language.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
+                case "div" - HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.language.language) }</div> % a
+                case "div" - HasClass("info_tag_price", a) / childs => priceTag(prod) % a
               } match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)
@@ -78,7 +78,7 @@ object ProductsPage extends Cart[Request] with ShopUtils {
           s.node match {
             case e: Elem =>
               val v = list.map(c => (<option value={ c.id getOrElse "?" }>{ c.title_?(s.language.language) }</option>)).toSeq
-              Success((s.state, e.wrap(NodeSeq.fromSeq(v))))
+              Success((s.state, e / NodeSeq.fromSeq(v)))
             case _ => Success((s.state, NodeSeq.Empty))
           }
         case Failure(t) => Success((s.state, errorTag(Loc.loc0(s.language)("no_category").text)))
