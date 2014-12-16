@@ -133,7 +133,7 @@ object ProductWriteService extends PathUtils with ShiftUtils with Selectors with
       inputText(fieldPrefix + "description")(validateMapField(fieldPrefix + "description", ?("description").text)) <*>
       inputText(fieldPrefix + "properties")(validateProps(?("properties").text)) <*>
       inputDouble(fieldPrefix + "price")(validateDouble(fieldPrefix + "price", ?("price").text)) <*>
-      inputOptional(fieldPrefix + "discount_price")(validateOptional(fieldPrefix + "discount_price", s => Some(s.toDouble))) <*>
+      inputOptional(fieldPrefix + "discount_price")(validateDiscount[Double](fieldPrefix + "discount_price", s => Some(s.toDouble))) <*>
       inputInt(fieldPrefix + "soldCount")(validateDefault(fieldPrefix + "soldCount", 0)) <*>
       inputSelect(fieldPrefix + "categories", Nil)(validateListField(fieldPrefix + "categories", ?("categories").text)) <*>
       inputFile("files")(validateDefault("files", Nil)) <*>

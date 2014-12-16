@@ -1,11 +1,10 @@
 package net.shop.web.services
 
-import net.shift.loc.Loc
-import net.shift.loc.Language
-import net.shift.html.Validation
-import net.shift.engine.utils.ShiftUtils
 import net.shift.html.Failure
 import net.shift.html.Success
+import net.shift.html.Validation
+import net.shift.loc.Language
+import net.shift.loc.Loc
 
 trait ProductValidation {
 
@@ -13,6 +12,10 @@ trait ProductValidation {
   type ValidationMap = Map[String, String]
   type ValidationList = List[String]
   type ValidationInput = Map[String, List[String]]
+
+  implicit val o = new Ordering[Double] {
+    def compare(l: Double, r: Double): Int = (l - r).toInt
+  }
 
   def validateProps(title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, ValidationMap] = env => {
     (env.get("pkey"), env.get("pval")) match {
@@ -55,6 +58,20 @@ trait ProductValidation {
     env.get(name) match {
       case Some(n :: _) if !n.isEmpty => Success(f(n))
       case _                          => Success(None)
+    }
+  }
+
+  def validateDiscount[T: Ordering](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[ValidationError, Option[T]] = env => {
+    val failed = Failure(List((name, Loc.loc0(lang)("field.discount.smaller").text)))
+    val v = implicitly[Ordering[T]]
+
+    (env.get("edit_discount_price"), env.get("edit_price")) match {
+      case (Some(n :: _), Some(p :: _)) if !n.isEmpty =>
+        (f(n), f(p)) match {
+          case (Some(d), Some(current)) if (v.compare(d, current) < 0) => Success(Some(d))
+          case _ => failed
+        }
+      case _ => Success(None)
     }
   }
 

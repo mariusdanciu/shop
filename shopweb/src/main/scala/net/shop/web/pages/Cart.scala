@@ -36,8 +36,8 @@ trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
       } map ((s.state, _))
   }
 
-  def priceTag(p: ProductDetail): Elem = p.oldPrice match {
-    case Some(old) => <span>{ <span>{ p.price }</span> ++ <strike>{ old }</strike> <span>RON</span> }</span>
+  def priceTag(p: ProductDetail): Elem = p.discountPrice match {
+    case Some(discount) => <span>{ <span>{ discount }</span> ++ <strike>{ p.price }</strike> <span>RON</span> }</span>
     case _ => <span>{ s"${p.price} RON" }</span>
   }
 

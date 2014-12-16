@@ -136,7 +136,7 @@ object MongoDBPersistence extends Persistence {
     db += "description" -> MongoDBObject(obj.description.toList)
     db += "properties" -> MongoDBObject(obj.properties.toList)
     db += "price" -> obj.price
-    db += "oldPrice" -> obj.oldPrice
+    db += "discountPrice" -> obj.discountPrice
     db += "soldCount" -> obj.soldCount
     db += "categories" -> obj.categories
     db += "images" -> obj.images
@@ -157,7 +157,7 @@ object MongoDBPersistence extends Persistence {
       description = obj.getAsOrElse[Map[String, String]]("description", Map.empty),
       properties = obj.getAsOrElse[Map[String, String]]("properties", Map.empty),
       price = obj.getAsOrElse[Double]("price", 0.0),
-      oldPrice = obj.getAs[Double]("oldPrice"),
+      discountPrice = obj.getAs[Double]("discountPrice"),
       soldCount = obj.getAs[Int]("soldCOunt") getOrElse 0,
       categories = obj.getAsOrElse[List[String]]("categories", Nil),
       images = obj.getAsOrElse[List[String]]("images", Nil),

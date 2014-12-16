@@ -328,5 +328,10 @@
    "code" : "167",
    "name" : "view",
    "text" : "Vizualizeaza"
+ },
+ {
+   "code" : "168",
+   "name" : "field.discount.smaller",
+   "text" : "Pretul redus trebuie sa fie mai mic decat pretul curent"
  }
 ]
