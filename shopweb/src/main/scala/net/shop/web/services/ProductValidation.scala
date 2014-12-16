@@ -61,20 +61,6 @@ trait ProductValidation {
     }
   }
 
-  def validateDiscount[T: Ordering](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[ValidationError, Option[T]] = env => {
-    val failed = Failure(List((name, Loc.loc0(lang)("field.discount.smaller").text)))
-    val v = implicitly[Ordering[T]]
-
-    (env.get("edit_discount_price"), env.get("edit_price")) match {
-      case (Some(n :: _), Some(p :: _)) if !n.isEmpty =>
-        (f(n), f(p)) match {
-          case (Some(d), Some(current)) if (v.compare(d, current) < 0) => Success(Some(d))
-          case _ => failed
-        }
-      case _ => Success(None)
-    }
-  }
-
   def validateDefault[S](name: String, v: S)(implicit lang: Language): ValidationInput => Validation[ValidationError, S] =
     env => Success(v)
 
