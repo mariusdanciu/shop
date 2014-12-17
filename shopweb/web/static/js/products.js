@@ -3,62 +3,33 @@
 
     $.blockUI.defaults.baseZ = 90;
 
-    refreshList();
+    products.refreshList();
 
     $("#sortSelect").chosen({
       "disable_search" : true
     });
 
-    $('#sortSelect').on(
-        'change',
-        function(evt, params) {
-          $("#item_list").load(normUrl("/products", $(this).val()),
-              function(response, status, xhr) {
-                if (status == "error") {
-                  $("#notice_connect_e").show().delay(5000).fadeOut("slow");
-                } else {
-                  refreshList();
-                }
-              });
-        })
+    $('#sortSelect').on('change', function(evt, params) {
+      $("#item_list").load(products.normUrl("/products", $(this).val()), function(response, status, xhr) {
+        if (status == "error") {
+          $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+        } else {
+          products.refreshList();
+        }
+      });
+    })
 
     $(".close_dialog").bind("click", function(event) {
-      closeDialog();
+      products.closeDialog();
     });
 
-    $('#create_product_tab').tabify();
-
-    $("#create_product").click(function(event) {
-      saveProduct("#upload_form");
-      event.stopPropagation();
-      event.preventDefault();
-    });
-
-    addProp("#add_prop", "#prop_fields");
-
-    
   });
 
-  var addProp = function(elem, holder) {
-    $(elem)
-        .click(
-            function(event) {
-              var div = $("<div class='row'></div>");
-              div.append("<input type='text' name='pkey'/><input type='text' name='pval'/>");
-              
-              var remove = $("<img class='clickable' src='/static/images/minus.png'/>");
-              remove.click(function(e) {
-                div.remove();
-              });
-              
-              div.append(remove);
-              $(holder).append(div);
-              
-            });
-  }
+})();
 
+var products = {
 
-  var normUrl = function(url, sort) {
+  normUrl : function(url, sort) {
     var cat = $.url().param("cat");
     var search = $.url().param("search");
 
@@ -69,71 +40,38 @@
     }
     url += "&sort=" + sort;
     return url;
-  };
+  },
 
-  var reloadProducts = function() {
-    $("#item_list").load(normUrl("/products", $('#sortSelect').val()),
-        function(response, status, xhr) {
-          if (status == "error") {
-            $("#notice_connect_e").show().delay(5000).fadeOut("slow");
-          } else {
-            refreshList();
-          }
-        });
-  };
+  reloadProducts : function() {
+    $("#item_list").load(products.normUrl("/products", $('#sortSelect').val()), function(response, status, xhr) {
+      if (status == "error") {
+        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+      } else {
+        products.refreshList();
+      }
+    });
+  },
 
-  var closeDialog = function() {
+  closeDialog : function() {
     $.unblockUI();
     setTimeout(function() {
       $("#product_dialog").empty();
       $(".zoomContainer").remove();
     }, 400);
-  }
+  },
 
-  var deleteProduct = function(id) {
-    $.ajax({
-      url : "/product/delete/" + id,
-      type : "DELETE"
-    }).success(reloadProducts()).fail(function(msg, f) {
-      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
-    });
-  }
-
-  var saveProduct = function(formId) {
-    $(formId).each(function() {
-      var frm = this;
-      var formData = new FormData(frm);
-
-      $(formId + ' label').css("color", "#000000").removeAttr("title");
-      $.ajax({
-        url : $(frm).attr('action'),
-        type : "POST",
-        cache : false,
-        contentType : false,
-        processData : false,
-        data : formData,
-        statusCode : {
-          201 : function() {
-            closeDialog();
-            reloadProducts();
-          }
-        }
-      }).fail(function(msg, f) {
-        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
-      })
-    });
-  };
-
-  var refreshList = function() {
+  refreshList : function() {
     $(".item_box").each(function(index) {
       var me = $(this);
 
-      me.find('.edit_tag_close').click(function(event) {
-        var pid = me.attr("id");
-        deleteProduct(pid);
-        event.preventDefault();
-        event.stopPropagation();
-      });
+      if (window.admin !== undefined) {
+        me.find('.edit_tag_close').click(function(event) {
+          var pid = me.attr("id");
+          window.admin.deleteProduct(pid);
+          event.preventDefault();
+          event.stopPropagation();
+        });
+      }
 
       me.find('.info_tag_cart').click(function(event) {
         var pid = me.attr("id");
@@ -162,18 +100,12 @@
               });
 
               $('#add_to_cart').click(function(event) {
-                closeDialog();
+                products.closeDialog();
                 cart.addItem(pid);
                 cart.showCart();
                 event.stopPropagation();
               });
 
-              $("#save_product").click(function(event) {
-                saveProduct("#edit_form", "/product/update");
-                event.stopPropagation();
-                event.preventDefault();
-              });
-              
               $.blockUI({
                 message : $("#product_dialog"),
                 css : {
@@ -190,59 +122,30 @@
               });
 
               $('#product_details_tab').tabify();
-              $('#edit_product_tab').tabify();
 
-              $("#edit_specs .row img").click(function(e) {
-                var row = $(this).parent();
-                row.remove();
-              });
-              
               var content = $("#prod_desc").text();
               $("#prod_desc").html(textile.convert(content));
 
-              
-              addProp("#edit_add_prop", "#edit_prop_fields");
+              if (window.admin !== undefined) {
+                window.admin.attachToProduct(function() {
+                  products.closeDialog();
+                  products.reloadProducts();
+                });
+              }
 
-              $("#edit_toggle_desc").click(function(e){
-                $(".toggle_text").toggle();
-                $(".edit_toggle").toggle({
-                  duration: 0,
-                  done: function() {
-                    var preview = $("#edit_description_view");
-                    if (preview.css('display') != 'none') {
-                      preview.html(textile.convert($("#edit_description").val()));
-                    }
-                  }
-                }
-                );
-              });
-              
               $(".close_dialog").bind("click", function(event) {
-                closeDialog();
+                products.closeDialog();
               });
             }
           });
           event.stopPropagation();
         });
       } else {
-        $("#itemadd").click(function(event) {
-          $.blockUI({
-            message : $("#product_create_dialog"),
-            css : {
-              top : '70px',
-              left : ($(window).width() - 800) / 2 + 'px',
-              width : '800px',
-              border : 'none',
-              cursor : null
-            },
-            overlayCSS : {
-              cursor : null,
-              backgroundColor : '#dddddd'
-            }
-          });
-        });
+        if (window.admin !== undefined) {
+          window.admin.createProduct();
+        }
       }
     });
   }
 
-})();
+};

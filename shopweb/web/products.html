@@ -8,6 +8,7 @@
 <script type="text/javascript" src="/static/js/blockui.js"></script>
 <script type="text/javascript" src="/static/js/textile.js"></script>
 
+<script type="text/javascript" src="/static/js/admin.js"></script>
 <script type="text/javascript" src="/static/js/products.js"></script>
 </head>
 
@@ -80,8 +81,13 @@
               <div id="create_textzone" class="form_textzone tab_content">
               	<div class="row">
                   <label for="create_description" data-loc="description"></label>
+                  <div id="create_toggle_desc" class="clickable right">
+                     <div class="create_toggle_text" data-loc="view"></div>
+                     <div class="create_toggle_text hidden" data-loc="edit"></div>
+                  </div>
                 </div>
-                <textarea class="editor" id="create_description" name="create_description"></textarea>
+                <textarea class="create_toggle" id="create_description" name="create_description"></textarea>
+                <div class="create_toggle preview" id="create_description_view" ></div>
               </div>
               
               <div id="files" class="tab_content">

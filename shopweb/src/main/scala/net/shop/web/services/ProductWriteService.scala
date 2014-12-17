@@ -139,7 +139,7 @@ object ProductWriteService extends PathUtils with ShiftUtils with Selectors with
       inputFile("files")(validateDefault("files", Nil)) <*>
       inputSelect(fieldPrefix + "keywords", Nil)(validateListField(fieldPrefix + "keywords", ?("keywords").text)))
 
-    (files, productFormlet validate params postValidate {
+    (files, productFormlet validate params flatMap {
       case p @ ProductDetail(_,
         _,
         _,
