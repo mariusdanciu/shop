@@ -24,8 +24,9 @@ import net.shop.api.persistence.NoSort
 import net.shop.api.persistence.SortByName
 import net.shop.api.persistence.SortByPrice
 import net.shop.utils.ShopUtils
+import net.shift.security.User
 
-object ProductsPage extends Cart[Request] with ShopUtils {
+object ProductsPage extends Cart[UserState] with ShopUtils {
 
   override def snippets = List(title, item, itemAdd, catList) ++ cartSnips
 
@@ -33,7 +34,7 @@ object ProductsPage extends Cart[Request] with ShopUtils {
 
   val title = reqSnip("title") {
     s =>
-      val v = (s.state.param("cat"), s.state.param("search")) match {
+      val v = (s.state.req.param("cat"), s.state.req.param("search")) match {
         case (Some(cat :: _), None) =>
           ShopApplication.persistence.categoryById(cat) match {
             case Success(c) => Text(c.title.getOrElse(s.language.language, "???"))
@@ -52,14 +53,14 @@ object ProductsPage extends Cart[Request] with ShopUtils {
   val item = reqSnip("item") {
     s =>
       {
-        val prods = ProductsQuery.fetch(s.state) match {
+        val prods = ProductsQuery.fetch(s.state.req) match {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
-                case "li" - HasClass("item", a) / childs            => <li>{ childs }</li>
-                case "div" - HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.language.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
-                case "div" - HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.language.language) }</div> % a
-                case "div" - HasClass("info_tag_price", a) / childs => priceTag(prod) % a
+                case "li" attributes HasClass("item", a) / childs            => <li>{ childs }</li>
+                case "div" attributes HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.language.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
+                case "div" attributes HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.language.language) }</div> % a
+                case "div" attributes HasClass("info_tag_price", a) / childs => priceTag(prod) % a
               } match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)
@@ -104,3 +105,5 @@ object ProductsQuery {
     }
   }
 }
+
+

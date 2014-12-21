@@ -19,6 +19,8 @@ import net.shop.utils.ShopUtils
 import net.shop.web.ShopApplication
 import net.shift.common.NodeOps._
 import net.shift.loc.Language
+import net.shift.common.ShiftFailure
+import net.shift.security.User
 
 object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlUtils {
 
@@ -29,7 +31,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
       {
         s.state.req.param("pid") match {
           case Some(id :: _) => ShopApplication.persistence.productById(id) match {
-            case Success(prod) => Success(ProductPageState(s.state.req, Success(prod)), <h1>{ prod.title_?(s.language.language) }</h1>)
+            case Success(prod) => Success(ProductPageState(s.state.req, Success(prod), s.state.user), <h1>{ prod.title_?(s.language.language) }</h1>)
             case Failure(t) =>
               Success(s.state, errorTag(Loc.loc0(s.language)("no_product").text))
           }
@@ -56,7 +58,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
         for {
           prod <- s.state.product
           el <- bind(s.node) {
-            case "a" - _ => <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.language)("product.page").text }</a>
+            case "a" attributes _ => <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.language)("product.page").text }</a>
           }
         } yield {
           el
@@ -68,7 +70,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
     s =>
       (s.state.product flatMap { prod =>
         bind(s.node) {
-          case "b:img" - _ =>
+          case "b:img" attributes _ =>
             val list = NodeSeq.fromSeq(for {
               p <- prod.images zipWithIndex
             } yield {
@@ -88,7 +90,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
                 { list }
               </div>
 
-        } map { b => (ProductPageState(s.state.req, Success(prod)), b) }
+        } map { b => (ProductPageState(s.state.req, Success(prod), s.state.user), b) }
       }).recover { case _ => (s.state, NodeSeq.Empty) }
   }
 
@@ -97,13 +99,13 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
       (for {
         p <- s.state.product
       } yield {
-        (ProductPageState(s.state.req, Success(p)), priceTag(p))
+        (ProductPageState(s.state.req, Success(p), s.state.user), priceTag(p))
       }).recover { case _ => (s.state, NodeSeq.Empty) }
   }
 
   private def option2Try[T](o: Option[T]): Try[T] = o match {
     case Some(v) => Success(v)
-    case _       => ShiftFailure("Empty")
+    case _       => ShiftFailure("Empty").toFailure
   }
 
   val details = reqSnip("details") {
@@ -113,7 +115,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
           p <- s.state.product
           desc <- option2Try(p.description.get(s.language.language))
         } yield {
-          (ProductPageState(s.state.req, Success(p)), Text(desc))
+          (ProductPageState(s.state.req, Success(p), s.state.user), Text(desc))
         }).recover { case _ => (s.state, NodeSeq.Empty) }
       }
   }
@@ -134,7 +136,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
                 case _          => NodeSeq.Empty
               }
           }
-          (ProductPageState(s.state.req, Success(p)), n)
+          (ProductPageState(s.state.req, Success(p), s.state.user), n)
         }).recover { case _ => (s.state, NodeSeq.Empty) }
       }
   }
@@ -150,18 +152,18 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
           val discountPrice = p.discountPrice.map(_.toString()).getOrElse("")
 
           (bind(s.node) {
-            case "form" - attrs / childs                           => node("form", attrs.attrs + ("action" -> ("/product/update/" + p.stringId))) / childs
-            case HasId("edit_pid", attrs)                          => node("input", attrs.attrs + ("value" -> p.stringId))
-            case HasId("edit_title", attrs)                        => node("input", attrs.attrs + ("value" -> title))
-            case HasId("edit_price", attrs)                        => node("input", attrs.attrs + ("value" -> p.price.toString()))
-            case HasId("edit_discount_price", attrs)               => node("input", attrs.attrs + ("value" -> discountPrice))
-            case HasId("edit_categories", attrs)                   => handleCategories(attrs, s.language, p.categories.toSet)
-            case HasId("edit_keywords", attrs)                     => node("input", attrs.attrs + ("value" -> p.keyWords.mkString(", ")))
-            case HasId("edit_description", attrs)                  => node("textarea", attrs.attrs) / Text(desc)
-            case _ - HasClass("edit_props_sample", attrs) / childs => handleProperties(childs, p)
+            case "form" attributes attrs / childs                           => node("form", attrs.attrs + ("action" -> ("/product/update/" + p.stringId))) / childs
+            case HasId("edit_pid", attrs)                                   => node("input", attrs.attrs + ("value" -> p.stringId))
+            case HasId("edit_title", attrs)                                 => node("input", attrs.attrs + ("value" -> title))
+            case HasId("edit_price", attrs)                                 => node("input", attrs.attrs + ("value" -> p.price.toString()))
+            case HasId("edit_discount_price", attrs)                        => node("input", attrs.attrs + ("value" -> discountPrice))
+            case HasId("edit_categories", attrs)                            => handleCategories(attrs, s.language, p.categories.toSet)
+            case HasId("edit_keywords", attrs)                              => node("input", attrs.attrs + ("value" -> p.keyWords.mkString(", ")))
+            case HasId("edit_description", attrs)                           => node("textarea", attrs.attrs) / Text(desc)
+            case _ attributes HasClass("edit_props_sample", attrs) / childs => handleProperties(childs, p)
           }) match {
-            case Success(n) => (ProductPageState(s.state.req, Success(p)), n)
-            case _          => (ProductPageState(s.state.req, Success(p)), s.node)
+            case Success(n) => (ProductPageState(s.state.req, Success(p), s.state.user), n)
+            case _          => (ProductPageState(s.state.req, Success(p), s.state.user), s.node)
           }
         }).recover { case _ => (s.state, NodeSeq.Empty) }
       }
@@ -184,9 +186,9 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
   private def handleProperties(childs: NodeSeq, p: ProductDetail) = NodeSeq.fromSeq((p.properties flatMap {
     case (k, v) =>
       bind(node("div", Map("class" -> "row")) / childs) {
-        case "k:input" - attrs / _ =>
+        case "k:input" attributes attrs / _ =>
           node("input", attrs.attrs + ("value" -> k))
-        case "v:input" - attrs / _ =>
+        case "v:input" attributes attrs / _ =>
           node("input", attrs.attrs + ("value" -> v))
       } match {
         case Success(n) => n
@@ -197,8 +199,8 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
 }
 
 object ProductPageState {
-  def build(req: Request): ProductPageState = new ProductPageState(req, Failure[ProductDetail](new RuntimeException("Product not found")))
+  def build(req: Request, user: Option[User]): ProductPageState = new ProductPageState(req, Failure[ProductDetail](new RuntimeException("Product not found")), user)
 }
 
-case class ProductPageState(req: Request, product: Try[ProductDetail]) 
+case class ProductPageState(req: Request, product: Try[ProductDetail], user: Option[User]) 
 

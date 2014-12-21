@@ -25,10 +25,10 @@ object CartItemNode extends DynamicContent[CartState] with XmlUtils with ShopUti
       bind(s.node) {
         case HasClass("thumb", a) => <img/> % a attr ("src", imagePath("thumb", s.state.prod)) e
         case HasClass("cart_title", a) => <span>{ s.state.prod.title_?(s.language.language) }</span> % a
-        case "input" - a / _ => (<input id={ "q_" + s.state.prod.stringId }/> % a attr ("value", s.state.quantity toString)) e
-        case "a" - a / childs => <a id={ "del_" + s.state.prod.stringId } href="#">{ childs }</a>
-        case "img" - a / _ => <img/> % a e
-        case "span" - a / _ if a.hasClass("cart_price") => <span>{ s.state.prod.price }</span> % a
+        case "input" attributes a / _ => (<input id={ "q_" + s.state.prod.stringId }/> % a attr ("value", s.state.quantity toString)) e
+        case "a" attributes a / childs => <a id={ "del_" + s.state.prod.stringId } href="#">{ childs }</a>
+        case "img" attributes a / _ => <img/> % a e
+        case "span" attributes a / _ if a.hasClass("cart_price") => <span>{ s.state.prod.price }</span> % a
       } map ((s.state, _))
   }
 

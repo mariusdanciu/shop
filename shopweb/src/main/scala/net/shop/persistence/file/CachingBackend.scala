@@ -9,7 +9,7 @@ import net.shop.api.ProductDetail
 import net.shop.api.persistence.NoSort
 import net.shop.api.persistence.Persistence
 import net.shop.api.persistence.SortSpec
-import net.shift.engine.ShiftFailure
+import net.shift.common.ShiftFailure
 
 case class CachingBackend(serv: Persistence) extends Persistence {
 

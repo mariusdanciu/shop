@@ -12,16 +12,15 @@ import net.shift.engine.ShiftApplication.service
 import net.shift.loc.Language
 import net.shift.netty.NettyServer
 import net.shop.api.persistence.Persistence
-import net.shop.persistence.file.CachingBackend
-import net.shop.persistence.file.FSProductsService
+import net.shop.mongodb.MongoDBPersistence
 import net.shop.web.pages.CategoryPage
 import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
+import net.shop.web.pages.UserState
 import net.shop.web.pages.TermsPage
 import net.shop.web.services.ShopServices
-import net.shop.mongodb.MongoDBPersistence
-import net.shift.engine.ShiftFailure
+import net.shop.web.pages.UserState
 
 object StartShop extends App with DefaultLog {
 
@@ -32,7 +31,7 @@ object StartShop extends App with DefaultLog {
   Config load ()
 
   NettyServer.start(Config.int("port"), ShopApplication)
-  
+
   println("Server started.")
 }
 
@@ -49,7 +48,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
 
   def ajaxProductsList = for {
     r <- ajax
-    p <- page("products", Path("web/templates/productslist.html"), ProductsPage)
+    p <- page(UserState.build _, "products", Path("web/templates/productslist.html"), ProductsPage)
   } yield p
 
   def ajaxProductDetail = for {
@@ -65,10 +64,11 @@ object ShopApplication extends ShiftApplication with ShopServices {
       staticFiles(Path("web/static")) |
       productsVariantImages |
       categoriesImages |
-      page("/", Path("web/categories.html"), CategoryPage) |
+      page(UserState.build _, "/", Path("web/categories.html"), CategoryPage) |
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
-      page("products", Path("web/products.html"), ProductsPage) |
+      page(UserState.build _, "products", Path("web/products.html"), ProductsPage) |
       page("terms", Path("web/terms.html"), TermsPage) |
+      authPage(UserState.build _, "admin", Path("web/categories.html"), CategoryPage) |
       getCart() |
       orderService.order |
       createProduct |

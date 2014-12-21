@@ -17,8 +17,9 @@ import net.shop.web.ShopApplication
 import scala.util.Success
 import scala.util.Failure
 import net.shop.utils.ShopUtils
+import net.shift.security.User
 
-object CategoryPage extends Cart[Request] with ShopUtils { self =>
+object CategoryPage extends Cart[UserState] with ShopUtils { self =>
 
   override def snippets = List(title, item) ++ super.snippets
 
@@ -33,9 +34,9 @@ object CategoryPage extends Cart[Request] with ShopUtils { self =>
           case Success(list) =>
             list flatMap { cat =>
               (bind(s.node) {
-                case "li" - HasClass("item", a) / childs => <li>{ childs }</li>
-                case "div" - HasClass("cat_box", a) / childs => <div id={ cat stringId } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
-                case "div" - HasClasses("info_tag_text" :: _, a) / _ => <div>{ cat.title_?(s.language.language) }</div> % a
+                case "li" attributes HasClass("item", a) / childs             => <li>{ childs }</li>
+                case "div" attributes HasClass("cat_box", a) / childs         => <div id={ cat stringId } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
+                case "div" attributes HasClasses("info_tag_text" :: _, a) / _ => <div>{ cat.title_?(s.language.language) }</div> % a
               }) match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)
@@ -49,3 +50,9 @@ object CategoryPage extends Cart[Request] with ShopUtils { self =>
   }
 
 }
+
+object UserState {
+  def build(req: Request, user: Option[User]): UserState = new UserState(req, user)
+}
+
+case class UserState(req: Request, user: Option[User]) 

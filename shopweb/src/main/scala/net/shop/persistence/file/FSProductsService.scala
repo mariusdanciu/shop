@@ -16,7 +16,7 @@ import net.shop.api.ProductDetail
 import net.shop.api.Category
 import net.shift.common.TraversingSpec
 import net.shift.common.ApplicativeFunctor
-import net.shift.engine.ShiftFailure
+import net.shift.common.ShiftFailure
 import net.shop.api.persistence.Persistence
 import net.shop.api.persistence.NoSort
 import net.shop.api.persistence.SortByName
@@ -105,12 +105,12 @@ object FSProductsService extends Persistence with TraversingSpec {
     })
   }
   
-  def createProducts(prod: ProductDetail*): Try[Seq[String]] = new ShiftFailure("Not supported")
+  def createProducts(prod: ProductDetail*): Try[Seq[String]] = ShiftFailure("Not supported").toFailure
 
-  def updateProducts(prod: ProductDetail*): Try[Seq[String]] = new ShiftFailure("Not supported")
+  def updateProducts(prod: ProductDetail*): Try[Seq[String]] = new ShiftFailure("Not supported").toFailure
   
-  def createCategories(cats: Category*): Try[Seq[String]] = new ShiftFailure("Not supported")
+  def createCategories(cats: Category*): Try[Seq[String]] = new ShiftFailure("Not supported").toFailure
 
-  def deleteProducts(prod: String*): Try[Int] = new ShiftFailure("Not supported")
+  def deleteProducts(prod: String*): Try[Int] = new ShiftFailure("Not supported").toFailure
 }
 

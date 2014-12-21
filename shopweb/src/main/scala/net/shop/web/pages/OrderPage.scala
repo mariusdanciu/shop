@@ -45,14 +45,14 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
       s.state.o match {
         case OrderLog(id, time, Person(fn, ln), region, city, address, email, phone, _) =>
           bind(s.node) {
-            case n - HasId("oid", a) / _ => <span>{ id }</span> % a
-            case n - HasId("lname", a) / _ => <span>{ ln }</span> % a
-            case n - HasId("fname", a) / _ => <span>{ fn }</span> % a
-            case n - HasId("region", a) / _ => <span>{ region }</span> % a
-            case n - HasId("city", a) / _ => <span>{ city }</span> % a
-            case n - HasId("address", a) / _ => <span>{ address }</span> % a
-            case n - HasId("email", a) / _ => <span>{ email }</span> % a
-            case n - HasId("phone", a) / _ => <span>{ phone }</span> % a
+            case n attributes HasId("oid", a) / _ => <span>{ id }</span> % a
+            case n attributes HasId("lname", a) / _ => <span>{ ln }</span> % a
+            case n attributes HasId("fname", a) / _ => <span>{ fn }</span> % a
+            case n attributes HasId("region", a) / _ => <span>{ region }</span> % a
+            case n attributes HasId("city", a) / _ => <span>{ city }</span> % a
+            case n attributes HasId("address", a) / _ => <span>{ address }</span> % a
+            case n attributes HasId("email", a) / _ => <span>{ email }</span> % a
+            case n attributes HasId("phone", a) / _ => <span>{ phone }</span> % a
           } match {
             case Success(n) => Success((s.state, n))
             case Failure(f) => Success((s.state, errorTag(f toString)))
@@ -60,17 +60,17 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
 
         case OrderLog(id, time, Company(cn, cif, regCom, bank, account), region, city, address, email, phone, _) =>
           bind(s.node) {
-            case n - HasId("oid", a) / _ => <span>{ id }</span> % a
-            case n - HasId("cname", a) / _ => <span>{ cn }</span> % a
-            case n - HasId("cif", a) / _ => <span>{ cif }</span> % a
-            case n - HasId("cregcom", a) / _ => <span>{ regCom }</span> % a
-            case n - HasId("cbank", a) / _ => <span>{ bank }</span> % a
-            case n - HasId("cbankaccount", a) / _ => <span>{ account }</span> % a
-            case n - HasId("cregion", a) / _ => <span>{ region }</span> % a
-            case n - HasId("ccity", a) / _ => <span>{ city }</span> % a
-            case n - HasId("caddress", a) / _ => <span>{ address }</span> % a
-            case n - HasId("cemail", a) / _ => <span>{ email }</span> % a
-            case n - HasId("cphone", a) / _ => <span>{ phone }</span> % a
+            case n attributes HasId("oid", a) / _ => <span>{ id }</span> % a
+            case n attributes HasId("cname", a) / _ => <span>{ cn }</span> % a
+            case n attributes HasId("cif", a) / _ => <span>{ cif }</span> % a
+            case n attributes HasId("cregcom", a) / _ => <span>{ regCom }</span> % a
+            case n attributes HasId("cbank", a) / _ => <span>{ bank }</span> % a
+            case n attributes HasId("cbankaccount", a) / _ => <span>{ account }</span> % a
+            case n attributes HasId("cregion", a) / _ => <span>{ region }</span> % a
+            case n attributes HasId("ccity", a) / _ => <span>{ city }</span> % a
+            case n attributes HasId("caddress", a) / _ => <span>{ address }</span> % a
+            case n attributes HasId("cemail", a) / _ => <span>{ email }</span> % a
+            case n attributes HasId("cphone", a) / _ => <span>{ phone }</span> % a
           } match {
             case Success(n) => Success((s.state, n))
             case Failure(f) => Success((s.state, errorTag(f toString)))
@@ -88,11 +88,11 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
             ShopApplication.persistence.productById(prod.id) match {
               case Success(p) =>
                 (bind(s.node) {
-                  case "img" - a / _ =>
+                  case "img" attributes a / _ =>
                     <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "normal", p.images.head)}") e
-                  case "td" - HasClass("c1", a) / _ => <td>{ p.title_?(s.language.language) }</td> % a
-                  case "td" - HasClass("c2", a) / _ => <td>{ prod.quantity }</td> % a
-                  case "td" - HasClass("c3", a) / _ => <td>{ p.price }</td> % a
+                  case "td" attributes HasClass("c1", a) / _ => <td>{ p.title_?(s.language.language) }</td> % a
+                  case "td" attributes HasClass("c2", a) / _ => <td>{ prod.quantity }</td> % a
+                  case "td" attributes HasClass("c3", a) / _ => <td>{ p.price }</td> % a
                 }) match {
                   case Success(n) => acc ++ n
                   case Failure(f) => acc ++ errorTag(f toString)
