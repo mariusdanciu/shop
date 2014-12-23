@@ -23,7 +23,7 @@ object TermsPage extends Cart[Request] with ShopUtils { self =>
   override def snippets = List(title) ++ super.snippets
 
   val title = reqSnip("title") {
-    s => Success((s.state, <h1>{ Loc.loc0(s.language)("terms.link").text }</h1>))
+    s => Success((s.state.initialState, <h1>{ Loc.loc0(s.state.lang)("terms.link").text }</h1>))
   }
 
 }

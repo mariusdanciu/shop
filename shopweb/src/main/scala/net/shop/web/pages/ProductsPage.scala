@@ -26,7 +26,7 @@ import net.shop.api.persistence.SortByPrice
 import net.shop.utils.ShopUtils
 import net.shift.security.User
 
-object ProductsPage extends Cart[UserState] with ShopUtils {
+object ProductsPage extends Cart[Request] with ShopUtils {
 
   override def snippets = List(title, item, itemAdd, catList) ++ cartSnips
 
@@ -34,41 +34,41 @@ object ProductsPage extends Cart[UserState] with ShopUtils {
 
   val title = reqSnip("title") {
     s =>
-      val v = (s.state.req.param("cat"), s.state.req.param("search")) match {
+      val v = (s.state.initialState.param("cat"), s.state.initialState.param("search")) match {
         case (Some(cat :: _), None) =>
           ShopApplication.persistence.categoryById(cat) match {
-            case Success(c) => Text(c.title.getOrElse(s.language.language, "???"))
+            case Success(c) => Text(c.title.getOrElse(s.state.lang.language, "???"))
             case _          => NodeSeq.Empty
           }
         case (None, Some(search :: _)) => Text(s""""$search"""")
         case _                         => NodeSeq.Empty
       }
-      Success((s.state, <h1>{ v }</h1>))
+      Success((s.state.initialState, <h1>{ v }</h1>))
   }
 
   val itemAdd = reqSnip("itemadd") {
-    s => Success((s.state, s.node))
+    s => Success((s.state.initialState, s.node))
   }
 
   val item = reqSnip("item") {
     s =>
       {
-        val prods = ProductsQuery.fetch(s.state.req) match {
+        val prods = ProductsQuery.fetch(s.state.initialState) match {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
                 case "li" attributes HasClass("item", a) / childs            => <li>{ childs }</li>
-                case "div" attributes HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.language.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
-                case "div" attributes HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.language.language) }</div> % a
+                case "div" attributes HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.state.lang.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
+                case "div" attributes HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.state.lang.language) }</div> % a
                 case "div" attributes HasClass("info_tag_price", a) / childs => priceTag(prod) % a
               } match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)
               }
             }
-          case Failure(t) => errorTag(Loc.loc0(s.language)("no_category").text)
+          case Failure(t) => errorTag(Loc.loc0(s.state.lang)("no_category").text)
         }
-        Success((s.state, prods.toSeq))
+        Success((s.state.initialState, prods.toSeq))
       }
   }
 
@@ -78,11 +78,11 @@ object ProductsPage extends Cart[UserState] with ShopUtils {
         case Success(list) =>
           s.node match {
             case e: Elem =>
-              val v = list.map(c => (<option value={ c.id getOrElse "?" }>{ c.title_?(s.language.language) }</option>)).toSeq
-              Success((s.state, e / NodeSeq.fromSeq(v)))
-            case _ => Success((s.state, NodeSeq.Empty))
+              val v = list.map(c => (<option value={ c.id getOrElse "?" }>{ c.title_?(s.state.lang.language) }</option>)).toSeq
+              Success((s.state.initialState, e / NodeSeq.fromSeq(v)))
+            case _ => Success((s.state.initialState, NodeSeq.Empty))
           }
-        case Failure(t) => Success((s.state, errorTag(Loc.loc0(s.language)("no_category").text)))
+        case Failure(t) => Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no_category").text)))
       }
   }
 

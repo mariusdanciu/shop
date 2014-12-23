@@ -31,18 +31,18 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
 
   def orderTemplate(state: OrderState): Try[NodeSeq] =
-    Html5.runPageFromFile(state, state.lang, Path(s"web/templates/order_${state.lang.language}.html"), this).map(in => in._2)
+    Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_${state.lang.language}.html"), this).map(in => in._2)
 
   def orderCompanyTemplate(state: OrderState): Try[NodeSeq] =
-    Html5.runPageFromFile(state, state.lang, Path(s"web/templates/order_company_${state.lang.language}.html"), this).map(in => in._2)
+    Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_company_${state.lang.language}.html"), this).map(in => in._2)
 
   val logo = reqSnip("logo") {
-    s => Success((s.state, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid-small.png" }/>))
+    s => Success((s.state.initialState, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid-small.png" }/>))
   }
 
   val info = reqSnip("info") {
     s =>
-      s.state.o match {
+      s.state.initialState.o match {
         case OrderLog(id, time, Person(fn, ln), region, city, address, email, phone, _) =>
           bind(s.node) {
             case n attributes HasId("oid", a) / _ => <span>{ id }</span> % a
@@ -54,8 +54,8 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
             case n attributes HasId("email", a) / _ => <span>{ email }</span> % a
             case n attributes HasId("phone", a) / _ => <span>{ phone }</span> % a
           } match {
-            case Success(n) => Success((s.state, n))
-            case Failure(f) => Success((s.state, errorTag(f toString)))
+            case Success(n) => Success((s.state.initialState, n))
+            case Failure(f) => Success((s.state.initialState, errorTag(f toString)))
           }
 
         case OrderLog(id, time, Company(cn, cif, regCom, bank, account), region, city, address, email, phone, _) =>
@@ -72,8 +72,8 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
             case n attributes HasId("cemail", a) / _ => <span>{ email }</span> % a
             case n attributes HasId("cphone", a) / _ => <span>{ phone }</span> % a
           } match {
-            case Success(n) => Success((s.state, n))
-            case Failure(f) => Success((s.state, errorTag(f toString)))
+            case Success(n) => Success((s.state.initialState, n))
+            case Failure(f) => Success((s.state.initialState, errorTag(f toString)))
           }
 
       }
@@ -83,14 +83,14 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   val content = reqSnip("content") {
     s =>
       {
-        val items = (NodeSeq.Empty /: s.state.o.items) {
+        val items = (NodeSeq.Empty /: s.state.initialState.o.items) {
           case (acc, prod) =>
             ShopApplication.persistence.productById(prod.id) match {
               case Success(p) =>
                 (bind(s.node) {
                   case "img" attributes a / _ =>
                     <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "normal", p.images.head)}") e
-                  case "td" attributes HasClass("c1", a) / _ => <td>{ p.title_?(s.language.language) }</td> % a
+                  case "td" attributes HasClass("c1", a) / _ => <td>{ p.title_?(s.state.lang.language) }</td> % a
                   case "td" attributes HasClass("c2", a) / _ => <td>{ prod.quantity }</td> % a
                   case "td" attributes HasClass("c3", a) / _ => <td>{ p.price }</td> % a
                 }) match {
@@ -101,12 +101,12 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
             }
         }
 
-        Success(s.state, items)
+        Success(s.state.initialState, items)
       }
   }
 
   val total = reqSnip("total") {
-    s => Success((s.state, Text(s.state.o.total.formatted("%.2f"))))
+    s => Success((s.state.initialState, Text(s.state.initialState.o.total.formatted("%.2f"))))
   }
 }
 

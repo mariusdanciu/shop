@@ -29,46 +29,46 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
   val title = reqSnip("title") {
     s =>
       {
-        s.state.req.param("pid") match {
+        s.state.initialState.req.param("pid") match {
           case Some(id :: _) => ShopApplication.persistence.productById(id) match {
-            case Success(prod) => Success(ProductPageState(s.state.req, Success(prod), s.state.user), <h1>{ prod.title_?(s.language.language) }</h1>)
+            case Success(prod) => Success(ProductPageState(s.state.initialState.req, Success(prod), s.state.user), <h1>{ prod.title_?(s.state.lang.language) }</h1>)
             case Failure(t) =>
-              Success(s.state, errorTag(Loc.loc0(s.language)("no_product").text))
+              Success(s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no_product").text))
           }
-          case _ => Success(s.state, errorTag(Loc.loc0(s.language)("no_product").text))
+          case _ => Success(s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no_product").text))
         }
       }
   }
 
   val catlink = reqSnip("catlink") {
     s =>
-      ((s.state.product map { p =>
+      ((s.state.initialState.product map { p =>
         (p.categories.flatMap(e => {
           ShopApplication.persistence.categoryById(e) match {
-            case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.language.language) }</a> ++ <span>, </span>)
+            case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.state.lang.language) }</a> ++ <span>, </span>)
             case _            => NodeSeq.Empty
           }
         }).toList.dropRight(1))
-      }) map { l => (s.state, NodeSeq.fromSeq(l)) }).recover { case _ => (s.state, NodeSeq.Empty) }
+      }) map { l => (s.state.initialState, NodeSeq.fromSeq(l)) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
   val productLink = reqSnip("productlink") {
     s =>
-      ((s.state.product flatMap { p =>
+      ((s.state.initialState.product flatMap { p =>
         for {
-          prod <- s.state.product
+          prod <- s.state.initialState.product
           el <- bind(s.node) {
-            case "a" attributes _ => <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.language)("product.page").text }</a>
+            case "a" attributes _ => <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.state.lang)("product.page").text }</a>
           }
         } yield {
           el
         }
-      }) map { (s.state, _) }).recover { case _ => (s.state, NodeSeq.Empty) }
+      }) map { (s.state.initialState, _) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
   val images = reqSnip("images") {
     s =>
-      (s.state.product flatMap { prod =>
+      (s.state.initialState.product flatMap { prod =>
         bind(s.node) {
           case "b:img" attributes _ =>
             val list = NodeSeq.fromSeq(for {
@@ -85,22 +85,22 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
             val path = imagePath(prod.stringId, "normal", prod.images.head)
             val large = imagePath(prod.stringId, "large", prod.images.head)
 
-            <img id="sel_img" src={ path } title={ prod.title_?(s.language.language) } data-zoom-image={ large }></img> ++
+            <img id="sel_img" src={ path } title={ prod.title_?(s.state.lang.language) } data-zoom-image={ large }></img> ++
               <div id="gallery">
                 { list }
               </div>
 
-        } map { b => (ProductPageState(s.state.req, Success(prod), s.state.user), b) }
-      }).recover { case _ => (s.state, NodeSeq.Empty) }
+        } map { b => (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), b) }
+      }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
   val detailPrice = reqSnip("detailPrice") {
     s =>
       (for {
-        p <- s.state.product
+        p <- s.state.initialState.product
       } yield {
-        (ProductPageState(s.state.req, Success(p), s.state.user), priceTag(p))
-      }).recover { case _ => (s.state, NodeSeq.Empty) }
+        (ProductPageState(s.state.initialState.req, Success(p), s.state.user), priceTag(p))
+      }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
   private def option2Try[T](o: Option[T]): Try[T] = o match {
@@ -112,11 +112,11 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
     s =>
       {
         (for {
-          p <- s.state.product
-          desc <- option2Try(p.description.get(s.language.language))
+          p <- s.state.initialState.product
+          desc <- option2Try(p.description.get(s.state.lang.language))
         } yield {
-          (ProductPageState(s.state.req, Success(p), s.state.user), Text(desc))
-        }).recover { case _ => (s.state, NodeSeq.Empty) }
+          (ProductPageState(s.state.initialState.req, Success(p), s.state.user), Text(desc))
+        }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
       }
   }
 
@@ -124,7 +124,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
     s =>
       {
         (for {
-          p <- s.state.product
+          p <- s.state.initialState.product
         } yield {
           val n = (NodeSeq.Empty /: p.properties) {
             case (acc, (k, v)) =>
@@ -136,8 +136,8 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
                 case _          => NodeSeq.Empty
               }
           }
-          (ProductPageState(s.state.req, Success(p), s.state.user), n)
-        }).recover { case _ => (s.state, NodeSeq.Empty) }
+          (ProductPageState(s.state.initialState.req, Success(p), s.state.user), n)
+        }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
       }
   }
 
@@ -145,10 +145,10 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
     s =>
       {
         (for {
-          p <- s.state.product
+          p <- s.state.initialState.product
         } yield {
-          val title = p.title.get(s.language.language).getOrElse("")
-          val desc = p.description.get(s.language.language).getOrElse("")
+          val title = p.title.get(s.state.lang.language).getOrElse("")
+          val desc = p.description.get(s.state.lang.language).getOrElse("")
           val discountPrice = p.discountPrice.map(_.toString()).getOrElse("")
 
           (bind(s.node) {
@@ -157,15 +157,15 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
             case HasId("edit_title", attrs)                                 => node("input", attrs.attrs + ("value" -> title))
             case HasId("edit_price", attrs)                                 => node("input", attrs.attrs + ("value" -> p.price.toString()))
             case HasId("edit_discount_price", attrs)                        => node("input", attrs.attrs + ("value" -> discountPrice))
-            case HasId("edit_categories", attrs)                            => handleCategories(attrs, s.language, p.categories.toSet)
+            case HasId("edit_categories", attrs)                            => handleCategories(attrs, s.state.lang, p.categories.toSet)
             case HasId("edit_keywords", attrs)                              => node("input", attrs.attrs + ("value" -> p.keyWords.mkString(", ")))
             case HasId("edit_description", attrs)                           => node("textarea", attrs.attrs) / Text(desc)
             case _ attributes HasClass("edit_props_sample", attrs) / childs => handleProperties(childs, p)
           }) match {
-            case Success(n) => (ProductPageState(s.state.req, Success(p), s.state.user), n)
-            case _          => (ProductPageState(s.state.req, Success(p), s.state.user), s.node)
+            case Success(n) => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), n)
+            case _          => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node)
           }
-        }).recover { case _ => (s.state, NodeSeq.Empty) }
+        }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
       }
   }
 

@@ -32,8 +32,8 @@ trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
   val order = snip[T]("order") {
     s =>
       bind(s.node) {
-        case "form" attributes _ => <form id="order_form">{ OrderForm.form(s.language).html }</form>
-      } map ((s.state, _))
+        case "form" attributes _ => <form id="order_form">{ OrderForm.form(s.state.lang).html }</form>
+      } map ((s.state.initialState, _))
   }
 
   def priceTag(p: ProductDetail): Elem = p.discountPrice match {
@@ -42,6 +42,6 @@ trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
   }
 
   val connectError = snip[T]("connect_error") {
-    s => Success((s.state, <div id="notice_connect_e">{ Loc.loc0(s.language)("connect.fail").text }</div>))
+    s => Success((s.state.initialState, <div id="notice_connect_e">{ Loc.loc0(s.state.lang)("connect.fail").text }</div>))
   }
 }

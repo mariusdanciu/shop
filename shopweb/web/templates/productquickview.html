@@ -28,7 +28,7 @@
           <ul id="product_details_tab">
             <li class="active"><a href="#prod_desc" data-loc="description"></a></li>
             <li><a href="#prod_specs" data-loc="specs"></a></li>
-            <li id="edit_tab"><a href="#edit" data-loc="edit"></a></li>
+            <li id="edit_tab" data-permissions="write"><a href="#edit" data-loc="edit"></a></li>
           </ul>
         </div>
         <div id="prod_desc" class="prod_desc tab_content">
@@ -42,7 +42,8 @@
              </div>
           </div>
         </div>
-        <div id="edit" class="tab_content">
+        
+        <div id="edit" class="tab_content" data-permissions="write">
  
           <form id="edit_form" method="POST" data-snip="edit">
           

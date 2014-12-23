@@ -17,22 +17,19 @@ import net.shop.web.pages.CategoryPage
 import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
-import net.shop.web.pages.UserState
 import net.shop.web.pages.TermsPage
 import net.shop.web.services.ShopServices
-import net.shop.web.pages.UserState
 
 object StartShop extends App with DefaultLog {
 
   PropertyConfigurator.configure("config/log4j.properties");
 
-  info("Starting iDid application ...");
-
   Config load ()
 
-  NettyServer.start(Config.int("port"), ShopApplication)
+  val port = Config.int("port")
+  NettyServer.start(port, ShopApplication)
 
-  println("Server started.")
+  println("Server started on port " + port)
 }
 
 object ShopApplication extends ShiftApplication with ShopServices {
@@ -48,7 +45,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
 
   def ajaxProductsList = for {
     r <- ajax
-    p <- page(UserState.build _, "products", Path("web/templates/productslist.html"), ProductsPage)
+    p <- page("products", Path("web/templates/productslist.html"), ProductsPage)
   } yield p
 
   def ajaxProductDetail = for {
@@ -64,11 +61,11 @@ object ShopApplication extends ShiftApplication with ShopServices {
       staticFiles(Path("web/static")) |
       productsVariantImages |
       categoriesImages |
-      page(UserState.build _, "/", Path("web/categories.html"), CategoryPage) |
+      page("/", Path("web/categories.html"), CategoryPage) |
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
-      page(UserState.build _, "products", Path("web/products.html"), ProductsPage) |
+      page("products", Path("web/products.html"), ProductsPage) |
       page("terms", Path("web/terms.html"), TermsPage) |
-      authPage(UserState.build _, "admin", Path("web/categories.html"), CategoryPage) |
+      authPage("admin", Path("web/categories.html"), CategoryPage) |
       getCart() |
       orderService.order |
       createProduct |
