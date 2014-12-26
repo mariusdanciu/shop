@@ -24,7 +24,7 @@
     });
 
   });
-
+  
 })();
 
 var products = {
@@ -63,10 +63,10 @@ var products = {
   refreshList : function() {
     $(".item_box").each(function(index) {
       var me = $(this);
+      var pid = me.attr("id");
 
       if (window.admin !== undefined) {
         me.find('.edit_tag_close').click(function(event) {
-          var pid = me.attr("id");
           window.admin.deleteProduct(pid);
           event.preventDefault();
           event.stopPropagation();
@@ -74,13 +74,11 @@ var products = {
       }
 
       me.find('.info_tag_cart').click(function(event) {
-        var pid = me.attr("id");
         cart.addItem(pid);
         cart.showCart();
         event.stopPropagation();
       });
 
-      var pid = me.attr("id");
       if (pid !== undefined) {
         me.click(function(event) {
           var loc = "/productquickview?pid=" + pid;
@@ -142,7 +140,7 @@ var products = {
         });
       } else {
         if (window.admin !== undefined) {
-          window.admin.createProduct();
+          window.admin.attachCreateProduct(me);
         }
       }
     });

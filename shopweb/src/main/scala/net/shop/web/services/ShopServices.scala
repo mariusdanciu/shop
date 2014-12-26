@@ -4,13 +4,11 @@ package web.services
 import scala.Option.option2Iterable
 import scala.util.Failure
 import scala.util.Success
-
 import org.json4s.DefaultFormats
 import org.json4s.jvalue2extractable
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization.write
 import org.json4s.string2JsonInput
-
 import net.shift.common.DefaultLog
 import net.shift.common.Path
 import net.shift.common.PathUtils
@@ -84,8 +82,8 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
     resp(new ImageResponse(input, "image/jpg")))
 
   def categoriesImages = for {
-    Path("data" :: "categories" :: file :: Nil) <- path
-    input <- fileOf(Path(s"data/categories/$file"))
+    Path("data" :: "categories" :: id :: file :: Nil) <- path
+    input <- fileOf(Path(s"data/categories/$id/$file"))
   } yield service(resp =>
     resp(new ImageResponse(input, "image/png")))
 
@@ -126,6 +124,12 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   def updateProduct = ProductWriteService.updateProduct
 
   def deleteProduct = ProductWriteService.deleteProduct
+  
+  def createCategory = CategoryWriteService.createCategory
+  
+  def deleteCategory = CategoryWriteService.deleteCategory
+  
+  def updateCategory = CategoryWriteService.updateCategory
 }
 
 

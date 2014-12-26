@@ -28,7 +28,7 @@ import net.shift.security.User
 
 object ProductsPage extends Cart[Request] with ShopUtils {
 
-  override def snippets = List(title, item, itemAdd, catList) ++ cartSnips
+  override def snippets = List(title, item, catList) ++ cartSnips
 
   val cartSnips = super.snippets
 
@@ -44,10 +44,6 @@ object ProductsPage extends Cart[Request] with ShopUtils {
         case _                         => NodeSeq.Empty
       }
       Success((s.state.initialState, <h1>{ v }</h1>))
-  }
-
-  val itemAdd = reqSnip("itemadd") {
-    s => Success((s.state.initialState, s.node))
   }
 
   val item = reqSnip("item") {

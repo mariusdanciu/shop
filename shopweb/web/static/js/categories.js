@@ -1,41 +1,69 @@
 (function() {
-	$(function() {
+  $(function() {
+    $.blockUI.defaults.baseZ = 90;
 
-		$(".cat_box").each(function(index) {
-			var me = $(this);
+    $(".close_dialog").bind("click", function(event) {
+      categories.closeDialog();
+    });
 
-			me.mouseenter(function() {
-				me.css({
-					'cursor' : 'pointer'
-				});
-				me.find('.info_tag').css({
-					background : 'rgba(0, 0, 0, 1)'
-				});
-				me.find('.info_tag div').css({
-					'color' : '#ffffff'
-				});
-			});
+    categories.refreshList();
 
-			me.mouseleave(function() {
-				me.css({
-					'cursor' : 'hand'
-				});
-				me.find('.info_tag').css({
-					'background' : 'rgba(255, 255, 255, .5)'
-				});
-				me.find('.info_tag div').css({
-					'color' : '#000000'
-				});
-			});
-			
-			me.click(function(event) {
-				var pid = me.attr("id");
-				window.location.href = "/products?cat=" + pid;
-				event.stopPropagation();
-			});
-
-		});
-
-	});
+  });
 
 })();
+
+var categories = {
+
+  closeDialog : function() {
+    $.unblockUI();
+  },
+
+  refreshList : function() {
+
+    $(".close_dialog").bind("click", function(event) {
+      categories.closeDialog();
+    });
+    $(".cat_box").each(function(index) {
+      var me = $(this);
+      var pid = me.attr("id");
+
+      if (window.admin !== undefined) {
+        me.find('.edit_tag_close').click(function(event) {
+          window.admin.deleteCategory(pid);
+          event.preventDefault();
+          event.stopPropagation();
+        });
+
+        me.find('.edit_tag_update').click(function(event) {
+          window.admin.editCategory(pid);
+          event.preventDefault();
+          event.stopPropagation();
+        });
+
+      }
+
+      if (pid !== undefined) {
+        me.click(function(event) {
+          window.location.href = "/products?cat=" + pid;
+          event.preventDefault();
+          event.stopPropagation();
+        });
+      } else {
+        if (window.admin !== undefined) {
+          window.admin.attachCreateCategory(me);
+        }
+      }
+
+    });
+  },
+
+  reloadCategories : function() {
+    $("#item_list").load("/", function(response, status, xhr) {
+      if (status == "error") {
+        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+      } else {
+        categories.refreshList();
+      }
+    });
+  }
+}

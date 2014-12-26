@@ -48,6 +48,11 @@ object ShopApplication extends ShiftApplication with ShopServices {
     p <- page("products", Path("web/templates/productslist.html"), ProductsPage)
   } yield p
 
+  def ajaxCategoriesList = for {
+    r <- ajax
+    p <- page("/", Path("web/templates/categorieslist.html"), CategoryPage)
+  } yield p
+
   def ajaxProductDetail = for {
     r <- ajax
     p <- page(ProductPageState.build _, "productquickview", Path("web/templates/productquickview.html"), ProductDetailPage)
@@ -56,9 +61,10 @@ object ShopApplication extends ShiftApplication with ShopServices {
   def servingRule = for {
     _ <- logReq
     _ <- withLanguage(Language("ro"))
-    c <- ajaxProductsList |
+    c <- staticFiles(Path("web/static")) |
+      ajaxProductsList |
+      ajaxCategoriesList |
       ajaxProductDetail |
-      staticFiles(Path("web/static")) |
       productsVariantImages |
       categoriesImages |
       page("/", Path("web/categories.html"), CategoryPage) |
@@ -71,6 +77,9 @@ object ShopApplication extends ShiftApplication with ShopServices {
       createProduct |
       deleteProduct |
       updateProduct |
+      createCategory |
+      deleteCategory |
+      updateCategory |
       service(notFoundService)
   } yield c
 

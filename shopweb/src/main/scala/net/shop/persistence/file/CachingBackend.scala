@@ -49,10 +49,8 @@ case class CachingBackend(serv: Persistence) extends Persistence {
   override def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = serv.searchProducts(text, spec)
 
   def createProducts(prod: ProductDetail*): Try[Seq[String]] = serv.createProducts(prod: _*)
-  
-  def updateProducts(prod: ProductDetail*): Try[Seq[String]] = serv.updateProducts(prod: _*)
 
-  def createCategories(cats: Category*): Try[Seq[String]] = serv.createCategories(cats: _*)
+  def updateProducts(prod: ProductDetail*): Try[Seq[String]] = serv.updateProducts(prod: _*)
 
   def deleteProducts(ids: String*): Try[Int] = {
     serv.deleteProducts(ids: _*) match {
@@ -62,4 +60,11 @@ case class CachingBackend(serv: Persistence) extends Persistence {
       case f => f
     }
   }
+
+  def createCategories(cats: Category*): Try[Seq[String]] = serv.createCategories(cats: _*)
+
+  def updateCategories(prod: Category*): Try[Seq[String]] = serv.updateCategories(prod: _*)
+
+  def deleteCategories(ids: String*): Try[Int] = serv.deleteCategories(ids: _*)
+
 }

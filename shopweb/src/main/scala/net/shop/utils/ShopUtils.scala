@@ -8,7 +8,7 @@ import scala.util.Random
 trait ShopUtils {
   val random = new Random(System.currentTimeMillis())
   
-  def categoryImagePath(cat: Category): String = s"/data/categories/${cat.image}"
+  def categoryImagePath(cat: Category): String = s"/data/categories/${cat.stringId}/${cat.image.getOrElse("")}"
   
   def imagePath(id: String, variant: String, prod: String): String = s"/data/products/$id/$variant/$prod"
 

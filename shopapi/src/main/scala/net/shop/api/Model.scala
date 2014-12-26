@@ -25,7 +25,7 @@ case class CartItem(id: String, count: Int)
 
 case class Cart(items: List[CartItem])
 
-case class Category(id: Option[String] = None, val title: Map[String, String], image: String) {
+case class Category(id: Option[String] = None, val title: Map[String, String], image: Option[String]) {
   def title_?(l: String) = title.getOrElse(l, "???")
   def stringId = id getOrElse "?"
 }

@@ -54,7 +54,7 @@ object FSProductsService extends Persistence with TraversingSpec {
     allCategories match {
       case Success(l) => l.find(c => c.stringId == id) match {
         case Some(c) => Success(c)
-        case _ => Failure(new RuntimeException(s"Category $id not found"))
+        case _       => Failure(new RuntimeException(s"Category $id not found"))
       }
       case Failure(f) => Failure(f)
     }
@@ -69,7 +69,7 @@ object FSProductsService extends Persistence with TraversingSpec {
   override def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = {
     sort((allProducts match {
       case Success(all) => Success(all filter predicate(text))
-      case f => f
+      case f            => f
     }), spec)
   }
 
@@ -101,16 +101,21 @@ object FSProductsService extends Persistence with TraversingSpec {
   def resolveCategories(p: ProductDetail): List[String] = {
     p.categories.flatMap(c => categoryById(c) match {
       case Success(cat) => cat.title.values.toList
-      case _ => Nil
+      case _            => Nil
     })
   }
-  
+
   def createProducts(prod: ProductDetail*): Try[Seq[String]] = ShiftFailure("Not supported").toFailure
 
   def updateProducts(prod: ProductDetail*): Try[Seq[String]] = new ShiftFailure("Not supported").toFailure
-  
-  def createCategories(cats: Category*): Try[Seq[String]] = new ShiftFailure("Not supported").toFailure
 
   def deleteProducts(prod: String*): Try[Int] = new ShiftFailure("Not supported").toFailure
+
+  def createCategories(prod: Category*): Try[Seq[String]] = new ShiftFailure("Not supported").toFailure
+  
+  def updateCategories(prod: Category*): Try[Seq[String]] = new ShiftFailure("Not supported").toFailure
+  
+  def deleteCategories(prod: String*): Try[Int] = new ShiftFailure("Not supported").toFailure
+
 }
 

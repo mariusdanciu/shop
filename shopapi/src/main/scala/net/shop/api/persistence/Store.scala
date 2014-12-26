@@ -25,6 +25,8 @@ trait Persistence {
   def updateProducts(prod: ProductDetail*): Try[Seq[String]]
   def deleteProducts(prod: String*): Try[Int]
   def createCategories(prod: Category*): Try[Seq[String]]
+  def updateCategories(prod: Category*): Try[Seq[String]]
+  def deleteCategories(prod: String*): Try[Int]
 }
 
 object SortSpec {

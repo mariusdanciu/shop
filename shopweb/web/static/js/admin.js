@@ -2,8 +2,38 @@
   $(function() {
     $('#create_product_tab').tabify();
 
+    $("#update_category_form").keydown(function(event) {
+      if (event.keyCode == 13) {
+        window.admin.saveCategory("#update_category_form");
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+    });
+
+    $("#create_category_form").keydown(function(event) {
+      if (event.keyCode == 13) {
+        window.admin.saveCategory("#create_category_form");
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+    });
+    
+    $("#create_category").click(function(event) {
+      window.admin.saveCategory("#create_category_form");
+      event.stopPropagation();
+      event.preventDefault();
+    });
+
+    $("#update_category").click(function(event) {
+      window.admin.saveCategory("#update_category_form");
+      event.stopPropagation();
+      event.preventDefault();
+    });
+
     $("#create_product").click(function(event) {
-      window.admin.saveProduct("#upload_form", function() {
+      window.admin.save("#upload_form", function() {
         window.products.closeDialog();
         window.products.reloadProducts();
       });
@@ -14,11 +44,30 @@
     admin.addProp("#add_prop", "#prop_fields");
     admin.toggleDescription("create");
 
+    document.onkeydown = function(evt) {
+      evt = evt || window.event;
+
+      if (evt.keyCode == 27) {
+        if (window.products !== undefined) {
+          window.products.closeDialog();
+        }
+        if (window.categories !== undefined) {
+          window.categories.closeDialog();
+        }
+      }
+    };
   });
 
 })();
 
 var admin = {
+  saveCategory : function(formId) {
+    window.admin.save(formId, function() {
+      window.categories.closeDialog();
+      window.categories.reloadCategories();
+    });
+  },
+
   addProp : function(elem, holder) {
     $(elem).click(function(event) {
       var div = $("<div class='row'></div>");
@@ -44,7 +93,16 @@ var admin = {
     });
   },
 
-  saveProduct : function(formId, successFunc) {
+  deleteCategory : function(id) {
+    $.ajax({
+      url : "/category/delete/" + id,
+      type : "DELETE"
+    }).success(categories.reloadCategories()).fail(function(msg, f) {
+      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+    });
+  },
+
+  save : function(formId, successFunc) {
     $(formId).each(function() {
       var frm = this;
       var formData = new FormData(frm);
@@ -81,12 +139,12 @@ var admin = {
         }
       });
     });
-    
+
   },
-  
+
   attachToProduct : function(successFunc) {
     $("#save_product").click(function(event) {
-      admin.saveProduct("#edit_form", successFunc);
+      admin.save("#edit_form", successFunc);
       event.stopPropagation();
       event.preventDefault();
     });
@@ -99,8 +157,8 @@ var admin = {
     admin.toggleDescription("edit");
   },
 
-  createProduct : function() {
-    $("#itemadd").click(function(event) {
+  attachCreateProduct : function(elem) {
+    elem.click(function(event) {
       $.blockUI({
         message : $("#product_create_dialog"),
         css : {
@@ -115,6 +173,43 @@ var admin = {
           backgroundColor : '#dddddd'
         }
       });
+    });
+  },
+
+  attachCreateCategory : function(elem) {
+    elem.click(function(event) {
+      $.blockUI({
+        message : $("#category_create_dialog"),
+        css : {
+          top : '200px',
+          left : ($(window).width() - 400) / 2 + 'px',
+          width : '400px',
+          border : 'none',
+          cursor : null
+        },
+        overlayCSS : {
+          cursor : null,
+          backgroundColor : '#dddddd'
+        }
+      });
+    });
+  },
+
+  editCategory : function(cid) {
+    $('#update_category_form').attr("action", "/category/update/" + cid)
+    $.blockUI({
+      message : $("#category_update_dialog"),
+      css : {
+        top : '200px',
+        left : ($(window).width() - 400) / 2 + 'px',
+        width : '400px',
+        border : 'none',
+        cursor : null
+      },
+      overlayCSS : {
+        cursor : null,
+        backgroundColor : '#dddddd'
+      }
     });
   }
 

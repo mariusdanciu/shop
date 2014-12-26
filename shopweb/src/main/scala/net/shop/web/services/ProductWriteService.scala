@@ -42,8 +42,10 @@ object ProductWriteService extends PathUtils with ShiftUtils with Selectors with
     Path("product" :: "delete" :: id :: Nil) <- path
   } yield {
     ShopApplication.persistence.deleteProducts(id) match {
-      case scala.util.Success(num) => service(_(Resp.ok))
-      case scala.util.Failure(t)   => service(_(Resp.notFound))
+      case scala.util.Success(num) =>
+        scalax.file.Path.fromString(s"data/products/$id").deleteRecursively(true);
+        service(_(Resp.ok))
+      case scala.util.Failure(t) => service(_(Resp.notFound))
     }
   }
 
@@ -103,18 +105,6 @@ object ProductWriteService extends PathUtils with ShiftUtils with Selectors with
 
   }
 
-  private def validationFail(msgs: ValidationError) = service(_(JsResponse(
-    func() {
-      JsStatement(
-        (for {
-          m <- msgs
-        } yield {
-          $(s"label[for='${m._1}']") ~
-            JsDsl.apply("css", "color", "#ff0000") ~
-            JsDsl.apply("attr", "title", m._2)
-        }): _*)
-    }.wrap.apply.toJsString)))
-
   private def extract(implicit loc: Language, id: Option[String], fieldPrefix: String, multipart: MultiPartBody): (List[(String, String, Array[Byte])], Validation[ValidationError, ProductDetail]) = {
 
     val (bins, text) = multipart.parts partition {
@@ -123,12 +113,12 @@ object ProductWriteService extends PathUtils with ShiftUtils with Selectors with
     }
 
     val params = extractParams(text)
-    val files = extractBins(bins)
+    val files = extractProductBins(bins)
 
     val product = ((ProductDetail.apply _).curried)(id)
     val ? = Loc.loc0(loc) _
 
-    val productFormlet = (Formlet(product) <*>
+    val productFormlet = Formlet(product) <*>
       inputText(fieldPrefix + "title")(validateMapField(fieldPrefix + "title", ?("title").text)) <*>
       inputText(fieldPrefix + "description")(validateMapField(fieldPrefix + "description", ?("description").text)) <*>
       inputText(fieldPrefix + "properties")(validateProps(?("properties").text)) <*>
@@ -137,7 +127,7 @@ object ProductWriteService extends PathUtils with ShiftUtils with Selectors with
       inputInt(fieldPrefix + "soldCount")(validateDefault(fieldPrefix + "soldCount", 0)) <*>
       inputSelect(fieldPrefix + "categories", Nil)(validateListField(fieldPrefix + "categories", ?("categories").text)) <*>
       inputFile("files")(validateDefault("files", Nil)) <*>
-      inputSelect(fieldPrefix + "keywords", Nil)(validateListField(fieldPrefix + "keywords", ?("keywords").text)))
+      inputSelect(fieldPrefix + "keywords", Nil)(validateListField(fieldPrefix + "keywords", ?("keywords").text))
 
     (files, productFormlet validate params flatMap {
       case p @ ProductDetail(_,
@@ -154,34 +144,6 @@ object ProductWriteService extends PathUtils with ShiftUtils with Selectors with
     })
   }
 
-  def extractParams(text: List[MultiPart]) = ((Map.empty: Map[String, List[String]]) /: text) {
-    case (acc, TextPart(h, content)) =>
-      (for {
-        Header(_, _, par) <- h.get("Content-Disposition")
-        name <- par.get("name")
-      } yield {
-        acc.get(name).map(v => acc + (name -> (v ++ List(content)))) getOrElse (acc + (name -> List(content)))
-      }) getOrElse acc
-    case (acc, _) => acc
-  }
-
   def split(content: String) = content.split("\\s*,\\s*").toList
-
-  def extractBins(bins: List[MultiPart]) = ((Nil: List[(String, String, Array[Byte])]) /: bins) {
-    case (acc, BinaryPart(h, content)) =>
-      (for {
-        cd <- h.get("Content-Disposition")
-        FileSplit(n, ext) <- cd.params.get("filename")
-        FileSplit(name, _) <- Some(n)
-      } yield {
-        acc ++ List(if (n.endsWith(".thumb"))
-          (s"thumb/$name.$ext", s"$name.$ext", content)
-        else if (n.endsWith(".normal"))
-          (s"normal/$name.$ext", s"$name.$ext", content)
-        else
-          (s"large/$name.$ext", s"$name.$ext", content))
-      }) getOrElse acc
-    case (acc, _) => acc
-  }
 
 }

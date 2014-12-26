@@ -1,5 +1,7 @@
 <html data-template="common">
 <head>
+<script type="text/javascript" src="/static/js/blockui.js"></script>
+<script type="text/javascript" src="/static/js/admin.js"></script>
 <script type="text/javascript" src="/static/js/categories.js"></script>
 </head>
 
@@ -7,15 +9,95 @@
   <div id="content" class="center">
     <div id="item_list" class="cat_content">
       <ul>
+        <li data-permissions="write">
+          <div class="cat_box">
+            <img class="add_item" src="/static/images/add-item.png" />
+          </div>
+        </li>
         <li data-snip="item">
           <div class="cat_box">
-            <div class="info_tag cat_tag">
+            <div class="edit_tag">
+              <div class="edit_tag_close" data-permissions="write">
+                <img src="/static/images/close.png" />
+              </div>
+              <div class="edit_tag_update" data-permissions="write">
+                <img src="/static/images/edit.png" />
+              </div>
+
+            </div>
+            <div class="info_tag">
               <div class="info_tag_text cat_text"></div>
             </div>
           </div>
         </li>
       </ul>
     </div>
+
+    <div id="category_create_dialog" data-permissions="write">
+      <div class="product_content">
+        <div class="title_dialog">
+          <h1 id="new_cat_title" data-loc="new.category"></h1>
+        </div>
+        <div class="close_dialog">
+          <img src="/static/images/close.png" />
+        </div>
+        <div class="content_dialog">
+          <div class="upload_form_fields">
+            <form action="/category/create" id="create_category_form" method="POST">
+              <div id="fields" class="fields tab_content">
+                <div class="column">
+                  <div class="row">
+                    <label for="title" data-loc="title"></label><input id="title" type="text" name="title" />
+                  </div>
+                  <div class="row">
+                    <input type="file" id="fileselect" name="files" />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="dialog_footer">
+        <div id="create_category">
+          <a href="#" data-loc="save"></a>
+        </div>
+      </div>
+    </div>
+
+    <div id="category_update_dialog" data-permissions="write">
+      <div class="product_content">
+        <div class="title_dialog">
+          <h1 id="edit_cat_title" data-loc="edit.category"></h1>
+        </div>
+        <div class="close_dialog">
+          <img src="/static/images/close.png" />
+        </div>
+        <div class="content_dialog">
+          <div class="upload_form_fields">
+            <form id="update_category_form" method="POST">
+              <div id="fields" class="fields tab_content">
+                <div class="column">
+                  <div class="row">
+                    <label for="title" data-loc="title"></label><input id="title" type="text" name="title" />
+                  </div>
+                  <div class="row">
+                    <input type="file" id="fileselect" name="files" />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="dialog_footer">
+        <div id="update_category">
+          <a href="#" data-loc="save"></a>
+        </div>
+      </div>
+    </div>
+
   </div>
 </body>
 </html>
+

@@ -130,6 +130,32 @@ object MongoDBPersistence extends Persistence {
     case e: Exception => fail(e)
   }
 
+  def updateCategories(prod: Category*): Try[Seq[String]] = try {
+    val builder = db("categories").initializeOrderedBulkOperation
+
+    val ids = for {
+      p <- prod
+      id <- p.id
+    } yield {
+      builder.find(MongoDBObject("_id" -> new ObjectId(id))).update(MongoDBObject {
+        "$set" -> categoryToMongo(p)
+      })
+      id
+    }
+
+    builder.execute()
+    Success(ids)
+  } catch {
+    case e: Exception => fail(e)
+  }
+
+  def deleteCategories(ids: String*): Try[Int] = try {
+    val num = (0 /: ids)((acc, id) => db("categories").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
+    Success(num)
+  } catch {
+    case e: Exception => fail(e)
+  }
+
   private def productToMongo(obj: ProductDetail): MongoDBObject = {
     val db = MongoDBObject.newBuilder
     db += "title" -> MongoDBObject(obj.title.toList)
@@ -147,7 +173,7 @@ object MongoDBPersistence extends Persistence {
   private def categoryToMongo(obj: Category): MongoDBObject = {
     val db = MongoDBObject.newBuilder
     db += "title" -> MongoDBObject(obj.title.toList)
-    db += ("image" -> obj.image)
+    obj.image.map(img => db += ("image" -> img))
     db.result
   }
 
@@ -166,5 +192,5 @@ object MongoDBPersistence extends Persistence {
   private def mongoToCategory(obj: DBObject): Category =
     Category(id = obj.getAs[ObjectId]("_id").map(_.toString),
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
-      image = obj.getAsOrElse[String]("image", "?"))
+      image = obj.getAs[String]("image"))
 }

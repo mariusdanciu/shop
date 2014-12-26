@@ -5,6 +5,15 @@ import net.shift.html.Success
 import net.shift.html.Validation
 import net.shift.loc.Language
 import net.shift.loc.Loc
+import net.shift.engine.http.MultiPart
+import net.shift.engine.http.TextPart
+import net.shift.engine.http.Header
+import net.shift.engine.http.BinaryPart
+import net.shift.common.FileSplit
+import net.shift.engine.ShiftApplication.service
+import net.shift.engine.http.JsResponse
+import net.shift.js._
+import JsDsl._
 
 trait ProductValidation {
 
@@ -64,4 +73,55 @@ trait ProductValidation {
   def validateDefault[S](name: String, v: S)(implicit lang: Language): ValidationInput => Validation[ValidationError, S] =
     env => Success(v)
 
+  def extractParams(text: List[MultiPart]) = ((Map.empty: Map[String, List[String]]) /: text) {
+    case (acc, TextPart(h, content)) =>
+      (for {
+        Header(_, _, par) <- h.get("Content-Disposition")
+        name <- par.get("name")
+      } yield {
+        acc.get(name).map(v => acc + (name -> (v ++ List(content)))) getOrElse (acc + (name -> List(content)))
+      }) getOrElse acc
+    case (acc, _) => acc
+  }
+
+  def extractProductBins(bins: List[MultiPart]) = ((Nil: List[(String, String, Array[Byte])]) /: bins) {
+    case (acc, BinaryPart(h, content)) =>
+      (for {
+        cd <- h.get("Content-Disposition")
+        FileSplit(n, ext) <- cd.params.get("filename")
+        FileSplit(name, _) <- Some(n)
+      } yield {
+        acc ++ List(if (n.endsWith(".thumb"))
+          (s"thumb/$name.$ext", s"$name.$ext", content)
+        else if (n.endsWith(".normal"))
+          (s"normal/$name.$ext", s"$name.$ext", content)
+        else
+          (s"large/$name.$ext", s"$name.$ext", content))
+      }) getOrElse acc
+    case (acc, _) => acc
+  }
+
+  def extractCategoryBin(bins: MultiPart): Option[(String, Array[Byte])] = bins match {
+    case BinaryPart(h, content) =>
+      (for {
+        cd <- h.get("Content-Disposition")
+        FileSplit(n, ext) <- cd.params.get("filename")
+        FileSplit(name, _) <- Some(n)
+      } yield {
+        (s"$name.$ext", content)
+      })
+    case _ => None
+  }
+
+  def validationFail(msgs: ValidationError) = service(_(JsResponse(
+    func() {
+      JsStatement(
+        (for {
+          m <- msgs
+        } yield {
+          $(s"label[for='${m._1}']") ~
+            JsDsl.apply("css", "color", "#ff0000") ~
+            JsDsl.apply("attr", "title", m._2)
+        }): _*)
+    }.wrap.apply.toJsString)))
 }

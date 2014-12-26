@@ -333,5 +333,20 @@
    "code" : "168",
    "name" : "field.discount.smaller",
    "text" : "Pretul redus trebuie sa fie mai mic decat pretul curent"
+ },
+ {
+   "code" : "169",
+   "name" : "new.category",
+   "text" : "Categorie noua"
+ },
+ {
+   "code" : "170",
+   "name" : "create.category",
+   "text" : "Creaza categoria"
+ },
+ {
+   "code" : "171",
+   "name" : "edit.category",
+   "text" : "Editeaza categoria"
  }
 ]
