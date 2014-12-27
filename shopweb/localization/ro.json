@@ -348,5 +348,25 @@
    "code" : "171",
    "name" : "edit.category",
    "text" : "Editeaza categoria"
+ },
+ {
+   "code" : "172",
+   "name" : "username",
+   "text" : "Utilizator"
+ },
+ {
+   "code" : "173",
+   "name" : "password",
+   "text" : "Parola"
+ },
+ {
+   "code" : "174",
+   "name" : "authenticate",
+   "text" : "Autentifica"
+ },
+ {
+   "code" : "175",
+   "name" : "login.fail",
+   "text" : "Autentificare esuata."
  }
 ]

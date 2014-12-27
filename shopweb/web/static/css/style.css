@@ -113,6 +113,11 @@ a:active {
 	box-shadow: 0px 0px 30px 1px #444444;
 }
 
+.page {
+	position: relative;
+	top: 80px;
+}
+
 .wrap {
 	min-height: 100%;
 	height: auto !important;
@@ -474,7 +479,6 @@ a:active {
 	position: relative;
 	width: 100%;
 	height: 30px;
-	margin-top: 66px;
 }
 
 .detailPrice {
@@ -518,6 +522,11 @@ a:active {
 
 .upload_form_fields .fields input, .upload_form_fields .fields select {
     float: right;
+}
+
+.row {
+	height: 35px;
+	margin-right: 10px;
 }
 
 .upload_form_fields .row {
@@ -619,7 +628,11 @@ a:active {
 	border: 1px solid #dddddd !important;
 }
 
-#search {
+#logout {
+  margin-top: 5px;
+}
+
+#search, #logout {
 	position: relative;
 	float: right;
 	margin-right: 10px;
@@ -673,7 +686,6 @@ a:active {
 .terms {
 	float: left;
 	font-size: 16px;
-	margin-top: 80px;
 }
 
 #terms_wrapper label {
@@ -683,10 +695,6 @@ a:active {
 
 #search_text:hover {
 	background-color: #eeeeee;
-}
-
-.cat_content {
-	margin-top: 66px;
 }
 
 #notice_e,#notice_connect_e {
@@ -856,7 +864,6 @@ a:active {
   width: 100#;
 }
 
-
 .column {
   position: relative;
   float: left;
@@ -912,4 +919,20 @@ a:active {
 
 .create_toggle_text, .edit_toggle_text {
   margin-top: 5px;
+}
+
+.form_box {
+  width: 400px;
+  position: relative;
+  top: 60px;
+  border: 1px solid #cccccc;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px 1px #dddddd;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.auth * {
+  float: right;
+  margin-top: 10px;
 }

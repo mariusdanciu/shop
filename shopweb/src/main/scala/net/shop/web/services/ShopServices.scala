@@ -14,6 +14,7 @@ import net.shift.common.Path
 import net.shift.common.PathUtils
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
+import net.shift.engine.http._
 import net.shift.engine.http.AsyncResponse
 import net.shift.engine.http.ImageResponse
 import net.shift.engine.http.JsonResponse
@@ -36,6 +37,12 @@ import net.shop.tryApplicative
 import net.shop.web.ShopApplication
 import net.shop.web.pages.CartItemNode
 import net.shop.web.pages.CartState
+import net.shop.web.pages.CategoryPage
+import net.shop.web.pages.ProductsPage
+import net.shift.engine.http.Resp
+import net.shop.web.pages.ProductPageState
+import net.shop.web.pages.ProductDetailPage
+import net.shift.loc.Loc
 
 trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog {
 
@@ -52,27 +59,55 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
     }
   }
 
+  def logReq = for {
+    r <- req
+  } yield {
+    log.debug("Request: " + r.uri)
+    r
+  }
+  def ajaxLogin = for {
+    _ <- ajax
+    r <- path("auth")
+    u <- authenticate(Loc.loc0(r.language)("login.fail").text)
+  } yield service(_(Resp.ok.withSecurityCookies(u)))
+
+  def ajaxProductsList = for {
+    r <- ajax
+    p <- page("products", Path("web/templates/productslist.html"), ProductsPage)
+  } yield p
+
+  def ajaxCategoriesList = for {
+    r <- ajax
+    p <- page("/", Path("web/templates/categorieslist.html"), CategoryPage)
+  } yield p
+
+  def ajaxProductDetail = for {
+    r <- ajax
+    p <- page(ProductPageState.build _, "productquickview", Path("web/templates/productquickview.html"), ProductDetailPage)
+  } yield p
+
+  def tryLogout(r: Request, attempt: Attempt): Attempt = {
+    val logout = !r.param("logout").isEmpty
+    if (logout)
+      attempt.map(_.withResponse { _ withoutSecurityCookies })
+    else
+      attempt
+  }
+
   def page[T](uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
     r <- path(uri)
     u <- user
   } yield {
-    Html5.pageFromFile(PageState(r, r.language, u), filePath, snipets)
+    val logout = !r.param("logout").isEmpty
+    tryLogout(r, Html5.pageFromFile(PageState(r, r.language, if (logout) None else u), filePath, snipets))
   }
 
   def page[T](f: (Request, Option[User]) => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
     r <- path(uri)
     u <- user
   } yield {
-    Html5.pageFromFile(PageState(f(r, u), r.language, u), filePath, snipets)(bySnippetAttr[SnipState[T]])
-  }
-
-  def authPage(uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
-    r <- path(uri)
-    u <- authenticate
-  } yield {
-    Html5.pageFromFile(PageState(r, r.language, Some(u)), filePath, snipets)(bySnippetAttr[SnipState[Request]]).map {
-      _ withResponse (_ withSecurityCookies u)
-    }
+    val logout = !r.param("logout").isEmpty
+    tryLogout(r, Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[SnipState[T]]))
   }
 
   def productsVariantImages = for {
@@ -124,12 +159,13 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   def updateProduct = ProductWriteService.updateProduct
 
   def deleteProduct = ProductWriteService.deleteProduct
-  
+
   def createCategory = CategoryWriteService.createCategory
-  
+
   def deleteCategory = CategoryWriteService.deleteCategory
-  
+
   def updateCategory = CategoryWriteService.updateCategory
+
 }
 
 

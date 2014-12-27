@@ -11,14 +11,15 @@ import net.shift.engine.ShiftApplication.rule
 import net.shift.engine.ShiftApplication.service
 import net.shift.loc.Language
 import net.shift.netty.NettyServer
-import net.shop.api.persistence.Persistence
 import net.shop.mongodb.MongoDBPersistence
 import net.shop.web.pages.CategoryPage
+import net.shop.web.pages.LoginPage
 import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.TermsPage
 import net.shop.web.services.ShopServices
+import net.shop.api.persistence.Persistence
 
 object StartShop extends App with DefaultLog {
 
@@ -36,32 +37,11 @@ object ShopApplication extends ShiftApplication with ShopServices {
 
   lazy val persistence: Persistence = MongoDBPersistence
 
-  def logReq = for {
-    r <- req
-  } yield {
-    log.debug("Request: " + r.uri)
-    r
-  }
-
-  def ajaxProductsList = for {
-    r <- ajax
-    p <- page("products", Path("web/templates/productslist.html"), ProductsPage)
-  } yield p
-
-  def ajaxCategoriesList = for {
-    r <- ajax
-    p <- page("/", Path("web/templates/categorieslist.html"), CategoryPage)
-  } yield p
-
-  def ajaxProductDetail = for {
-    r <- ajax
-    p <- page(ProductPageState.build _, "productquickview", Path("web/templates/productquickview.html"), ProductDetailPage)
-  } yield p
-
   def servingRule = for {
     _ <- logReq
     _ <- withLanguage(Language("ro"))
     c <- staticFiles(Path("web/static")) |
+      ajaxLogin |
       ajaxProductsList |
       ajaxCategoriesList |
       ajaxProductDetail |
@@ -71,7 +51,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
       page("products", Path("web/products.html"), ProductsPage) |
       page("terms", Path("web/terms.html"), TermsPage) |
-      authPage("admin", Path("web/categories.html"), CategoryPage) |
+      page("admin", Path("web/login.html"), LoginPage) |
       getCart() |
       orderService.order |
       createProduct |

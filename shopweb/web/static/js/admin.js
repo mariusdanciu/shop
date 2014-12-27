@@ -19,7 +19,7 @@
         return false;
       }
     });
-    
+
     $("#create_category").click(function(event) {
       window.admin.saveCategory("#create_category_form");
       event.stopPropagation();
@@ -37,6 +37,27 @@
         window.products.closeDialog();
         window.products.reloadProducts();
       });
+      event.stopPropagation();
+      event.preventDefault();
+    });
+
+    $("#authgo").click(function(event) {
+      window.admin.login("#login_form");
+      event.stopPropagation();
+      event.preventDefault();
+    });
+
+    $("#login_form").keydown(function(event) {
+      if (event.keyCode == 13) {
+        window.admin.login("#login_form");
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+      }
+    });
+
+    $("#logout").click(function(event) {
+      window.admin.logout();
       event.stopPropagation();
       event.preventDefault();
     });
@@ -61,6 +82,31 @@
 })();
 
 var admin = {
+  logout : function() {
+    window.location.href = "/?logout=true";
+  },
+
+  login : function(frmId) {
+    var creds = $.base64.encode($(frmId + " #username").val() + ":" + $(frmId + " #password").val());
+
+    $.ajax({
+      url : $(frmId).attr('action'),
+      type : "GET",
+      cache : false,
+      headers : {
+        'Authorization' : "Basic " + creds
+      },
+      statusCode : {
+        200 : function() {
+          window.location.href = "/";
+        }
+      }
+    }).fail(function(msg, f) {
+      $("#notice_connect_e").html(msg.responseText);
+      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+    });
+  },
+
   saveCategory : function(formId) {
     window.admin.save(formId, function() {
       window.categories.closeDialog();
