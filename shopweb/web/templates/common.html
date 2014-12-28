@@ -8,6 +8,7 @@
 <script type="text/javascript" src="/static/js/purl.js"></script>
 <script type="text/javascript" src="/static/js/common.js"></script>
 <script type="text/javascript" src="/static/js/jquery.tabify.js"></script>
+<script type="text/javascript" src="/static/js/jquery.base64.min.js"></script>
 </head>
 
 <body>
@@ -21,8 +22,9 @@
           <h1 data-snip="title"></h1>
         </div>
         <div id="logout" data-permissions="write">
-          <a href="#" ><img src="/static/images/logout.png" /></a>
+          <a href="#"><img src="/static/images/logout.png" /></a>
         </div>
+        <div id="user_symbol" class="clickable"></div>
         <div id="search">
           <div>
             <input id="search_text" type="text" />
@@ -49,100 +51,115 @@
       </ul>
     </div>
   </div>
-        
-        
+
+  <div id="user_popup">
+      <form action="/auth" id="login_form" method="POST">
+        <div class="fields">
+          <div class="row">
+            <label for="username" data-loc="username"></label> <input id="username" type="text" name="username" />
+          </div>
+          <div class="row">
+            <label for="password" data-loc="password"></label><input id="password" type="password" name="password" />
+          </div>
+        </div>
+      </form>
+      <div id="authgo" class="row auth">
+        <a href="#" data-loc="authenticate"></a>
+      </div>
+  </div>
+
   <div id="cart_popup">
     <div id="cart_empty" data-loc="cart.empty"></div>
     <div id="cart_notice"></div>
-      <div>
-        <div id="cart_content"></div>
-        <div id="order">
-          <ul id="menu" class="menu">
-            <li class="active"><a  href="#pf">Persoana fizica</a></li>
+    <div>
+      <div id="cart_content"></div>
+      <div id="order">
+        <ul id="menu" class="menu">
+          <li class="active"><a href="#pf">Persoana fizica</a></li>
           <li><a href="#pj">Persoana juridica</a></li>
-          </ul>
-          <div id="pf" class="content">
-            <form id="order_form">
-              <div>
-                <label for="lname" data-loc="last.name"></label><input id="lname" name="lname" type="text" />
-              </div>
-              <div>
-                <label for="fname" data-loc="first.name"></label><input id="fname" name="fname" type="text" />
-              </div>
-              <div>
-                <label for="region" data-loc="region"></label><input id="region" name="region" type="text" />
-              </div>
-              <div>
-                <label for="city" data-loc="city"></label><input id="city" name="city" type="text" />
-              </div>
-              <div>
-                <label for="address" data-loc="address"></label><input id="address" name="address" type="text" />
-              </div>
-              <div>
-                <label for="email" data-loc="email"></label><input id="email" name="email" type="text" />
-              </div>
-              <div>
-                <label for="phone" data-loc="phone"></label><input id="phone" name="phone" type="number" />
-              </div>
-              <div>
-                <div id="terms_wrapper">
-                  <input id="terms" name="terms" type="checkbox" /> <label for="terms" data-loc="terms.and.conds"></label>
-                </div>
-              </div>
-            </form>
+        </ul>
+        <div id="pf" class="content">
+          <form id="order_form">
             <div>
-              <a id="buy_final" href="#" data-loc="buy_final"></a>
+              <label for="lname" data-loc="last.name"></label><input id="lname" name="lname" type="text" />
             </div>
+            <div>
+              <label for="fname" data-loc="first.name"></label><input id="fname" name="fname" type="text" />
+            </div>
+            <div>
+              <label for="region" data-loc="region"></label><input id="region" name="region" type="text" />
+            </div>
+            <div>
+              <label for="city" data-loc="city"></label><input id="city" name="city" type="text" />
+            </div>
+            <div>
+              <label for="address" data-loc="address"></label><input id="address" name="address" type="text" />
+            </div>
+            <div>
+              <label for="email" data-loc="email"></label><input id="email" name="email" type="text" />
+            </div>
+            <div>
+              <label for="phone" data-loc="phone"></label><input id="phone" name="phone" type="number" />
+            </div>
+            <div>
+              <div id="terms_wrapper">
+                <input id="terms" name="terms" type="checkbox" /> <label for="terms" data-loc="terms.and.conds"></label>
+              </div>
+            </div>
+          </form>
+          <div>
+            <a id="buy_final" href="#" data-loc="buy_final"></a>
           </div>
-          <div id="pj" class="content">
-            <form id="order_form_company">
-              <div>
-                <label for="cname" data-loc="company.name"></label><input id="cname" name="cname" type="text" />
-              </div>
-              <div>
-                <label for="cif" data-loc="company.cif"></label><input id="cif" name="cif" type="text" />
-              </div>
-              <div>
-                <label for="cregcom" data-loc="company.reg.com"></label><input id="cregcom" name="cregcom" type="text" />
-              </div>
-              <div>
-                <label for="cbank" data-loc="company.bank"></label><input id="cbank" name="cbank" type="text" />
-              </div>
-              <div>
-                <label for="cbankaccount" data-loc="company.bank.account"></label><input id="cbankaccount" name="cbankaccount" type="text" />
-              </div>
-              <div>
-                <label for="cregion" data-loc="region"></label><input id="cregion" name="cregion" type="text" />
-              </div>
-              <div>
-                <label for="ccity" data-loc="city"></label><input id="ccity" name="ccity" type="text" />
-              </div>
-              <div>
-                <label for="caddress" data-loc="address"></label><input id="caddress" name="caddress" type="text" />
-              </div>
-              <div>
-                <label for="cemail" data-loc="email"></label><input id="cemail" name="cemail" type="text" />
-              </div>
-              <div>
-                <label for="cphone" data-loc="phone"></label><input id="cphone" name="cphone" type="number" />
-              </div>
-              <div>
-                <div id="terms_wrapper">
-                  <input id="cterms" name="terms" type="checkbox" /> <label for="cterms" data-loc="terms.and.conds"></label>
-                </div>
-              </div>
-            </form>
+        </div>
+        <div id="pj" class="content">
+          <form id="order_form_company">
             <div>
-              <a id="c_buy_final_comp" href="#" data-loc="buy_final"></a>
+              <label for="cname" data-loc="company.name"></label><input id="cname" name="cname" type="text" />
             </div>
+            <div>
+              <label for="cif" data-loc="company.cif"></label><input id="cif" name="cif" type="text" />
+            </div>
+            <div>
+              <label for="cregcom" data-loc="company.reg.com"></label><input id="cregcom" name="cregcom" type="text" />
+            </div>
+            <div>
+              <label for="cbank" data-loc="company.bank"></label><input id="cbank" name="cbank" type="text" />
+            </div>
+            <div>
+              <label for="cbankaccount" data-loc="company.bank.account"></label><input id="cbankaccount" name="cbankaccount" type="text" />
+            </div>
+            <div>
+              <label for="cregion" data-loc="region"></label><input id="cregion" name="cregion" type="text" />
+            </div>
+            <div>
+              <label for="ccity" data-loc="city"></label><input id="ccity" name="ccity" type="text" />
+            </div>
+            <div>
+              <label for="caddress" data-loc="address"></label><input id="caddress" name="caddress" type="text" />
+            </div>
+            <div>
+              <label for="cemail" data-loc="email"></label><input id="cemail" name="cemail" type="text" />
+            </div>
+            <div>
+              <label for="cphone" data-loc="phone"></label><input id="cphone" name="cphone" type="number" />
+            </div>
+            <div>
+              <div id="terms_wrapper">
+                <input id="cterms" name="terms" type="checkbox" /> <label for="cterms" data-loc="terms.and.conds"></label>
+              </div>
+            </div>
+          </form>
+          <div>
+            <a id="c_buy_final_comp" href="#" data-loc="buy_final"></a>
           </div>
         </div>
       </div>
-      <div id="cart_footer">
-        <span id="total">0 RON</span> <a id="buy_step1" href="#" data-loc="buy_step1"></a> <a id="terms_link" href="/terms"
-          target="_blank" data-loc="terms.link"></a>
-      </div>
     </div>
+    <div id="cart_footer">
+      <span id="total">0 RON</span> <a id="buy_step1" href="#" data-loc="buy_step1"></a> <a id="terms_link" href="/terms" target="_blank"
+        data-loc="terms.link"></a>
+    </div>
+  </div>
 </body>
 </html>
 

@@ -51,7 +51,6 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
       page("products", Path("web/products.html"), ProductsPage) |
       page("terms", Path("web/terms.html"), TermsPage) |
-      page("admin", Path("web/login.html"), LoginPage) |
       getCart() |
       orderService.order |
       createProduct |

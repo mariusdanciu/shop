@@ -341,7 +341,6 @@ a:active {
 }
 
 #cart_popup {
-	display: block;
 	display: none;
 	background: #FFF;
 	border: solid 1px #BBBBBB;
@@ -353,6 +352,24 @@ a:active {
 	color: #000000;
 	opacity: 0.95;
 }
+
+#user_popup {
+	display: none;
+	background: #FFF;
+	border: solid 1px #BBBBBB;
+	border-radius: 10px;
+	box-shadow: 0px 0px 27px #999;
+	position: fixed;
+	z-index: 9999;
+	top: 60px;
+	right: 0px;
+	color: #000000;
+	opacity: 0.95;
+	padding: 10px;
+	width: 300px;
+	font-size: 16px;
+}
+
 
 #add_to_cart_box {
 	float: left;
@@ -520,7 +537,7 @@ a:active {
     overflow: auto;
 }
 
-.upload_form_fields .fields input, .upload_form_fields .fields select {
+#order input, .fields input, .upload_form_fields .fields select {
     float: right;
 }
 
@@ -628,11 +645,21 @@ a:active {
 	border: 1px solid #dddddd !important;
 }
 
-#logout {
+#user_symbol {
+  height: 32px;
+  width: 32px;
+  background : url('/static/images/user.png');
+}
+
+#user_symbol:hover {
+  background : url('/static/images/user-light.png');
+}
+
+#logout, #user_symbol {
   margin-top: 5px;
 }
 
-#search, #logout {
+#search, #logout, #user_symbol {
 	position: relative;
 	float: right;
 	margin-right: 10px;
