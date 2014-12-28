@@ -32,6 +32,12 @@
         return false;
       }
     });
+    
+    $("#logout").click(function(event) {
+      window.user.logout();
+      event.stopPropagation();
+      event.preventDefault();
+    });
 
     $(document).click(function() {
       cart.hideCart();
