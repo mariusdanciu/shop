@@ -35,11 +35,18 @@ import net.shop.web.ShopApplication
 import net.shift.js._
 import JsDsl._
 
-object ProductWriteService extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog with ProductValidation {
+object ProductWriteService extends PathUtils
+  with ShiftUtils
+  with Selectors
+  with TraversingSpec
+  with DefaultLog
+  with FormValidation
+  with SecuredService {
 
   def deleteProduct = for {
     r <- DELETE
     Path("product" :: "delete" :: id :: Nil) <- path
+    user <- auth
   } yield {
     ShopApplication.persistence.deleteProducts(id) match {
       case scala.util.Success(num) =>
@@ -52,6 +59,7 @@ object ProductWriteService extends PathUtils with ShiftUtils with Selectors with
   def updateProduct = for {
     r <- POST
     Path("product" :: "update" :: pid :: Nil) <- path
+    user <- auth
     mp <- multipartForm
   } yield {
     extract(r.language, Some(pid), "edit_", mp) match {
@@ -83,6 +91,7 @@ object ProductWriteService extends PathUtils with ShiftUtils with Selectors with
   def createProduct = for {
     r <- POST
     Path("product" :: "create" :: Nil) <- path
+    user <- auth
     mp <- multipartForm
   } yield {
     extract(r.language, None, "create_", mp) match {

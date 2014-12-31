@@ -1,25 +1,32 @@
 (function() {
   $(function() {
-    
+
     $("#menu").tabify();
     $("#cart_symbol").click(function(event) {
       window.cart.showCart();
       event.stopPropagation();
       event.preventDefault();
     });
-    
+
     $("#user_symbol").click(function(event) {
       window.user.showLogin();
       event.stopPropagation();
       event.preventDefault();
     });
 
-    $("#cart_popup, #user_popup").click(function(event) {
+    $("#cart_popup, #user_popup, #newuser_popup").click(function(event) {
       event.stopPropagation();
     });
-    
+
     $("#authgo").click(function(event) {
       window.user.login("#login_form");
+      event.stopPropagation();
+      event.preventDefault();
+    });
+
+    $("#newuser").click(function(event) {
+      window.user.hideLogin();
+      window.user.showNewUser();
       event.stopPropagation();
       event.preventDefault();
     });
@@ -32,11 +39,15 @@
         return false;
       }
     });
-    
+
     $("#logout").click(function(event) {
       window.user.logout();
       event.stopPropagation();
       event.preventDefault();
+    });
+
+    $(".close_dialog").bind("click", function(event) {
+      common.closeDialog();
     });
 
     $(document).click(function() {
@@ -46,6 +57,7 @@
 
     $(document).keyup(function(e) {
       if (e.keyCode == 27) {
+        common.closeDialog();
         cart.hideCart();
         user.hideLogin();
       }
@@ -97,39 +109,62 @@
 
 })();
 
+var common = {
+  closeDialog : function() {
+    $.unblockUI();
+  }
+}
+
 var user = {
-   showLogin: function() {
-     $("#user_popup").show();
-   },
-   
-   hideLogin: function() {
-     $("#user_popup").hide();
-   },
-   
-   logout : function() {
-     window.location.href = "/?logout=true";
-   },
+  showNewUser : function() {
+    $.blockUI({
+      message : $("#newuser_popup"),
+      css : {
+        top : '100px',
+        left : ($(window).width() - 350) / 2 + 'px',
+        width : '350px',
+        border : 'none',
+        cursor : null
+      },
+      overlayCSS : {
+        cursor : null,
+        backgroundColor : '#dddddd'
+      }
+    });
+  },
 
-   login : function(frmId) {
-     var creds = $.base64.encode($(frmId + " #username").val() + ":" + $(frmId + " #password").val());
+  showLogin : function() {
+    $("#user_popup").show();
+  },
 
-     $.ajax({
-       url : $(frmId).attr('action'),
-       type : "GET",
-       cache : false,
-       headers : {
-         'Authorization' : "Basic " + creds
-       },
-       statusCode : {
-         200 : function() {
-           window.location.href = "/";
-         }
-       }
-     }).fail(function(msg, f) {
-       $("#notice_connect_e").html(msg.responseText);
-       $("#notice_connect_e").show().delay(5000).fadeOut("slow");
-     });
-   }    
+  hideLogin : function() {
+    $("#user_popup").hide();
+  },
+
+  logout : function() {
+    window.location.href = "/?logout=true";
+  },
+
+  login : function(frmId) {
+    var creds = $.base64.encode($(frmId + " #username").val() + ":" + $(frmId + " #password").val());
+
+    $.ajax({
+      url : $(frmId).attr('action'),
+      type : "GET",
+      cache : false,
+      headers : {
+        'Authorization' : "Basic " + creds
+      },
+      statusCode : {
+        200 : function() {
+          window.location.href = "/";
+        }
+      }
+    }).fail(function(msg, f) {
+      $("#notice_connect_e").html(msg.responseText);
+      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+    });
+  }
 }
 
 var cart = {

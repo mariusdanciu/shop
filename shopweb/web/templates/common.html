@@ -21,17 +21,20 @@
         <div id="title_text">
           <h1 data-snip="title"></h1>
         </div>
-        <div id="logout" data-permissions="write">
+        <div id="logout" class="top_items top5" data-permissions="write">
           <a href="#"><img src="/static/images/logout.png" /></a>
         </div>
-        <div id="user_symbol" class="clickable"></div>
-        <div id="search">
+        <div id="current_user" class="top_items">
+          <span data-snip="user"></span>
+        </div>
+        <div id="user_symbol" class="clickable top_items top5"></div>
+        <div id="search" class="top_items">
           <div>
             <input id="search_text" type="text" />
           </div>
           <a href="#" id="gosearch"><img src="/static/images/search.png" /></a>
         </div>
-        <div id="logo">
+        <div id="logo" class="top_items">
           <a href="/"><img src="/static/images/idid-small.png" /></a>
         </div>
       </div>
@@ -53,20 +56,42 @@
   </div>
 
   <div id="user_popup">
-      <form action="/auth" id="login_form" method="POST">
+    <form action="/auth" id="login_form" method="POST">
+      <div class="fields">
+        <div class="row">
+          <label for="username" data-loc="username"></label> <input id="username" type="text" name="username" />
+        </div>
+        <div class="row">
+          <label for="password" data-loc="password"></label><input id="password" type="password" name="password" />
+        </div>
+      </div>
+    </form>
+    <div class="row auth bordertop top10">
+      <a id="authgo" href="#" data-loc="authenticate"></a> <a id="newuser" class="right20" href="#" data-loc="new.user"></a>
+    </div>
+  </div>
+
+  <div id="newuser_popup">
+    <div class="title_dialog">
+      <h1 data-loc="new.user"></h1>
+    </div>
+    <div class="close_dialog">
+      <img src="/static/images/close.png" />
+    </div>
+    <div class="content_dialog">
+      <form action="/create/user" id="newuser_form" method="POST">
         <div class="fields">
           <div class="row">
-            <label for="username" data-loc="username"></label> <input id="username" type="text" name="username" />
+            <label for="firstName" data-loc="first.name"></label> <input id="firstName" type="text" name="firstName" />
           </div>
           <div class="row">
-            <label for="password" data-loc="password"></label><input id="password" type="password" name="password" />
+            <label for="lastName" data-loc="last.name"></label><input id="lastName" type="text" name="lastName" />
           </div>
         </div>
       </form>
-      <div id="authgo" class="row auth">
-        <a href="#" data-loc="authenticate"></a>
-      </div>
+    </div>
   </div>
+
 
   <div id="cart_popup">
     <div id="cart_empty" data-loc="cart.empty"></div>
@@ -75,8 +100,8 @@
       <div id="cart_content"></div>
       <div id="order">
         <ul id="menu" class="menu">
-          <li class="active"><a href="#pf">Persoana fizica</a></li>
-          <li><a href="#pj">Persoana juridica</a></li>
+          <li class="active"><a href="#pf" data-loc="person"></a></li>
+          <li><a href="#pj" data-loc="company"></a></li>
         </ul>
         <div id="pf" class="content">
           <form id="order_form">
@@ -87,7 +112,17 @@
               <label for="fname" data-loc="first.name"></label><input id="fname" name="fname" type="text" />
             </div>
             <div>
-              <label for="region" data-loc="region"></label><input id="region" name="region" type="text" />
+              <label for="email" data-loc="email"></label><input id="email" name="email" type="text" />
+            </div>
+            <div>
+              <label for="phone" data-loc="phone"></label><input id="phone" name="phone" type="number" />
+            </div>
+            <div>
+              <label for="cnp" data-loc="cnp"></label><input id="cnp" name="cnp" type="number" />
+            </div>
+            <div>
+              <input id="country" name="country" type="hidden" value="Romania" /> <label for="region" data-loc="region"></label><input
+                id="region" name="region" type="text" />
             </div>
             <div>
               <label for="city" data-loc="city"></label><input id="city" name="city" type="text" />
@@ -96,10 +131,7 @@
               <label for="address" data-loc="address"></label><input id="address" name="address" type="text" />
             </div>
             <div>
-              <label for="email" data-loc="email"></label><input id="email" name="email" type="text" />
-            </div>
-            <div>
-              <label for="phone" data-loc="phone"></label><input id="phone" name="phone" type="number" />
+              <label for="zip" data-loc="zip"></label><input id="zip" name="zip" type="text" />
             </div>
             <div>
               <div id="terms_wrapper">
@@ -129,7 +161,14 @@
               <label for="cbankaccount" data-loc="company.bank.account"></label><input id="cbankaccount" name="cbankaccount" type="text" />
             </div>
             <div>
-              <label for="cregion" data-loc="region"></label><input id="cregion" name="cregion" type="text" />
+              <label for="cemail" data-loc="email"></label><input id="cemail" name="cemail" type="text" />
+            </div>
+            <div>
+              <label for="cphone" data-loc="phone"></label><input id="cphone" name="cphone" type="number" />
+            </div>
+            <div>
+              <input id="ccountry" name="ccountry" type="hidden" value="Romania" /> <label for="cregion" data-loc="region"></label><input
+                id="cregion" name="cregion" type="text" />
             </div>
             <div>
               <label for="ccity" data-loc="city"></label><input id="ccity" name="ccity" type="text" />
@@ -138,10 +177,7 @@
               <label for="caddress" data-loc="address"></label><input id="caddress" name="caddress" type="text" />
             </div>
             <div>
-              <label for="cemail" data-loc="email"></label><input id="cemail" name="cemail" type="text" />
-            </div>
-            <div>
-              <label for="cphone" data-loc="phone"></label><input id="cphone" name="cphone" type="number" />
+              <label for="czip" data-loc="zip"></label><input id="czip" name="czip" type="text" />
             </div>
             <div>
               <div id="terms_wrapper">

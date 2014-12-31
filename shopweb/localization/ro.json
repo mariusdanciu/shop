@@ -368,5 +368,26 @@
    "code" : "175",
    "name" : "login.fail",
    "text" : "Autentificare esuata."
+ },
+ {
+   "code" : "177",
+   "name" : "person",
+   "text" : "Persoana fizica"
+ },
+ {
+   "code" : "178",
+   "name" : "company",
+   "text" : "Persoana juridica"
+ },
+ {
+   "code" : "179",
+   "name" : "zip",
+   "text" : "Cod postal"
+ },
+ {
+   "code" : "180",
+   "name" : "new.user",
+   "text" : "Utilizator nou"
  }
+ 
 ]

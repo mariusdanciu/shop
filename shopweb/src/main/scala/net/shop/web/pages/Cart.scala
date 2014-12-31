@@ -1,29 +1,26 @@
 package net.shop
 package web.pages
 
+import scala.util.Success
+import scala.util.Try
+import scala.xml.Elem
+import scala.xml.NodeSeq
+import scala.xml.Text
 import net.shift._
 import net.shift._
-import net.shift.common.Path
-import net.shift.engine.http.Request
-import net.shift.engine.page.Html5
+import net.shift.common.NodeOps._
+import net.shift.common.XmlUtils
+import net.shift.loc.Loc
 import net.shift.template._
 import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
-import scala.xml.NodeSeq
-import scala.util.Try
-import net.shift.common.XmlUtils
-import net.shop.web.form.OrderForm
-import scala.util.Success
-import scala.util.Failure
 import net.shop.api.ProductDetail
-import scala.xml.{ Elem, Text }
-import scala.xml.Group
-import net.shift.loc.Loc
+import net.shop.web.form.OrderForm
 
 trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
 
-  def snippets = List(order, connectError)
+  def snippets = List(order, connectError, user)
 
   def reqSnip(name: String) = snip[T](name) _
 
@@ -38,10 +35,18 @@ trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
 
   def priceTag(p: ProductDetail): Elem = p.discountPrice match {
     case Some(discount) => <span>{ <span>{ discount }</span> ++ <strike>{ p.price }</strike> <span>RON</span> }</span>
-    case _ => <span>{ s"${p.price} RON" }</span>
+    case _              => <span>{ s"${p.price} RON" }</span>
   }
 
   val connectError = snip[T]("connect_error") {
     s => Success((s.state.initialState, <div id="notice_connect_e">{ Loc.loc0(s.state.lang)("connect.fail").text }</div>))
+  }
+
+  val user = snip[T]("user") {
+    s =>
+      bind(s.node) {
+        case name attributes Attributes(attrs) / _ =>
+          node(name, attrs) / (s.state.user.map(u => Text(u.name)).getOrElse(NodeSeq.Empty))
+      } map ((s.state.initialState, _))
   }
 }

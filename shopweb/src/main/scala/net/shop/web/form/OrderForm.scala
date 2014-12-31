@@ -17,6 +17,7 @@ import net.shop.utils.ShopUtils
 import net.shop.api.ProductDetail
 import net.shop.api.Person
 import net.shop.api.Company
+import net.shop.api.Address
 
 object OrderForm extends ShopUtils {
   sealed trait EnvValue
@@ -28,8 +29,8 @@ object OrderForm extends ShopUtils {
 
     env.get(name) match {
       case Some(FormField(n)) if !n.isEmpty() => Success(n)
-      case Some(FormField(n)) if n.isEmpty() => required
-      case _ => required
+      case Some(FormField(n)) if n.isEmpty()  => required
+      case _                                  => required
     }
   }
 
@@ -62,13 +63,13 @@ object OrderForm extends ShopUtils {
   def validItems(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], List[(ProductDetail, Int)]] =
     env => env.get("items") match {
       case Some(OrderItems(l)) => Success(l)
-      case _ => Failure(List(("items", Loc.loc0(lang)("order.items.required").text)))
+      case _                   => Failure(List(("items", Loc.loc0(lang)("order.items.required").text)))
     }
 
   def validTerms(id: String)(implicit lang: Language): Map[String, EnvValue] => Validation[List[(String, String)], Boolean] =
     env => env.get("terms") match {
       case Some(FormField("on")) => Success(true)
-      case _ => Failure(List((id, Loc.loc0(lang)("terms.and.conds.err").text)))
+      case _                     => Failure(List((id, Loc.loc0(lang)("terms.and.conds.err").text)))
     }
 
   def inputItems(name: String)(f: Map[String, EnvValue] => Validation[List[(String, String)], List[(ProductDetail, Int)]]) =
@@ -82,15 +83,23 @@ object OrderForm extends ShopUtils {
     val ? = Loc.loc0(lang) _
 
     val person = (Person.apply _).curried
+    val address = (Address.apply _).curried
+
     val personFormlet = Formlet(person) <*>
       inputText("lname")(validName("fname", ?("first.name").text)) <*>
-      inputText("fname")(validName("lname", ?("last.name").text))
+      inputText("fname")(validName("lname", ?("last.name").text)) <*>
+      inputText("cnp")(validName("cnp", ?("cnp").text))
+
+    val addressFormlet = Formlet(address) <*>
+      inputText("country")(validName("country", ?("country").text)) <*>
+      inputText("region")(validName("region", ?("region").text)) <*>
+      inputText("city")(validName("city", ?("city").text)) <*>
+      inputText("address")(validName("address", ?("address").text)) <*>
+      inputText("zip")(validName("zip", ?("zip").text))
 
     Formlet(order) <*>
       personFormlet <*>
-      inputText("region")(validName("region", ?("region").text)) <*>
-      inputText("city")(validName("city", ?("city").text)) <*>
-      inputText("address")(validName("address",  ?("address").text)) <*>
+      addressFormlet <*>
       inputText("email")(validEmail("email", "email")) <*>
       inputText("phone")(validPhone("phone", "phone")) <*>
       inputCheck("terms", "true")(validTerms("terms")) <*>
@@ -102,18 +111,25 @@ object OrderForm extends ShopUtils {
     val ? = Loc.loc0(lang) _
 
     val company = (Company.apply _).curried
+    val address = (Address.apply _).curried
+    
     val companyFormlet = Formlet(company) <*>
-      inputText("cname")(validName("cname",  ?("company.name").text)) <*>
+      inputText("cname")(validName("cname", ?("company.name").text)) <*>
       inputText("cif")(validName("cif", ?("company.cif").text)) <*>
       inputText("cregcom")(validName("cregcom", ?("company.reg.com").text)) <*>
       inputText("cbank")(validName("cbank", ?("company.bank").text)) <*>
-      inputText("cbankaccount")(validName("cbankaccount",  ?("company.bank.account").text))
+      inputText("cbankaccount")(validName("cbankaccount", ?("company.bank.account").text))
 
-    Formlet(order) <*>
-      companyFormlet <*>
+    val addressFormlet = Formlet(address) <*>
+      inputText("ccountry")(validName("ccountry", ?("country").text)) <*>
       inputText("cregion")(validName("cregion", ?("region").text)) <*>
       inputText("ccity")(validName("ccity", ?("city").text)) <*>
       inputText("caddress")(validName("caddress", ?("address").text)) <*>
+      inputText("czip")(validName("czip", ?("zip").text))
+
+    Formlet(order) <*>
+      companyFormlet <*>
+      addressFormlet <*>
       inputText("cemail")(validEmail("cemail", "cemail")) <*>
       inputText("cphone")(validPhone("cphone", "cphone")) <*>
       inputCheck("cterms", "true")(validTerms("cterms")) <*>

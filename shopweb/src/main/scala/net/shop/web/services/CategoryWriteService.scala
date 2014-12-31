@@ -22,12 +22,22 @@ import net.shift.template.Selectors
 import net.shop.api.Category
 import net.shop.web.ShopApplication
 import net.shift.engine.http.DELETE
+import net.shift.security.BasicCredentials
+import net.shift.security.User
+import net.shift.security.Permission
+import net.shift.security.Credentials
 
-object CategoryWriteService extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog with ProductValidation {
+object CategoryWriteService extends PathUtils
+  with Selectors
+  with TraversingSpec
+  with DefaultLog
+  with FormValidation
+  with SecuredService {
 
   def deleteCategory = for {
     r <- DELETE
     Path("category" :: "delete" :: id :: Nil) <- path
+    user <- auth
   } yield {
     ShopApplication.persistence.deleteCategories(id) match {
       case scala.util.Success(num) =>
@@ -40,6 +50,7 @@ object CategoryWriteService extends PathUtils with ShiftUtils with Selectors wit
   def updateCategory = for {
     r <- POST
     Path("category" :: "update" :: id :: Nil) <- path
+    user <- auth
     mp <- multipartForm
   } yield {
     extract(r.language, None, mp) match {
@@ -66,6 +77,7 @@ object CategoryWriteService extends PathUtils with ShiftUtils with Selectors wit
   def createCategory = for {
     r <- POST
     Path("category" :: "create" :: Nil) <- path
+    user <- auth
     mp <- multipartForm
   } yield {
     extract(r.language, None, mp) match {

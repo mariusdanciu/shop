@@ -2,10 +2,6 @@
   $(function() {
     $.blockUI.defaults.baseZ = 90;
 
-    $(".close_dialog").bind("click", function(event) {
-      categories.closeDialog();
-    });
-
     categories.refreshList();
 
   });
@@ -14,15 +10,12 @@
 
 var categories = {
 
-  closeDialog : function() {
-    $.unblockUI();
-  },
-
   refreshList : function() {
 
     $(".close_dialog").bind("click", function(event) {
-      categories.closeDialog();
+      window.common.closeDialog();
     });
+    
     $(".cat_box").each(function(index) {
       var me = $(this);
       var pid = me.attr("id");

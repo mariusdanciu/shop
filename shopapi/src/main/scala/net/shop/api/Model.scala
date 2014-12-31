@@ -3,6 +3,20 @@ package api
 
 import java.util.Date
 
+case class UserDetail(id: Option[String] = None,
+                      firstName: String,
+                      lastName: String,
+                      cnp: String,
+                      addresses: List[Address],
+                      email: String,
+                      phone: String)
+
+case class Address(country: String,
+                   region: String,
+                   city: String,
+                   address: String,
+                   zipCode: String)
+
 case class ProductDetail(id: Option[String] = None,
                          title: Map[String, String],
                          description: Map[String, String],
@@ -32,28 +46,24 @@ case class Category(id: Option[String] = None, val title: Map[String, String], i
 
 sealed trait Submitter
 
-case class Person(firstName: String, lastName: String) extends Submitter
+case class Person(firstName: String, lastName: String, cnp: String) extends Submitter
 case class Company(companyName: String, cif: String, regCom: String, bank: String, bankAccount: String) extends Submitter
 
 case class Order(id: String,
                  submitter: Submitter,
-                 region: String,
-                 city: String,
-                 address: String,
+                 address: Address,
                  email: String,
                  phone: String,
                  terms: Boolean,
                  items: List[(ProductDetail, Int)]) {
 
-  def toOrderLog = OrderLog(id, new Date(), submitter, region, city, address, email, phone, items map { i => i._1.toProductLog(i._2) })
+  def toOrderLog = OrderLog(id, new Date(), submitter, address, email, phone, items map { i => i._1.toProductLog(i._2) })
 }
 
 case class OrderLog(id: String,
                     time: Date,
                     submitter: Submitter,
-                    region: String,
-                    city: String,
-                    address: String,
+                    address: Address,
                     email: String,
                     phone: String,
                     items: List[ProductLog]) {

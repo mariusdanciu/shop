@@ -21,6 +21,7 @@ import net.shop.utils.ShopUtils
 import net.shop.api.OrderLog
 import net.shop.api.Person
 import net.shop.api.Company
+import net.shop.api.Address
 
 object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors with ShopUtils {
 
@@ -43,34 +44,35 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   val info = reqSnip("info") {
     s =>
       s.state.initialState.o match {
-        case OrderLog(id, time, Person(fn, ln), region, city, address, email, phone, _) =>
+        case OrderLog(id, time, Person(fn, ln, cnp), Address(country, region, city, address, zip), email, phone, _) =>
           bind(s.node) {
-            case n attributes HasId("oid", a) / _ => <span>{ id }</span> % a
-            case n attributes HasId("lname", a) / _ => <span>{ ln }</span> % a
-            case n attributes HasId("fname", a) / _ => <span>{ fn }</span> % a
-            case n attributes HasId("region", a) / _ => <span>{ region }</span> % a
-            case n attributes HasId("city", a) / _ => <span>{ city }</span> % a
+            case n attributes HasId("oid", a) / _     => <span>{ id }</span> % a
+            case n attributes HasId("lname", a) / _   => <span>{ ln }</span> % a
+            case n attributes HasId("fname", a) / _   => <span>{ fn }</span> % a
+            case n attributes HasId("cnp", a) / _     => <span>{ cnp }</span> % a
+            case n attributes HasId("region", a) / _  => <span>{ region }</span> % a
+            case n attributes HasId("city", a) / _    => <span>{ city }</span> % a
             case n attributes HasId("address", a) / _ => <span>{ address }</span> % a
-            case n attributes HasId("email", a) / _ => <span>{ email }</span> % a
-            case n attributes HasId("phone", a) / _ => <span>{ phone }</span> % a
+            case n attributes HasId("email", a) / _   => <span>{ email }</span> % a
+            case n attributes HasId("phone", a) / _   => <span>{ phone }</span> % a
           } match {
             case Success(n) => Success((s.state.initialState, n))
             case Failure(f) => Success((s.state.initialState, errorTag(f toString)))
           }
 
-        case OrderLog(id, time, Company(cn, cif, regCom, bank, account), region, city, address, email, phone, _) =>
+        case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(country, region, city, address, zip), email, phone, _) =>
           bind(s.node) {
-            case n attributes HasId("oid", a) / _ => <span>{ id }</span> % a
-            case n attributes HasId("cname", a) / _ => <span>{ cn }</span> % a
-            case n attributes HasId("cif", a) / _ => <span>{ cif }</span> % a
-            case n attributes HasId("cregcom", a) / _ => <span>{ regCom }</span> % a
-            case n attributes HasId("cbank", a) / _ => <span>{ bank }</span> % a
+            case n attributes HasId("oid", a) / _          => <span>{ id }</span> % a
+            case n attributes HasId("cname", a) / _        => <span>{ cn }</span> % a
+            case n attributes HasId("cif", a) / _          => <span>{ cif }</span> % a
+            case n attributes HasId("cregcom", a) / _      => <span>{ regCom }</span> % a
+            case n attributes HasId("cbank", a) / _        => <span>{ bank }</span> % a
             case n attributes HasId("cbankaccount", a) / _ => <span>{ account }</span> % a
-            case n attributes HasId("cregion", a) / _ => <span>{ region }</span> % a
-            case n attributes HasId("ccity", a) / _ => <span>{ city }</span> % a
-            case n attributes HasId("caddress", a) / _ => <span>{ address }</span> % a
-            case n attributes HasId("cemail", a) / _ => <span>{ email }</span> % a
-            case n attributes HasId("cphone", a) / _ => <span>{ phone }</span> % a
+            case n attributes HasId("cregion", a) / _      => <span>{ region }</span> % a
+            case n attributes HasId("ccity", a) / _        => <span>{ city }</span> % a
+            case n attributes HasId("caddress", a) / _     => <span>{ address }</span> % a
+            case n attributes HasId("cemail", a) / _       => <span>{ email }</span> % a
+            case n attributes HasId("cphone", a) / _       => <span>{ phone }</span> % a
           } match {
             case Success(n) => Success((s.state.initialState, n))
             case Failure(f) => Success((s.state.initialState, errorTag(f toString)))

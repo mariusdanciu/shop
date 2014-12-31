@@ -15,7 +15,7 @@ import net.shift.engine.http.JsResponse
 import net.shift.js._
 import JsDsl._
 
-trait ProductValidation {
+trait FormValidation {
 
   type ValidationError = List[(String, String)]
   type ValidationMap = Map[String, String]
