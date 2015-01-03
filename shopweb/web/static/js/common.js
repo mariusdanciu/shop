@@ -31,6 +31,18 @@
       event.preventDefault();
     });
 
+    $("#save_user").click(function(event) {
+      window.user.createUser("#newuser_form");
+      event.stopPropagation();
+      event.preventDefault();
+    });
+    
+    $('#forgotpass').click(function(event) {
+      window.user.forgotPass("#login_form");
+      event.stopPropagation();
+      event.preventDefault();
+    });
+
     $("#login_form").keydown(function(event) {
       if (event.keyCode == 13) {
         window.user.login("#login_form");
@@ -120,9 +132,9 @@ var user = {
     $.blockUI({
       message : $("#newuser_popup"),
       css : {
-        top : '100px',
-        left : ($(window).width() - 350) / 2 + 'px',
-        width : '350px',
+        top : '150px',
+        left : ($(window).width() - 550) / 2 + 'px',
+        width : '550px',
         border : 'none',
         cursor : null
       },
@@ -144,6 +156,23 @@ var user = {
   logout : function() {
     window.location.href = "/?logout=true";
   },
+  
+  forgotPass : function(frmId) {
+    var email = $.base64.encode($(frmId + " #username").val());
+    $.ajax({
+      url : "/forgotpassword/" + email,
+      type : "POST",
+      cache : false,
+      statusCode : {
+        200 : function() {
+          common.closeDialog();
+        }
+      }
+    }).fail(function(msg, f) {
+      $("#notice_connect_e").html(msg.responseText);
+      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+    });
+  },
 
   login : function(frmId) {
     var creds = $.base64.encode($(frmId + " #username").val() + ":" + $(frmId + " #password").val());
@@ -164,7 +193,30 @@ var user = {
       $("#notice_connect_e").html(msg.responseText);
       $("#notice_connect_e").show().delay(5000).fadeOut("slow");
     });
-  }
+  },
+
+  createUser : function(formId) {
+    $(formId).each(function() {
+      var frm = this;
+
+      $(formId + ' label').css("color", "#000000").removeAttr("title");
+      $.ajax({
+        url : $(formId).attr('action'),
+        type : "POST",
+        cache : false,
+        data :  $(formId).serialize(),
+        statusCode : {
+          201 : function() {
+            common.closeDialog();
+          }
+        }
+      }).fail(function(msg, f) {
+        $("#notice_connect_e").html(msg.responseText);
+        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+      });
+    });
+  },
+
 }
 
 var cart = {

@@ -83,7 +83,7 @@ object OrderForm extends ShopUtils {
     val ? = Loc.loc0(lang) _
 
     val person = (Person.apply _).curried
-    val address = (Address.apply _).curried
+    val address = ((Address.apply _).curried)(None)
 
     val personFormlet = Formlet(person) <*>
       inputText("lname")(validName("fname", ?("first.name").text)) <*>
@@ -111,8 +111,8 @@ object OrderForm extends ShopUtils {
     val ? = Loc.loc0(lang) _
 
     val company = (Company.apply _).curried
-    val address = (Address.apply _).curried
-    
+    val address = ((Address.apply _).curried)(None)
+
     val companyFormlet = Formlet(company) <*>
       inputText("cname")(validName("cname", ?("company.name").text)) <*>
       inputText("cif")(validName("cif", ?("company.cif").text)) <*>

@@ -12,7 +12,6 @@ import net.shift.template._
 import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
-import net.shift.template.Snippet._
 import net.shop.web.ShopApplication
 import scala.util.Success
 import scala.util.Failure

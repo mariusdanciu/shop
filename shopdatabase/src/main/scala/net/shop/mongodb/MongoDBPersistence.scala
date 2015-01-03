@@ -12,7 +12,7 @@ import net.shop.api._
 import net.shop.api.persistence._
 import net.shop.api.persistence.ShopError._
 
-object MongoDBPersistence extends Persistence {
+object MongoDBPersistence extends Persistence with MongoConversions {
 
   lazy val db = MongoClient("localhost")("idid")
 
@@ -156,41 +156,55 @@ object MongoDBPersistence extends Persistence {
     case e: Exception => fail(e)
   }
 
-  private def productToMongo(obj: ProductDetail): MongoDBObject = {
-    val db = MongoDBObject.newBuilder
-    db += "title" -> MongoDBObject(obj.title.toList)
-    db += "description" -> MongoDBObject(obj.description.toList)
-    db += "properties" -> MongoDBObject(obj.properties.toList)
-    db += "price" -> obj.price
-    db += "discountPrice" -> obj.discountPrice
-    db += "soldCount" -> obj.soldCount
-    db += "categories" -> obj.categories
-    db += "images" -> obj.images
-    db += "keywords" -> obj.keyWords
-    db.result
+  def createUsers(user: UserDetail*): Try[Seq[String]] = try {
+    val mongos = user.map(userToMongo(_))
+    db("users").insert(mongos: _*)
+    Success(mongos map { p => p.getOrElse("_id", "?").toString })
+  } catch {
+    case e: Exception => fail(e)
   }
 
-  private def categoryToMongo(obj: Category): MongoDBObject = {
-    val db = MongoDBObject.newBuilder
-    db += "title" -> MongoDBObject(obj.title.toList)
-    obj.image.map(img => db += ("image" -> img))
-    db.result
+  def updateUsers(user: UserDetail*): Try[Seq[String]] = try {
+    val builder = db("users").initializeOrderedBulkOperation
+
+    val ids = for {
+      u <- user
+      id <- u.id
+    } yield {
+      builder.find(MongoDBObject("_id" -> new ObjectId(id))).update(MongoDBObject {
+        "$set" -> userToMongo(u)
+      })
+      id
+    }
+
+    builder.execute()
+    Success(ids)
+  } catch {
+    case e: Exception => fail(e)
   }
 
-  private def mongoToProduct(obj: DBObject): ProductDetail =
-    ProductDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
-      title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
-      description = obj.getAsOrElse[Map[String, String]]("description", Map.empty),
-      properties = obj.getAsOrElse[Map[String, String]]("properties", Map.empty),
-      price = obj.getAsOrElse[Double]("price", 0.0),
-      discountPrice = obj.getAs[Double]("discountPrice"),
-      soldCount = obj.getAs[Int]("soldCOunt") getOrElse 0,
-      categories = obj.getAsOrElse[List[String]]("categories", Nil),
-      images = obj.getAsOrElse[List[String]]("images", Nil),
-      keyWords = obj.getAsOrElse[List[String]]("keywords", Nil))
+  def deleteUsers(ids: String*): Try[Int] = try {
+    val num = (0 /: ids)((acc, id) => db("users").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
+    Success(num)
+  } catch {
+    case e: Exception => fail(e)
+  }
 
-  private def mongoToCategory(obj: DBObject): Category =
-    Category(id = obj.getAs[ObjectId]("_id").map(_.toString),
-      title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
-      image = obj.getAs[String]("image"))
+  def allUsers: Try[Iterator[UserDetail]] = try {
+    Success(for { p <- db("users").find() } yield {
+      mongoToUser(p)
+    })
+  } catch {
+    case e: Exception => fail(e)
+  }
+
+  def userByEmail(email: String): Try[UserDetail] = try {
+    db("users").findOne(MongoDBObject("email" -> email)) match {
+      case Some(obj) => Success(mongoToUser(obj))
+      case _         => fail(email + " not found")
+    }
+  } catch {
+    case e: Exception => fail(e)
+  }
+
 }

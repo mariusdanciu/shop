@@ -35,7 +35,7 @@ import net.shop.web.ShopApplication
 import net.shift.js._
 import JsDsl._
 
-object ProductWriteService extends PathUtils
+object ProductService extends PathUtils
   with ShiftUtils
   with Selectors
   with TraversingSpec

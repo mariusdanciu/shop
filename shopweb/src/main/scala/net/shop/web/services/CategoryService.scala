@@ -1,4 +1,5 @@
-package net.shop.web.services
+package net.shop
+package web.services
 
 import net.shift.common.DefaultLog
 import net.shift.common.Path
@@ -27,7 +28,7 @@ import net.shift.security.User
 import net.shift.security.Permission
 import net.shift.security.Credentials
 
-object CategoryWriteService extends PathUtils
+object CategoryService extends PathUtils
   with Selectors
   with TraversingSpec
   with DefaultLog

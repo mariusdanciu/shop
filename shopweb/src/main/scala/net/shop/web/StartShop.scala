@@ -59,6 +59,8 @@ object ShopApplication extends ShiftApplication with ShopServices {
       createCategory |
       deleteCategory |
       updateCategory |
+      createUser |
+      forgotPassword |
       service(notFoundService)
   } yield c
 

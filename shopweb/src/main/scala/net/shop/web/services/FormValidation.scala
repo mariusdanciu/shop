@@ -63,6 +63,16 @@ trait FormValidation {
     }
   }
 
+  def validateText(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, String] = env => {
+    val failed = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
+
+    env.get(name) match {
+      case Some(n :: _) if !n.isEmpty => Success(n)
+      case Some(n) if n.isEmpty       => failed
+      case _                          => failed
+    }
+  }
+
   def validateOptional[T](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[ValidationError, Option[T]] = env => {
     env.get(name) match {
       case Some(n :: _) if !n.isEmpty => Success(f(n))

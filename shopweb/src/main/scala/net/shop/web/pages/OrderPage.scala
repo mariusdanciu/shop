@@ -44,7 +44,7 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   val info = reqSnip("info") {
     s =>
       s.state.initialState.o match {
-        case OrderLog(id, time, Person(fn, ln, cnp), Address(country, region, city, address, zip), email, phone, _) =>
+        case OrderLog(id, time, Person(fn, ln, cnp), Address(_, country, region, city, address, zip), email, phone, _) =>
           bind(s.node) {
             case n attributes HasId("oid", a) / _     => <span>{ id }</span> % a
             case n attributes HasId("lname", a) / _   => <span>{ ln }</span> % a
@@ -60,7 +60,7 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
             case Failure(f) => Success((s.state.initialState, errorTag(f toString)))
           }
 
-        case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(country, region, city, address, zip), email, phone, _) =>
+        case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(_, country, region, city, address, zip), email, phone, _) =>
           bind(s.node) {
             case n attributes HasId("oid", a) / _          => <span>{ id }</span> % a
             case n attributes HasId("cname", a) / _        => <span>{ cn }</span> % a

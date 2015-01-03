@@ -9,9 +9,12 @@ case class UserDetail(id: Option[String] = None,
                       cnp: String,
                       addresses: List[Address],
                       email: String,
-                      phone: String)
+                      phone: Option[String],
+                      password: String,
+                      permissions: List[String])
 
-case class Address(country: String,
+case class Address(id: Option[String] = None,
+                   country: String,
                    region: String,
                    city: String,
                    address: String,

@@ -388,6 +388,31 @@
    "code" : "180",
    "name" : "new.user",
    "text" : "Utilizator nou"
+ },
+ {
+   "code" : "181",
+   "name" : "retype.password",
+   "text" : "Reintroduceti parola"
+ },
+ {
+   "code" : "182",
+   "name" : "password.not.match",
+   "text" : "Parolele nu corespund"
+ },
+ {
+   "code" : "183",
+   "name" : "user.cannot.create",
+   "text" : "Utilizatorul nu poate fi creat"
+ },
+ {
+   "code" : "184",
+   "name" : "forgot.password",
+   "text" : "Am uitat parola"
+ },
+ {
+   "code" : "185",
+   "name" : "recover.password",
+   "text" : "Recuperare parola"
  }
  
 ]

@@ -21,7 +21,7 @@
         <div id="title_text">
           <h1 data-snip="title"></h1>
         </div>
-        <div id="logout" class="top_items top5" data-permissions="write">
+        <div id="logout" class="top_items top5" data-permissions="read">
           <a href="#"><img src="/static/images/logout.png" /></a>
         </div>
         <div id="current_user" class="top_items">
@@ -59,7 +59,7 @@
     <form action="/auth" id="login_form" method="POST">
       <div class="fields">
         <div class="row">
-          <label for="username" data-loc="username"></label> <input id="username" type="text" name="username" />
+          <label for="username" data-loc="email"></label> <input id="username" type="text" name="username" />
         </div>
         <div class="row">
           <label for="password" data-loc="password"></label><input id="password" type="password" name="password" />
@@ -67,7 +67,9 @@
       </div>
     </form>
     <div class="row auth bordertop top10">
-      <a id="authgo" href="#" data-loc="authenticate"></a> <a id="newuser" class="right20" href="#" data-loc="new.user"></a>
+        <a id="authgo" href="#" data-loc="authenticate"></a>
+        <a id="forgotpass" class="right20" href="#" data-loc="forgot.password"></a>
+        <a id="newuser" class="right20" href="#" data-loc="new.user"></a>
     </div>
   </div>
 
@@ -79,16 +81,41 @@
       <img src="/static/images/close.png" />
     </div>
     <div class="content_dialog">
-      <form action="/create/user" id="newuser_form" method="POST">
-        <div class="fields">
-          <div class="row">
-            <label for="firstName" data-loc="first.name"></label> <input id="firstName" type="text" name="firstName" />
+      <div class="column">
+        <img src="/static/images/useradd.png" />
+      </div>
+      <div class="column left30 userinputs">
+        <form action="/create/user" id="newuser_form" method="POST">
+          <div class="fields">
+            <div class="row">
+              <label for="cu_firstName" data-loc="first.name"></label> <input id="cu_firstName" type="text" name="cu_firstName" />
+            </div>
+            <div class="row">
+              <label for="cu_lastName" data-loc="last.name"></label><input id="cu_lastName" type="text" name="cu_lastName" />
+            </div>
+            <div class="row">
+              <label for="cu_cnp" data-loc="cnp"></label><input id="cu_cnp" type="text" name="cu_cnp" />
+            </div>
+            <div class="row">
+              <label for="cu_phone" data-loc="phone"></label><input id="cu_phone" type="text" name="cu_phone" />
+            </div>
+            <div class="row">
+              <label for="cu_email" data-loc="email"></label><input id="cu_email" type="text" name="cu_email" />
+            </div>
+            <div class="row">
+              <label for="cu_password" data-loc="password"></label><input id="cu_password" type="password" name="cu_password" />
+            </div>
+            <div class="row">
+              <label for="cu_password2" data-loc="retype.password"></label><input id="cu_password2" type="password" name="cu_password2" />
+            </div>
           </div>
-          <div class="row">
-            <label for="lastName" data-loc="last.name"></label><input id="lastName" type="text" name="lastName" />
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
+    </div>
+    <div class="dialog_footer">
+      <div id="save_user">
+        <a href="#" data-loc="save"></a>
+      </div>
     </div>
   </div>
 

@@ -4,26 +4,30 @@ package web.services
 import scala.Option.option2Iterable
 import scala.util.Failure
 import scala.util.Success
+
 import org.json4s.DefaultFormats
 import org.json4s.jvalue2extractable
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization.write
 import org.json4s.string2JsonInput
+
 import net.shift.common.DefaultLog
 import net.shift.common.Path
 import net.shift.common.PathUtils
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http._
 import net.shift.engine.http.AsyncResponse
+import net.shift.engine.http.Attempt
 import net.shift.engine.http.ImageResponse
 import net.shift.engine.http.JsonResponse
 import net.shift.engine.http.Request
+import net.shift.engine.http.Resp
 import net.shift.engine.http.Response.augmentResponse
 import net.shift.engine.http.TextResponse
 import net.shift.engine.http.serviceServiceUtils
 import net.shift.engine.page.Html5
 import net.shift.engine.utils.ShiftUtils
+import net.shift.loc.Loc
 import net.shift.security.BasicCredentials
 import net.shift.security.Credentials
 import net.shift.security.Permission
@@ -38,13 +42,11 @@ import net.shop.web.ShopApplication
 import net.shop.web.pages.CartItemNode
 import net.shop.web.pages.CartState
 import net.shop.web.pages.CategoryPage
-import net.shop.web.pages.ProductsPage
-import net.shift.engine.http.Resp
-import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductDetailPage
-import net.shift.loc.Loc
+import net.shop.web.pages.ProductPageState
+import net.shop.web.pages.ProductsPage
 
-trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog {
+trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService {
 
   def notFoundService(resp: AsyncResponse) {
     resp(TextResponse("Sorry ... service not found"))
@@ -52,13 +54,8 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
 
   implicit val reqSelector = bySnippetAttr[SnipState[Request]]
   implicit val cartItemsSelector = bySnippetAttr[SnipState[CartState]]
-  implicit def login(creds: Credentials): Option[User] = {
-    creds match {
-      case BasicCredentials("marius", "boot") => Some(User("marius", None, Set(Permission("write"))))
-      case _                                  => None
-    }
-  }
 
+  
   def logReq = for {
     r <- req
   } yield {
@@ -154,17 +151,21 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
     parse(java.net.URLDecoder.decode(json, "UTF-8")).extract[Cart]
   }
 
-  def createProduct = ProductWriteService.createProduct
+  def createProduct = ProductService.createProduct
 
-  def updateProduct = ProductWriteService.updateProduct
+  def updateProduct = ProductService.updateProduct
 
-  def deleteProduct = ProductWriteService.deleteProduct
+  def deleteProduct = ProductService.deleteProduct
 
-  def createCategory = CategoryWriteService.createCategory
+  def createCategory = CategoryService.createCategory
 
-  def deleteCategory = CategoryWriteService.deleteCategory
+  def deleteCategory = CategoryService.deleteCategory
 
-  def updateCategory = CategoryWriteService.updateCategory
+  def updateCategory = CategoryService.updateCategory
+  
+  def createUser = UserService.createUser
+  
+  def forgotPassword = UserService.forgotPassword
 
 }
 
