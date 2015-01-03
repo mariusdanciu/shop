@@ -124,6 +124,7 @@
 var common = {
   closeDialog : function() {
     $.unblockUI();
+    $("#user_popup").hide();
   }
 }
 
@@ -163,11 +164,8 @@ var user = {
       url : "/forgotpassword/" + email,
       type : "POST",
       cache : false,
-      statusCode : {
-        200 : function() {
-          common.closeDialog();
-        }
-      }
+    }).success(function(){
+      common.closeDialog();
     }).fail(function(msg, f) {
       $("#notice_connect_e").html(msg.responseText);
       $("#notice_connect_e").show().delay(5000).fadeOut("slow");

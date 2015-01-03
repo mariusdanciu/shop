@@ -1,19 +1,20 @@
 package net.shop.web.services
 
+import net.shift.common.FileSplit
+import net.shift.engine.ShiftApplication.service
+import net.shift.engine.http.BinaryPart
+import net.shift.engine.http.Header
+import net.shift.engine.http.JsResponse
+import net.shift.engine.http.MultiPart
+import net.shift.engine.http.TextPart
 import net.shift.html.Failure
 import net.shift.html.Success
 import net.shift.html.Validation
+import net.shift.js._
+import net.shift.js.JsDsl._
 import net.shift.loc.Language
 import net.shift.loc.Loc
-import net.shift.engine.http.MultiPart
-import net.shift.engine.http.TextPart
-import net.shift.engine.http.Header
-import net.shift.engine.http.BinaryPart
-import net.shift.common.FileSplit
-import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http.JsResponse
-import net.shift.js._
-import JsDsl._
+import net.shop.web.ShopApplication
 
 trait FormValidation {
 
@@ -70,6 +71,21 @@ trait FormValidation {
       case Some(n :: _) if !n.isEmpty => Success(n)
       case Some(n) if n.isEmpty       => failed
       case _                          => failed
+    }
+  }
+
+  def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, String] = env => {
+    val failed = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
+
+    env.get(name) match {
+      case Some(n :: _) if !n.isEmpty =>
+        ShopApplication.persistence.userByEmail(n) match {
+          case scala.util.Success(email) => Failure(List((name, Loc.loc0(lang)("user.already.exists").text)))
+          case _ => Success(n)
+        }
+
+      case Some(n) if n.isEmpty => failed
+      case _                    => failed
     }
   }
 

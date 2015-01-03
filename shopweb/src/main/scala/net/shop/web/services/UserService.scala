@@ -38,9 +38,9 @@ object UserService extends PathUtils
 
   def forgotPassword = for {
     r <- POST
-    Path("forgotpassword" :: Base64(email) :: Nil) <- path
+    Path("forgotpassword" :: b64 :: Nil) <- path
   } yield {
-
+    val email = Base64.decodeString(b64)
     (for {
       ud <- ShopApplication.persistence.userByEmail(email)
       (_, n) <- Html5.runPageFromFile(PageState(ud, r.language), Path(s"web/templates/forgotpassword_${r.language.language}.html"), ForgotPasswordPage)
@@ -48,7 +48,8 @@ object UserService extends PathUtils
       Messaging.send(ForgotPassword(r.language, email, n.toString))
     }) match {
       case Success(_) => service(_(Resp.ok))
-      case Failure(t) => service(_(Resp.notFound.withBody(t.getMessage)))
+      case Failure(t) =>
+        service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(email)).text)))
     }
 
   }
@@ -91,7 +92,7 @@ object UserService extends PathUtils
       inputText("cu_lastName")(validateText("cu_lastName", ?("last.name").text)) <*>
       inputText("cu_cnp")(validateText("cu_cnp", ?("cnp").text)) <*>
       inputText("cu_phone")(validateOptional("cu_phone", Some(_))) <*>
-      inputText("cu_email")(validateText("cu_email", ?("email").text)) <*>
+      inputText("cu_email")(validateCreateUser("cu_email", ?("email").text)) <*>
       inputPassword("cu_password")(validateText("cu_password", ?("password").text)) <*>
       inputPassword("cu_password2")(validateText("cu_password2", ?("retype.password").text))
 
