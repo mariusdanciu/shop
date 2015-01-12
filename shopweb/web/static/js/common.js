@@ -134,8 +134,8 @@ var user = {
       message : $("#newuser_popup"),
       css : {
         top : '150px',
-        left : ($(window).width() - 550) / 2 + 'px',
-        width : '550px',
+        left : ($(window).width() - 630) / 2 + 'px',
+        width : '630px',
         border : 'none',
         cursor : null
       },
@@ -197,7 +197,7 @@ var user = {
     $(formId).each(function() {
       var frm = this;
 
-      $(formId + ' label').css("color", "#000000").removeAttr("title");
+      $(formId + ' label').css("color", "#555555").removeAttr("title");
       $.ajax({
         url : $(formId).attr('action'),
         type : "POST",
@@ -220,7 +220,7 @@ var user = {
 var cart = {
 
   cleanFormMessages : function() {
-    $('#order_form label, #order_form_company label').css("color", "#000000").removeAttr("title");
+    $('#order_form label, #order_form_company label').css("color", "#555555").removeAttr("title");
   },
 
   clear : function() {
@@ -346,9 +346,10 @@ var cart = {
         $('#cart_content').show();
         $('#cart_footer').show();
 
-        $(".cart_item ul li a").each(function(index) {
+        $(".cart_item a").each(function(index) {
           var me = $(this);
           var id = me.attr("id").substring(4);
+          
           $('#q_' + id).on("keyup change", function(e) {
             window.cart.setItemCount(id, $(this).val());
             e.preventDefault();

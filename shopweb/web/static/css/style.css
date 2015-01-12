@@ -13,8 +13,17 @@ html,body {
 * {
 	outline: medium none;
 	margin: 0;
-	font-family: 'Lato', sans-serif;
+	font-family: sans-serif;
 	font-weight: 300;
+	color: #555555;
+}
+
+div, span, input, textarea {
+  font-size: 16px;
+}
+
+a {
+  font-size: 16px;
 }
 
 b, strong {
@@ -34,7 +43,6 @@ input {
 }
 
 textarea, input, select, .preview {
-	font-size: 16px;
 	border: 1px solid #bbbbbb;
 	box-shadow: 0px 0px 15px 1px #dddddd;
 }
@@ -46,7 +54,6 @@ input[type=checkbox] {
 input[type="checkbox"]+label {
 	background: url('/static/images/unchecked_checkbox.png') no-repeat;
 	height: 26px;
-	width: 26px;
 	padding-right: 42px;
 	background-position: right;
 }
@@ -54,7 +61,6 @@ input[type="checkbox"]+label {
 input[type="checkbox"]:checked+label {
 	background: url('/static/images/checked_checkbox.png') no-repeat;
 	height: 26px;
-	width: 26px;
 	background-position: right;
 }
 
@@ -65,6 +71,7 @@ label:hover {
 label {
   position: relative;
   top: 5px;
+  float: left;
 }
 
 ul {
@@ -84,12 +91,12 @@ h3 span {
 }
 
 a:link {
-	color: #000000;
+	color: #555555;
 	text-decoration: none;
 }
 
 a:visited {
-	color: #000000;
+	color: #555555;
 	text-decoration: none;
 }
 
@@ -103,19 +110,56 @@ a:active {
 	text-decoration: none;
 }
 
+.btn {
+  background: #949494;
+  background-image: -webkit-linear-gradient(top, #949494, #000000);
+  background-image: -moz-linear-gradient(top, #949494, #000000);
+  background-image: -ms-linear-gradient(top, #949494, #000000);
+  background-image: -o-linear-gradient(top, #949494, #000000);
+  background-image: linear-gradient(to bottom, #949494, #000000);
+  -webkit-border-radius: 10;
+  -moz-border-radius: 10;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 0px 10px #000000;
+  -moz-box-shadow: 0px 0px 10px #000000;
+  box-shadow: 0px 0px 5px #000000;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 400;
+  padding: 7px 20px 10px 20px;
+  border: solid #7a7a7a 1px;
+  text-decoration: none;
+  position: relative;
+  top: 20px;
+}
+
+.btn:hover {
+  background: #b8b8b8;
+  background-image: -webkit-linear-gradient(top, #b8b8b8, #403f40);
+  background-image: -moz-linear-gradient(top, #b8b8b8, #403f40);
+  background-image: -ms-linear-gradient(top, #b8b8b8, #403f40);
+  background-image: -o-linear-gradient(top, #b8b8b8, #403f40);
+  background-image: linear-gradient(to bottom, #b8b8b8, #403f40);
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .header {
 	height: 60px;
 	background-color: #045584;
-	color: #ffffff;
 	position: fixed;
 	width: 100%;
 	z-index: 80;
 	box-shadow: 0px 0px 30px 1px #444444;
 }
 
+.header * {
+	color: #ffffff;
+}
+
 .page {
 	position: relative;
-	top: 80px;
+	padding-top: 80px;
 }
 
 .wrap {
@@ -139,15 +183,20 @@ a:active {
 	position: relative;
 }
 
+.footer * {
+	color: #dddddd;
+}
+
 .footer .center {
-	font-size: 16px;
-	color: #ffffff;
 	top: 10px;
 	position: relative;
 }
 
+.footer .center ul li {
+    margin-top: 5px;
+}
+
 .footer * a {
-	font-size: 16px;
 	color: #ffffff;
 	text-decoration: none;
 }
@@ -268,7 +317,6 @@ a:active {
 	position: relative;
 	text-align: right;
 	top: 20px;
-	color: #000000;
 	font-size: 22px;
 	float: right;
 	right: 10px;
@@ -287,14 +335,11 @@ a:active {
 	position: relative;
 	top: 10px;
 	left: 10px;
-	color: #000000;
-	font-size: 16px;
 }
 
 .cat_text {
 	font-size: 24px;
 	top: 10px;
-	color: #000000;
 }
 
 .thumb {
@@ -346,7 +391,6 @@ a:active {
 	max-height: 460px;
 	padding: 20px;
 	float: left;
-	font-size: 16px;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
@@ -360,7 +404,6 @@ a:active {
 	position: fixed;
 	z-index: 9999;
 	top: 60px;
-	color: #000000;
 	opacity: 0.95;
 }
 
@@ -374,16 +417,13 @@ a:active {
 	z-index: 9999;
 	top: 60px;
 	right: 0px;
-	color: #000000;
 	opacity: 0.95;
 	padding: 10px;
-	width: 320px;
-	font-size: 16px;
+	width: 350px;
 }
 
 #add_to_cart_box {
 	float: left;
-	font-size: 16px;
 	margin-top: 2px;
 }
 
@@ -391,8 +431,8 @@ a:active {
 	margin-bottom: 20px;
 	position: relative;
 	width: 100%;
-	font-size: 16px;
 	float: left;
+	border-top: 1px solid #dddddd;
 }
 
 #cart_footer a {
@@ -403,6 +443,8 @@ a:active {
 #cart_footer #total {
 	float: left;
 	margin-left: 30px;
+	margin-right: 40px;
+	font-size: 20px;
 }
 
 #cart_footer * {
@@ -415,7 +457,6 @@ a:active {
 	padding: 20px;
 	float: left;
 	position: relative;
-	font-size: 16px;
 }
 
 #cart_notice {
@@ -424,13 +465,11 @@ a:active {
 	padding: 20px;
 	float: left;
 	position: relative;
-	font-size: 16px;
 	color: #009900;
 }
 
 .prod_details {
 	float: left;
-	font-size: 16px;
 	width: 100%;
 }
 
@@ -450,14 +489,14 @@ a:active {
 #cart_content li {
 	float: left;
 	clear: left;
+	margin-top: 5px;
 }
 
-.cart_title {
-	color: #000000;
-}
-
-.cart_price {
-	font-size: 16px;
+.cart_item_box {
+	box-shadow: 0px 0px 10px #999;
+	border-radius: 10px;
+	display: inline-block;
+	width: 100%;
 }
 
 .cart_item {
@@ -467,8 +506,17 @@ a:active {
 	width: 250px;
 }
 
+.cart_item ul {
+	margin-top: 15px;
+}
+
 .cart_item ul li {
 	margin-top: 5px;
+}
+
+.cart_item a {
+	float: right;
+	padding: 5px;
 }
 
 .cart_item ul li img {
@@ -502,7 +550,6 @@ a:active {
 
 .navigation {
 	float: left;
-	font-size: 16px;
 	position: relative;
 	width: 100%;
 	height: 30px;
@@ -510,20 +557,22 @@ a:active {
 
 .detailPrice {
 	float: left;
-	font-size: 32px;
 	margin-top: 10px;
 	margin-left: 10px;
+}
+
+.detailPrice span {
+	font-size: 32px;
 }
 
 #order {
 	float: left;
 	padding: 20px 40px 20px 20px;
 	position: relative;
-	width: 440px;
+	width: 480px;
 }
 
 .upload_form_fields input, .select_row select, #order input {
-	font-size: 16px;
 	height: 26px;
 	width: 250px;
 	margin-right: 5px;
@@ -536,7 +585,6 @@ a:active {
 
 #upload_form label, #order form label {
 	text-align: right;
-	font-size: 16px;
 	position: relative;
 }
 
@@ -547,14 +595,24 @@ a:active {
     overflow: auto;
 }
 
-#order input, .fields input, .upload_form_fields .fields select {
+#order input, .fields input, .fields span, .upload_form_fields .fields select {
     float: right;
+}
+
+.fields span {
+	margin-top: 5px;
 }
 
 .row {
 	height: 35px;
 	width: 100%;
 	text-align: left;
+}
+
+.row_simple {
+    clear: both;
+	width: 100%;
+	display: inline-block;
 }
 
 .upload_form_fields .row {
@@ -633,7 +691,6 @@ a:active {
 }
 
 #order a {
-	font-size: 16px;
 	float: right;
 }
 
@@ -666,7 +723,6 @@ a:active {
 	background-color: #B7CBD7;
 	border: none;
 	box-shadow: 0 0 20px 1px #aaaaaa;
-	color: #000000;
 	border-radius: 10px;
 	width: 150px;
 }
@@ -704,7 +760,6 @@ a:active {
 
 .terms {
 	float: left;
-	font-size: 16px;
 }
 
 #terms_wrapper label {
@@ -761,7 +816,6 @@ a:active {
 	background: #ffffff;
 	padding: 10px;
 	text-decoration: none;
-	color: #000;
 	border-radius: 10px 10px 0px 0px;
 }
 
@@ -771,11 +825,12 @@ a:active {
 	border-radius: 10px 10px 0px 0px;
 }
 
-.content {
+#order > div {
 	float: left;
 	clear: both;
 	background: #f3f3f3;
 	border-radius: 0px 10px 10px 10px;
+	width: 460px;
 }
 
 #order #pf, #pj {
@@ -817,14 +872,12 @@ a:active {
 
 .content_dialog {
 	clear: both;
-	font-size: 16px;
 }
 
 .dialog_footer {
 	clear: both;
 	position: relative;
 	float: left;
-	font-size: 16px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 	width: 100%;
@@ -853,7 +906,6 @@ a:active {
  padding: 10px;
  float:left;
  text-decoration: none;
- color: #999999;
  border-bottom: 1px solid #999999;
 }
 
@@ -864,7 +916,6 @@ a:active {
  border-bottom: none;
  border-color: #999999;
  border-radius: 10px 10px 0px 0px;
- color: #000000;
 }
 
 #files {
@@ -889,7 +940,6 @@ a:active {
   float: left;
 }
 .specs_title {
-  font-size: 16px;
   float: left;
   margin-right: 10px;
   margin-top: 5px;
@@ -898,10 +948,6 @@ a:active {
 #prop_fields input, #edit_prop_fields input {
   width: 220px;
   float: left;
-}
-
-.clickable {
-  font-size: 16px;
 }
 
 .clickable:hover {
@@ -945,12 +991,18 @@ a:active {
   border-radius: 10px;
   box-shadow: 0px 0px 15px 1px #dddddd;
   padding: 10px;
-  font-size: 16px;
 }
 
-.auth * {
-  float: right;
-  margin-top: 10px;
+.auth {
+  clear:both;
+  overflow: auto;
+}
+
+.auth a {
+  font-size: 14px;
+  display: inline-block;
+  padding-top: 10px;
+  padding-right: 10px;
 }
 
 .top5 {
@@ -965,6 +1017,15 @@ a:active {
   margin-top: 20px;
 }
 
+.paddingtop10 {
+  padding-top: 10px;
+}
+
+.paddingtop20 {
+  padding-top: 20px;
+}
+
+
 .left10 {
   margin-left: 10px;
   position: relative;
@@ -978,7 +1039,10 @@ a:active {
 
 .right20 {
   margin-right: 20px;
-  position: relative;
+}
+
+.right10 {
+  margin-right: 10px;
 }
 
 .bordertop {
@@ -986,5 +1050,42 @@ a:active {
 }
 
 .userinputs {
-  width: 360px;
+  width: 440px;
+}
+
+.addressinputs {
+  width: 430px;
+}
+
+.addressinputs input{
+  width: 300px;
+}
+
+.accordion {
+  max-height: 400px;
+}
+
+.accordion .accordion_title, .accordion .accordion_content {
+  padding: 10px;
+  border-bottom: 0; 
+}
+
+.accordion > .accordion_content {
+  display: none;
+}
+
+.accordion .accordion_title {
+  box-shadow: 0px 0px 15px 1px #dddddd;
+  height: 20px;
+}
+
+.accordion .accordion_title a, .accordion .accordion_title a {
+  display: block;
+}
+
+.address_template {
+  display: none;
+}
+#sortSelect {
+  width: 200px;
 }

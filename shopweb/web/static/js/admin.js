@@ -52,7 +52,7 @@
           window.products.closeDialog();
         }
         if (window.categories !== undefined) {
-          window.categories.closeDialog();
+          window.common.closeDialog();
         }
       }
     };
@@ -64,7 +64,7 @@ var admin = {
 
   saveCategory : function(formId) {
     window.admin.save(formId, function() {
-      window.categories.closeDialog();
+      window.common.closeDialog();
       window.categories.reloadCategories();
     });
   },
@@ -108,7 +108,7 @@ var admin = {
       var frm = this;
       var formData = new FormData(frm);
 
-      $(formId + ' label').css("color", "#000000").removeAttr("title");
+      $(formId + ' label').css("color", "#555555").removeAttr("title");
       $.ajax({
         url : $(frm).attr('action'),
         type : "POST",

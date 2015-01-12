@@ -3,13 +3,14 @@ package api
 
 import java.util.Date
 
+case class UserInfo(firstName: String, lastName: String, cnp: String, phone: String)
+case class CompanyInfo(name: String, cif: String, regCom: String, bank: String, bankAccount: String, phone: String)
+
 case class UserDetail(id: Option[String] = None,
-                      firstName: String,
-                      lastName: String,
-                      cnp: String,
+                      userInfo: UserInfo,
+                      companyInfo: Option[CompanyInfo],
                       addresses: List[Address],
                       email: String,
-                      phone: Option[String],
                       password: String,
                       permissions: List[String])
 

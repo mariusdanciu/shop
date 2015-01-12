@@ -20,6 +20,7 @@ import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.TermsPage
 import net.shop.web.services.ShopServices
 import net.shop.api.persistence.Persistence
+import net.shop.web.pages.AccountSettingsPage
 
 object StartShop extends App with DefaultLog {
 
@@ -51,6 +52,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
       page("products", Path("web/products.html"), ProductsPage) |
       page("terms", Path("web/terms.html"), TermsPage) |
+      page("accountsettings", Path("web/accountsettings.html"), AccountSettingsPage) |
       getCart() |
       orderService.order |
       createProduct |

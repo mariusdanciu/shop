@@ -10,18 +10,17 @@ import net.shift.engine.utils.ShiftUtils
 import net.shift.engine.http.Request
 import net.shop.web.ShopApplication
 import scala.util.Success
+import net.shift.common.Config
 
 trait SecuredService extends ShiftUtils {
   implicit def login(creds: Credentials): Option[User] = {
     creds match {
-      case BasicCredentials("marius.danciu@gmail.com", "test") =>
-        Some(User("marius.danciu@gmail.com", None, Set(Permission("read"), Permission("write"))))
-
       case BasicCredentials(email, password) =>
 
         ShopApplication.persistence.userByEmail(email) match {
           case Success(ud) if (ud.password == password) =>
-            Some(User(ud.email, None, ud.permissions.map(Permission(_)).toSet))
+            val extraPerms = if (ud.email == Config.string("admin.user")) List("write") else Nil
+            Some(User(ud.email, None, (ud.permissions ++ extraPerms).map(Permission(_)).toSet))
           case _ =>
             None
         }

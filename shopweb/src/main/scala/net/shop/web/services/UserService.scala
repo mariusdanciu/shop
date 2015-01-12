@@ -1,31 +1,31 @@
 package net.shop
 package web.services
 
+import scala.util.Failure
+import scala.util.Success
+import net.shift.common.Base64
 import net.shift.common.DefaultLog
 import net.shift.common.Path
 import net.shift.common.PathUtils
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http._
+import net.shift.engine.page.Html5
 import net.shift.engine.utils.ShiftUtils
 import net.shift.html.Formlet
 import net.shift.html.Formlet._
 import net.shift.html.Validation
-import net.shift.loc.Loc
-import net.shift.template.Selectors
 import net.shift.loc.Language
-import net.shop.api.Category
-import net.shop.web.ShopApplication
-import net.shop.api.UserDetail
-import net.shift.common.Base64
+import net.shift.loc.Loc
 import net.shift.template.PageState
-import net.shift.engine.page.Html5
-import net.shop.web.pages.ForgotPasswordPage
-import scala.util.Success
-import scala.util.Failure
+import net.shift.template.Selectors
 import net.shift.template.SnipState
-import net.shop.messaging.Messaging
+import net.shop.api.UserDetail
 import net.shop.messaging.ForgotPassword
+import net.shop.messaging.Messaging
+import net.shop.web.ShopApplication
+import net.shop.web.pages.ForgotPasswordPage
+import net.shop.api.UserInfo
 
 object UserService extends PathUtils
   with Selectors
@@ -53,6 +53,7 @@ object UserService extends PathUtils
     }
 
   }
+
   def createUser = for {
     r <- POST
     Path("create" :: "user" :: Nil) <- path
@@ -61,13 +62,17 @@ object UserService extends PathUtils
     extract(r) match {
       case net.shift.html.Success(u) =>
 
-        val usr = UserDetail(id = None,
+        val ui = UserInfo(
           firstName = u.firstName,
           lastName = u.lastName,
           cnp = u.cnp,
+          phone = u.phone.getOrElse(""))
+
+        val usr = UserDetail(id = None,
+          userInfo = ui,
+          companyInfo = None,
           addresses = Nil,
           email = u.email,
-          phone = u.phone,
           password = u.password,
           permissions = List("read"))
 

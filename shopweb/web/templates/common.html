@@ -1,6 +1,6 @@
 <html>
 <head>
-<link href='http://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css' />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:700,300,400' rel='stylesheet' type='text/css' />
 <link href="/static/css/style.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="/static/js/jquery-2.0.3.min.js"></script>
@@ -28,6 +28,9 @@
           <span data-snip="user"></span>
         </div>
         <div id="user_symbol" class="clickable top_items top5"></div>
+        <div id="settings_symbol" class="clickable top_items top5">
+          <a href="/accountsettings"><img src="/static/images/settings.png" /></a>
+        </div>
         <div id="search" class="top_items">
           <div>
             <input id="search_text" type="text" />
@@ -66,10 +69,10 @@
         </div>
       </div>
     </form>
-    <div class="row auth bordertop top10">
+    <div class="row_simple auth bordertop top10">
         <a id="authgo" href="#" data-loc="authenticate"></a>
-        <a id="forgotpass" class="right20" href="#" data-loc="forgot.password"></a>
-        <a id="newuser" class="right20" href="#" data-loc="new.user"></a>
+        <a id="forgotpass" href="#" data-loc="forgot.password"></a>
+        <a id="newuser" href="#" data-loc="new.user"></a>
     </div>
   </div>
 
@@ -142,10 +145,10 @@
               <label for="email" data-loc="email"></label><input id="email" name="email" type="text" />
             </div>
             <div>
-              <label for="phone" data-loc="phone"></label><input id="phone" name="phone" type="number" />
+              <label for="phone" data-loc="phone"></label><input id="phone" name="phone" type="text" />
             </div>
             <div>
-              <label for="cnp" data-loc="cnp"></label><input id="cnp" name="cnp" type="number" />
+              <label for="cnp" data-loc="cnp"></label><input id="cnp" name="cnp" type="text" />
             </div>
             <div>
               <input id="country" name="country" type="hidden" value="Romania" /> <label for="region" data-loc="region"></label><input
@@ -167,7 +170,7 @@
             </div>
           </form>
           <div>
-            <a id="buy_final" href="#" data-loc="buy_final"></a>
+            <a id="buy_final" class="top10" href="#" data-loc="buy_final"></a>
           </div>
         </div>
         <div id="pj" class="content">
@@ -191,7 +194,7 @@
               <label for="cemail" data-loc="email"></label><input id="cemail" name="cemail" type="text" />
             </div>
             <div>
-              <label for="cphone" data-loc="phone"></label><input id="cphone" name="cphone" type="number" />
+              <label for="cphone" data-loc="phone"></label><input id="cphone" name="cphone" type="text" />
             </div>
             <div>
               <input id="ccountry" name="ccountry" type="hidden" value="Romania" /> <label for="cregion" data-loc="region"></label><input
@@ -212,7 +215,7 @@
               </div>
             </div>
           </form>
-          <div>
+          <div class="top10">
             <a id="c_buy_final_comp" href="#" data-loc="buy_final"></a>
           </div>
         </div>

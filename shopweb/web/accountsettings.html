@@ -1,0 +1,118 @@
+<html data-template="common">
+<head>
+<script type="text/javascript" src="/static/js/accountsettings.js"></script>
+</head>
+
+<body>
+  <div id="content" class="center page">
+    <div class="column">
+      <form action="/update/settings" id="updatesettings_form" method="POST">
+        <div class="column left30 userinputs">
+          <div class="accordion">
+            <div class="accordion_title clickable">
+              <a href="#" data-loc="person"></a>
+            </div>
+            <div class="accordion_content">
+              <div class="fields">
+                <div class="row">
+                  <label for="update_firstName" data-loc="first.name"></label> <input id="update_firstName" type="text"
+                    name="update_firstName" />
+                </div>
+                <div class="row">
+                  <label for="update_lastName" data-loc="last.name"></label><input id="update_lastName" type="text" name="update_lastName" />
+                </div>
+                <div class="row">
+                  <label for="update_cnp" data-loc="cnp"></label><input id="update_cnp" type="text" name="update_cnp" />
+                </div>
+                <div class="row">
+                  <label for="update_phone" data-loc="phone"></label><input id="update_phone" type="text" name="update_phone" />
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion_title clickable">
+              <a href="#" data-loc="company"></a>
+            </div>
+            <div class="accordion_content">
+              <div class="fields">
+                <div class="row">
+                  <label for="update_cname" data-loc="company.name"></label><input id="update_cname" name="update_cname" type="text" />
+                </div>
+                <div class="row">
+                  <label for="update_cif" data-loc="company.cif"></label><input id="update_cif" name="update_cif" type="text" />
+                </div>
+                <div class="row">
+                  <label for="update_cregcom" data-loc="company.reg.com"></label><input id="update_cregcom" name="update_cregcom"
+                    type="text" />
+                </div>
+                <div class="row">
+                  <label for="update_cbank" data-loc="company.bank"></label><input id="update_cbank" name="update_cbank" type="text" />
+                </div>
+                <div class="row">
+                  <label for="update_cbankaccount" data-loc="company.bank.account"></label><input id="update_cbankaccount"
+                    name="update_cbankaccount" type="text" />
+                </div>
+                <div class="row">
+                  <label for="update_cphone" data-loc="phone"></label><input id="update_cphone" name="update_cphone" type="text" />
+                </div>
+              </div>
+            </div>
+            <div class="fields top20 paddingtop20 bordertop">
+              <div class="row">
+                <label for="update_password" data-loc="password"></label><input id="update_password" type="password" name="update_password" />
+              </div>
+              <div class="row">
+                <label for="update_password2" data-loc="retype.password"></label><input id="update_password2" type="password"
+                  name="update_password2" />
+              </div>
+            </div>
+
+            <div id="update_user">
+              <div class="row bordertop top20 paddingtop10">
+                <a href="#" data-loc="save"></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column left30 addressinputs">
+          <div class="fields">
+            <div class="row">
+              <label for="addr_name">Adauga adresa</label> <input class="left" id="addr_name" type="text" />
+            </div>
+          </div>
+          <div id="addresses" class="accordion"></div>
+        </div>
+      </form>
+    </div>
+
+    <div class="address_template">
+      <div class="accordion_title clickable">
+        <div class="column">
+          <a class="addr_title" href=""></a>
+        </div>
+        <div class="right del">
+          <a href=""><img src="/static/images/minus.png" /></a>
+        </div>
+      </div>
+      <div class="accordion_content">
+        <div class="fields">
+          <div class="row">
+            <label for="addr_region" data-loc="region"></label><input id="addr_region" type="text" name="addr_region" />
+          </div>
+          <div class="row">
+            <label for="addr_city" data-loc="city"></label><input id="addr_city" type="text" name="addr_city" />
+          </div>
+          <div class="row">
+            <label for="addr_addr" data-loc="address"></label><input id="addr_addr" type="text" name="addr_addr" />
+          </div>
+          <div class="row">
+            <label for="addr_zip" data-loc="zip"></label><input id="addr_zip" type="text" name="addr_zip" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+

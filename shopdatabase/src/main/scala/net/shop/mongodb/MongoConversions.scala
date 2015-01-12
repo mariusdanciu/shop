@@ -9,6 +9,8 @@ import net.shop.api.Category
 import org.bson.types.ObjectId
 import net.shop.api.UserDetail
 import net.shop.api.Address
+import net.shop.api.UserInfo
+import net.shop.api.CompanyInfo
 
 trait MongoConversions {
   def productToMongo(obj: ProductDetail): MongoDBObject = {
@@ -34,12 +36,27 @@ trait MongoConversions {
 
   def userToMongo(u: UserDetail): DBObject = {
     val db = MongoDBObject.newBuilder
-    db += "firstName" -> u.firstName
-    db += "lastName" -> u.lastName
-    db += "cnp" -> u.cnp
+
+    val userInfo = MongoDBObject.newBuilder
+    userInfo += "firstName" -> u.userInfo.firstName
+    userInfo += "lastName" -> u.userInfo.lastName
+    userInfo += "cnp" -> u.userInfo.cnp
+    userInfo += "phone" -> u.userInfo.phone
+
+    val companyInfo = u.companyInfo.map { ci =>
+      val companyInfo = MongoDBObject.newBuilder
+      companyInfo += "name" -> ci.name
+      companyInfo += "cif" -> ci.cif
+      companyInfo += "regCom" -> ci.regCom
+      companyInfo += "bank" -> ci.bank
+      companyInfo += "bankAccount" -> ci.bankAccount
+      companyInfo += "phone" -> ci.phone
+      companyInfo.result()
+    }
+    db += "userInfo" -> userInfo.result
+    db += "companyInfo" -> companyInfo
     db += "addresses" -> u.addresses.map(addressToMongo(_))
     db += "email" -> u.email
-    db += "phone" -> u.phone
     db += "password" -> u.password
     db += "permissions" -> u.permissions
     db.result
@@ -71,16 +88,31 @@ trait MongoConversions {
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
       image = obj.getAs[String]("image"))
 
-  def mongoToUser(obj: DBObject): UserDetail =
+  def mongoToUser(obj: DBObject): UserDetail = {
+
+    val ui = UserInfo(
+      firstName = obj.getAsOrElse[String]("userInfo.firstName", ""),
+      lastName = obj.getAsOrElse[String]("userInfo.lastName", ""),
+      cnp = obj.getAsOrElse[String]("userInfo.cnp", ""),
+      phone = obj.getAsOrElse[String]("userInfo.phone", ""))
+
+    val ci = obj.getAs[String]("companyInfo.name").map(name =>
+      CompanyInfo(
+        name = name,
+        cif = obj.getAsOrElse[String]("companyInfo.cif", ""),
+        regCom = obj.getAsOrElse[String]("companyInfo.regCom", ""),
+        bank = obj.getAsOrElse[String]("companyInfo.bank", ""),
+        bankAccount = obj.getAsOrElse[String]("companyInfo.bankAccount", ""),
+        phone = obj.getAsOrElse[String]("companyInfo.phone", "")))
+
     UserDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
-      firstName = obj.getAsOrElse[String]("firstName", ""),
-      lastName = obj.getAsOrElse[String]("lastName", ""),
-      cnp = obj.getAsOrElse[String]("cnp", ""),
+      userInfo = ui,
+      companyInfo = ci,
       addresses = obj.getAsOrElse[List[DBObject]]("addresses", Nil).map(mongoToAddress(_)),
       email = obj.getAsOrElse[String]("email", ""),
-      phone = obj.getAs[String]("phone"),
       password = obj.getAsOrElse[String]("password", ""),
       permissions = obj.getAsOrElse[List[String]]("permissions", Nil))
+  }
 
   def mongoToAddress(obj: DBObject): Address =
     Address(id = obj.getAs[ObjectId]("_id").map(_.toString),
