@@ -111,11 +111,6 @@
       }
     });
 
-    $("#gosearch").click(function(e) {
-      var text = $("#search_text").val();
-      window.location.href = '/products?search=' + text;
-    });
-
     window.cart.loadView();
   });
 

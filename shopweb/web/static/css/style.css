@@ -703,8 +703,10 @@ a:active {
 	border: 1px solid #cccccc;
 	width: 200px;
 	height: 32px;
-	color: #999999;
+	color: #666666;
 	font-size: 20px;
+	background-image: url("/static/images/search.png");
+    background-repeat: no-repeat;
 	
 }
 
@@ -1058,7 +1060,7 @@ a:active {
 }
 
 .accordion .accordion_title {
-  box-shadow: 0px 0px 15px 1px #dddddd;
+  border-top: 1px solid #cccccc;
   height: 20px;
 }
 
