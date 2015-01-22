@@ -66,7 +66,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
     _ <- ajax
     r <- path("auth")
     u <- authenticate(Loc.loc0(r.language)("login.fail").text)
-  } yield service(_(Resp.ok.withSecurityCookies(u)))
+  } yield service(_(Resp.ok.securityCookies(u)))
 
   def ajaxProductsList = for {
     r <- ajax
@@ -86,7 +86,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   def tryLogout(r: Request, attempt: Attempt): Attempt = {
     val logout = !r.param("logout").isEmpty
     if (logout)
-      attempt.map(_.withResponse { _ withoutSecurityCookies })
+      attempt.map(_.withResponse { _ dropSecurityCookies })
     else
       attempt
   }

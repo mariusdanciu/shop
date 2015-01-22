@@ -49,7 +49,7 @@ object UserService extends PathUtils
     }) match {
       case Success(_) => service(_(Resp.ok))
       case Failure(t) =>
-        service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(email)).text)))
+        service(_(Resp.notFound.asText.body(Loc.loc(r.language)("user.not.found", Seq(email)).text)))
     }
 
   }
@@ -81,7 +81,7 @@ object UserService extends PathUtils
             service(_(Resp.created))
           case scala.util.Failure(t) =>
             error("Cannot create user ", t)
-            service(_(Resp.serverError.withBody(Loc.loc0(r.language)("user.cannot.create").text)))
+            service(_(Resp.serverError.body(Loc.loc0(r.language)("user.cannot.create").text)))
         }
 
       case net.shift.html.Failure(msgs) => validationFail(msgs)

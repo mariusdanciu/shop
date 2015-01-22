@@ -73,13 +73,13 @@ object ShopBuild extends Build {
       settings = Defaults.defaultSettings ++ Seq(distShopApiSetting))
 
 
-  lazy val shopweb = Project(id = "shopweb", 
-      base = file("shopweb"), 
-      settings = Defaults.defaultSettings ++ Seq(distShopWebSetting)) dependsOn (shopapi)
-
   lazy val shopdatabase = Project(id = "shopdatabase", 
       base = file("shopdatabase"),
       settings = Defaults.defaultSettings ++ Seq(distShopDBSetting)) dependsOn (shopapi)
+
+  lazy val shopweb = Project(id = "shopweb", 
+      base = file("shopweb"), 
+      settings = Defaults.defaultSettings ++ Seq(distShopWebSetting)) dependsOn (shopapi, shopdatabase)
 
 }
 

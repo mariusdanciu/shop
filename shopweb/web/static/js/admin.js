@@ -34,7 +34,7 @@
 
     $("#create_product").click(function(event) {
       window.admin.save("#upload_form", function() {
-        window.products.closeDialog();
+    	window.common.closeDialog();
         window.products.reloadProducts();
       });
       event.stopPropagation();
@@ -49,7 +49,7 @@
 
       if (evt.keyCode == 27) {
         if (window.products !== undefined) {
-          window.products.closeDialog();
+          window.common.closeDialog();
         }
         if (window.categories !== undefined) {
           window.common.closeDialog();
