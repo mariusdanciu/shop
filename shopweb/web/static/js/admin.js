@@ -34,7 +34,7 @@
 
     $("#create_product").click(function(event) {
       window.admin.save("#upload_form", function() {
-    	window.common.closeDialog();
+        window.common.closeDialog();
         window.products.reloadProducts();
       });
       event.stopPropagation();

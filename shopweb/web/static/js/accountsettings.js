@@ -52,6 +52,7 @@ var settings = {
       title.find('.addr_title').text(name);
       content.find("input").each(function(e) {
         $(this).attr("name", $(this).attr("name") + "/" + name);
+        $(this).attr("id", $(this).attr("id") + "/" + name);
       });
 
       $('#addresses').append(title).append(content);

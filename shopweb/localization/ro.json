@@ -413,6 +413,26 @@
    "code" : "185",
    "name" : "recover.password",
    "text" : "Recuperare parola"
+ },
+ {
+   "code" : "186",
+   "name" : "user.not.found",
+   "text" : "Utilizatorul '%s' nu a fost gasit"
+ },
+ {
+   "code" : "187",
+   "name" : "user.already.exists",
+   "text" : "Utilizatorul exista deja"
+ },
+ {
+   "code" : "188",
+   "name" : "country",
+   "text" : "Tara"
+ },
+ {
+   "code" : "189",
+   "name" : "settings",
+   "text" : "Set\u0103ri"
  }
  
 ]

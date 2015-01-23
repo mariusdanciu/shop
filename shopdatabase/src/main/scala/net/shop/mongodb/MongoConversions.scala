@@ -94,7 +94,7 @@ trait MongoConversions {
       firstName = obj.getAsOrElse[String]("userInfo.firstName", ""),
       lastName = obj.getAsOrElse[String]("userInfo.lastName", ""),
       cnp = obj.getAsOrElse[String]("userInfo.cnp", ""),
-      phone = obj.getAsOrElse[String]("userInfo.phone", ""))
+      phone = obj.getAs[String]("userInfo.phone"))
 
     val ci = obj.getAs[String]("companyInfo.name").map(name =>
       CompanyInfo(
@@ -103,7 +103,7 @@ trait MongoConversions {
         regCom = obj.getAsOrElse[String]("companyInfo.regCom", ""),
         bank = obj.getAsOrElse[String]("companyInfo.bank", ""),
         bankAccount = obj.getAsOrElse[String]("companyInfo.bankAccount", ""),
-        phone = obj.getAsOrElse[String]("companyInfo.phone", "")))
+        phone = obj.getAs[String]("companyInfo.phone")))
 
     UserDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
       userInfo = ui,

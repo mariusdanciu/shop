@@ -66,7 +66,7 @@ object UserService extends PathUtils
           firstName = u.firstName,
           lastName = u.lastName,
           cnp = u.cnp,
-          phone = u.phone.getOrElse(""))
+          phone = u.phone)
 
         val usr = UserDetail(id = None,
           userInfo = ui,
