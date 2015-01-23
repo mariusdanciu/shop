@@ -39,7 +39,7 @@ p {
 }
 
 input {
-	height: 26px;
+	height: 30px;
 }
 
 textarea, input, select, .preview {
@@ -552,14 +552,8 @@ a:active {
 }
 
 .upload_form_fields input, .select_row select, #order input {
-	height: 26px;
 	width: 250px;
 	margin-right: 5px;
-}
-
-#order form div {
-	width: 100%;
-	height: 35px;
 }
 
 #upload_form label, #order form label {
@@ -583,7 +577,7 @@ a:active {
 }
 
 .row {
-	height: 35px;
+	height: 40px;
 	width: 100%;
 	text-align: left;
 }

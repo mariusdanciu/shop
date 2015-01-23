@@ -55,14 +55,8 @@ object SettingsService extends PathUtils
     }
 
     def normalize = {
-      val p = params.filter { case (k, v) => k contains ":" }.groupBy {
+      params.filter { case (k, v) => k contains ":" }.groupBy {
         case (k, v) => toPair(k).map(_._2) getOrElse ""
-      }
-      p.map {
-        case (k, v) =>
-          (k, v.map {
-            case (vk, vv) => toPair(vk).map(t => (t._1, vv)) getOrElse ("", vv)
-          })
       }
     }
 
@@ -88,10 +82,10 @@ object SettingsService extends PathUtils
     } yield {
       val addrFormlet = Formlet(address) <*>
         inputText(s"addr_country:$k")(validateDefault("Romania")) <*>
-        inputText(s"addr_region:$k")(validateText(s"addr_region:$k", ?("region").text)) <*>
-        inputText(s"addr_city:$k")(validateText(s"addr_city:$k", ?("city").text)) <*>
-        inputText(s"addr_addr:$k")(validateText(s"addr_addr:$k", ?("address").text)) <*>
-        inputText(s"addr_zip:$k")(validateText(s"addr_zip:$k", ?("zip").text))
+        inputText(s"addr_region:$k")(required(s"addr_region:$k", ?("region").text, Success(_))) <*>
+        inputText(s"addr_city:$k")(required(s"addr_city:$k", ?("city").text, Success(_))) <*>
+        inputText(s"addr_addr:$k")(required(s"addr_addr:$k", ?("address").text, Success(_))) <*>
+        inputText(s"addr_zip:$k")(required(s"addr_zip:$k", ?("zip").text, Success(_)))
       addrFormlet validate par
     }
   }
