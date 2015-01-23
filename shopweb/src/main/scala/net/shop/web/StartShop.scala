@@ -63,6 +63,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       updateCategory |
       createUser |
       forgotPassword |
+      updateSettings |
       service(notFoundService)
   } yield c
 

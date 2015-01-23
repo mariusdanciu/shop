@@ -115,7 +115,6 @@ a:active {
   border: 1px solid #999999;
   text-decoration: none;
   position: relative;
-  margin-top: 10px;
   display: inline-block;
 }
 
@@ -957,7 +956,6 @@ a:active {
 
 #save_product {
   font-size: 18px;
-  margin-top: 10px;
 }
 
 .hidden {

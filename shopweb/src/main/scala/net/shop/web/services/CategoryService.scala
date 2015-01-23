@@ -117,7 +117,7 @@ object CategoryService extends PathUtils
 
     val categoryFormlet = Formlet(category) <*>
       inputText("title")(validateMapField("title", ?("title").text)) <*>
-      inputFile("files")(validateDefault("files", None))
+      inputFile("files")(validateDefault(None))
 
     (file, categoryFormlet validate params)
 

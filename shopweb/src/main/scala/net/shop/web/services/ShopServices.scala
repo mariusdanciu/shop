@@ -55,7 +55,6 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   implicit val reqSelector = bySnippetAttr[SnipState[Request]]
   implicit val cartItemsSelector = bySnippetAttr[SnipState[CartState]]
 
-  
   def logReq = for {
     r <- req
   } yield {
@@ -162,10 +161,12 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   def deleteCategory = CategoryService.deleteCategory
 
   def updateCategory = CategoryService.updateCategory
-  
+
   def createUser = UserService.createUser
-  
+
   def forgotPassword = UserService.forgotPassword
+
+  def updateSettings = SettingsService.updateSettings
 
 }
 

@@ -22,72 +22,57 @@ trait FormValidation {
   type ValidationMap = Map[String, String]
   type ValidationList = List[String]
   type ValidationInput = Map[String, List[String]]
+  type ValidationFunc[T] = ValidationInput => Validation[ValidationError, T]
 
   implicit val o = new Ordering[Double] {
     def compare(l: Double, r: Double): Int = (l - r).toInt
   }
 
-  def validateProps(title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, ValidationMap] = env => {
-    (env.get("pkey"), env.get("pval")) match {
-      case (Some(k), Some(v)) => Success(k.zip(v).toMap)
-      case _                  => Success(Map.empty)
+  def required[T](name: String, title: String, f: String => Validation[ValidationError, T])(implicit lang: Language): ValidationFunc[T] =
+    env => {
+      val failed = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
+
+      env.get(name) match {
+        case Some(n :: _) if !n.isEmpty => f(n)
+        case Some(n) if n.isEmpty       => failed
+        case _                          => failed
+      }
     }
-  }
 
-  def validateMapField(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, ValidationMap] = env => {
-    val failed = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
-
-    env.get(name) match {
-      case Some(n :: _) if !n.isEmpty => Success(Map(lang.language -> n))
-      case Some(n) if n.isEmpty       => failed
-      case _                          => failed
+  def optional[T](name: String, title: String, default: => T, f: String => Validation[ValidationError, T])(implicit lang: Language): ValidationFunc[T] =
+    env => {
+      env.get(name) match {
+        case Some(n :: _) if !n.isEmpty => f(n)
+        case Some(n) if n.isEmpty       => Success(default)
+        case _                          => Success(default)
+      }
     }
-  }
 
-  def validateListField(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, ValidationList] = env => {
-    val failed = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
-    env.get(name) match {
-      case Some(n :: Nil) if !n.isEmpty => Success(n.split("\\s*,\\s*").toList)
-      case Some(n) if !n.isEmpty        => Success(n)
-      case Some(n) if n.isEmpty         => failed
-      case _                            => failed
+  def validateProps(title: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
+    env => {
+      (env.get("pkey"), env.get("pval")) match {
+        case (Some(k), Some(v)) => Success(k.zip(v).toMap)
+        case _                  => Success(Map.empty)
+      }
     }
-  }
 
-  def validateDouble(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, Double] = env => {
-    val failed = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
+  def validateMapField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
+    required(name, title, s => Success(Map(lang.language -> s)))
 
-    env.get(name) match {
-      case Some(n :: _) if !n.isEmpty => Success(n.toDouble)
-      case Some(n) if n.isEmpty       => failed
-      case _                          => failed
-    }
-  }
+  def validateListField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationList] =
+    required(name, title, s => Success(s.split("\\s*,\\s*").toList))
 
-  def validateText(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, String] = env => {
-    val failed = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
+  def validateDouble(name: String, title: String)(implicit lang: Language): ValidationFunc[Double] =
+    required(name, title, s => Success(s.toDouble))
 
-    env.get(name) match {
-      case Some(n :: _) if !n.isEmpty => Success(n)
-      case Some(n) if n.isEmpty       => failed
-      case _                          => failed
-    }
-  }
+  def validateText(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, String] =
+    optional(name, title, "", Success(_))
 
-  def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, String] = env => {
-    val failed = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
-
-    env.get(name) match {
-      case Some(n :: _) if !n.isEmpty =>
-        ShopApplication.persistence.userByEmail(n) match {
-          case scala.util.Success(email) => Failure(List((name, Loc.loc0(lang)("user.already.exists").text)))
-          case _ => Success(n)
-        }
-
-      case Some(n) if n.isEmpty => failed
-      case _                    => failed
-    }
-  }
+  def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, String] =
+    required(name, title, s => ShopApplication.persistence.userByEmail(s) match {
+      case scala.util.Success(email) => Failure(List((name, Loc.loc0(lang)("user.already.exists").text)))
+      case _                         => Success(s)
+    })
 
   def validateOptional[T](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[ValidationError, Option[T]] = env => {
     env.get(name) match {
@@ -96,7 +81,7 @@ trait FormValidation {
     }
   }
 
-  def validateDefault[S](name: String, v: S)(implicit lang: Language): ValidationInput => Validation[ValidationError, S] =
+  def validateDefault[S](v: S)(implicit lang: Language): ValidationInput => Validation[ValidationError, S] =
     env => Success(v)
 
   def extractParams(text: List[MultiPart]) = ((Map.empty: Map[String, List[String]]) /: text) {
@@ -151,3 +136,5 @@ trait FormValidation {
         }): _*)
     }.wrap.apply.toJsString)))
 }
+
+case class ValidationCombiner()

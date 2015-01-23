@@ -1,6 +1,7 @@
 package net.shop
 package web.services
 
+import net.shift.engine.ShiftApplication.service
 import net.shift.common.TraversingSpec
 import net.shift.engine.utils.ShiftUtils
 import net.shift.common.DefaultLog
@@ -19,6 +20,9 @@ import net.shift.security.User
 import net.shop.api.UserInfo
 import net.shop.api.CompanyInfo
 import net.shop.api.Address
+import net.shift.html.Failure
+import net.shift.html.Success
+import net.shift.engine.http.Resp
 
 object SettingsService extends PathUtils
   with Selectors
@@ -27,23 +31,31 @@ object SettingsService extends PathUtils
   with FormValidation
   with SecuredService {
 
-  def createUser = for {
+  val k = updateSettings
+
+  def updateSettings = for {
     r <- POST
     Path("update" :: "settings" :: Nil) <- path
-    u <- user
+    u <- authenticate(Loc.loc0(r.language)("login.fail").text)
   } yield {
     implicit val loc = r.language
+    extract(r, u) match {
+      case Success(u) =>
+        println(u)
+        service(_(Resp.created))
+      case Failure(e) => validationFail(e)
+    }
   }
 
-  private def extractAddresses(params: Map[String, List[String]])(implicit loc: Language): List[Address] = {
+  private def extractAddresses(params: Map[String, List[String]])(implicit loc: Language): Validation[ValidationError, List[Address]] = {
 
-    def toPair(s: String): Option[(String, String)] = s.split("/").toList match {
+    def toPair(s: String): Option[(String, String)] = s.split(":").toList match {
       case name :: value :: Nil => Some((name, value))
       case _                    => None
     }
 
     def normalize = {
-      val p = params.filter { case (k, v) => k contains "/" }.groupBy {
+      val p = params.filter { case (k, v) => k contains ":" }.groupBy {
         case (k, v) => toPair(k).map(_._2) getOrElse ""
       }
       p.map {
@@ -56,7 +68,16 @@ object SettingsService extends PathUtils
 
     val addresses = validateAddresses(normalize)
 
-    Nil
+    val errors = (((Nil: ValidationError), Nil: List[Address]) /: addresses)((acc, e) => e match {
+      case Failure(e)    => (acc._1 ::: e, acc._2)
+      case Success(addr) => (acc._1, acc._2 ::: List(addr))
+    })
+
+    errors match {
+      case (Nil, list) => Success(list)
+      case (errors, _) => Failure(errors)
+    }
+
   }
 
   private def validateAddresses(res: Map[String, Map[String, List[String]]])(implicit loc: Language) = {
@@ -66,19 +87,18 @@ object SettingsService extends PathUtils
       (k, par) <- res
     } yield {
       val addrFormlet = Formlet(address) <*>
-        inputText(s"addr_country/$k")(validateDefault(s"addr_country/$k", "Romania")) <*>
-        inputText(s"addr_region/$k")(validateText(s"addr_region/$k", ?("region").text)) <*>
-        inputText(s"addr_city/$k")(validateText(s"addr_city/$k", ?("city").text)) <*>
-        inputText(s"addr_addr/$k")(validateText(s"addr_addr/$k", ?("address").text)) <*>
-        inputText(s"addr_zip/$k")(validateText(s"addr_zip/$k", ?("zip").text))
+        inputText(s"addr_country:$k")(validateDefault("Romania")) <*>
+        inputText(s"addr_region:$k")(validateText(s"addr_region:$k", ?("region").text)) <*>
+        inputText(s"addr_city:$k")(validateText(s"addr_city:$k", ?("city").text)) <*>
+        inputText(s"addr_addr:$k")(validateText(s"addr_addr:$k", ?("address").text)) <*>
+        inputText(s"addr_zip:$k")(validateText(s"addr_zip:$k", ?("zip").text))
       addrFormlet validate par
     }
   }
 
-  private def extract(r: Request, u: User)(implicit loc: Language): Validation[ValidationError, UpdateUser] = {
+  private def extract(r: Request, u: User)(implicit loc: Language): Validation[ValidationError, UserForm] = {
     val ? = Loc.loc0(loc) _
 
-    val user = (CreateUser.apply _).curried
     val ui = (UserInfo.apply _).curried
     val ci = (CompanyInfo.apply _).curried
     val uu = (UpdateUser.apply _).curried
@@ -106,7 +126,7 @@ object SettingsService extends PathUtils
       inputText("update_password")(validateText("update_password", ?("password").text)) <*>
       inputText("update_password2")(validateText("update_password2", ?("retype.password").text))
 
-    (updateFormlet validate r.params flatMap {
+    val valid = (updateFormlet validate r.params flatMap {
       case p @ UpdateUser(_,
         _,
         pass,
@@ -115,10 +135,18 @@ object SettingsService extends PathUtils
       case p =>
         net.shift.html.Success(p)
     })
+
+    (valid, extractAddresses(r.params)) match {
+      case (Failure(l), Failure(r)) => Failure(l ::: r)
+      case (Failure(l), _)          => Failure(l)
+      case (_, Failure(r))          => Failure(r)
+      case (Success(l), Success(r)) => Success(UserForm(l, r))
+    }
+
   }
 }
 
 case class UpdateUser(userInfo: UserInfo, companyInfo: CompanyInfo, pass: String, verifyPass: String)
-
+case class UserForm(user: UpdateUser, addresses: List[Address])
 
 

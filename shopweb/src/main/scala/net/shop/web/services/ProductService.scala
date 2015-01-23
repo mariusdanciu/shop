@@ -133,9 +133,9 @@ object ProductService extends PathUtils
       inputText(fieldPrefix + "properties")(validateProps(?("properties").text)) <*>
       inputDouble(fieldPrefix + "price")(validateDouble(fieldPrefix + "price", ?("price").text)) <*>
       inputOptional(fieldPrefix + "discount_price")(validateOptional(fieldPrefix + "discount_price", s => Some(s.toDouble))) <*>
-      inputInt(fieldPrefix + "soldCount")(validateDefault(fieldPrefix + "soldCount", 0)) <*>
+      inputInt(fieldPrefix + "soldCount")(validateDefault(0)) <*>
       inputSelect(fieldPrefix + "categories", Nil)(validateListField(fieldPrefix + "categories", ?("categories").text)) <*>
-      inputFile("files")(validateDefault("files", Nil)) <*>
+      inputFile("files")(validateDefault(Nil)) <*>
       inputSelect(fieldPrefix + "keywords", Nil)(validateListField(fieldPrefix + "keywords", ?("keywords").text))
 
     (files, productFormlet validate params flatMap {
