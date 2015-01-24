@@ -70,7 +70,7 @@ label:hover {
 
 label {
   position: relative;
-  top: 5px;
+  top: 7px;
   float: left;
 }
 
@@ -1035,7 +1035,7 @@ a:active {
 }
 
 .addressinputs input{
-  width: 300px;
+  width: 290px;
 }
 
 .accordion {

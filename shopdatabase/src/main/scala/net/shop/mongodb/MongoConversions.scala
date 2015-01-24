@@ -43,18 +43,16 @@ trait MongoConversions {
     userInfo += "cnp" -> u.userInfo.cnp
     userInfo += "phone" -> u.userInfo.phone
 
-    val companyInfo = u.companyInfo.map { ci =>
-      val companyInfo = MongoDBObject.newBuilder
-      companyInfo += "name" -> ci.name
-      companyInfo += "cif" -> ci.cif
-      companyInfo += "regCom" -> ci.regCom
-      companyInfo += "bank" -> ci.bank
-      companyInfo += "bankAccount" -> ci.bankAccount
-      companyInfo += "phone" -> ci.phone
-      companyInfo.result()
-    }
+    val companyInfo = MongoDBObject.newBuilder
+    companyInfo += "name" -> u.companyInfo.name
+    companyInfo += "cif" -> u.companyInfo.cif
+    companyInfo += "regCom" -> u.companyInfo.regCom
+    companyInfo += "bank" -> u.companyInfo.bank
+    companyInfo += "bankAccount" -> u.companyInfo.bankAccount
+    companyInfo += "phone" -> u.companyInfo.phone
+
     db += "userInfo" -> userInfo.result
-    db += "companyInfo" -> companyInfo
+    db += "companyInfo" -> companyInfo.result
     db += "addresses" -> u.addresses.map(addressToMongo(_))
     db += "email" -> u.email
     db += "password" -> u.password
@@ -64,6 +62,7 @@ trait MongoConversions {
 
   def addressToMongo(addr: Address): DBObject = {
     val db = MongoDBObject.newBuilder
+    db += "name" -> addr.name
     db += "country" -> addr.country
     db += "region" -> addr.region
     db += "city" -> addr.city
@@ -91,19 +90,18 @@ trait MongoConversions {
   def mongoToUser(obj: DBObject): UserDetail = {
 
     val ui = UserInfo(
-      firstName = obj.getAsOrElse[String]("userInfo.firstName", ""),
-      lastName = obj.getAsOrElse[String]("userInfo.lastName", ""),
-      cnp = obj.getAsOrElse[String]("userInfo.cnp", ""),
-      phone = obj.getAs[String]("userInfo.phone"))
+      firstName = obj.expand[String]("userInfo.firstName").getOrElse(""),
+      lastName = obj.expand[String]("userInfo.lastName").getOrElse(""),
+      cnp = obj.expand[String]("userInfo.cnp").getOrElse(""),
+      phone = obj.expand[String]("userInfo.phone").getOrElse(""))
 
-    val ci = obj.getAs[String]("companyInfo.name").map(name =>
-      CompanyInfo(
-        name = name,
-        cif = obj.getAsOrElse[String]("companyInfo.cif", ""),
-        regCom = obj.getAsOrElse[String]("companyInfo.regCom", ""),
-        bank = obj.getAsOrElse[String]("companyInfo.bank", ""),
-        bankAccount = obj.getAsOrElse[String]("companyInfo.bankAccount", ""),
-        phone = obj.getAs[String]("companyInfo.phone")))
+    val ci = CompanyInfo(
+      name = obj.expand[String]("companyInfo.name").getOrElse(""),
+      cif = obj.expand[String]("companyInfo.cif").getOrElse(""),
+      regCom = obj.expand[String]("companyInfo.regCom").getOrElse(""),
+      bank = obj.expand[String]("companyInfo.bank").getOrElse(""),
+      bankAccount = obj.expand[String]("companyInfo.bankAccount").getOrElse(""),
+      phone = obj.expand[String]("companyInfo.phone").getOrElse(""))
 
     UserDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
       userInfo = ui,
@@ -116,6 +114,7 @@ trait MongoConversions {
 
   def mongoToAddress(obj: DBObject): Address =
     Address(id = obj.getAs[ObjectId]("_id").map(_.toString),
+      name = obj.getAsOrElse[String]("name", ""),
       country = obj.getAsOrElse[String]("country", ""),
       region = obj.getAsOrElse[String]("region", ""),
       city = obj.getAsOrElse[String]("city", ""),

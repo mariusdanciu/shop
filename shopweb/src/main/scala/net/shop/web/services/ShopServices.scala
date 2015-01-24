@@ -4,13 +4,11 @@ package web.services
 import scala.Option.option2Iterable
 import scala.util.Failure
 import scala.util.Success
-
 import org.json4s.DefaultFormats
 import org.json4s.jvalue2extractable
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization.write
 import org.json4s.string2JsonInput
-
 import net.shift.common.DefaultLog
 import net.shift.common.Path
 import net.shift.common.PathUtils
@@ -45,6 +43,7 @@ import net.shop.web.pages.CategoryPage
 import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
+import net.shop.web.pages.SettingsPageState
 
 trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService {
 
@@ -54,6 +53,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
 
   implicit val reqSelector = bySnippetAttr[SnipState[Request]]
   implicit val cartItemsSelector = bySnippetAttr[SnipState[CartState]]
+  implicit val settingsSelector = bySnippetAttr[SnipState[SettingsPageState]]
 
   def logReq = for {
     r <- req
@@ -96,6 +96,14 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   } yield {
     val logout = !r.param("logout").isEmpty
     tryLogout(r, Html5.pageFromFile(PageState(r, r.language, if (logout) None else u), filePath, snipets))
+  }
+
+  def settingsPage(uri: String, filePath: Path, snipets: DynamicContent[SettingsPageState]) = for {
+    r <- path(uri)
+    u <- userRequired(Loc.loc0(r.language)("login.fail").text)
+  } yield {
+    val logout = !r.param("logout").isEmpty
+    tryLogout(r, Html5.pageFromFile(PageState(SettingsPageState(r, None), r.language, Some(u)), filePath, snipets))
   }
 
   def page[T](f: (Request, Option[User]) => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
@@ -143,7 +151,6 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
       case _ => resp(JsonResponse("[]"))
     })
 
-  def orderService = OrderService
 
   private def readCart(json: String): Cart = {
     implicit val formats = DefaultFormats
@@ -163,7 +170,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   def updateCategory = CategoryService.updateCategory
 
   def createUser = UserService.createUser
-
+  
   def forgotPassword = UserService.forgotPassword
 
   def updateSettings = SettingsService.updateSettings

@@ -21,6 +21,12 @@ import net.shop.web.pages.TermsPage
 import net.shop.web.services.ShopServices
 import net.shop.api.persistence.Persistence
 import net.shop.web.pages.AccountSettingsPage
+import net.shop.web.services.UserService
+import net.shop.web.services.SettingsService
+import net.shop.web.services.CategoryService
+import net.shop.web.services.ProductService
+import net.shop.web.services.OrderService
+import net.shop.web.services.ShopServices
 
 object StartShop extends App with DefaultLog {
 
@@ -52,18 +58,19 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
       page("products", Path("web/products.html"), ProductsPage) |
       page("terms", Path("web/terms.html"), TermsPage) |
-      page("accountsettings", Path("web/accountsettings.html"), AccountSettingsPage) |
+      settingsPage("accountsettings", Path("web/accountsettings.html"), AccountSettingsPage) |
       getCart() |
-      orderService.order |
-      createProduct |
-      deleteProduct |
-      updateProduct |
-      createCategory |
-      deleteCategory |
-      updateCategory |
-      createUser |
-      forgotPassword |
-      updateSettings |
+      OrderService.order |
+      ProductService.createProduct |
+      ProductService.deleteProduct |
+      ProductService.updateProduct |
+      CategoryService.createCategory |
+      CategoryService.deleteCategory |
+      CategoryService.updateCategory |
+      UserService.createUser |
+      UserService.userInfo |
+      UserService.forgotPassword |
+      SettingsService.updateSettings |
       service(notFoundService)
   } yield c
 

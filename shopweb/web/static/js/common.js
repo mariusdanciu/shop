@@ -76,6 +76,7 @@
     });
 
     $("#buy_step1").click(function(event) {
+      cart.fetchUserInfo();
       cart.showStep1Links();
       event.stopPropagation();
       event.preventDefault();
@@ -120,7 +121,18 @@ var common = {
   closeDialog : function() {
     $.unblockUI();
     $("#user_popup").hide();
+  },
+  
+  showNotice : function(text) {
+    $("#notice_i").html(text);
+    $("#notice_i").show().delay(5000).fadeOut("slow");
+  },
+  
+  showError : function(text) {
+    $("#notice_e").html(text);
+    $("#notice_e").show().delay(5000).fadeOut("slow");
   }
+
 }
 
 var user = {
@@ -214,6 +226,32 @@ var user = {
 
 var cart = {
 
+  fetchUserInfo : function() {
+    $.ajax({
+      url : "/userinfo",
+      dataType : "json",
+      context : $("#cart_content")
+    }).done(function(data) {
+      cart.populateForm(data);
+    });
+  },  
+  
+  populateForm : function(data){
+    $("#order_form #fname").attr("value", data.userInfo.firstName);
+    $("#order_form #lname").attr("value", data.userInfo.lastName);
+    $("#order_form #email").attr("value", data.email);
+    $("#order_form #phone").attr("value", data.userInfo.phone);
+    $("#order_form #cnp").attr("value", data.userInfo.cnp);
+    
+    $("#order_form_company #cname").attr("value", data.companyInfo.name);
+    $("#order_form_company #cif").attr("value", data.companyInfo.cif);
+    $("#order_form_company #cregcom").attr("value", data.companyInfo.regCom);
+    $("#order_form_company #cbank").attr("value", data.companyInfo.bank);
+    $("#order_form_company #cbankaccount").attr("value", data.companyInfo.bankAccount);
+    $("#order_form_company #cemail").attr("value", data.email);
+    $("#order_form_company #cphone").attr("value", data.companyInfo.phone);
+  },
+    
   cleanFormMessages : function() {
     $('#order_form label, #order_form_company label').css("color", "#555555").removeAttr("title");
   },

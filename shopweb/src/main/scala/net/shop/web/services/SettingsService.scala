@@ -36,14 +36,27 @@ object SettingsService extends PathUtils
   def updateSettings = for {
     r <- POST
     Path("update" :: "settings" :: Nil) <- path
-    u <- authenticate(Loc.loc0(r.language)("login.fail").text)
+    u <- user
   } yield {
-    implicit val loc = r.language
-    extract(r, u) match {
-      case Success(u) =>
-        println(u)
-        service(_(Resp.created))
-      case Failure(e) => validationFail(e)
+    u match {
+      case Some(usr) =>
+        implicit val loc = r.language
+        extract(r, usr) match {
+          case Success(u) =>
+            ShopApplication.persistence.userByEmail(usr.name) match {
+              case scala.util.Success(ud) =>
+                val merged = ud.copy(userInfo = u.user.userInfo,
+                  companyInfo = u.user.companyInfo,
+                  addresses = u.addresses,
+                  password = if (u.user.pass.isEmpty) ud.password else u.user.pass)
+                ShopApplication.persistence.updateUsers(merged)
+
+              case _ => service(_(Resp.serverError.asText.body(Loc.loc0(r.language)("login.fail").text)))
+            }
+            service(_(Resp.created.asText.body(Loc.loc0(r.language)("settings.saved").text)))
+          case Failure(e) => validationFail(e)
+        }
+      case None => service(_(Resp.forbidden.asText.body(Loc.loc0(r.language)("login.fail").text)))
     }
   }
 
@@ -80,8 +93,7 @@ object SettingsService extends PathUtils
     for {
       (k, par) <- res
     } yield {
-      val addrFormlet = Formlet(address) <*>
-        inputText(s"addr_country:$k")(validateDefault("Romania")) <*>
+      val addrFormlet = Formlet(address(k)("Romania")) <*>
         inputText(s"addr_region:$k")(required(s"addr_region:$k", ?("region").text, Success(_))) <*>
         inputText(s"addr_city:$k")(required(s"addr_city:$k", ?("city").text, Success(_))) <*>
         inputText(s"addr_addr:$k")(required(s"addr_addr:$k", ?("address").text, Success(_))) <*>
@@ -97,24 +109,19 @@ object SettingsService extends PathUtils
     val ci = (CompanyInfo.apply _).curried
     val uu = (UpdateUser.apply _).curried
 
-    val phoneFunc = (t: String) => t.trim match {
-      case "" => None
-      case t  => Some(t)
-    }
-
     val uiFormlet = Formlet(ui) <*>
       inputText("update_firstName")(validateText("update_firstName", ?("first.name").text)) <*>
       inputText("update_lastName")(validateText("update_lastName", ?("last.name").text)) <*>
       inputText("update_cnp")(validateText("update_cnp", ?("cnp").text)) <*>
-      inputText("update_phone")(validateOptional[String]("update_phone", phoneFunc))
+      inputText("update_phone")(validateText("update_phone", ?("phone").text))
 
     val ciFormlet = Formlet(ci) <*>
       inputText("update_cname")(validateText("update_cname", ?("company.name").text)) <*>
       inputText("update_cif")(validateText("update_cif", ?("compnay.cif").text)) <*>
-      inputText("update_regcom")(validateText("update_regcom", ?("company.reg.com").text)) <*>
+      inputText("update_cregcom")(validateText("update_cregcom", ?("company.reg.com").text)) <*>
       inputText("update_cbank")(validateText("update_cbank", ?("company.bank").text)) <*>
       inputText("update_cbankaccount")(validateText("update_cbankaccount", ?("company.bank.account").text)) <*>
-      inputText("update_cphone")(validateOptional("update_cphone", phoneFunc))
+      inputText("update_cphone")(validateText("update_cphone", ?("phone").text))
 
     val updateFormlet = Formlet(uu) <*> uiFormlet <*> ciFormlet <*>
       inputText("update_password")(validateText("update_password", ?("password").text)) <*>

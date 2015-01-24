@@ -433,6 +433,11 @@
    "code" : "189",
    "name" : "settings",
    "text" : "Set\u0103ri"
+ },
+ {
+   "code" : "189",
+   "name" : "settings.saved",
+   "text" : "Set\u0103rile au fost salvate cu succes."
  }
  
 ]

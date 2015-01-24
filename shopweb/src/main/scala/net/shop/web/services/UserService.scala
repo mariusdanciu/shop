@@ -26,15 +26,31 @@ import net.shop.messaging.Messaging
 import net.shop.web.ShopApplication
 import net.shop.web.pages.ForgotPasswordPage
 import net.shop.api.UserInfo
+import net.shop.api.CompanyInfo
+import net.shop.api.Formatter
+import net.shop.model.Formatters._
 
 object UserService extends PathUtils
   with Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
-  with ShiftUtils {
+  with SecuredService {
 
   implicit val reqSelector = bySnippetAttr[SnipState[UserDetail]]
+
+  def userInfo = for {
+    r <- GET
+    Path("userinfo" :: Nil) <- path
+    user <- userRequired(Loc.loc0(r.language)("login.fail").text)
+  } yield {
+    ShopApplication.persistence.userByEmail(user.name) match {
+      case Success(ud) =>
+        service(_(JsonResponse(Formatter.format(ud))))
+      case _ =>
+        service(_(Resp.notFound.asText.body(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
+    }
+  }
 
   def forgotPassword = for {
     r <- POST
@@ -70,7 +86,7 @@ object UserService extends PathUtils
 
         val usr = UserDetail(id = None,
           userInfo = ui,
-          companyInfo = None,
+          companyInfo = CompanyInfo("", "", "", "", "", ""),
           addresses = Nil,
           email = u.email,
           password = u.password,
@@ -96,7 +112,7 @@ object UserService extends PathUtils
       inputText("cu_firstName")(validateText("cu_firstName", ?("first.name").text)) <*>
       inputText("cu_lastName")(validateText("cu_lastName", ?("last.name").text)) <*>
       inputText("cu_cnp")(validateText("cu_cnp", ?("cnp").text)) <*>
-      inputText("cu_phone")(validateOptional("cu_phone", Some(_))) <*>
+      inputText("cu_phone")(validateText("cu_phone", ?("phone").text)) <*>
       inputText("cu_email")(validateCreateUser("cu_email", ?("email").text)) <*>
       inputPassword("cu_password")(validateText("cu_password", ?("password").text)) <*>
       inputPassword("cu_password2")(validateText("cu_password2", ?("retype.password").text))
@@ -120,7 +136,7 @@ object UserService extends PathUtils
 case class CreateUser(firstName: String,
                       lastName: String,
                       cnp: String,
-                      phone: Option[String],
+                      phone: String,
                       email: String,
                       password: String,
                       password2: String)
