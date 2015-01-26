@@ -4,33 +4,45 @@ import net.shift.common.FileSplit
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
 import net.shift.engine.http.Header
-import net.shift.engine.http.JsResponse
+import net.shift.engine.http.JsonResponse
 import net.shift.engine.http.MultiPart
 import net.shift.engine.http.TextPart
-import net.shift.html.Failure
-import net.shift.html.Success
 import net.shift.html.Validation
-import net.shift.js._
 import net.shift.js.JsDsl._
 import net.shift.loc.Language
-import net.shift.loc.Loc
+import net.shop.api.Formatter
+import net.shop.model.Formatters
+import net.shop.model.Formatters._
+import net.shop.model.ValidationFail
 import net.shop.web.ShopApplication
+import net.shift.loc.Loc
+import net.shop.model.FieldError
+import net.shift.common.Semigroup
+import scala.util.Failure
+import scala.util.Success
+import net.shift.html.Invalid
+import net.shift.html.Valid
 
-trait FormValidation {
-
-  type ValidationError = List[(String, String)]
-  type ValidationMap = Map[String, String]
-  type ValidationList = List[String]
-  type ValidationInput = Map[String, List[String]]
-  type ValidationFunc[T] = ValidationInput => Validation[ValidationError, T]
-
+object FormImplicits {
   implicit val o = new Ordering[Double] {
     def compare(l: Double, r: Double): Int = (l - r).toInt
   }
 
-  def required[T](name: String, title: String, f: String => Validation[ValidationError, T])(implicit lang: Language): ValidationFunc[T] =
+  implicit def failSemigroup[A]: Semigroup[ValidationFail] = new Semigroup[ValidationFail] {
+    def append(a: ValidationFail, b: ValidationFail): ValidationFail = ValidationFail(a.errors ::: b.errors)
+  }
+}
+
+trait FormValidation {
+
+  type ValidationMap = Map[String, String]
+  type ValidationList = List[String]
+  type ValidationInput = Map[String, List[String]]
+  type ValidationFunc[T] = ValidationInput => Validation[ValidationFail, T]
+
+  def required[T](name: String, title: String, f: String => Validation[ValidationFail, T])(implicit lang: Language): ValidationFunc[T] =
     env => {
-      val failed = Failure(List((name, Loc.loc(lang)("field.required", Seq(title)).text)))
+      val failed = Invalid(ValidationFail(FieldError(name, Loc.loc(lang)("field.required", Seq(title)).text)))
 
       env.get(name) match {
         case Some(n :: _) if !n.isEmpty => f(n)
@@ -39,50 +51,54 @@ trait FormValidation {
       }
     }
 
-  def optional[T](name: String, title: String, default: => T, f: String => Validation[ValidationError, T])(implicit lang: Language): ValidationFunc[T] =
+  def optional[T](name: String, title: String, default: => T, f: String => Validation[ValidationFail, T])(implicit lang: Language): ValidationFunc[T] =
     env => {
       env.get(name) match {
         case Some(n :: _) if !n.isEmpty => f(n)
-        case Some(n) if n.isEmpty       => Success(default)
-        case _                          => Success(default)
+        case Some(n) if n.isEmpty       => Valid(default)
+        case _                          => Valid(default)
       }
     }
 
   def validateProps(title: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
     env => {
       (env.get("pkey"), env.get("pval")) match {
-        case (Some(k), Some(v)) => Success(k.zip(v).toMap)
-        case _                  => Success(Map.empty)
+        case (Some(k), Some(v)) => Valid(k.zip(v).toMap)
+        case _                  => Valid(Map.empty)
       }
     }
 
   def validateMapField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
-    required(name, title, s => Success(Map(lang.language -> s)))
+    required(name, title, s => Valid(Map(lang.language -> s)))
 
   def validateListField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationList] =
-    required(name, title, s => Success(s.split("\\s*,\\s*").toList))
+    required(name, title, s => Valid(s.split("\\s*,\\s*").toList))
 
+  def optionalListField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationList] =
+    optional(name, title, Nil, s => Valid(s.split("\\s*,\\s*").toList))
+
+    
   def validateDouble(name: String, title: String)(implicit lang: Language): ValidationFunc[Double] =
-    required(name, title, s => Success(s.toDouble))
+    required(name, title, s => Valid(s.toDouble))
 
-  def validateText(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, String] =
-    optional(name, title, "", Success(_))
+  def validateText(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationFail, String] =
+    optional(name, title, "", Valid(_))
 
-  def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationError, String] =
+  def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationFail, String] =
     required(name, title, s => ShopApplication.persistence.userByEmail(s) match {
-      case scala.util.Success(email) => Failure(List((name, Loc.loc0(lang)("user.already.exists").text)))
-      case _                         => Success(s)
+      case scala.util.Success(email) => Invalid(ValidationFail(FieldError(name, Loc.loc0(lang)("user.already.exists").text)))
+      case _                         => Valid(s)
     })
 
-  def validateOptional[T](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[ValidationError, Option[T]] = env => {
+  def validateOptional[T](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[ValidationFail, Option[T]] = env => {
     env.get(name) match {
-      case Some(n :: _) if !n.isEmpty => Success(f(n))
-      case _                          => Success(None)
+      case Some(n :: _) if !n.isEmpty => Valid(f(n))
+      case _                          => Valid(None)
     }
   }
 
-  def validateDefault[S](v: S)(implicit lang: Language): ValidationInput => Validation[ValidationError, S] =
-    env => Success(v)
+  def validateDefault[S](v: S)(implicit lang: Language): ValidationInput => Validation[ValidationFail, S] =
+    env => Valid(v)
 
   def extractParams(text: List[MultiPart]) = ((Map.empty: Map[String, List[String]]) /: text) {
     case (acc, TextPart(h, content)) =>
@@ -124,17 +140,13 @@ trait FormValidation {
     case _ => None
   }
 
-  def validationFail(msgs: ValidationError) = service(_(JsResponse(
-    func() {
-      JsStatement(
-        (for {
-          m <- msgs
-        } yield {
-          $(s"label[for='${m._1}']") ~
-            JsDsl.apply("css", "color", "#ff0000") ~
-            JsDsl.apply("attr", "title", m._2)
-        }): _*)
-    }.wrap.apply.toJsString)))
+  def validationFail(msgs: ValidationFail) =
+    service(r => {
+      r(JsonResponse(Formatter.format(msgs)).code(403))
+    })
+
+  def respValidationFail(resp: net.shift.engine.http.AsyncResponse, msgs: ValidationFail) =
+    resp(JsonResponse(Formatter.format(msgs)).code(403))
+
 }
 
-case class ValidationCombiner()

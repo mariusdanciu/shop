@@ -12,7 +12,6 @@ import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http._
 import net.shift.engine.page.Html5
 import net.shift.engine.utils.ShiftUtils
-import net.shift.html.Formlet
 import net.shift.html.Formlet._
 import net.shift.html.Validation
 import net.shift.loc.Language
@@ -20,15 +19,21 @@ import net.shift.loc.Loc
 import net.shift.template.PageState
 import net.shift.template.Selectors
 import net.shift.template.SnipState
-import net.shop.api.UserDetail
-import net.shop.messaging.ForgotPassword
-import net.shop.messaging.Messaging
-import net.shop.web.ShopApplication
-import net.shop.web.pages.ForgotPasswordPage
-import net.shop.api.UserInfo
 import net.shop.api.CompanyInfo
 import net.shop.api.Formatter
+import net.shop.api.UserDetail
+import net.shop.api.UserInfo
+import net.shop.messaging.ForgotPassword
+import net.shop.messaging.Messaging
 import net.shop.model.Formatters._
+import net.shop.model.ValidationFail
+import net.shop.web.ShopApplication
+import net.shop.web.pages.ForgotPasswordPage
+import net.shop.web.services.FormImplicits._
+import net.shift.html.Formlet
+import net.shop.model.FieldError
+import net.shift.html.Valid
+import net.shift.html.Invalid
 
 object UserService extends PathUtils
   with Selectors
@@ -76,7 +81,7 @@ object UserService extends PathUtils
   } yield {
     implicit val loc = r.language
     extract(r) match {
-      case net.shift.html.Success(u) =>
+      case Valid(u) =>
 
         val ui = UserInfo(
           firstName = u.firstName,
@@ -100,22 +105,22 @@ object UserService extends PathUtils
             service(_(Resp.serverError.body(Loc.loc0(r.language)("user.cannot.create").text)))
         }
 
-      case net.shift.html.Failure(msgs) => validationFail(msgs)
+      case Invalid(msgs) => validationFail(msgs)
     }
   }
 
-  private def extract(r: Request)(implicit loc: Language): Validation[ValidationError, CreateUser] = {
+  private def extract(r: Request)(implicit loc: Language): Validation[ValidationFail, CreateUser] = {
     val user = (CreateUser.apply _).curried
     val ? = Loc.loc0(loc) _
 
     val userFormlet = Formlet(user) <*>
-      inputText("cu_firstName")(validateText("cu_firstName", ?("first.name").text)) <*>
-      inputText("cu_lastName")(validateText("cu_lastName", ?("last.name").text)) <*>
-      inputText("cu_cnp")(validateText("cu_cnp", ?("cnp").text)) <*>
-      inputText("cu_phone")(validateText("cu_phone", ?("phone").text)) <*>
+      inputText("cu_firstName")(required("cu_firstName", ?("first.name").text, Valid(_))) <*>
+      inputText("cu_lastName")(required("cu_lastName", ?("last.name").text, Valid(_))) <*>
+      inputText("cu_cnp")(required("cu_cnp", ?("cnp").text, Valid(_))) <*>
+      inputText("cu_phone")(required("cu_phone", ?("phone").text, Valid(_))) <*>
       inputText("cu_email")(validateCreateUser("cu_email", ?("email").text)) <*>
-      inputPassword("cu_password")(validateText("cu_password", ?("password").text)) <*>
-      inputPassword("cu_password2")(validateText("cu_password2", ?("retype.password").text))
+      inputPassword("cu_password")(required("cu_password", ?("password").text, Valid(_))) <*>
+      inputPassword("cu_password2")(required("cu_password2", ?("retype.password").text, Valid(_)))
 
     (userFormlet validate r.params flatMap {
       case p @ CreateUser(_,
@@ -125,9 +130,9 @@ object UserService extends PathUtils
         _,
         pass,
         pass2) if (pass != pass2) =>
-        net.shift.html.Failure(List(("cu_password2", Loc.loc0(loc)("password.not.match").text)))
+        Invalid(ValidationFail(FieldError("cu_password2", Loc.loc0(loc)("password.not.match").text)))
       case p =>
-        net.shift.html.Success(p)
+        Valid(p)
     })
   }
 

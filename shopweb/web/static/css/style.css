@@ -237,7 +237,7 @@ a:active {
 
 .item_box:hover {
     border-radius: 10px;
-	box-shadow: inset 0px 0px 40px 1px #dddddd;
+    box-shadow: inset 0px 0px 1px 1px #dddddd;
 	cursor: pointer;
 }
 
@@ -1065,4 +1065,13 @@ a:active {
 }
 #sortSelect {
   width: 200px;
+}
+
+.address_name {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.address_nav {
+ display: none;
 }

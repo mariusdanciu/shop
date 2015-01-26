@@ -88,7 +88,13 @@ var admin = {
   deleteProduct : function(id) {
     $.ajax({
       url : "/product/delete/" + id,
-      type : "DELETE"
+      timeout : 3000,
+      type : "DELETE",
+      error: function(x, t, m) {
+        if(m === "") {
+          common.showConnectionError();
+        } 
+      }
     }).success(products.reloadProducts()).fail(function(msg, f) {
       $("#notice_connect_e").show().delay(5000).fadeOut("slow");
     });
@@ -97,7 +103,13 @@ var admin = {
   deleteCategory : function(id) {
     $.ajax({
       url : "/category/delete/" + id,
-      type : "DELETE"
+      timeout : 3000,
+      type : "DELETE",
+      error: function(x, t, m) {
+        if(m === "") {
+          common.showConnectionError();
+        } 
+      }
     }).success(categories.reloadCategories()).fail(function(msg, f) {
       $("#notice_connect_e").show().delay(5000).fadeOut("slow");
     });
@@ -115,15 +127,25 @@ var admin = {
         cache : false,
         contentType : false,
         processData : false,
+        timeout : 3000,
         data : formData,
         statusCode : {
           201 : function() {
             successFunc();
+          },
+          403 : function(msg) {
+            var data = JSON.parse(msg.responseText);
+            if (data.errors) {
+              common.showFormErrors(data.errors);
+            }
           }
+        },
+        error: function(x, t, m) {
+          if(m === "") {
+            common.showConnectionError();
+          } 
         }
-      }).fail(function(msg, f) {
-        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
-      })
+      });
     });
   },
 

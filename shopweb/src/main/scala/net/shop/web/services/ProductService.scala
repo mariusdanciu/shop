@@ -10,7 +10,6 @@ import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
 import net.shift.engine.http.DELETE
 import net.shift.engine.http.Header
-import net.shift.engine.http.JsResponse
 import net.shift.engine.http.MultiPart
 import net.shift.engine.http.MultiPartBody
 import net.shift.engine.http.POST
@@ -34,6 +33,11 @@ import net.shop.api.ProductDetail
 import net.shop.web.ShopApplication
 import net.shift.js._
 import JsDsl._
+import net.shop.model.ValidationFail
+import net.shop.model.FieldError
+import net.shop.web.services.FormImplicits._
+import net.shift.html.Valid
+import net.shift.html.Invalid
 
 object ProductService extends PathUtils
   with ShiftUtils
@@ -63,7 +67,7 @@ object ProductService extends PathUtils
     mp <- multipartForm
   } yield {
     extract(r.language, Some(pid), "edit_", mp) match {
-      case (files, net.shift.html.Success(o)) =>
+      case (files, Valid(o)) =>
         val cpy = o.copy(images = Set(files.map(f => f._2): _*).toList)
 
         ShopApplication.persistence.productById(pid) match {
@@ -84,7 +88,7 @@ object ProductService extends PathUtils
           case scala.util.Failure(f) => service(_(Resp.notFound))
         }
 
-      case (_, net.shift.html.Failure(msgs)) => validationFail(msgs)
+      case (_, Invalid(msgs)) => validationFail(msgs)
     }
   }
 
@@ -95,7 +99,7 @@ object ProductService extends PathUtils
     mp <- multipartForm
   } yield {
     extract(r.language, None, "create_", mp) match {
-      case (files, net.shift.html.Success(o)) =>
+      case (files, Valid(o)) =>
         val cpy = o.copy(images = Set(files.map(f => f._2): _*).toList)
         ShopApplication.persistence.createProducts(cpy) match {
           case scala.util.Success(p) =>
@@ -108,13 +112,13 @@ object ProductService extends PathUtils
             service(_(Resp.serverError))
         }
 
-      case (_, net.shift.html.Failure(msgs)) => validationFail(msgs)
+      case (_, Invalid(msgs)) => validationFail(msgs)
 
     }
 
   }
 
-  private def extract(implicit loc: Language, id: Option[String], fieldPrefix: String, multipart: MultiPartBody): (List[(String, String, Array[Byte])], Validation[ValidationError, ProductDetail]) = {
+  private def extract(implicit loc: Language, id: Option[String], fieldPrefix: String, multipart: MultiPartBody): (List[(String, String, Array[Byte])], Validation[ValidationFail, ProductDetail]) = {
 
     val (bins, text) = multipart.parts partition {
       case BinaryPart(h, content) => true
@@ -136,7 +140,7 @@ object ProductService extends PathUtils
       inputInt(fieldPrefix + "soldCount")(validateDefault(0)) <*>
       inputSelect(fieldPrefix + "categories", Nil)(validateListField(fieldPrefix + "categories", ?("categories").text)) <*>
       inputFile("files")(validateDefault(Nil)) <*>
-      inputSelect(fieldPrefix + "keywords", Nil)(validateListField(fieldPrefix + "keywords", ?("keywords").text))
+      inputText(fieldPrefix + "keywords")(optionalListField(fieldPrefix + "keywords", ?("keywords").text))
 
     (files, productFormlet validate params flatMap {
       case p @ ProductDetail(_,
@@ -148,8 +152,8 @@ object ProductService extends PathUtils
         _,
         _,
         _,
-        _) if (discountPrice >= price) => net.shift.html.Failure(List(("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text)))
-      case p => net.shift.html.Success(p)
+        _) if (discountPrice >= price) => Invalid(ValidationFail(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text)))
+      case p => Valid(p)
     })
   }
 

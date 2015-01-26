@@ -16,7 +16,7 @@ import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shop.api.ProductDetail
-import net.shop.web.form.OrderForm
+import net.shop.web.services.OrderForm
 
 trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
 

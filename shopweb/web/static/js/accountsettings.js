@@ -39,14 +39,26 @@ var settings = {
         url : $(formId).attr('action'),
         type : "POST",
         cache : false,
+        timeout : 3000,
         data : $(formId).serialize(),
+        timeout : 3000,
         statusCode : {
           201 : function(msg) {
             common.showNotice(msg);
+          },
+          
+          403 : function(msg) {
+            var data = JSON.parse(msg.responseText);
+            if (data.errors) {
+              common.showFormErrors(data.errors);
+            }            
           }
+        },
+        error: function(x, t, m) {
+          if(m === "") {
+            common.showConnectionError();
+          } 
         }
-      }).fail(function(msg, f) {
-        common.showError(msg.responseText);
       });
     });
   },

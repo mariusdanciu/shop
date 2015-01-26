@@ -36,7 +36,7 @@
       event.stopPropagation();
       event.preventDefault();
     });
-    
+
     $('#forgotpass').click(function(event) {
       window.user.forgotPass("#login_form");
       event.stopPropagation();
@@ -98,9 +98,21 @@
       cart.cleanFormMessages();
       $.ajax({
         url : "/order",
-        data : obj
-      }).fail(function(msg, f) {
-        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+        data : obj,
+        timeout : 3000,
+        statusCode : {
+          403 : function(msg) {
+            var data = JSON.parse(msg.responseText);
+            if (data.errors) {
+              common.showFormErrors(data.errors);
+            }            
+          }
+        },
+        error: function(x, t, m) {
+          if(m === "") {
+            common.showConnectionError();
+          } 
+        }
       });
       event.preventDefault();
     });
@@ -122,15 +134,26 @@ var common = {
     $.unblockUI();
     $("#user_popup").hide();
   },
-  
+
   showNotice : function(text) {
     $("#notice_i").html(text);
     $("#notice_i").show().delay(5000).fadeOut("slow");
   },
-  
+
   showError : function(text) {
     $("#notice_e").html(text);
     $("#notice_e").show().delay(5000).fadeOut("slow");
+  },
+  
+  showConnectionError : function(text) {
+    $("#notice_connect_e").html(text);
+    $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+  },
+  
+  showFormErrors : function(errors) {
+    $.each(errors, function() {
+      $("label[for='" + this.id + "']").css("color", "#ff0000").attr("title", this.error);
+    });
   }
 
 }
@@ -164,18 +187,21 @@ var user = {
   logout : function() {
     window.location.href = "/?logout=true";
   },
-  
+
   forgotPass : function(frmId) {
     var email = $.base64.encode($(frmId + " #username").val());
     $.ajax({
       url : "/forgotpassword/" + email,
       type : "POST",
+      timeout : 3000,
       cache : false,
-    }).success(function(){
+      error: function(x, t, m) {
+        if(m === "") {
+          common.showConnectionError();
+        } 
+      }
+    }).success(function() {
       common.closeDialog();
-    }).fail(function(msg, f) {
-      $("#notice_connect_e").html(msg.responseText);
-      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
     });
   },
 
@@ -186,6 +212,7 @@ var user = {
       url : $(frmId).attr('action'),
       type : "GET",
       cache : false,
+      timeout : 3000,
       headers : {
         'Authorization' : "Basic " + creds
       },
@@ -193,10 +220,12 @@ var user = {
         200 : function() {
           window.location.href = "/";
         }
+      },
+      error: function(x, t, m) {
+        if(m === "") {
+          common.showConnectionError();
+        } 
       }
-    }).fail(function(msg, f) {
-      $("#notice_connect_e").html(msg.responseText);
-      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
     });
   },
 
@@ -209,20 +238,32 @@ var user = {
         url : $(formId).attr('action'),
         type : "POST",
         cache : false,
-        data :  $(formId).serialize(),
+        timeout : 3000,
+        data : $(formId).serialize(),
         statusCode : {
           201 : function() {
             common.closeDialog();
+          },
+          403 : function(msg) {
+            var data = JSON.parse(msg.responseText);
+            if (data.errors) {
+              common.showFormErrors(data.errors);
+            }            
           }
+        },
+        error: function(x, t, m) {
+          if(m === "") {
+            common.showConnectionError();
+          } 
         }
-      }).fail(function(msg, f) {
-        $("#notice_connect_e").html(msg.responseText);
-        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
       });
     });
   },
 
 }
+
+var addresses = undefined;
+var currentAddress = 0;
 
 var cart = {
 
@@ -230,19 +271,33 @@ var cart = {
     $.ajax({
       url : "/userinfo",
       dataType : "json",
-      context : $("#cart_content")
+      timeout : 3000,
+      context : $("#cart_content"),
+      error: function(x, t, m) {
+        if(m === "") {
+          common.showConnectionError();
+        } 
+      }
     }).done(function(data) {
       cart.populateForm(data);
     });
-  },  
+  },
+
+  populateAddress : function(idx) {
+    $("#order_form #region, #order_form_company #cregion").attr("value", addresses[idx].region);
+    $("#order_form #city, #order_form_company #ccity").attr("value", addresses[idx].city);
+    $("#order_form #address, #order_form_company #caddress").attr("value", addresses[idx].address);
+    $("#order_form #zip, #order_form_company #czip").attr("value", addresses[idx].zipCode);
+    $(".address_name").html(addresses[idx].name);
+  },
   
-  populateForm : function(data){
+  populateForm : function(data) {
     $("#order_form #fname").attr("value", data.userInfo.firstName);
     $("#order_form #lname").attr("value", data.userInfo.lastName);
     $("#order_form #email").attr("value", data.email);
     $("#order_form #phone").attr("value", data.userInfo.phone);
     $("#order_form #cnp").attr("value", data.userInfo.cnp);
-    
+
     $("#order_form_company #cname").attr("value", data.companyInfo.name);
     $("#order_form_company #cif").attr("value", data.companyInfo.cif);
     $("#order_form_company #cregcom").attr("value", data.companyInfo.regCom);
@@ -250,8 +305,35 @@ var cart = {
     $("#order_form_company #cbankaccount").attr("value", data.companyInfo.bankAccount);
     $("#order_form_company #cemail").attr("value", data.email);
     $("#order_form_company #cphone").attr("value", data.companyInfo.phone);
+
+    addresses = data.addresses;
+    if (addresses && addresses.length > 0) {
+      $(".address_nav").show();
+      cart.populateAddress(currentAddress);
+      
+      $(".right_arrow").click(function(e) {
+        if (currentAddress < addresses.length - 1 ) {
+          currentAddress++;
+          cart.populateAddress(currentAddress);
+        }
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      $(".left_arrow").click(function(e) {
+        if (currentAddress > 0) {
+          currentAddress--;
+          cart.populateAddress(currentAddress);
+        }
+        e.stopPropagation();
+        e.preventDefault();
+      });
+    } else {
+      $("address_nav").hide();
+    }
+
   },
-    
+
   cleanFormMessages : function() {
     $('#order_form label, #order_form_company label').css("color", "#555555").removeAttr("title");
   },
@@ -364,7 +446,13 @@ var cart = {
       $.ajax({
         url : "/getcart",
         dataType : "json",
-        context : $("#cart_content")
+        timeout : 3000,
+        context : $("#cart_content"),
+        error: function(x, t, m) {
+          if(m === "") {
+            common.showConnectionError();
+          } 
+        }
       }).done(function(data) {
         $(this).empty();
         var ul = document.createElement("ul");
@@ -382,7 +470,7 @@ var cart = {
         $(".cart_item a").each(function(index) {
           var me = $(this);
           var id = me.attr("id").substring(4);
-          
+
           $('#q_' + id).on("keyup change", function(e) {
             window.cart.setItemCount(id, $(this).val());
             e.preventDefault();
@@ -396,8 +484,6 @@ var cart = {
         if (f !== undefined) {
           f();
         }
-      }).fail(function(msg, f) {
-        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
       });
     }
   },

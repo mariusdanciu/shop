@@ -23,3 +23,4 @@ trait ShopUtils {
   def uuid = ("" /: Range.apply(0, 7))((acc, v) => acc + random.nextInt(9))
 
 }
+

@@ -20,9 +20,12 @@ import net.shift.security.User
 import net.shop.api.UserInfo
 import net.shop.api.CompanyInfo
 import net.shop.api.Address
-import net.shift.html.Failure
-import net.shift.html.Success
 import net.shift.engine.http.Resp
+import net.shop.model.ValidationFail
+import net.shop.model.FieldError
+import net.shop.web.services.FormImplicits._
+import net.shift.html.Valid
+import net.shift.html.Invalid
 
 object SettingsService extends PathUtils
   with Selectors
@@ -42,7 +45,7 @@ object SettingsService extends PathUtils
       case Some(usr) =>
         implicit val loc = r.language
         extract(r, usr) match {
-          case Success(u) =>
+          case Valid(u) =>
             ShopApplication.persistence.userByEmail(usr.name) match {
               case scala.util.Success(ud) =>
                 val merged = ud.copy(userInfo = u.user.userInfo,
@@ -54,13 +57,13 @@ object SettingsService extends PathUtils
               case _ => service(_(Resp.serverError.asText.body(Loc.loc0(r.language)("login.fail").text)))
             }
             service(_(Resp.created.asText.body(Loc.loc0(r.language)("settings.saved").text)))
-          case Failure(e) => validationFail(e)
+          case Invalid(e) => validationFail(e)
         }
       case None => service(_(Resp.forbidden.asText.body(Loc.loc0(r.language)("login.fail").text)))
     }
   }
 
-  private def extractAddresses(params: Map[String, List[String]])(implicit loc: Language): Validation[ValidationError, List[Address]] = {
+  private def extractAddresses(params: Map[String, List[String]])(implicit loc: Language): Validation[ValidationFail, List[Address]] = {
 
     def toPair(s: String): Option[(String, String)] = s.split(":").toList match {
       case name :: value :: Nil => Some((name, value))
@@ -75,14 +78,14 @@ object SettingsService extends PathUtils
 
     val addresses = validateAddresses(normalize)
 
-    val errors = (((Nil: ValidationError), Nil: List[Address]) /: addresses)((acc, e) => e match {
-      case Failure(e)    => (acc._1 ::: e, acc._2)
-      case Success(addr) => (acc._1, acc._2 ::: List(addr))
+    val errors = (((ValidationFail()), Nil: List[Address]) /: addresses)((acc, e) => e match {
+      case Invalid(e)    => (acc._1 append e, acc._2)
+      case Valid(addr) => (acc._1, acc._2 ::: List(addr))
     })
 
     errors match {
-      case (Nil, list) => Success(list)
-      case (errors, _) => Failure(errors)
+      case (ValidationFail(Nil), list) => Valid(list)
+      case (errors, _)                 => Invalid(errors)
     }
 
   }
@@ -94,15 +97,15 @@ object SettingsService extends PathUtils
       (k, par) <- res
     } yield {
       val addrFormlet = Formlet(address(k)("Romania")) <*>
-        inputText(s"addr_region:$k")(required(s"addr_region:$k", ?("region").text, Success(_))) <*>
-        inputText(s"addr_city:$k")(required(s"addr_city:$k", ?("city").text, Success(_))) <*>
-        inputText(s"addr_addr:$k")(required(s"addr_addr:$k", ?("address").text, Success(_))) <*>
-        inputText(s"addr_zip:$k")(required(s"addr_zip:$k", ?("zip").text, Success(_)))
+        inputText(s"addr_region:$k")(required(s"addr_region:$k", ?("region").text, Valid(_))) <*>
+        inputText(s"addr_city:$k")(required(s"addr_city:$k", ?("city").text, Valid(_))) <*>
+        inputText(s"addr_addr:$k")(required(s"addr_addr:$k", ?("address").text, Valid(_))) <*>
+        inputText(s"addr_zip:$k")(required(s"addr_zip:$k", ?("zip").text, Valid(_)))
       addrFormlet validate par
     }
   }
 
-  private def extract(r: Request, u: User)(implicit loc: Language): Validation[ValidationError, UserForm] = {
+  private def extract(r: Request, u: User)(implicit loc: Language): Validation[ValidationFail, UserForm] = {
     val ? = Loc.loc0(loc) _
 
     val ui = (UserInfo.apply _).curried
@@ -132,16 +135,16 @@ object SettingsService extends PathUtils
         _,
         pass,
         pass2) if (pass != pass2) =>
-        net.shift.html.Failure(List(("update_password2", Loc.loc0(loc)("password.not.match").text)))
+        Invalid(ValidationFail(FieldError("update_password2", Loc.loc0(loc)("password.not.match").text)))
       case p =>
-        net.shift.html.Success(p)
+        Valid(p)
     })
 
     (valid, extractAddresses(r.params)) match {
-      case (Failure(l), Failure(r)) => Failure(l ::: r)
-      case (Failure(l), _)          => Failure(l)
-      case (_, Failure(r))          => Failure(r)
-      case (Success(l), Success(r)) => Success(UserForm(l, r))
+      case (Invalid(l), Invalid(r)) => Invalid(l append r)
+      case (Invalid(l), _)          => Invalid(l)
+      case (_, Invalid(r))          => Invalid(r)
+      case (Valid(l), Valid(r)) => Valid(UserForm(l, r))
     }
 
   }

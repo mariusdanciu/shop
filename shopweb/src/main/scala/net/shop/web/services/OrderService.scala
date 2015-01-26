@@ -14,7 +14,6 @@ import net.shift.js._
 import net.shift.loc.Language
 import net.shop.messaging._
 import net.shop.web.ShopApplication
-import net.shop.web.form.OrderForm
 import net.shift.engine.http.JsResponse
 import net.shift.loc.Loc
 import net.shop.web.pages.OrderPage
@@ -22,8 +21,7 @@ import net.shop.web.pages.OrderState
 import net.shop.api.Company
 import net.shop.api.Person
 
-object OrderService extends HttpPredicates {
-
+object OrderService extends HttpPredicates with FormValidation {
 
   private def normalizeParams(lang: Language, params: Map[String, String]): Try[Map[String, OrderForm.type#EnvValue]] = {
     import OrderForm._
@@ -60,7 +58,7 @@ object OrderService extends HttpPredicates {
           val v = if (norm.contains("cif")) OrderForm.companyForm(r.language) else OrderForm.form(r.language)
 
           (v validate norm) match {
-            case net.shift.html.Success(o) =>
+            case Valid(o) =>
               Future {
                 resp(JsResponse(
                   func() {
@@ -83,19 +81,8 @@ object OrderService extends HttpPredicates {
                 }) map { n => Messaging.send(OrderDocument(r.language, o, n toString)) }
 
               }
-            case net.shift.html.Failure(msgs) => {
-              resp(JsResponse(
-                func() {
-                  JsStatement(
-                    (for {
-                      m <- msgs
-                    } yield {
-                      $(s"label[for='${m._1}']") ~
-                        apply("css", "color", "#ff0000") ~
-                        apply("attr", "title", m._2)
-                    }): _*)
-                }.wrap.apply.toJsString))
-            }
+            case Invalid(msgs) =>
+              respValidationFail(resp, msgs)
           }
 
         case Failure(t) =>

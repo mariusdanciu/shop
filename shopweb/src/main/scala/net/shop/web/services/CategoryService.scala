@@ -27,6 +27,10 @@ import net.shift.security.BasicCredentials
 import net.shift.security.User
 import net.shift.security.Permission
 import net.shift.security.Credentials
+import net.shop.model.ValidationFail
+import net.shop.web.services.FormImplicits._
+import net.shift.html.Invalid
+import net.shift.html.Valid
 
 object CategoryService extends PathUtils
   with Selectors
@@ -55,7 +59,7 @@ object CategoryService extends PathUtils
     mp <- multipartForm
   } yield {
     extract(r.language, None, mp) match {
-      case (file, net.shift.html.Success(o)) =>
+      case (file, Valid(o)) =>
         val cpy = o.copy(id = Some(id), image = file.map(f => f._1))
         ShopApplication.persistence.updateCategories(cpy) match {
           case scala.util.Success(p) =>
@@ -69,7 +73,7 @@ object CategoryService extends PathUtils
             service(_(Resp.serverError))
         }
 
-      case (_, net.shift.html.Failure(msgs)) => validationFail(msgs)
+      case (_, Invalid(msgs)) => validationFail(msgs)
 
     }
 
@@ -82,7 +86,7 @@ object CategoryService extends PathUtils
     mp <- multipartForm
   } yield {
     extract(r.language, None, mp) match {
-      case (file, net.shift.html.Success(o)) =>
+      case (file, Valid(o)) =>
         val cpy = o.copy(image = file.map(f => f._1))
 
         ShopApplication.persistence.createCategories(cpy) match {
@@ -96,13 +100,13 @@ object CategoryService extends PathUtils
             service(_(Resp.serverError))
         }
 
-      case (_, net.shift.html.Failure(msgs)) => validationFail(msgs)
+      case (_, Invalid(msgs)) => validationFail(msgs)
 
     }
 
   }
 
-  private def extract(implicit loc: Language, id: Option[String], multipart: MultiPartBody): (Option[(String, Array[Byte])], Validation[ValidationError, Category]) = {
+  private def extract(implicit loc: Language, id: Option[String], multipart: MultiPartBody): (Option[(String, Array[Byte])], Validation[ValidationFail, Category]) = {
 
     val (bins, text) = multipart.parts partition {
       case BinaryPart(h, content) => true
