@@ -47,7 +47,12 @@
  {
    "code" : "109",
    "name" : "buy_step1",
-   "text" : "Pasul urmator >>"
+   "text" : "Inainte >"
+ },
+ {
+   "code" : "109",
+   "name" : "buy_step0",
+   "text" : "< Inapoi"
  },
  {
    "code" : "110",

@@ -39,7 +39,7 @@ p {
 }
 
 input {
-	height: 30px;
+	height: 35px;
 }
 
 textarea, input, select, .preview {
@@ -70,7 +70,7 @@ label:hover {
 
 label {
   position: relative;
-  top: 7px;
+  top: 10px;
   float: left;
 }
 
@@ -352,9 +352,10 @@ a:active {
 	float: left;
 }
 
-#product_title h1 {
+h1 {
 	padding-left: 10px;
 	margin-top: 10px;
+	font-size: 24px;
 }
 
 #cart_symbol {
@@ -366,7 +367,6 @@ a:active {
 }
 
 #cart_content {
-	width: 380px;
 	max-height: 460px;
 	padding: 20px;
 	float: left;
@@ -482,7 +482,7 @@ a:active {
 	float: left;
 	margin-left: 25px;
 	overflow: hidden;
-	width: 250px;
+	width: 280px;
 }
 
 .cart_item ul {
@@ -541,14 +541,13 @@ a:active {
 }
 
 .detailPrice span {
-	font-size: 32px;
+	font-size: 24px;
 }
 
 #order {
 	float: left;
 	padding: 20px 40px 20px 20px;
 	position: relative;
-	width: 480px;
 }
 
 .upload_form_fields input, .select_row select, #order input {
@@ -564,7 +563,7 @@ a:active {
 .upload_form_fields .fields {
     float: left;
     width: 100%;
-    max-height: 400px;
+    height: 350px;
     overflow: auto;
 }
 
@@ -577,7 +576,7 @@ a:active {
 }
 
 .row {
-	height: 40px;
+	height: 45px;
 	width: 100%;
 	text-align: left;
 }
@@ -807,7 +806,6 @@ a:active {
 	clear: both;
 	background: #f3f3f3;
 	border-radius: 0px 10px 10px 10px;
-	width: 460px;
 }
 
 #order #pf, #pj {
@@ -909,7 +907,6 @@ a:active {
   float: left;
   clear: both;
   position: relative;
-  margin-top: 10px;
   width: 100#;
 }
 
@@ -917,6 +914,11 @@ a:active {
   position: relative;
   float: left;
 }
+
+.cart_form_column {
+  width: 380px
+}
+
 .specs_title {
   float: left;
   margin-right: 10px;
@@ -1074,4 +1076,9 @@ a:active {
 
 .address_nav {
  display: none;
+}
+
+.order_button {
+  clear: both;
+  margin-left: 10px;
 }

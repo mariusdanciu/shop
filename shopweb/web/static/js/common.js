@@ -75,6 +75,13 @@
       }
     });
 
+    $("#buy_step0").click(function(event) {
+      cart.fetchUserInfo();
+      cart.showStep0Links();
+      event.stopPropagation();
+      event.preventDefault();
+    });
+
     $("#buy_step1").click(function(event) {
       cart.fetchUserInfo();
       cart.showStep1Links();
@@ -82,6 +89,7 @@
       event.preventDefault();
     });
 
+    
     $('#buy_final, #c_buy_final_comp').click(function(event) {
       var clicked = $(this).attr("id");
       var form = (clicked !== "c_buy_final_comp") ? "#order_form" : "#order_form_company";
@@ -488,8 +496,17 @@ var cart = {
     }
   },
 
+  showStep0Links : function() {
+    $('#cart_content').show();
+    $('#order').hide();
+    $('#buy_step1').show();
+    $('#buy_step0').hide();
+  },
+  
   showStep1Links : function() {
+    $('#cart_content').hide();
     $('#order').show();
+    $('#buy_step0').show();
     $('#buy_step1').hide();
   },
 
@@ -497,6 +514,7 @@ var cart = {
     window.cart.loadView(function() {
       $('#order').hide();
       $('#cart_notice').hide();
+      $('#buy_step0').hide();
       $('#buy_step1').show();
       $('#cart_popup').show();
     });
