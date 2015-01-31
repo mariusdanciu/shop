@@ -1,5 +1,7 @@
 <html>
 <head>
+
+<link href='http://fonts.googleapis.com/css?family=Dosis:400,300,700&amp;subset=latin,latin-ext' rel='stylesheet' type='text/css' />
 <link href="/static/css/style.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="/static/js/jquery-2.0.3.min.js"></script>
@@ -172,12 +174,13 @@
               <div id="terms_wrapper">
                 <input id="terms" name="terms" type="checkbox" /> <label for="terms" data-loc="terms.and.conds"></label>
               </div>
+              <div class="order_button">
+                <a id="buy_final" class="btn" href="#" data-loc="buy_final"></a>
+              </div>
             </div>
 
           </form>
-          <div class="order_button">
-            <a id="buy_final" class="btn" href="#" data-loc="buy_final"></a>
-          </div>
+
         </div>
         <div id="pj" class="content">
           <form id="order_form_company">
@@ -225,19 +228,17 @@
               <div id="terms_wrapper">
                 <input id="cterms" name="terms" type="checkbox" /> <label for="cterms" data-loc="terms.and.conds"></label>
               </div>
+              <div class="order_button">
+                <a id="c_buy_final_comp" class="btn" href="#" data-loc="buy_final"></a>
+              </div>
             </div>
           </form>
-          <div class="order_button">
-            <a id="c_buy_final_comp" class="btn" href="#" data-loc="buy_final"></a>
-          </div>
         </div>
       </div>
     </div>
     <div id="cart_footer">
-      <span id="total">0 RON</span> 
-      <a id="buy_step1" href="#" data-loc="buy_step1"></a> 
-      <a id="terms_link" href="/terms" target="_blank" data-loc="terms.link"></a>
-      <a id="buy_step0" href="#" data-loc="buy_step0"></a> 
+      <span id="total">0 RON</span> <a id="buy_step1" href="#" data-loc="buy_step1"></a> <a id="terms_link" href="/terms" target="_blank"
+        data-loc="terms.link"></a> <a id="buy_step0" href="#" data-loc="buy_step0"></a>
     </div>
   </div>
 </body>

@@ -203,13 +203,20 @@ var user = {
       type : "POST",
       timeout : 3000,
       cache : false,
+      statusCode : {
+        404 : function(m) {
+          common.closeDialog();
+          common.showError(m.responseText);
+        }
+      },
       error: function(x, t, m) {
         if(m === "") {
           common.showConnectionError();
-        } 
+        }
       }
-    }).success(function() {
+    }).success(function(m) {
       common.closeDialog();
+      common.showNotice(m);
     });
   },
 
@@ -227,6 +234,10 @@ var user = {
       statusCode : {
         200 : function() {
           window.location.href = "/";
+        },
+        401 : function(m) {
+          common.closeDialog();
+          common.showError(m.responseText);
         }
       },
       error: function(x, t, m) {

@@ -18,9 +18,8 @@ object MongoDBPersistence extends Persistence with MongoConversions {
 
   db.command(MongoDBObject("setParameter" -> 1, "textSearchEnabled" -> 1))
 
-  db("products").ensureIndex(MongoDBObject("title.ro" -> 1))
-  db("products").ensureIndex(MongoDBObject("keywords" -> 1))
-  db("products").ensureIndex(MongoDBObject("categories" -> 1))
+  db("products").ensureIndex(MongoDBObject("title.ro" -> "text", "description.ro" -> "text", "keywords" -> "text"))
+  db("users").ensureIndex(MongoDBObject("firstName" -> "text", "lastName" -> "text", "phone" -> "text", "email" -> "text"))
 
   def productById(id: String): Try[ProductDetail] = try {
     db("products").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
@@ -59,11 +58,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
   def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = try {
     Success(
       for {
-        p <- db("products").find(
-          $or(
-            $or(MongoDBObject("title.ro" -> s".*${text}.*".r),
-              MongoDBObject("keyWords" -> s".*${text}.*".r)),
-            MongoDBObject("categories" -> s".*${text}.*".r)))
+        p <- db("products").find(MongoDBObject("$text" -> MongoDBObject("$search" -> text)))
       } yield {
         mongoToProduct(p)
       })

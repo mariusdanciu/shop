@@ -13,9 +13,8 @@ html,body {
 * {
 	outline: medium none;
 	margin: 0;
-	font-family: sans-serif;
+	font-family: 'Dosis', sans-serif;
 	font-weight: 300;
-	color: #555555;
 }
 
 div, span, input, textarea {
@@ -91,12 +90,12 @@ h3 span {
 }
 
 a:link {
-	color: #555555;
+	color: #000000;
 	text-decoration: none;
 }
 
 a:visited {
-	color: #555555;
+	color: #000000;
 	text-decoration: none;
 }
 
@@ -138,7 +137,7 @@ a:active {
 
 .page {
 	position: relative;
-	padding-top: 80px;
+	padding-top: 70px;
 }
 
 .wrap {
@@ -216,7 +215,6 @@ a:active {
 }
 
 .cat_box:hover {
-	box-shadow: inset 0px 0px 40px 1px #dddddd;
 	cursor: pointer;
 }
 
@@ -313,12 +311,13 @@ a:active {
 .info_tag_text {
 	position: relative;
 	top: 10px;
-	left: 10px;
+	font-size: 20px;
+	text-align: center;
 }
 
 .cat_text {
-	font-size: 24px;
-	top: 10px;
+	font-size: 32px;
+	top: 20px;
 }
 
 .thumb {
@@ -355,7 +354,7 @@ a:active {
 h1 {
 	padding-left: 10px;
 	margin-top: 10px;
-	font-size: 24px;
+	font-size: 32px;
 }
 
 #cart_symbol {
@@ -372,6 +371,7 @@ h1 {
 	float: left;
 	overflow-y: auto;
 	overflow-x: hidden;
+	width: 430px;
 }
 
 #cart_popup {
@@ -398,7 +398,6 @@ h1 {
 	right: 0px;
 	opacity: 0.95;
 	padding: 10px;
-	width: 350px;
 }
 
 #add_to_cart_box {
@@ -417,6 +416,7 @@ h1 {
 #cart_footer a {
 	margin-right: 40px;
 	float: right;
+	font-size: 20px;
 }
 
 #cart_footer #total {
@@ -579,6 +579,7 @@ h1 {
 	height: 45px;
 	width: 100%;
 	text-align: left;
+	clear: both;
 }
 
 .row_simple {
@@ -695,7 +696,7 @@ h1 {
 	border: 1px solid #cccccc;
 	width: 200px;
 	height: 32px;
-	color: #666666;
+	color: #000000;
 	font-size: 20px;
 	background-image: url("/static/images/search.png");
     background-repeat: no-repeat;
@@ -975,10 +976,10 @@ h1 {
 .auth {
   clear:both;
   overflow: auto;
+  text-align: center;
 }
 
 .auth a {
-  font-size: 14px;
   display: inline-block;
   padding-top: 10px;
   padding-right: 10px;
@@ -1065,9 +1066,6 @@ h1 {
 .address_template {
   display: none;
 }
-#sortSelect {
-  width: 200px;
-}
 
 .address_name {
   padding-left: 10px;
@@ -1079,6 +1077,14 @@ h1 {
 }
 
 .order_button {
-  clear: both;
+  margin-left: 10px;
+}
+
+#newuser_form input {
+  width: 250px;
+}
+
+#login_form input {
+  width: 253px;
   margin-left: 10px;
 }

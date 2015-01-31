@@ -68,11 +68,10 @@ object UserService extends PathUtils
     } yield {
       Messaging.send(ForgotPassword(r.language, email, n.toString))
     }) match {
-      case Success(_) => service(_(Resp.ok))
+      case Success(_) => service(_(TextResponse(Loc.loc(r.language)("forgotpass.mail.sent", Seq(email)).text)))
       case Failure(t) =>
         service(_(Resp.notFound.asText.body(Loc.loc(r.language)("user.not.found", Seq(email)).text)))
     }
-
   }
 
   def createUser = for {

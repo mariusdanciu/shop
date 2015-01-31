@@ -443,6 +443,11 @@
    "code" : "189",
    "name" : "settings.saved",
    "text" : "Set\u0103rile au fost salvate cu succes."
+ },
+ {
+   "code" : "190",
+   "name" : "forgotpass.mail.sent",
+   "text" : "Un email cu parola dumneavoastra a fost trimis la adresa '%s'"
  }
  
 ]
