@@ -108,8 +108,8 @@ var products = {
                 message : $("#product_dialog"),
                 css : {
                   top : '100px',
-                  left : ($(window).width() - 1000) / 2 + 'px',
-                  width : '1050px',
+                  left : ($(window).width() - 1100) / 2 + 'px',
+                  width : '1100px',
                   border : 'none',
                   cursor : null
                 },

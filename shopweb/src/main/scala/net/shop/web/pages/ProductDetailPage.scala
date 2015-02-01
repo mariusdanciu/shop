@@ -24,7 +24,7 @@ import net.shift.security.User
 
 object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlUtils {
 
-  override def snippets = List(title, catlink, productLink, images, detailPrice, details, specs, edit) ++ super.snippets
+  override def snippets = List(title, catlink, productLink, images, detailPrice, stock, details, specs, edit) ++ super.snippets
 
   val title = reqSnip("title") {
     s =>
@@ -103,6 +103,18 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
+  val stock = reqSnip("stock") {
+    s =>
+      (for {
+        p <- s.state.initialState.product
+      } yield {
+        (ProductPageState(s.state.initialState.req, Success(p), s.state.user), p.stock match {
+          case None    => Text(Loc.loc0(s.state.lang)("stock.order").text)
+          case Some(v) => Text(Loc.loc0(s.state.lang)("in.stock").text)
+        })
+      }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
+  }
+
   private def option2Try[T](o: Option[T]): Try[T] = o match {
     case Some(v) => Success(v)
     case _       => ShiftFailure("Empty").toFailure
@@ -159,6 +171,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
             case HasId("edit_discount_price", attrs)                        => node("input", attrs.attrs + ("value" -> discountPrice))
             case HasId("edit_categories", attrs)                            => handleCategories(attrs, s.state.lang, p.categories.toSet)
             case HasId("edit_keywords", attrs)                              => node("input", attrs.attrs + ("value" -> p.keyWords.mkString(", ")))
+            case HasId("edit_stock", attrs)                                 => node("input", attrs.attrs + ("value" -> p.stock.map(_ toString).getOrElse("")))
             case HasId("edit_description", attrs)                           => node("textarea", attrs.attrs) / Text(desc)
             case _ attributes HasClass("edit_props_sample", attrs) / childs => handleProperties(childs, p)
           }) match {

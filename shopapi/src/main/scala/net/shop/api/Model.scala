@@ -29,6 +29,7 @@ case class ProductDetail(id: Option[String] = None,
                          price: Double,
                          discountPrice: Option[Double],
                          soldCount: Int,
+                         stock: Option[Int],
                          categories: List[String],
                          images: List[String],
                          keyWords: List[String]) {

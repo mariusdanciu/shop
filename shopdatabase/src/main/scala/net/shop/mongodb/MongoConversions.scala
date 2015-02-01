@@ -21,6 +21,7 @@ trait MongoConversions {
     db += "price" -> obj.price
     db += "discountPrice" -> obj.discountPrice
     db += "soldCount" -> obj.soldCount
+    db += "stock" -> obj.stock
     db += "categories" -> obj.categories
     db += "images" -> obj.images
     db += "keywords" -> obj.keyWords
@@ -77,7 +78,8 @@ trait MongoConversions {
       properties = obj.getAsOrElse[Map[String, String]]("properties", Map.empty),
       price = obj.getAsOrElse[Double]("price", 0.0),
       discountPrice = obj.getAs[Double]("discountPrice"),
-      soldCount = obj.getAs[Int]("soldCOunt") getOrElse 0,
+      soldCount = obj.getAs[Int]("soldCount") getOrElse 0,
+      stock = obj.getAs[Int]("stock"),
       categories = obj.getAsOrElse[List[String]]("categories", Nil),
       images = obj.getAsOrElse[List[String]]("images", Nil),
       keyWords = obj.getAsOrElse[List[String]]("keywords", Nil))

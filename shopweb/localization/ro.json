@@ -448,6 +448,26 @@
    "code" : "190",
    "name" : "forgotpass.mail.sent",
    "text" : "Un email cu parola dumneavoastra a fost trimis la adresa '%s'"
+ },
+ {
+   "code" : "199",
+   "name" : "in.stock",
+   "text" : "In stoc"
+ },
+ {
+   "code" : "199",
+   "name" : "out.of.stock",
+   "text" : "Nu se gaseste in stoc"
+ },
+ {
+   "code" : "199",
+   "name" : "stock.order",
+   "text" : "La comanda"
+ },
+ {
+   "code" : "200",
+   "name" : "stock",
+   "text" : "Stoc"
  }
  
 ]

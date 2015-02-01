@@ -17,7 +17,7 @@ html,body {
 	font-weight: 300;
 }
 
-div, span, input, textarea {
+div, span, input, textarea, select {
   font-size: 16px;
 }
 
@@ -331,14 +331,13 @@ a:active {
 }
 
 #pright {
-	min-width: 400px;
 	width: 910px;
 	float: left;
 	margin-left: 20px;
 }
 
 .quickview #pright {
-	width: 660px;
+	width: 700px;
 }
 
 #product_title {
@@ -1087,4 +1086,13 @@ h1 {
 #login_form input {
   width: 253px;
   margin-left: 10px;
+}
+
+.stock {
+  float: left;
+  border-left: 1px solid #666666;
+  margin-left: 20px;
+  margin-top: 10px;
+  padding-left: 20px;
+  font-size: 20px;
 }
