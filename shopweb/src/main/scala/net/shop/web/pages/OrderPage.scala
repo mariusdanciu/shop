@@ -38,7 +38,7 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
     Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_company_${state.lang.language}.html"), this).map(in => in._2)
 
   val logo = reqSnip("logo") {
-    s => Success((s.state.initialState, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid-small.png" }/>))
+    s => Success((s.state.initialState, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/logo-black-small.png" }/>))
   }
 
   val info = reqSnip("info") {
