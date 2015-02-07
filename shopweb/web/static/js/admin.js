@@ -99,6 +99,22 @@ var admin = {
       $("#notice_connect_e").show().delay(5000).fadeOut("slow");
     });
   },
+  
+  getCategory : function(id, categoryFunc) {
+    $.ajax({
+      url : "/category/" + id,
+      timeout : 3000,
+      type : "GET",
+      dataType: "json",
+      error: function(x, t, m) {
+        if(m === "") {
+          common.showConnectionError();
+        } 
+      }
+    }).success(categoryFunc).fail(function(msg, f) {
+      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+    });
+  },
 
   deleteCategory : function(id) {
     $.ajax({
@@ -186,8 +202,8 @@ var admin = {
         message : $("#product_create_dialog"),
         css : {
           top : '70px',
-          left : ($(window).width() - 800) / 2 + 'px',
-          width : '800px',
+          left : ($(window).width() - 500) / 2 + 'px',
+          width : '500px',
           border : 'none',
           cursor : null
         },
@@ -205,8 +221,8 @@ var admin = {
         message : $("#category_create_dialog"),
         css : {
           top : '200px',
-          left : ($(window).width() - 400) / 2 + 'px',
-          width : '400px',
+          left : ($(window).width() - 320) / 2 + 'px',
+          width : '320px',
           border : 'none',
           cursor : null
         },
@@ -219,21 +235,29 @@ var admin = {
   },
 
   editCategory : function(cid) {
-    $('#update_category_form').attr("action", "/category/update/" + cid)
-    $.blockUI({
-      message : $("#category_update_dialog"),
-      css : {
-        top : '200px',
-        left : ($(window).width() - 400) / 2 + 'px',
-        width : '400px',
-        border : 'none',
-        cursor : null
-      },
-      overlayCSS : {
-        cursor : null,
-        backgroundColor : '#dddddd'
-      }
+    admin.getCategory(cid, function(obj) {
+      console.log(obj);
+      $('#update_category_form #title').val(obj.title);
+      $('#update_category_form #pos').val(obj.position);
+      
+      $('#update_category_form').attr("action", "/category/update/" + cid)
+      $.blockUI({
+        message : $("#category_update_dialog"),
+        css : {
+          top : '200px',
+          left : ($(window).width() - 320) / 2 + 'px',
+          width : '320px',
+          border : 'none',
+          cursor : null
+        },
+        overlayCSS : {
+          cursor : null,
+          backgroundColor : '#dddddd'
+        }
+      });
     });
+    
+    
   }
 
 };

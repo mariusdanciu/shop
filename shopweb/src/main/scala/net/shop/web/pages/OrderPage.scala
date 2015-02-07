@@ -32,10 +32,10 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
   implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
 
   def orderTemplate(state: OrderState): Try[NodeSeq] =
-    Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_${state.lang.language}.html"), this).map(in => in._2)
+    Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_${state.lang.name}.html"), this).map(in => in._2)
 
   def orderCompanyTemplate(state: OrderState): Try[NodeSeq] =
-    Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_company_${state.lang.language}.html"), this).map(in => in._2)
+    Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_company_${state.lang.name}.html"), this).map(in => in._2)
 
   val logo = reqSnip("logo") {
     s => Success((s.state.initialState, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/logo-black-small.png" }/>))
@@ -92,7 +92,7 @@ object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors
                 (bind(s.node) {
                   case "img" attributes a / _ =>
                     <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "normal", p.images.head)}") e
-                  case "td" attributes HasClass("c1", a) / _ => <td>{ p.title_?(s.state.lang.language) }</td> % a
+                  case "td" attributes HasClass("c1", a) / _ => <td>{ p.title_?(s.state.lang.name) }</td> % a
                   case "td" attributes HasClass("c2", a) / _ => <td>{ prod.quantity }</td> % a
                   case "td" attributes HasClass("c3", a) / _ => <td>{ p.price }</td> % a
                 }) match {

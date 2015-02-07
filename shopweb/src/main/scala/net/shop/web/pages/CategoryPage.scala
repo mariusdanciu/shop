@@ -34,8 +34,8 @@ object CategoryPage extends Cart[Request] with ShopUtils { self =>
             list flatMap { cat =>
               (bind(s.node) {
                 case "li" attributes HasClass("item", a) / childs             => <li>{ childs }</li>
-                case "div" attributes HasClass("cat_box", a) / childs         => <div id={ cat stringId } style={ "background-image: url('" + categoryImagePath(cat) + "')" }>{ childs }</div> % a
-                case "div" attributes HasClasses("info_tag_text" :: _, a) / _ => <div>{ cat.title_?(s.state.lang.language) }</div> % a
+                case "div" attributes HasClass("cat_box", a) / childs         => <div id={ cat stringId } style={ "background: url('" + categoryImagePath(cat) + "') no-repeat" }>{ childs }</div> % a
+                case "div" attributes HasClasses("info_tag_text" :: _, a) / _ => <div>{ cat.title_?(s.state.lang.name) }</div> % a
               }) match {
                 case Success(n) => n
                 case Failure(f) => errorTag(f toString)

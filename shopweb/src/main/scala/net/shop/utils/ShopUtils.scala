@@ -8,14 +8,14 @@ import scala.util.Random
 trait ShopUtils {
   val random = new Random(System.currentTimeMillis())
 
-  def categoryImagePath(cat: Category): String = s"/data/categories/${cat.stringId}/${cat.image.getOrElse("")}"
+  def categoryImagePath(cat: Category): String = s"/data/categories/${cat.stringId}.png"
 
   def imagePath(id: String, variant: String, prod: String): String = s"/data/products/$id/$variant/$prod"
 
   def imagePath(variant: String, prod: ProductDetail): String =
     prod.images match {
       case h :: _ => s"/data/products/${prod.stringId}/$variant/${h}"
-      case Nil    => ""
+      case Nil    => "/static/images/noimage.png"
     }
 
   def errorTag(text: String) = <div class="error"><div><img src="/static/images/exclamation.png"/></div><span>{ text }</span></div>

@@ -10,8 +10,7 @@
     <div id="item_list">
       <ul>
         <li data-permissions="write">
-          <div class="cat_box">
-            <img class="add_item" src="/static/images/add-item.png" />
+          <div class="cat_box cat_add_item">
           </div>
         </li>
         <li data-snip="item">
@@ -25,7 +24,7 @@
               </div>
 
             </div>
-            <div class="info_tag">
+            <div class="info_tag cat_info_tag">
               <div class="info_tag_text cat_text"></div>
             </div>
           </div>
@@ -34,31 +33,32 @@
     </div>
 
     <div id="category_create_dialog" data-permissions="write">
-      <div class="product_content">
+      <div>
         <div class="title_dialog">
-          <h1 id="new_cat_title" data-loc="new.category"></h1>
+          <h2 id="new_cat_title" data-loc="new.category"></h2>
         </div>
         <div class="close_dialog">
           <img src="/static/images/close.png" />
         </div>
-        <div class="content_dialog">
-          <div class="upload_form_fields">
-            <form action="/category/create" id="create_category_form" method="POST">
-              <div id="fields" class="fields tab_content">
-                <div class="column">
-                  <div class="row">
-                    <label for="title" data-loc="title"></label><input id="title" type="text" name="title" />
-                  </div>
-                  <div class="row">
-                    <input type="file" id="fileselect" name="files" />
-                  </div>
+        <div class="content_dialog left10">
+          <form action="/category/create" id="create_category_form" method="POST">
+            <div id="fields" class="fields tab_content">
+              <div class="column">
+                <div class="row">
+                  <label for="title" data-loc="title"></label><input id="title" type="text" name="title" />
+                </div>
+                <div class="row">
+                  <label for="pos" data-loc="list.pos"></label><input id="pos" type="text" name="pos" />
+                </div>
+                <div class="row">
+                  <input type="file" id="fileselect" name="files" />
                 </div>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
-      <div class="dialog_footer">
+      <div class="dialog_footer paddingtop10">
         <div id="create_category">
           <a href="#" class="btn" data-loc="save"></a>
         </div>
@@ -66,31 +66,32 @@
     </div>
 
     <div id="category_update_dialog" data-permissions="write">
-      <div class="product_content">
+      <div>
         <div class="title_dialog">
-          <h1 id="edit_cat_title" data-loc="edit.category"></h1>
+          <h2 id="edit_cat_title" data-loc="edit.category"></h2>
         </div>
         <div class="close_dialog">
           <img src="/static/images/close.png" />
         </div>
-        <div class="content_dialog">
-          <div class="upload_form_fields">
-            <form id="update_category_form" method="POST">
-              <div id="fields" class="fields tab_content">
-                <div class="column">
-                  <div class="row">
-                    <label for="title" data-loc="title"></label><input id="title" type="text" name="title" />
-                  </div>
-                  <div class="row">
-                    <input type="file" id="fileselect" name="files" />
-                  </div>
+        <div class="content_dialog left10">
+          <form id="update_category_form" method="POST">
+            <div id="fields" class="fields tab_content">
+              <div class="column">
+                <div class="row">
+                  <label for="title" data-loc="title"></label><input id="title" type="text" name="title" />
+                </div>
+                 <div class="row">
+                  <label for="pos" data-loc="list.pos"></label><input id="pos" type="text" name="pos" />
+                </div>
+                <div class="row">
+                  <input type="file" id="fileselect" name="files" />
                 </div>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
-      <div class="dialog_footer">
+      <div class="dialog_footer paddingtop10">
         <div id="update_category">
           <a href="#" class="btn" data-loc="save"></a>
         </div>

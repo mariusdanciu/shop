@@ -3,18 +3,17 @@ package mongodb
 
 import scala.util.Success
 import scala.util.Try
-
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
-
 import net.shop.api._
 import net.shop.api.persistence._
 import net.shop.api.persistence.ShopError._
+import net.shift.common.Config
 
 object MongoDBPersistence extends Persistence with MongoConversions {
 
-  lazy val db = MongoClient("localhost")("idid")
+  lazy val db = MongoClient(Config.string("db.host", "localhost"))("idid")
 
   db.command(MongoDBObject("setParameter" -> 1, "textSearchEnabled" -> 1))
 
@@ -76,7 +75,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
   }
 
   def allCategories: Try[Iterator[Category]] = try {
-    Success(for { p <- db("categories").find() } yield {
+    Success(for { p <- db("categories").find().sort(MongoDBObject("position" -> 1)) } yield {
       mongoToCategory(p)
     })
   } catch {
@@ -125,11 +124,11 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     case e: Exception => fail(e)
   }
 
-  def updateCategories(prod: Category*): Try[Seq[String]] = try {
+  def updateCategories(c: Category*): Try[Seq[String]] = try {
     val builder = db("categories").initializeOrderedBulkOperation
 
     val ids = for {
-      p <- prod
+      p <- c
       id <- p.id
     } yield {
       builder.find(MongoDBObject("_id" -> new ObjectId(id))).update(MongoDBObject {

@@ -45,7 +45,7 @@ case class CartItem(id: String, count: Int)
 
 case class Cart(items: List[CartItem])
 
-case class Category(id: Option[String] = None, val title: Map[String, String], image: Option[String]) {
+case class Category(id: Option[String] = None, position: Int, title: Map[String, String]) {
   def title_?(l: String) = title.getOrElse(l, "???")
   def stringId = id getOrElse "?"
 }
@@ -80,13 +80,13 @@ case class OrderLog(id: String,
 case class ProductLog(id: String, price: Double, quantity: Int)
 
 object Formatter {
-  def format[T: Formatter](v: T): String = {
+  def format[T: Formatter](v: T)(implicit lang: String): String = {
     implicitly[Formatter[T]].write(v)
   }
 }
 
 trait Formatter[T] {
-  def write(value: T): String
+  def write(value: T)(implicit lang: String): String
 }
 
 

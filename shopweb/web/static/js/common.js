@@ -451,6 +451,7 @@ var cart = {
   },
 
   loadView : function(f) {
+    console.log(window.cart.items());
     if (window.cart.items().length === 0) {
       $('#order').hide();
       $('#cart_content').hide();

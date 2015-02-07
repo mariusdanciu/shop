@@ -468,6 +468,16 @@
    "code" : "200",
    "name" : "stock",
    "text" : "Stoc"
+ },
+ {
+   "code" : "201",
+   "name" : "list.pos",
+   "text" : "Pozitia in lista"
+ },
+ {
+   "code" : "202",
+   "name" : "category.create.fail",
+   "text" : "Categoria nu poate fi creata"
  }
  
 ]

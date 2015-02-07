@@ -69,7 +69,7 @@ trait FormValidation {
     }
 
   def validateMapField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
-    required(name, title, s => Valid(Map(lang.language -> s)))
+    required(name, title, s => Valid(Map(lang.name -> s)))
 
   def validateListField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationList] =
     required(name, title, s => Valid(s.split("\\s*,\\s*").toList))
@@ -77,6 +77,8 @@ trait FormValidation {
   def optionalListField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationList] =
     optional(name, title, Nil, s => Valid(s.split("\\s*,\\s*").toList))
 
+  def validateInt(name: String, title: String)(implicit lang: Language): ValidationFunc[Int] =
+    required(name, title, s => Valid(s.toInt))
     
   def validateDouble(name: String, title: String)(implicit lang: Language): ValidationFunc[Double] =
     required(name, title, s => Valid(s.toDouble))
@@ -140,12 +142,12 @@ trait FormValidation {
     case _ => None
   }
 
-  def validationFail(msgs: ValidationFail) =
+  def validationFail(msgs: ValidationFail)(implicit lang: String) =
     service(r => {
       r(JsonResponse(Formatter.format(msgs)).code(403))
     })
 
-  def respValidationFail(resp: net.shift.engine.http.AsyncResponse, msgs: ValidationFail) =
+  def respValidationFail(resp: net.shift.engine.http.AsyncResponse, msgs: ValidationFail)(implicit lang: String) =
     resp(JsonResponse(Formatter.format(msgs)).code(403))
 
 }

@@ -59,11 +59,11 @@ class OrderActor extends Actor with DefaultLog {
   }
 
   def receive = {
-    case StoreOrderStats(content) => writeStat(content.o)
+    case StoreOrderStats(content) => writeStat(content.o)("ro")
     case mail: Mail               => sendMail(mail)
   }
 
-  def writeStat(o: Order) {
+  def writeStat(o: Order)(implicit lang: String) {
     statsLog.info(Formatter.format(o.toOrderLog) + ",")
   }
 

@@ -8,7 +8,6 @@ import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
 import net.shift.engine.http.MultiPartBody
-import net.shift.engine.http.POST
 import net.shift.engine.http.Resp
 import net.shift.engine.utils.ShiftUtils
 import net.shift.html.Formlet
@@ -22,7 +21,7 @@ import net.shift.loc.Loc
 import net.shift.template.Selectors
 import net.shop.api.Category
 import net.shop.web.ShopApplication
-import net.shift.engine.http.DELETE
+import net.shift.engine.http.{ DELETE, GET, POST }
 import net.shift.security.BasicCredentials
 import net.shift.security.User
 import net.shift.security.Permission
@@ -31,6 +30,9 @@ import net.shop.model.ValidationFail
 import net.shop.web.services.FormImplicits._
 import net.shift.html.Invalid
 import net.shift.html.Valid
+import net.shift.engine.http.JsonResponse
+import net.shop.api.Formatter
+import net.shop.model.Formatters._
 
 object CategoryService extends PathUtils
   with Selectors
@@ -38,6 +40,20 @@ object CategoryService extends PathUtils
   with DefaultLog
   with FormValidation
   with SecuredService {
+
+  def getCategory = for {
+    r <- GET
+    Path("category" :: id :: Nil) <- path
+    user <- auth
+  } yield {
+    ShopApplication.persistence.categoryById(id) match {
+      case scala.util.Success(cat) =>
+        val deleted = scalax.file.Path.fromString(s"data/categories/$id").deleteRecursively(true);
+        implicit val l = r.language.name
+        service(_(JsonResponse(Formatter.format(cat))))
+      case scala.util.Failure(t) => service(_(Resp.notFound))
+    }
+  }
 
   def deleteCategory = for {
     r <- DELETE
@@ -60,20 +76,19 @@ object CategoryService extends PathUtils
   } yield {
     extract(r.language, None, mp) match {
       case (file, Valid(o)) =>
-        val cpy = o.copy(id = Some(id), image = file.map(f => f._1))
+        val cpy = o.copy(id = Some(id))
         ShopApplication.persistence.updateCategories(cpy) match {
           case scala.util.Success(p) =>
             file.map { f =>
-              scalax.file.Path.fromString(s"data/categories/${f._1}").write(f._2)
+              scalax.file.Path.fromString(s"data/categories/${cpy.id.getOrElse("")}.png").write(f._2)
             }
             service(_(Resp.created))
 
           case scala.util.Failure(t) =>
-            error("Cannot create category ", t)
-            service(_(Resp.serverError))
+            service(_(Resp.serverError.asText.body("category.create.fail")))
         }
 
-      case (_, Invalid(msgs)) => validationFail(msgs)
+      case (_, Invalid(msgs)) => validationFail(msgs)(r.language.name)
 
     }
 
@@ -87,12 +102,11 @@ object CategoryService extends PathUtils
   } yield {
     extract(r.language, None, mp) match {
       case (file, Valid(o)) =>
-        val cpy = o.copy(image = file.map(f => f._1))
 
-        ShopApplication.persistence.createCategories(cpy) match {
+        ShopApplication.persistence.createCategories(o) match {
           case scala.util.Success(p) =>
             file.map { f =>
-              scalax.file.Path.fromString(s"data/categories/${p.head}/${f._1}").write(f._2)
+              scalax.file.Path.fromString(s"data/categories/${p.head}.png").write(f._2)
             }
             service(_(Resp.created))
           case scala.util.Failure(t) =>
@@ -100,7 +114,7 @@ object CategoryService extends PathUtils
             service(_(Resp.serverError))
         }
 
-      case (_, Invalid(msgs)) => validationFail(msgs)
+      case (_, Invalid(msgs)) => validationFail(msgs)(r.language.name)
 
     }
 
@@ -120,8 +134,8 @@ object CategoryService extends PathUtils
     val ? = Loc.loc0(loc) _
 
     val categoryFormlet = Formlet(category) <*>
-      inputText("title")(validateMapField("title", ?("title").text)) <*>
-      inputFile("files")(validateDefault(None))
+      inputText("pos")(validateInt("pos", ?("list.pos").text)) <*>
+      inputText("title")(validateMapField("title", ?("title").text))
 
     (file, categoryFormlet validate params)
 

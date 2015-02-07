@@ -148,7 +148,7 @@ a:active {
 }
 
 .center {
-	max-width: 1276px;
+	max-width: 1280px;
 	margin: auto;
 	position: relative;
 }
@@ -202,16 +202,16 @@ a:active {
 
 #item_list ul li {
 	float: left;
-	margin: 4px 5px 0 0;
+	margin: 4px 4px 0 0;
 	overflow: hidden;
 	position: relative;
 }
 
 .cat_box {
 	border-radius: 10px;
-	border: 1px solid #dddddd;
-	width: 312px;
-	height: 356px;
+	box-shadow: inset 0px 0px 1px 1px #dddddd;
+    height: 216px;
+    width: 156px;
 }
 
 .cat_box:hover {
@@ -252,7 +252,6 @@ a:active {
     display: block;
 }
 
-
 .item_box:hover > .info_tag div {
 	color: #ffffff;
 }
@@ -267,19 +266,26 @@ a:active {
 
 .info_tag {
     background: none repeat scroll 0 0 rgba(255, 255, 255, 0.6);
-    border: 1px solid #dddddd;
     border-radius: 0 0 10px 10px;
+    border: 1px solid #dddddd;
     height: 68px;
     margin: 0;
     position: relative;
-    top: 256px;
+    top: 246px;
     width: 310px;
+}
+
+.cat_info_tag {
+    border: none;
+    top: 138px;
+    width: 154px;
+    height: 37px;
 }
 
 .edit_tag {
 	position: relative;
-	width: 305px;
-	height: 30px;
+	width: 100%;
+	height: 40px;
 }
 
 .edit_tag_close, .edit_tag_update {
@@ -301,7 +307,7 @@ a:active {
 
 .info_tag_cart {
 	position: relative;
-	top: 13px;
+	top: 10px;
 	left: 10px;
 	text-align: left;
 	display: none;
@@ -316,8 +322,8 @@ a:active {
 }
 
 .cat_text {
-	font-size: 32px;
-	top: 20px;
+	font-size: 14px;
+	top: 10px;
 }
 
 .thumb {
@@ -484,10 +490,6 @@ h1 {
 	width: 280px;
 }
 
-.cart_item ul {
-	margin-top: 15px;
-}
-
 .cart_item ul li {
 	margin-top: 5px;
 }
@@ -619,6 +621,10 @@ h1 {
 
 .upload_form_fields .fields .select_row select {
 	height: 140px;
+}
+
+#edit_fields select {
+	height: 222px;
 }
 
 .upload_form_fields {
@@ -859,13 +865,17 @@ h1 {
 
 .dialog_footer div {
 	float: right;
-	margin-right: 10px;
+	margin-right: 7px;
 }
 
 .add_item {
-    margin-left: 100px;
-    margin-top: 114px;
+    background: url('/static/images/add-item.png') no-repeat center;
 } 
+
+.cat_add_item {
+    background: url('/static/images/add-item-small.png') no-repeat center;
+} 
+
 
 .create_product_tab, #product_details_tab { 
   padding: 0;
@@ -1009,6 +1019,12 @@ h1 {
   position: relative;
 }
 
+.left20 {
+  margin-left: 20px;
+  position: relative;
+}
+
+
 .left30 {
   margin-left: 30px;
   position: relative;
@@ -1085,6 +1101,11 @@ h1 {
 #login_form input {
   width: 253px;
   margin-left: 10px;
+}
+
+#login_form label {
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .stock {

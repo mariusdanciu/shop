@@ -39,7 +39,7 @@ object ProductsPage extends Cart[Request] with ShopUtils with XmlUtils {
       val v = (s.state.initialState.param("cat"), s.state.initialState.param("search")) match {
         case (Some(cat :: _), None) =>
           ShopApplication.persistence.categoryById(cat) match {
-            case Success(c) => Text(c.title.getOrElse(s.state.lang.language, "???"))
+            case Success(c) => Text(c.title.getOrElse(s.state.lang.name, "???"))
             case _          => NodeSeq.Empty
           }
         case (None, Some(search :: _)) => Text(s""""$search"""")
@@ -56,8 +56,8 @@ object ProductsPage extends Cart[Request] with ShopUtils with XmlUtils {
             list flatMap { prod =>
               bind(s.node) {
                 case "li" attributes HasClass("item", a) / childs            => <li>{ childs }</li>
-                case "div" attributes HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.state.lang.language) } style={ "background-image: url('" + imagePath("normal", prod) + "')" }>{ childs }</div> % a
-                case "div" attributes HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.state.lang.language) }</div> % a
+                case "div" attributes HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat center" }>{ childs }</div> % a
+                case "div" attributes HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.state.lang.name) }</div> % a
                 case "div" attributes HasClass("info_tag_price", a) / childs => priceTag(prod) % a
               } match {
                 case Success(n) => n
@@ -76,7 +76,7 @@ object ProductsPage extends Cart[Request] with ShopUtils with XmlUtils {
         case Success(list) =>
           s.node match {
             case e: Elem =>
-              val v = list.map(c => (<option value={ c.id getOrElse "?" }>{ c.title_?(s.state.lang.language) }</option>)).toSeq
+              val v = list.map(c => (<option value={ c.id getOrElse "?" }>{ c.title_?(s.state.lang.name) }</option>)).toSeq
               Success((s.state.initialState, e / NodeSeq.fromSeq(v)))
             case _ => Success((s.state.initialState, NodeSeq.Empty))
           }
@@ -98,7 +98,7 @@ object ProductsQuery {
 
   def toSortSpec(r: Request): SortSpec = {
     r.param("sort") match {
-      case Some(v :: _) => SortSpec.fromString(v, r.language.language)
+      case Some(v :: _) => SortSpec.fromString(v, r.language.name)
       case _            => NoSort
     }
   }

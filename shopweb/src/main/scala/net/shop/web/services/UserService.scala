@@ -51,6 +51,7 @@ object UserService extends PathUtils
   } yield {
     ShopApplication.persistence.userByEmail(user.name) match {
       case Success(ud) =>
+        implicit val l = r.language.name
         service(_(JsonResponse(Formatter.format(ud))))
       case _ =>
         service(_(Resp.notFound.asText.body(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
@@ -64,7 +65,7 @@ object UserService extends PathUtils
     val email = Base64.decodeString(b64)
     (for {
       ud <- ShopApplication.persistence.userByEmail(email)
-      (_, n) <- Html5.runPageFromFile(PageState(ud, r.language), Path(s"web/templates/forgotpassword_${r.language.language}.html"), ForgotPasswordPage)
+      (_, n) <- Html5.runPageFromFile(PageState(ud, r.language), Path(s"web/templates/forgotpassword_${r.language.name}.html"), ForgotPasswordPage)
     } yield {
       Messaging.send(ForgotPassword(r.language, email, n.toString))
     }) match {
@@ -104,7 +105,7 @@ object UserService extends PathUtils
             service(_(Resp.serverError.body(Loc.loc0(r.language)("user.cannot.create").text)))
         }
 
-      case Invalid(msgs) => validationFail(msgs)
+      case Invalid(msgs) => validationFail(msgs)(r.language.name)
     }
   }
 

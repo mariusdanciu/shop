@@ -24,6 +24,8 @@ import net.shift.security.User
 
 object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlUtils {
 
+  val noImage = "/static/images/noimage.png"
+
   override def snippets = List(title, catlink, productLink, images, detailPrice, stock, details, specs, edit) ++ super.snippets
 
   val title = reqSnip("title") {
@@ -31,7 +33,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
       {
         s.state.initialState.req.param("pid") match {
           case Some(id :: _) => ShopApplication.persistence.productById(id) match {
-            case Success(prod) => Success(ProductPageState(s.state.initialState.req, Success(prod), s.state.user), <h1>{ prod.title_?(s.state.lang.language) }</h1>)
+            case Success(prod) => Success(ProductPageState(s.state.initialState.req, Success(prod), s.state.user), <h1>{ prod.title_?(s.state.lang.name) }</h1>)
             case Failure(t) =>
               Success(s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no_product").text))
           }
@@ -45,7 +47,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
       ((s.state.initialState.product map { p =>
         (p.categories.flatMap(e => {
           ShopApplication.persistence.categoryById(e) match {
-            case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.state.lang.language) }</a> ++ <span>, </span>)
+            case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.state.lang.name) }</a> ++ <span>, </span>)
             case _            => NodeSeq.Empty
           }
         }).toList.dropRight(1))
@@ -71,25 +73,34 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
       (s.state.initialState.product flatMap { prod =>
         bind(s.node) {
           case "b:img" attributes _ =>
-            val list = NodeSeq.fromSeq(for {
-              p <- prod.images zipWithIndex
-            } yield {
-              val normal = imagePath(prod.stringId, "normal", p._1)
-              val large = imagePath(prod.stringId, "large", p._1)
-              val thumb = imagePath(prod.stringId, "thumb", p._1)
-              <a href="#" data-image={ normal } data-zoom-image={ large }>
-                <img id={ s"img_${p._2}" } src={ thumb }/>
-              </a>
-            })
+            prod.images match {
+              case Nil =>
+                <img id="sel_img" src={ noImage } title={ prod.title_?(s.state.lang.name) } data-zoom-image={ noImage }></img> ++
+                  <div id="gallery">
+                    <a href="#" data-image={ noImage } data-zoom-image={ noImage }>
+                      <img id="img_1" src={ noImage }/>
+                    </a>
+                  </div>
+              case images =>
+                val list = NodeSeq.fromSeq(for {
+                  p <- images zipWithIndex
+                } yield {
+                  val normal = imagePath(prod.stringId, "normal", p._1)
+                  val large = imagePath(prod.stringId, "large", p._1)
+                  val thumb = imagePath(prod.stringId, "thumb", p._1)
+                  <a href="#" data-image={ normal } data-zoom-image={ large }>
+                    <img id={ s"img_${p._2}" } src={ thumb }/>
+                  </a>
+                })
 
-            val path = imagePath(prod.stringId, "normal", prod.images.head)
-            val large = imagePath(prod.stringId, "large", prod.images.head)
+                val path = imagePath(prod.stringId, "normal", images.head)
+                val large = imagePath(prod.stringId, "large", images.head)
 
-            <img id="sel_img" src={ path } title={ prod.title_?(s.state.lang.language) } data-zoom-image={ large }></img> ++
-              <div id="gallery">
-                { list }
-              </div>
-
+                <img id="sel_img" src={ path } title={ prod.title_?(s.state.lang.name) } data-zoom-image={ large }></img> ++
+                  <div id="gallery">
+                    { list }
+                  </div>
+            }
         } map { b => (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), b) }
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
@@ -125,7 +136,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
       {
         (for {
           p <- s.state.initialState.product
-          desc <- option2Try(p.description.get(s.state.lang.language))
+          desc <- option2Try(p.description.get(s.state.lang.name))
         } yield {
           (ProductPageState(s.state.initialState.req, Success(p), s.state.user), Text(desc))
         }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
@@ -159,8 +170,8 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
         (for {
           p <- s.state.initialState.product
         } yield {
-          val title = p.title.get(s.state.lang.language).getOrElse("")
-          val desc = p.description.get(s.state.lang.language).getOrElse("")
+          val title = p.title.get(s.state.lang.name).getOrElse("")
+          val desc = p.description.get(s.state.lang.name).getOrElse("")
           val discountPrice = p.discountPrice.map(_.toString()).getOrElse("")
 
           (bind(s.node) {
@@ -185,7 +196,7 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
   private def handleCategories(attrs: Attributes, l: Language, categs: Set[String]) = node("select", attrs.attrs) / {
     ShopApplication.persistence.allCategories match {
       case Success(cats) => NodeSeq.fromSeq((for { c <- cats } yield {
-        val opt = node("option", Map("value" -> c.stringId)) / Text(c.title_?(l.language))
+        val opt = node("option", Map("value" -> c.stringId)) / Text(c.title_?(l.name))
         if (categs.contains(c.stringId)) {
           (opt attr ("selected", "true")).e
         } else {

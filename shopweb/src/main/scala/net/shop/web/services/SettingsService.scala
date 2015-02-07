@@ -57,7 +57,7 @@ object SettingsService extends PathUtils
               case _ => service(_(Resp.serverError.asText.body(Loc.loc0(r.language)("login.fail").text)))
             }
             service(_(Resp.created.asText.body(Loc.loc0(r.language)("settings.saved").text)))
-          case Invalid(e) => validationFail(e)
+          case Invalid(e) => validationFail(e)(r.language.name)
         }
       case None => service(_(Resp.forbidden.asText.body(Loc.loc0(r.language)("login.fail").text)))
     }

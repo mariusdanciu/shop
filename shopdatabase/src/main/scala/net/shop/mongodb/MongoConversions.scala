@@ -30,8 +30,8 @@ trait MongoConversions {
 
   def categoryToMongo(obj: Category): MongoDBObject = {
     val db = MongoDBObject.newBuilder
+    db += "position" -> obj.position
     db += "title" -> MongoDBObject(obj.title.toList)
-    obj.image.map(img => db += ("image" -> img))
     db.result
   }
 
@@ -86,8 +86,8 @@ trait MongoConversions {
 
   def mongoToCategory(obj: DBObject): Category =
     Category(id = obj.getAs[ObjectId]("_id").map(_.toString),
-      title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
-      image = obj.getAs[String]("image"))
+      position = obj.getAsOrElse[Int]("position", 0),
+      title = obj.getAsOrElse[Map[String, String]]("title", Map.empty))
 
   def mongoToUser(obj: DBObject): UserDetail = {
 

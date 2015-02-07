@@ -88,7 +88,7 @@ object ProductService extends PathUtils
           case scala.util.Failure(f) => service(_(Resp.notFound))
         }
 
-      case (_, Invalid(msgs)) => validationFail(msgs)
+      case (_, Invalid(msgs)) => validationFail(msgs)(r.language.name)
     }
   }
 
@@ -112,7 +112,7 @@ object ProductService extends PathUtils
             service(_(Resp.serverError))
         }
 
-      case (_, Invalid(msgs)) => validationFail(msgs)
+      case (_, Invalid(msgs)) => validationFail(msgs)(r.language.name)
 
     }
 

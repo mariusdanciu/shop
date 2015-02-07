@@ -16,7 +16,7 @@ object Main extends App with PathUtils {
 
   val ornamente = Category(
     title = Map("ro" -> "Ornamente"),
-    image = Some("jucarii.png"))
+    position = 0)
 
   val cats = List(ornamente)
 
