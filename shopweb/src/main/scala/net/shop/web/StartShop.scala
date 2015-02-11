@@ -27,6 +27,8 @@ import net.shop.web.services.CategoryService
 import net.shop.web.services.ProductService
 import net.shop.web.services.OrderService
 import net.shop.web.services.ShopServices
+import net.shop.web.pages.ReturnPolicyPage
+import net.shop.web.pages.DataProtectionPage
 
 object StartShop extends App with DefaultLog {
 
@@ -58,6 +60,8 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
       page("products", Path("web/products.html"), ProductsPage) |
       page("terms", Path("web/terms.html"), TermsPage) |
+      page("dataprotection", Path("web/dataprotection.html"), DataProtectionPage) |
+      page("returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
       settingsPage("accountsettings", Path("web/accountsettings.html"), AccountSettingsPage) |
       getCart() |
       OrderService.order |

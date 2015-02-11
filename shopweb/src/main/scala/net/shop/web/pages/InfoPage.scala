@@ -27,3 +27,23 @@ object TermsPage extends Cart[Request] with ShopUtils { self =>
   }
 
 }
+
+object DataProtectionPage extends Cart[Request] with ShopUtils { self =>
+
+  override def snippets = List(title) ++ super.snippets
+
+  val title = reqSnip("title") {
+    s => Success((s.state.initialState, <h1>{ Loc.loc0(s.state.lang)("data.protection.link").text }</h1>))
+  }
+
+}
+
+object ReturnPolicyPage extends Cart[Request] with ShopUtils { self =>
+
+  override def snippets = List(title) ++ super.snippets
+
+  val title = reqSnip("title") {
+    s => Success((s.state.initialState, <h1>{ Loc.loc0(s.state.lang)("return.policy.link").text }</h1>))
+  }
+
+}

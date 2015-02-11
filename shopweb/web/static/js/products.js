@@ -87,6 +87,20 @@ var products = {
               $("#notice_connect_e").show().delay(5000).fadeOut("slow");
             } else {
 
+              $("#fb-share-button").click(function(e){
+                FB.ui(
+                    {
+                      method: 'share',
+                      href: 'http://localhost:8887/product?pid=' + pid,
+                    },
+                    function(response) {
+                      if (response && !response.error_code) {
+                      } else {
+                      }
+                    }
+                  );
+              });
+              
               $("#sel_img").elevateZoom({
                 gallery : 'detail_box',
                 cursor : 'pointer',

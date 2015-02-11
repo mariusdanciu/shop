@@ -12,6 +12,18 @@ object ShopBuild extends Build {
   val distShopWeb = TaskKey[File]("distShopWeb", "")
   val distShopDB = TaskKey[File]("distShopDB", "")
   val dist = TaskKey[Unit]("dist", "")
+
+  val buildProps = {
+    import java.util.Properties
+ 
+    val prop = new Properties()
+    val file = new File("./build.properties")
+    
+    IO.load(prop, file)
+    prop.setProperty("build", prop.getProperty("build").toInt + 1 + "");
+    IO.write(prop, "", file)
+    prop
+  }
   
   val distShopWebSetting = distShopWeb <<= (target, managedClasspath in Runtime, publishLocal, packageBin in Compile) map {
     (target, cp, _, pack) =>
@@ -38,14 +50,14 @@ object ShopBuild extends Build {
   val distShopApiSetting = distShopApi <<= (target, managedClasspath in Runtime, publishLocal, packageBin in Compile) map {
     (target, cp, _, pack) => {
         println("dist > shopapi")
-	    pack
+	pack
     }
   }
   
   val distShopDBSetting = distShopDB <<= (target, managedClasspath in Runtime, publishLocal, packageBin in Compile) map {
     (target, cp, _, pack) => {
         println("dist > shopdatabase")
-	    pack
+	pack
     }
   }
   

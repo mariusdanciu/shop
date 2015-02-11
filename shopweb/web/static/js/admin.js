@@ -236,7 +236,6 @@ var admin = {
 
   editCategory : function(cid) {
     admin.getCategory(cid, function(obj) {
-      console.log(obj);
       $('#update_category_form #title').val(obj.title);
       $('#update_category_form #pos').val(obj.position);
       

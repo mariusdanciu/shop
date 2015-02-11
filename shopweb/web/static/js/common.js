@@ -133,6 +133,13 @@
     });
 
     window.cart.loadView();
+    
+    FB.init({
+      appId      : '915281988516999',
+      status     : true,
+      xfbml      : true,
+      version    : 'v2.0'
+    });
   });
 
 })();
@@ -451,7 +458,6 @@ var cart = {
   },
 
   loadView : function(f) {
-    console.log(window.cart.items());
     if (window.cart.items().length === 0) {
       $('#order').hide();
       $('#cart_content').hide();
@@ -495,6 +501,11 @@ var cart = {
             window.cart.setItemCount(id, $(this).val());
             e.preventDefault();
           });
+        });
+        
+        $(".del_cart_item a").each(function(index) {
+          var me = $(this);
+          var id = me.attr("id").substring(4);
           me.click(function(e) {
             window.cart.removeItem(id);
             e.preventDefault();

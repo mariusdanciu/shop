@@ -20,6 +20,18 @@
       borderSize : 1
     });
 
+    $("#fb-share-button").click(function(e) {
+      var pid = $.url().param("pid");
+      FB.ui({
+        method : 'share',
+        href : 'http://localhost:8887/product?pid=' + pid,
+      }, function(response) {
+        if (response && !response.error_code) {
+        } else {
+        }
+      });
+    });
+
     var content = $("#prod_desc").text();
     $("#prod_desc").html(textile.convert(content));
 

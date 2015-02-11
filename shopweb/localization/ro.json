@@ -478,6 +478,16 @@
    "code" : "202",
    "name" : "category.create.fail",
    "text" : "Categoria nu poate fi creata"
+ },
+ {
+   "code" : "202",
+   "name" : "data.protection.link",
+   "text" : "Protectia datelor"
+ },
+ {
+   "code" : "203",
+   "name" : "return.policy.link",
+   "text" : "Politica de retur"
  }
  
 ]

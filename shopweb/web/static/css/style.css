@@ -177,6 +177,7 @@ a:active {
 .footer * a {
 	color: #ffffff;
 	text-decoration: none;
+	font-size: 16px;
 }
 
 .footer a:hover {
@@ -486,8 +487,9 @@ h1 {
 .cart_item {
 	float: left;
 	margin-left: 25px;
+	margin-top: 10px;
 	overflow: hidden;
-	width: 280px;
+	width: 250px;
 }
 
 .cart_item ul li {
@@ -1045,6 +1047,7 @@ h1 {
 
 .userinputs {
   width: 440px;
+  margin-left: 36px;
 }
 
 .addressinputs {
@@ -1091,7 +1094,7 @@ h1 {
 }
 
 .order_button {
-  margin-left: 10px;
+  margin-right: 5px;
 }
 
 #newuser_form input {
@@ -1108,11 +1111,31 @@ h1 {
   margin-right: 20px;
 }
 
-.stock {
+.prod_price_line {
   float: left;
-  border-left: 1px solid #666666;
   margin-left: 20px;
   margin-top: 10px;
   padding-left: 20px;
   font-size: 20px;
+}
+
+
+.page_text {
+  margin-top: 30px;
+}
+
+.fb_area {
+  position: relative;
+  top: 15px;
+}
+
+.del_cart_item {
+  margin-top: 5px;
+  margin-right: 3px;
+}
+
+#fb-share-button {
+  float: left;
+  margin-top: 5px;
+  margin-right: 10px;
 }
