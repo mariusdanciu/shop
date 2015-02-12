@@ -1112,6 +1112,7 @@ h1 {
 }
 
 .prod_price_line {
+  border-left: 1px solid #666666;
   float: left;
   margin-left: 20px;
   margin-top: 10px;
