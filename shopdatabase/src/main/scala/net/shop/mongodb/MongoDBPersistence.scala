@@ -3,13 +3,16 @@ package mongodb
 
 import scala.util.Success
 import scala.util.Try
+
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
+
+import net.shift.common.Config
 import net.shop.api._
 import net.shop.api.persistence._
-import net.shop.api.persistence.ShopError._
-import net.shift.common.Config
+import ShopError._
+
 
 object MongoDBPersistence extends Persistence with MongoConversions {
 
@@ -19,6 +22,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
 
   db("products").ensureIndex(MongoDBObject("title.ro" -> "text", "description.ro" -> "text", "keywords" -> "text"))
   db("users").ensureIndex(MongoDBObject("firstName" -> "text", "lastName" -> "text", "phone" -> "text", "email" -> "text"))
+  db("orders").ensureIndex(MongoDBObject("email" -> 1, "items.id" -> 1))
 
   def productById(id: String): Try[ProductDetail] = try {
     db("products").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
@@ -201,4 +205,28 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     case e: Exception => fail(e)
   }
 
+  def createOrder(order: OrderLog*): Try[Seq[String]] = {
+    val mongos = order.map { orderToMongo }
+    try {
+      db("orders").insert(mongos: _*)
+      Success(mongos map { _.getOrElse("_id", "?").toString })
+    } catch {
+      case e: Exception => fail(e)
+    }
+  }
+  def ordersByEmail(email: String): Try[Iterator[OrderLog]] = try {
+    Success(
+      db("orders").find(MongoDBObject("email" -> email)) map mongoToOrder)
+  } catch {
+    case e: Exception => fail(e)
+  }
+
+  def ordersByProduct(productId: String): Try[Iterator[OrderLog]] = try {
+    Success(
+      db("orders").find("items.id" $in List(productId)) map mongoToOrder)
+  } catch {
+    case e: Exception => fail(e)
+  }
+
 }
+

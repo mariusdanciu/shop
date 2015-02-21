@@ -9,6 +9,7 @@ import scala.util.Try
 import net.shift.common.Path
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.HttpPredicates
+import net.shift.engine.http.JsonResponse
 import net.shift.html._
 import net.shift.js._
 import net.shift.loc.Language
@@ -20,6 +21,11 @@ import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
 import net.shop.api.Company
 import net.shop.api.Person
+import net.shop.model._
+import net.shift.engine.http.POST
+import net.shift.engine.http.GET
+import net.shop.api.Formatter
+import net.shop.api.ShopError
 
 object OrderService extends HttpPredicates with FormValidation {
 
@@ -45,7 +51,7 @@ object OrderService extends HttpPredicates with FormValidation {
 
   def order = {
     for {
-      r <- req
+      r <- POST
       Path("order" :: Nil) <- path
     } yield service(resp => {
       val params = r.params.map { case (k, v) => (k, v.head) }
@@ -99,4 +105,39 @@ object OrderService extends HttpPredicates with FormValidation {
       }
     })
   }
+
+  def orderByEmail = for {
+    r <- GET
+    Path("orders" :: Nil) <- path
+    email <- param("email")
+  } yield service(resp => {
+    import Formatters._
+    implicit val l = r.language.name
+    ShopApplication.persistence.ordersByEmail(email) match {
+      case Success(orders) =>
+        resp(JsonResponse(Formatter.format(orders.toList)))
+      case Failure(t) =>
+        resp(JsonResponse(Formatter.format(ShopError(Loc.loc(r.language)("orders.not.found.for.email", List(email)).text, t))))
+    }
+
+  })
+
+  def orderByProduct = for {
+    r <- GET
+    Path("orders" :: Nil) <- path
+    id <- param("productid")
+  } yield service(resp => {
+    import Formatters._
+    implicit val l = r.language.name
+    ShopApplication.persistence.ordersByProduct(id) match {
+      case Success(orders) =>
+        resp(JsonResponse(Formatter.format(orders.toList)))
+      case Failure(t : ShopError) =>
+        resp(JsonResponse(Formatter.format(t)).code(500))
+      case Failure(t) =>
+        resp(JsonResponse(Formatter.format(ShopError(t.getMessage, t))).code(500))
+    }
+
+  })
+
 }

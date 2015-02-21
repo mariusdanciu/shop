@@ -2,6 +2,7 @@ package net.shop
 package api
 
 import java.util.Date
+import scala.util.Failure
 
 case class UserInfo(firstName: String, lastName: String, cnp: String, phone: String)
 case class CompanyInfo(name: String, cif: String, regCom: String, bank: String, bankAccount: String, phone: String)
@@ -89,4 +90,13 @@ trait Formatter[T] {
   def write(value: T)(implicit lang: String): String
 }
 
+object ShopError {
+  def fail(msg: String) = Failure(new ShopError(msg))
+  def fail(e: Throwable) = Failure(new ShopError(e))
+}
+
+case class ShopError(msg: String, e: Throwable) extends RuntimeException(msg, e) {
+  def this(msg: String) = this(msg, null)
+  def this(e: Throwable) = this(e.getMessage(), e)
+}
 

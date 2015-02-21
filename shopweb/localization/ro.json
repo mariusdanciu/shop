@@ -488,6 +488,11 @@
    "code" : "203",
    "name" : "return.policy.link",
    "text" : "Politica de retur"
+ },
+ {
+   "code" : "204",
+   "name" : "orders.not.found.for.email",
+   "text" : "Nu a fost gasita nici o comanda pentru: %s"
  }
  
 ]

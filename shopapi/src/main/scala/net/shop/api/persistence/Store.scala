@@ -4,15 +4,7 @@ package persistence
 import scala.util.Try
 import scala.util.Failure
 
-object ShopError {
-  def fail(msg: String) = Failure(new ShopError(msg))
-  def fail(e: Exception) = Failure(new ShopError(e))
-}
 
-case class ShopError(msg: String, e: Exception) extends RuntimeException(msg, e) {
-  def this(msg: String) = this(msg, null)
-  def this(e: Exception) = this(e.getMessage(), e)
-}
 
 trait Persistence {
   def productById(id: String): Try[ProductDetail]
@@ -36,6 +28,10 @@ trait Persistence {
   def deleteUsers(userId: String*): Try[Int]
   def allUsers: Try[Iterator[UserDetail]]
   def userByEmail(email: String): Try[UserDetail]
+  
+  def createOrder(order: OrderLog*): Try[Seq[String]]
+  def ordersByEmail(email: String): Try[Iterator[OrderLog]]
+  def ordersByProduct(productId: String): Try[Iterator[OrderLog]]
   
 }
 

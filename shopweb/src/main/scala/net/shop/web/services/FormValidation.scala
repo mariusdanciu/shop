@@ -132,12 +132,13 @@ trait FormValidation {
 
   def extractCategoryBin(bins: MultiPart): Option[(String, Array[Byte])] = bins match {
     case BinaryPart(h, content) =>
+      println(h.get("Content-Disposition"))
+      println(h.get("Content-Disposition").map{ _.params.get("filename")})
       (for {
         cd <- h.get("Content-Disposition")
         FileSplit(n, ext) <- cd.params.get("filename")
-        FileSplit(name, _) <- Some(n)
       } yield {
-        (s"$name.$ext", content)
+        (s"$n.$ext", content)
       })
     case _ => None
   }

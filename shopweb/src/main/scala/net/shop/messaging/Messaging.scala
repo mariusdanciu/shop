@@ -11,6 +11,7 @@ import akka.actor.ActorSystem
 import net.shift.common.Log
 import net.shop.model.Formatters._
 import net.shift.loc.Loc
+import net.shop.web.ShopApplication
 
 sealed trait Message
 case class OrderDocument(l: Language, o: Order, doc: String) extends Message
@@ -54,18 +55,13 @@ object Messaging {
 
 class OrderActor extends Actor with DefaultLog {
 
-  val statsLog = new Log {
-    def loggerName = "stats"
-  }
-
   def receive = {
     case StoreOrderStats(content) => writeStat(content.o)("ro")
     case mail: Mail               => sendMail(mail)
   }
 
-  def writeStat(o: Order)(implicit lang: String) {
-    statsLog.info(Formatter.format(o.toOrderLog) + ",")
-  }
+  def writeStat(o: Order)(implicit lang: String) =
+    ShopApplication.persistence.createOrder(o.toOrderLog)
 
   def sendMail(mail: Mail) {
     import org.apache.commons.mail._

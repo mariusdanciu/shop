@@ -202,8 +202,8 @@ var admin = {
         message : $("#product_create_dialog"),
         css : {
           top : '70px',
-          left : ($(window).width() - 500) / 2 + 'px',
-          width : '500px',
+          left : ($(window).width() - 550) / 2 + 'px',
+          width : '550px',
           border : 'none',
           cursor : null
         },

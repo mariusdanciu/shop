@@ -3,10 +3,11 @@ package model
 
 import api._
 import net.shift.loc.Language
+import net.shop.api.ShopError
 
 object Formatters {
 
-  implicit object JsonOrderWriter extends Formatter[OrderLog] {
+  implicit object ErrorJsonWriter extends Formatter[ShopError] {
     import org.json4s._
     import org.json4s.native.Serialization
 
@@ -14,9 +15,26 @@ object Formatters {
       override def dateFormatter = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss'Z'")
     }
 
-    def write(order: OrderLog)(implicit lang: String): String = {
+    def write(err: ShopError)(implicit lang: String): String = {
       import org.json4s.native.Serialization.writePretty
-      writePretty(order)
+      writePretty(Err(err.msg))
+    }
+
+    case class Err(msg: String)
+
+  }
+
+  implicit object JsonOrdersWriter extends Formatter[List[OrderLog]] {
+    import org.json4s._
+    import org.json4s.native.Serialization
+
+    implicit val formats = new DefaultFormats {
+      override def dateFormatter = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss'Z'")
+    }
+
+    def write(orders: List[OrderLog])(implicit lang: String): String = {
+      import org.json4s.native.Serialization.writePretty
+      writePretty(orders)
     }
 
   }
@@ -77,7 +95,7 @@ object Formatters {
       import org.json4s.native.Serialization.writePretty
       writePretty(CategoryJson(c.id, c.title.getOrElse(lang, "ro"), c.position))
     }
-    
+
     case class CategoryJson(id: Option[String], title: String, position: Int)
   }
 

@@ -76,6 +76,8 @@ object ShopApplication extends ShiftApplication with ShopServices {
       UserService.userInfo |
       UserService.forgotPassword |
       SettingsService.updateSettings |
+      OrderService.orderByEmail |
+      OrderService.orderByProduct | 
       service(notFoundService)
   } yield c
 

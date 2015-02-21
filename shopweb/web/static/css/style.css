@@ -71,6 +71,7 @@ label {
   position: relative;
   top: 10px;
   float: left;
+  margin-right: 10px;
 }
 
 ul {
@@ -198,13 +199,13 @@ a:active {
 }
 
 #item_list ul {
-	overflow: hidden;
+	#overflow: hidden;
 }
 
 #item_list ul li {
 	float: left;
 	margin: 4px 4px 0 0;
-	overflow: hidden;
+	#overflow: hidden;
 	position: relative;
 }
 
@@ -217,16 +218,9 @@ a:active {
 
 .cat_box:hover {
 	cursor: pointer;
+	box-shadow: 0px 0px 55px 1px rgba(0,0,0,0.75);
 }
 
-.cat_box:hover > .info_tag {
-    background : #000000;
-    opacity: 0.7;
-}
-
-.cat_box:hover > .info_tag div {
-	color: #ffffff;
-}
 
 .item_box {
 	width: 312px;
@@ -591,9 +585,6 @@ h1 {
 	display: inline-block;
 }
 
-.upload_form_fields .row {
-	margin-right: 10px;
-}
 
 .upload_form_fields .row img {
     position: relative;
@@ -636,9 +627,15 @@ h1 {
     width: 100%;
 }
 
-.upload_form_fields textarea, .preview {
-   width: 100%;
+#create_description {
    height: 250px;
+   width: 100%;
+   resize: none;
+}
+
+#edit_description  {
+   height: 250px;
+   width: 100%;
    resize: none;
 }
 
@@ -1139,4 +1136,14 @@ h1 {
   float: left;
   margin-top: 5px;
   margin-right: 10px;
+}
+
+.box {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+#fileselect {
+  max-width: 280px;
 }

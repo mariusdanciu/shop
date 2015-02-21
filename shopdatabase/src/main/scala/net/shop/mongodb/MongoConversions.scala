@@ -11,8 +11,101 @@ import net.shop.api.UserDetail
 import net.shop.api.Address
 import net.shop.api.UserInfo
 import net.shop.api.CompanyInfo
+import net.shop.api.Order
+import net.shop.api.Person
+import net.shop.api.Company
+import net.shop.api.OrderLog
+import net.shop.api.ProductLog
+import java.util.Date
 
 trait MongoConversions {
+
+  def orderToMongo(obj: OrderLog): DBObject = {
+    val db = MongoDBObject.newBuilder
+    val submitter = MongoDBObject.newBuilder
+    val address = MongoDBObject.newBuilder
+    obj submitter match {
+      case Person(firstName, lastName, cnp) =>
+        submitter += "firstName" -> firstName
+        submitter += "lastName" -> lastName
+        submitter += "cnp" -> cnp
+
+      case Company(companyName, cif, regCom, bank, bankAccount) =>
+        submitter += "companyName" -> companyName
+        submitter += "cif" -> cif
+        submitter += "regCom" -> regCom
+        submitter += "bank" -> bank
+        submitter += "bankAccount" -> bankAccount
+    }
+    address += "name" -> obj.address.name
+    address += "country" -> obj.address.country
+    address += "region" -> obj.address.region
+    address += "city" -> obj.address.city
+    address += "address" -> obj.address.address
+    address += "zipCode" -> obj.address.zipCode
+
+    db += "id" -> obj.id
+    db += "time" -> obj.time
+    db += "submitter" -> submitter.result
+    db += "address" -> addressToMongo(obj.address)
+    db += "email" -> obj.email
+    db += "phone" -> obj.phone
+
+    val items = for { prod <- obj.items } yield {
+      val item = MongoDBObject.newBuilder
+
+      item += "id" -> prod.id
+      item += "price" -> prod.price
+      item += "quantity" -> prod.quantity
+
+      item.result
+    }
+    db += "items" -> items
+    db.result
+  }
+
+  def mongoToOrder(obj: DBObject): OrderLog = {
+    val maybeCompany = obj.expand[String]("submitter.companyName")
+
+    val submitterObj = maybeCompany match {
+      case Some(comp) =>
+        Company(companyName = comp,
+          cif = obj.expand[String]("submitter.cif") getOrElse "",
+          regCom = obj.expand[String]("submitter.regCom") getOrElse "",
+          bank = obj.expand[String]("submitter.bank") getOrElse "",
+          bankAccount = obj.expand[String]("submitter.bankAccount") getOrElse "")
+      case None =>
+        Person(firstName = obj.expand[String]("submitter.firstName") getOrElse "",
+          lastName = obj.expand[String]("submitter.lastName") getOrElse "",
+          cnp = obj.expand[String]("submitter.cnp") getOrElse "")
+    }
+
+    Address(
+      name = obj.expand[String]("address.name") getOrElse "",
+      country = obj.expand[String]("address.country") getOrElse "",
+      region = obj.expand[String]("address.region") getOrElse "",
+      city = obj.expand[String]("address.city") getOrElse "",
+      address = obj.expand[String]("address.address") getOrElse "",
+      zipCode = obj.expand[String]("address.zipCode") getOrElse "")
+
+    val dbItems = obj.getAsOrElse[List[DBObject]]("items", Nil)
+
+    val itemsObj = for { dbItem <- dbItems } yield {
+      ProductLog(
+        id = dbItem.getAsOrElse[String]("id", ""),
+        price = dbItem.getAsOrElse[Double]("price", 0.0),
+        quantity = dbItem.getAsOrElse[Int]("quantity", 0))
+    }
+
+    OrderLog(id = obj.getAsOrElse[String]("id", ""),
+      time = obj.getAsOrElse[Date]("time", new Date),
+      submitter = submitterObj,
+      address = mongoToAddress(obj.getAsOrElse[DBObject]("address", MongoDBObject.newBuilder.result())),
+      email = obj.getAsOrElse[String]("email", ""),
+      phone = obj.getAsOrElse[String]("phone", ""),
+      items = itemsObj)
+  }
+
   def productToMongo(obj: ProductDetail): MongoDBObject = {
     val db = MongoDBObject.newBuilder
     db += "title" -> MongoDBObject(obj.title.toList)
