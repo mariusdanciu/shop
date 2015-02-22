@@ -224,19 +224,18 @@ a:active {
 
 .item_box {
 	width: 312px;
-	height: 356px;
+	height: 424px;
 	border-radius: 10px;
+	z-index: 0;
+	position: relative;
 }
 
 .item_box:hover {
     border-radius: 10px;
-    box-shadow: inset 0px 0px 1px 1px #dddddd;
+    box-shadow: 0px 0px 75px 1px rgba(0,0,0,0.75);
+    z-index : 1;
 	cursor: pointer;
-}
-
-.item_box:hover > .info_tag {
-    background : #000000;
-    opacity: 0.7;
+	position: relative;
 }
 
 .item_box:hover > .edit_tag .edit_tag_close, .item_box:hover > .edit_tag .edit_tag_update  {
@@ -247,26 +246,15 @@ a:active {
     display: block;
 }
 
-.item_box:hover > .info_tag div {
-	color: #ffffff;
-}
-
-.item_box:hover > .info_tag .info_tag_cart {
-	display: inline;
-}
-
-.item_box:hover > .info_tag span {
-	color: #ffffff;
-}
-
 .info_tag {
-    background: none repeat scroll 0 0 rgba(255, 255, 255, 0.6);
+    background: #555555;
+    color: #ffffff;
     border-radius: 0 0 10px 10px;
     border: 1px solid #dddddd;
     height: 68px;
     margin: 0;
     position: relative;
-    top: 246px;
+    top: 314px;
     width: 310px;
 }
 
@@ -305,7 +293,6 @@ a:active {
 	top: 10px;
 	left: 10px;
 	text-align: left;
-	display: none;
 	float: left;
 }
 

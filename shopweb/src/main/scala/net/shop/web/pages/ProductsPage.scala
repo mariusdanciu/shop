@@ -56,7 +56,7 @@ object ProductsPage extends Cart[Request] with ShopUtils with XmlUtils {
             list flatMap { prod =>
               bind(s.node) {
                 case "li" attributes HasClass("item", a) / childs            => <li>{ childs }</li>
-                case "div" attributes HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat center" }>{ childs }</div> % a
+                case "div" attributes HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
                 case "div" attributes HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.state.lang.name) }</div> % a
                 case "div" attributes HasClass("info_tag_price", a) / childs => priceTag(prod) % a
               } match {
