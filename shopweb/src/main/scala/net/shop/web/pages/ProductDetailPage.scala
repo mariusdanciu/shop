@@ -175,14 +175,17 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlU
           val discountPrice = p.discountPrice.map(_.toString()).getOrElse("")
 
           (bind(s.node) {
-            case "form" attributes attrs / childs                           => node("form", attrs.attrs + ("action" -> ("/product/update/" + p.stringId))) / childs
-            case HasId("edit_pid", attrs)                                   => node("input", attrs.attrs + ("value" -> p.stringId))
-            case HasId("edit_title", attrs)                                 => node("input", attrs.attrs + ("value" -> title))
-            case HasId("edit_price", attrs)                                 => node("input", attrs.attrs + ("value" -> p.price.toString()))
-            case HasId("edit_discount_price", attrs)                        => node("input", attrs.attrs + ("value" -> discountPrice))
-            case HasId("edit_categories", attrs)                            => handleCategories(attrs, s.state.lang, p.categories.toSet)
-            case HasId("edit_keywords", attrs)                              => node("input", attrs.attrs + ("value" -> p.keyWords.mkString(", ")))
-            case HasId("edit_stock", attrs)                                 => node("input", attrs.attrs + ("value" -> p.stock.map(_ toString).getOrElse("")))
+            case "form" attributes attrs / childs    => node("form", attrs.attrs + ("action" -> ("/product/update/" + p.stringId))) / childs
+            case HasId("edit_pid", attrs)            => node("input", attrs.attrs + ("value" -> p.stringId))
+            case HasId("edit_title", attrs)          => node("input", attrs.attrs + ("value" -> title))
+            case HasId("edit_price", attrs)          => node("input", attrs.attrs + ("value" -> p.price.toString()))
+            case HasId("edit_discount_price", attrs) => node("input", attrs.attrs + ("value" -> discountPrice))
+            case HasId("edit_categories", attrs)     => handleCategories(attrs, s.state.lang, p.categories.toSet)
+            case HasId("edit_keywords", attrs)       => node("input", attrs.attrs + ("value" -> p.keyWords.mkString(", ")))
+            case HasId("edit_stock", attrs)          => node("input", attrs.attrs + ("value" -> p.stock.map(_ toString).getOrElse("")))
+            case HasId("edit_unique", attrs) =>
+              val a = attrs.attrs + ("value" -> "true")
+              node("input", if (!p.unique) a else a + ("checked" -> p.unique.toString))
             case HasId("edit_description", attrs)                           => node("textarea", attrs.attrs) / Text(desc)
             case _ attributes HasClass("edit_props_sample", attrs) / childs => handleProperties(childs, p)
           }) match {

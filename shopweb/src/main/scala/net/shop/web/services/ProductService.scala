@@ -24,6 +24,7 @@ import net.shift.html.Formlet.inputInt
 import net.shift.html.Formlet.inputOptional
 import net.shift.html.Formlet.inputSelect
 import net.shift.html.Formlet.inputText
+import net.shift.html.Formlet.inputCheck
 import net.shift.html.Formlet.listSemigroup
 import net.shift.html.Validation
 import net.shift.loc.Language
@@ -125,8 +126,8 @@ object ProductService extends PathUtils
       case _                      => false
     }
 
-    def stockFunc(in : String) = if (in.isEmpty()) None else Option(in.toInt)
-    
+    def stockFunc(in: String) = if (in.isEmpty()) None else Option(in.toInt)
+
     val params = extractParams(text)
     val files = extractProductBins(bins)
 
@@ -140,7 +141,8 @@ object ProductService extends PathUtils
       inputDouble(fieldPrefix + "price")(validateDouble(fieldPrefix + "price", ?("price").text)) <*>
       inputOptional(fieldPrefix + "discount_price")(validateOptional(fieldPrefix + "discount_price", s => Option(s.toDouble))) <*>
       inputInt(fieldPrefix + "soldCount")(validateDefault(0)) <*>
-      inputOptional(fieldPrefix + "stock")(validateOptional(fieldPrefix + "stock", stockFunc )) <*>
+      inputCheck(fieldPrefix + "unique", "false")(validateBoolean(fieldPrefix + "unique", ?("unique.product").text)) <*>
+      inputOptional(fieldPrefix + "stock")(validateOptional(fieldPrefix + "stock", stockFunc)) <*>
       inputSelect(fieldPrefix + "categories", Nil)(validateListField(fieldPrefix + "categories", ?("categories").text)) <*>
       inputFile("files")(validateDefault(Nil)) <*>
       inputText(fieldPrefix + "keywords")(optionalListField(fieldPrefix + "keywords", ?("keywords").text))
@@ -152,6 +154,7 @@ object ProductService extends PathUtils
         _,
         price,
         Some(discountPrice),
+        _,
         _,
         _,
         _,

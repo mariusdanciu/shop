@@ -1,6 +1,21 @@
 (function() {
   $(function() {
 
+    if (!window.console) {
+      var console = {
+        log : function() {
+        },
+        warn : function() {
+        },
+        error : function() {
+        },
+        time : function() {
+        },
+        timeEnd : function() {
+        }
+      }
+    }
+
     $("#menu").tabify();
     $("#cart_symbol").click(function(event) {
       window.cart.showCart();
@@ -89,7 +104,6 @@
       event.preventDefault();
     });
 
-    
     $('#buy_final, #c_buy_final_comp').click(function(event) {
       var clicked = $(this).attr("id");
       var form = (clicked !== "c_buy_final_comp") ? "#order_form" : "#order_form_company";
@@ -107,19 +121,21 @@
       $.ajax({
         url : "/order",
         data : obj,
+        cache: false,
         timeout : 3000,
+        type : 'POST',
         statusCode : {
           403 : function(msg) {
             var data = JSON.parse(msg.responseText);
             if (data.errors) {
               common.showFormErrors(data.errors);
-            }            
+            }
           }
         },
-        error: function(x, t, m) {
-          if(m === "") {
+        error : function(x, t, m) {
+          if (m === "") {
             common.showConnectionError();
-          } 
+          }
         }
       });
       event.preventDefault();
@@ -159,12 +175,12 @@ var common = {
     $("#notice_e").html(text);
     $("#notice_e").show().delay(5000).fadeOut("slow");
   },
-  
+
   showConnectionError : function(text) {
     $("#notice_connect_e").html(text);
     $("#notice_connect_e").show().delay(5000).fadeOut("slow");
   },
-  
+
   showFormErrors : function(errors) {
     $.each(errors, function() {
       $("label[for='" + this.id + "']").css("color", "#ff0000").attr("title", this.error);
@@ -216,8 +232,8 @@ var user = {
           common.showError(m.responseText);
         }
       },
-      error: function(x, t, m) {
-        if(m === "") {
+      error : function(x, t, m) {
+        if (m === "") {
           common.showConnectionError();
         }
       }
@@ -242,15 +258,15 @@ var user = {
         200 : function() {
           window.location.href = "/";
         },
-        401 : function(m) {
+        406 : function(m) {
           common.closeDialog();
           common.showError(m.responseText);
         }
       },
-      error: function(x, t, m) {
-        if(m === "") {
+      error : function(x, t, m) {
+        if (m === "") {
           common.showConnectionError();
-        } 
+        }
       }
     });
   },
@@ -274,13 +290,13 @@ var user = {
             var data = JSON.parse(msg.responseText);
             if (data.errors) {
               common.showFormErrors(data.errors);
-            }            
+            }
           }
         },
-        error: function(x, t, m) {
-          if(m === "") {
+        error : function(x, t, m) {
+          if (m === "") {
             common.showConnectionError();
-          } 
+          }
         }
       });
     });
@@ -298,11 +314,12 @@ var cart = {
       url : "/userinfo",
       dataType : "json",
       timeout : 3000,
+      cache: false,
       context : $("#cart_content"),
-      error: function(x, t, m) {
-        if(m === "") {
+      error : function(x, t, m) {
+        if (m === "") {
           common.showConnectionError();
-        } 
+        }
       }
     }).done(function(data) {
       cart.populateForm(data);
@@ -316,7 +333,7 @@ var cart = {
     $("#order_form #zip, #order_form_company #czip").attr("value", addresses[idx].zipCode);
     $(".address_name").html(addresses[idx].name);
   },
-  
+
   populateForm : function(data) {
     $("#order_form #fname").attr("value", data.userInfo.firstName);
     $("#order_form #lname").attr("value", data.userInfo.lastName);
@@ -336,9 +353,9 @@ var cart = {
     if (addresses && addresses.length > 0) {
       $(".address_nav").show();
       cart.populateAddress(currentAddress);
-      
+
       $(".right_arrow").click(function(e) {
-        if (currentAddress < addresses.length - 1 ) {
+        if (currentAddress < addresses.length - 1) {
           currentAddress++;
           cart.populateAddress(currentAddress);
         }
@@ -419,6 +436,7 @@ var cart = {
         } ]
       }));
     }
+
   },
 
   setItemCount : function(id, count) {
@@ -458,6 +476,7 @@ var cart = {
   },
 
   loadView : function(f) {
+
     if (window.cart.items().length === 0) {
       $('#order').hide();
       $('#cart_content').hide();
@@ -473,36 +492,39 @@ var cart = {
         url : "/getcart",
         dataType : "json",
         timeout : 3000,
+        cache: false,
         context : $("#cart_content"),
-        error: function(x, t, m) {
-          if(m === "") {
+        error : function(x, t, m) {
+          if (m === "") {
             common.showConnectionError();
-          } 
+          }
         }
       }).done(function(data) {
         $(this).empty();
         var ul = document.createElement("ul");
-        for (item in data) {
+
+        for (var i = 0; i < data.length; i++) {
           var li = document.createElement("li");
-          $(li).append(data[item]);
-          $(ul).append(li);
+          li.innerHTML = data[i];
+          ul.appendChild(li);
         }
+
         $(this).append(ul);
         window.cart.computeTotal();
 
         $('#cart_content').show();
         $('#cart_footer').show();
 
-        $(".cart_item a").each(function(index) {
+        $(".cart_item ul li input").each(function(index) {
           var me = $(this);
-          var id = me.attr("id").substring(4);
+          var id = me.attr("id").substring(2);
 
           $('#q_' + id).on("keyup change", function(e) {
             window.cart.setItemCount(id, $(this).val());
             e.preventDefault();
           });
         });
-        
+
         $(".del_cart_item a").each(function(index) {
           var me = $(this);
           var id = me.attr("id").substring(4);
@@ -525,7 +547,7 @@ var cart = {
     $('#buy_step1').show();
     $('#buy_step0').hide();
   },
-  
+
   showStep1Links : function() {
     $('#cart_content').hide();
     $('#order').show();

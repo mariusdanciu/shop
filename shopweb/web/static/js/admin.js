@@ -87,6 +87,7 @@ var admin = {
 
   deleteProduct : function(id) {
     $.ajax({
+      cache: false,
       url : "/product/delete/" + id,
       timeout : 3000,
       type : "DELETE",
@@ -102,6 +103,7 @@ var admin = {
   
   getCategory : function(id, categoryFunc) {
     $.ajax({
+      cache: false,
       url : "/category/" + id,
       timeout : 3000,
       type : "GET",
@@ -118,6 +120,7 @@ var admin = {
 
   deleteCategory : function(id) {
     $.ajax({
+      cache: false,
       url : "/category/delete/" + id,
       timeout : 3000,
       type : "DELETE",

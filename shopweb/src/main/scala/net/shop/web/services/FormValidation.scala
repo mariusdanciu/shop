@@ -79,6 +79,9 @@ trait FormValidation {
 
   def validateInt(name: String, title: String)(implicit lang: Language): ValidationFunc[Int] =
     required(name, title, s => Valid(s.toInt))
+
+  def validateBoolean(name: String, title: String)(implicit lang: Language): ValidationFunc[Boolean] =
+    optional(name, title, false,  s => Valid(s.toBoolean))
     
   def validateDouble(name: String, title: String)(implicit lang: Language): ValidationFunc[Double] =
     required(name, title, s => Valid(s.toDouble))

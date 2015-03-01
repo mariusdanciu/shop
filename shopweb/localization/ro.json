@@ -493,6 +493,16 @@
    "code" : "204",
    "name" : "orders.not.found.for.email",
    "text" : "Nu a fost gasita nici o comanda pentru: %s"
+ },
+ {
+   "code" : "205",
+   "name" : "unique.product",
+   "text" : "Produs unicat"
+ },
+ {
+   "code" : "206",
+   "name" : "unique",
+   "text" : "Unicat"
  }
  
 ]

@@ -64,7 +64,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   def ajaxLogin = for {
     _ <- ajax
     r <- path("auth")
-    u <- authenticate(Loc.loc0(r.language)("login.fail").text)
+    u <- authenticate(Loc.loc0(r.language)("login.fail").text, 406)
   } yield service(_(Resp.ok.securityCookies(u)))
 
   def ajaxProductsList = for {
