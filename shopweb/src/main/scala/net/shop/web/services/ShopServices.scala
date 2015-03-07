@@ -11,7 +11,7 @@ import org.json4s.native.Serialization.write
 import org.json4s.string2JsonInput
 import net.shift.common.DefaultLog
 import net.shift.common.Path
-import net.shift.common.PathUtils
+import net.shift.common.PathUtils._
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.AsyncResponse
@@ -44,8 +44,9 @@ import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.SettingsPageState
+import net.shift.io.IODefaults
 
-trait ShopServices extends PathUtils with ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService {
+trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults {
 
   def notFoundService(resp: AsyncResponse) {
     resp(TextResponse("Sorry ... service not found"))
@@ -111,7 +112,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
     u <- user
   } yield {
     val logout = !r.param("logout").isEmpty
-    tryLogout(r, Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[SnipState[T]]))
+    tryLogout(r, Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[SnipState[T]], fs))
   }
 
   def productsVariantImages = for {
@@ -151,7 +152,6 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
       case _ => resp(JsonResponse("[]"))
     })
 
-
   private def readCart(json: String): Cart = {
     implicit val formats = DefaultFormats
     parse(java.net.URLDecoder.decode(json, "UTF-8")).extract[Cart]
@@ -170,7 +170,7 @@ trait ShopServices extends PathUtils with ShiftUtils with Selectors with Travers
   def updateCategory = CategoryService.updateCategory
 
   def createUser = UserService.createUser
-  
+
   def forgotPassword = UserService.forgotPassword
 
   def updateSettings = SettingsService.updateSettings

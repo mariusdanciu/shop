@@ -4,7 +4,7 @@ import scala.util.Try
 import scala.xml.{ NodeSeq, Text }
 import net.shift.common.Bind
 import net.shift.common.Path
-import net.shift.common.XmlUtils
+import net.shift.common.XmlUtils._
 import net.shift.engine.http.Request
 import net.shift.engine.page.Html5
 import net.shift.loc.Language
@@ -22,8 +22,9 @@ import net.shop.api.OrderLog
 import net.shop.api.Person
 import net.shop.api.Company
 import net.shop.api.Address
+import net.shift.io.IODefaults
 
-object OrderPage extends DynamicContent[OrderState] with XmlUtils with Selectors with ShopUtils {
+object OrderPage extends DynamicContent[OrderState] with Selectors with ShopUtils with IODefaults {
 
   override def snippets = List(logo, info, content, total)
 

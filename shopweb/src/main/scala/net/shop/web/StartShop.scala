@@ -29,8 +29,9 @@ import net.shop.web.services.OrderService
 import net.shop.web.services.ShopServices
 import net.shop.web.pages.ReturnPolicyPage
 import net.shop.web.pages.DataProtectionPage
+import net.shift.io.IODefaults
 
-object StartShop extends App with DefaultLog {
+object StartShop extends App with DefaultLog with IODefaults {
 
   PropertyConfigurator.configure("config/log4j.properties");
 

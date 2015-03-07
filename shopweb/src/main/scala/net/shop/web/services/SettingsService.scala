@@ -6,7 +6,7 @@ import net.shift.common.TraversingSpec
 import net.shift.engine.utils.ShiftUtils
 import net.shift.common.DefaultLog
 import net.shift.template.Selectors
-import net.shift.common.PathUtils
+import net.shift.common.PathUtils._
 import net.shift.engine.http.POST
 import net.shift.common.Path
 import net.shift.loc.Loc
@@ -27,8 +27,7 @@ import net.shop.web.services.FormImplicits._
 import net.shift.html.Valid
 import net.shift.html.Invalid
 
-object SettingsService extends PathUtils
-  with Selectors
+object SettingsService extends Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
@@ -54,12 +53,12 @@ object SettingsService extends PathUtils
                   password = if (u.user.pass.isEmpty) ud.password else u.user.pass)
                 ShopApplication.persistence.updateUsers(merged)
 
-              case _ => service(_(Resp.serverError.asText.body(Loc.loc0(r.language)("login.fail").text)))
+              case _ => service(_(Resp.serverError.asText.withBody(Loc.loc0(r.language)("login.fail").text)))
             }
-            service(_(Resp.created.asText.body(Loc.loc0(r.language)("settings.saved").text)))
+            service(_(Resp.created.asText.withBody(Loc.loc0(r.language)("settings.saved").text)))
           case Invalid(e) => validationFail(e)(r.language.name)
         }
-      case None => service(_(Resp.forbidden.asText.body(Loc.loc0(r.language)("login.fail").text)))
+      case None => service(_(Resp.forbidden.asText.withBody(Loc.loc0(r.language)("login.fail").text)))
     }
   }
 
@@ -79,7 +78,7 @@ object SettingsService extends PathUtils
     val addresses = validateAddresses(normalize)
 
     val errors = (((ValidationFail()), Nil: List[Address]) /: addresses)((acc, e) => e match {
-      case Invalid(e)    => (acc._1 append e, acc._2)
+      case Invalid(e)  => (acc._1 append e, acc._2)
       case Valid(addr) => (acc._1, acc._2 ::: List(addr))
     })
 
@@ -144,7 +143,7 @@ object SettingsService extends PathUtils
       case (Invalid(l), Invalid(r)) => Invalid(l append r)
       case (Invalid(l), _)          => Invalid(l)
       case (_, Invalid(r))          => Invalid(r)
-      case (Valid(l), Valid(r)) => Valid(UserForm(l, r))
+      case (Valid(l), Valid(r))     => Valid(UserForm(l, r))
     }
 
   }

@@ -1,29 +1,27 @@
 package net.shop.web.services
 
 import net.shift.common.FileSplit
+import net.shift.common.Semigroup
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
 import net.shift.engine.http.Header
 import net.shift.engine.http.JsonResponse
 import net.shift.engine.http.MultiPart
+import net.shift.engine.http.Response.augmentResponse
 import net.shift.engine.http.TextPart
-import net.shift.html.Validation
-import net.shift.js.JsDsl._
-import net.shift.loc.Language
-import net.shop.api.Formatter
-import net.shop.model.Formatters
-import net.shop.model.Formatters._
-import net.shop.model.ValidationFail
-import net.shop.web.ShopApplication
-import net.shift.loc.Loc
-import net.shop.model.FieldError
-import net.shift.common.Semigroup
-import scala.util.Failure
-import scala.util.Success
 import net.shift.html.Invalid
 import net.shift.html.Valid
+import net.shift.html.Validation
+import net.shift.io.IODefaults
+import net.shift.loc.Language
+import net.shift.loc.Loc
+import net.shop.api.Formatter
+import net.shop.model.FieldError
+import net.shop.model.Formatters.ValidationErrorWriter
+import net.shop.model.ValidationFail
+import net.shop.web.ShopApplication
 
-object FormImplicits {
+object FormImplicits extends IODefaults {
   implicit val o = new Ordering[Double] {
     def compare(l: Double, r: Double): Int = (l - r).toInt
   }
@@ -33,7 +31,7 @@ object FormImplicits {
   }
 }
 
-trait FormValidation {
+trait FormValidation extends IODefaults {
 
   type ValidationMap = Map[String, String]
   type ValidationList = List[String]

@@ -11,8 +11,9 @@ import net.shift.engine.http.Request
 import net.shop.web.ShopApplication
 import scala.util.Success
 import net.shift.common.Config
+import net.shift.io.IODefaults
 
-trait SecuredService extends ShiftUtils {
+trait SecuredService extends ShiftUtils with IODefaults {
   implicit def login(creds: Credentials): Option[User] = {
     creds match {
       case BasicCredentials(email, password) =>

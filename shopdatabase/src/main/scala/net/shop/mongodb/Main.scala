@@ -3,13 +3,13 @@ package mongodb
 
 import com.mongodb.casbah.Imports._
 import java.io.File
-import net.shift.common.PathUtils
+import net.shift.common.PathUtils._
 import net.shift.common.Path
 
 import net.shop.api._
 import net.shop.api.persistence._
 
-object Main extends App with PathUtils {
+object Main extends App {
   val db = MongoClient("localhost")("idid")
 
   db.dropDatabase

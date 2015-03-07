@@ -12,6 +12,7 @@ import net.shift.common.Log
 import net.shop.model.Formatters._
 import net.shift.loc.Loc
 import net.shop.web.ShopApplication
+import net.shift.io.IODefaults
 
 sealed trait Message
 case class OrderDocument(l: Language, o: Order, doc: String) extends Message
@@ -27,7 +28,7 @@ case class Mail(
   subject: String,
   message: String) extends ActorMessage
 
-object Messaging {
+object Messaging extends IODefaults {
   val orderActor = ActorSystem("idid").actorOf(Props[OrderActor], "orderActor")
 
   def send(m: Message) {

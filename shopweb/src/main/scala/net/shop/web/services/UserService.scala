@@ -6,7 +6,7 @@ import scala.util.Success
 import net.shift.common.Base64
 import net.shift.common.DefaultLog
 import net.shift.common.Path
-import net.shift.common.PathUtils
+import net.shift.common.PathUtils._
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http._
@@ -35,8 +35,7 @@ import net.shop.model.FieldError
 import net.shift.html.Valid
 import net.shift.html.Invalid
 
-object UserService extends PathUtils
-  with Selectors
+object UserService extends Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
@@ -54,7 +53,7 @@ object UserService extends PathUtils
         implicit val l = r.language.name
         service(_(JsonResponse(Formatter.format(ud))))
       case _ =>
-        service(_(Resp.notFound.asText.body(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
+        service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
     }
   }
 
@@ -71,7 +70,7 @@ object UserService extends PathUtils
     }) match {
       case Success(_) => service(_(TextResponse(Loc.loc(r.language)("forgotpass.mail.sent", Seq(email)).text)))
       case Failure(t) =>
-        service(_(Resp.notFound.asText.body(Loc.loc(r.language)("user.not.found", Seq(email)).text)))
+        service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(email)).text)))
     }
   }
 
@@ -102,7 +101,7 @@ object UserService extends PathUtils
             service(_(Resp.created))
           case scala.util.Failure(t) =>
             error("Cannot create user ", t)
-            service(_(Resp.serverError.body(Loc.loc0(r.language)("user.cannot.create").text)))
+            service(_(Resp.serverError.withBody(Loc.loc0(r.language)("user.cannot.create").text)))
         }
 
       case Invalid(msgs) => validationFail(msgs)(r.language.name)

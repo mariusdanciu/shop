@@ -9,7 +9,7 @@ import scala.xml.Text
 import net.shift._
 import net.shift._
 import net.shift.common.NodeOps._
-import net.shift.common.XmlUtils
+import net.shift.common.XmlUtils._
 import net.shift.loc.Loc
 import net.shift.template._
 import net.shift.template._
@@ -17,8 +17,9 @@ import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shop.api.ProductDetail
 import net.shop.web.services.OrderForm
+import net.shift.io.IODefaults
 
-trait Cart[T] extends DynamicContent[T] with XmlUtils with Selectors {
+trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
 
   def snippets = List(order, connectError, user)
 

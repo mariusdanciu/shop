@@ -5,7 +5,7 @@ import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
 import scala.xml._
-import net.shift.common.XmlUtils
+import net.shift.common.XmlUtils._
 import net.shift.engine._
 import net.shift.engine.http.Request._
 import net.shift.engine.http.Request
@@ -22,7 +22,7 @@ import net.shift.loc.Language
 import net.shift.common.ShiftFailure
 import net.shift.security.User
 
-object ProductDetailPage extends Cart[ProductPageState] with ShopUtils with XmlUtils {
+object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
 
   val noImage = "/static/images/noimage.png"
 

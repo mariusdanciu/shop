@@ -5,7 +5,7 @@ import net.shop.utils.ShopUtils
 import net.shift.engine.http.Request
 import scala.util.Success
 import net.shift.template.Binds._
-import net.shift.common.XmlUtils
+import net.shift.common.XmlUtils._
 import net.shift.template.HasName
 import net.shift.common.NodeOps._
 import net.shift.common.NodeOps
@@ -23,8 +23,10 @@ import net.shift.template.HasClass
 import scala.xml.Text
 import scala.xml.Elem
 import net.shift.template.Attributes
+import net.shift.io.IODefaults
+import net.shift.common.XmlUtils
 
-object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with XmlUtils { self =>
+object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with IODefaults { self =>
 
   override def snippets = List(title, settingsForm, addressTemplate, addresses) ++ super.snippets
 
@@ -98,7 +100,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with X
 
 case class SettingsPageState(req: Request, user: Option[UserDetail])
 
-object AddressPage extends DynamicContent[Address] with ShopUtils with XmlUtils with Selectors { self =>
+object AddressPage extends DynamicContent[Address] with ShopUtils with Selectors { self =>
   override def snippets = List(addr)
 
   val addr = snip[Address]("addr") {
@@ -117,9 +119,9 @@ object AddressPage extends DynamicContent[Address] with ShopUtils with XmlUtils 
           case HasClass("addr_title", a) => node("a", a.attrs) / Text(name)
           case "label" attributes a      => node("label", a.attrs.attrs + ("for" -> augmentAttr(a.attrs.attrs, "for", name)))
           case HasName("addr_region", a) => augmentInput(a, s.state.initialState.region)
-          case HasName("addr_city", a) => augmentInput(a, s.state.initialState.city)
-          case HasName("addr_addr", a) => augmentInput(a, s.state.initialState.address)
-          case HasName("addr_zip", a)  => augmentInput(a, s.state.initialState.zipCode)
+          case HasName("addr_city", a)   => augmentInput(a, s.state.initialState.city)
+          case HasName("addr_addr", a)   => augmentInput(a, s.state.initialState.address)
+          case HasName("addr_zip", a)    => augmentInput(a, s.state.initialState.zipCode)
         }
         res.map((s.state.initialState, _))
       }

@@ -4,7 +4,7 @@ package web.services
 import net.shift.common.DefaultLog
 import net.shift.common.FileSplit
 import net.shift.common.Path
-import net.shift.common.PathUtils
+import net.shift.common.PathUtils._
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
@@ -40,8 +40,7 @@ import net.shop.web.services.FormImplicits._
 import net.shift.html.Valid
 import net.shift.html.Invalid
 
-object ProductService extends PathUtils
-  with ShiftUtils
+object ProductService extends ShiftUtils
   with Selectors
   with TraversingSpec
   with DefaultLog

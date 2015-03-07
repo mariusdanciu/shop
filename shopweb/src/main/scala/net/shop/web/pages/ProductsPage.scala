@@ -25,10 +25,10 @@ import net.shop.api.persistence.SortByName
 import net.shop.api.persistence.SortByPrice
 import net.shop.utils.ShopUtils
 import net.shift.security.User
-import net.shift.common.XmlUtils
+import net.shift.common.XmlUtils._
 import net.shift.common.NodeOps._
 
-object ProductsPage extends Cart[Request] with ShopUtils with XmlUtils {
+object ProductsPage extends Cart[Request] with ShopUtils {
 
   override def snippets = List(title, item, catList) ++ cartSnips
 

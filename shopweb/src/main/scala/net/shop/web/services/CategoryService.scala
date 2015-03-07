@@ -3,7 +3,7 @@ package web.services
 
 import net.shift.common.DefaultLog
 import net.shift.common.Path
-import net.shift.common.PathUtils
+import net.shift.common.PathUtils._
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
@@ -33,13 +33,15 @@ import net.shift.html.Valid
 import net.shift.engine.http.JsonResponse
 import net.shop.api.Formatter
 import net.shop.model.Formatters._
+import net.shift.io.IODefaults
+import net.shift.io.IO
 
-object CategoryService extends PathUtils
-  with Selectors
+object CategoryService extends Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
-  with SecuredService {
+  with SecuredService
+  with IODefaults {
 
   def getCategory = for {
     r <- GET
@@ -85,7 +87,7 @@ object CategoryService extends PathUtils
             service(_(Resp.created))
 
           case scala.util.Failure(t) =>
-            service(_(Resp.serverError.asText.body("category.create.fail")))
+            service(_(Resp.serverError.asText.withBody("category.create.fail")))
         }
 
       case (_, Invalid(msgs)) => validationFail(msgs)(r.language.name)
