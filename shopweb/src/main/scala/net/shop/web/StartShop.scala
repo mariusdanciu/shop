@@ -30,6 +30,7 @@ import net.shop.web.services.ShopServices
 import net.shop.web.pages.ReturnPolicyPage
 import net.shop.web.pages.DataProtectionPage
 import net.shift.io.IODefaults
+import net.shop.web.pages.CookiesPage
 
 object StartShop extends App with DefaultLog with IODefaults {
 
@@ -63,6 +64,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page("terms", Path("web/terms.html"), TermsPage) |
       page("dataprotection", Path("web/dataprotection.html"), DataProtectionPage) |
       page("returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
+      page("cookies", Path("web/cookies.html"), CookiesPage) |
       settingsPage("accountsettings", Path("web/accountsettings.html"), AccountSettingsPage) |
       getCart() |
       OrderService.order |

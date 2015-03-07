@@ -503,6 +503,12 @@
    "code" : "206",
    "name" : "unique",
    "text" : "Unicat"
+ },
+ {
+   "code" : "206",
+   "name" : "data.cookies.link",
+   "text" : "Cookie-uri"
  }
  
+
 ]
