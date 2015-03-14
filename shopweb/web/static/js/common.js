@@ -21,22 +21,26 @@
       window.cart.showCart();
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     $("#user_symbol").click(function(event) {
       window.user.showLogin();
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     $("#cart_popup, #user_popup, #newuser_popup").click(function(event) {
       event.stopPropagation();
-    });
+      return false;
+   });
 
     $("#authgo").click(function(event) {
       window.user.login("#login_form");
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     $("#newuser").click(function(event) {
@@ -44,18 +48,21 @@
       window.user.showNewUser();
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     $("#save_user").click(function(event) {
       window.user.createUser("#newuser_form");
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     $('#forgotpass').click(function(event) {
       window.user.forgotPass("#login_form");
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     $("#login_form").keydown(function(event) {
@@ -71,10 +78,12 @@
       window.user.logout();
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     $(".close_dialog").bind("click", function(event) {
       common.closeDialog();
+      return false;
     });
 
     $(document).click(function() {
@@ -95,6 +104,7 @@
       cart.showStep0Links();
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     $("#buy_step1").click(function(event) {
@@ -102,7 +112,8 @@
       cart.showStep1Links();
       event.stopPropagation();
       event.preventDefault();
-    });
+      return false;
+   });
 
     $('#buy_final, #c_buy_final_comp').click(function(event) {
       var clicked = $(this).attr("id");
@@ -139,6 +150,7 @@
         }
       });
       event.preventDefault();
+      return false;
     });
 
     $("#search_text").keypress(function(e) {
@@ -361,7 +373,8 @@ var cart = {
         }
         e.stopPropagation();
         e.preventDefault();
-      });
+        return false;
+     });
 
       $(".left_arrow").click(function(e) {
         if (currentAddress > 0) {
@@ -370,7 +383,8 @@ var cart = {
         }
         e.stopPropagation();
         e.preventDefault();
-      });
+        return false;
+     });
     } else {
       $("address_nav").hide();
     }
@@ -531,6 +545,7 @@ var cart = {
           me.click(function(e) {
             window.cart.removeItem(id);
             e.preventDefault();
+            return false;
           });
         });
 

@@ -725,14 +725,13 @@ h1 {
 #logo {
 	position: relative;
 	float: right;
-	left: 0px;
+	right: 10px;
 	top: 15px;
-	width: 90px;
 }
 
 #logo span {
     font-family: 'Julee', cursive;
-    font-size: 48px;
+    font-size: 32px;
 }
 
 #logo span:nth-child(1) {

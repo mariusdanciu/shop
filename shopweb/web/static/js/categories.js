@@ -14,6 +14,7 @@ var categories = {
 
     $(".close_dialog").bind("click", function(event) {
       window.common.closeDialog();
+      return false;
     });
     
     $(".cat_box").each(function(index) {
@@ -25,12 +26,14 @@ var categories = {
           window.admin.deleteCategory(pid);
           event.preventDefault();
           event.stopPropagation();
-        });
+          return false;
+       });
 
         me.find('.edit_tag_update').click(function(event) {
           window.admin.editCategory(pid);
           event.preventDefault();
           event.stopPropagation();
+          return false;
         });
 
       }
@@ -40,7 +43,8 @@ var categories = {
           window.location.href = "/products?cat=" + pid;
           event.preventDefault();
           event.stopPropagation();
-        });
+          return false;
+       });
       } else {
         if (window.admin !== undefined) {
           window.admin.attachCreateCategory(me);

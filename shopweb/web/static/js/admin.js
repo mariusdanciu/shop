@@ -24,12 +24,14 @@
       window.admin.saveCategory("#create_category_form");
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     $("#update_category").click(function(event) {
       window.admin.saveCategory("#update_category_form");
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     $("#create_product").click(function(event) {
@@ -39,6 +41,7 @@
       });
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     admin.addProp("#add_prop", "#prop_fields");
@@ -77,10 +80,12 @@ var admin = {
       var remove = $("<img class='clickable' src='/static/images/minus.png'/>");
       remove.click(function(e) {
         div.remove();
+        return false;
       });
 
       div.append(remove);
       $(holder).append(div);
+      return false;
 
     });
   },
@@ -146,7 +151,7 @@ var admin = {
         cache : false,
         contentType : false,
         processData : false,
-        timeout : 3000,
+        timeout : 10000,
         data : formData,
         statusCode : {
           201 : function() {
@@ -180,6 +185,7 @@ var admin = {
           }
         }
       });
+      return false;
     });
 
   },
@@ -189,11 +195,13 @@ var admin = {
       admin.save("#edit_form", successFunc);
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
     $('#edit_product_tab').tabify();
     $("#edit_specs .row img").click(function(e) {
       var row = $(this).parent();
       row.remove();
+      return false;
     });
     admin.addProp("#edit_add_prop", "#edit_prop_fields");
     admin.toggleDescription("edit");
@@ -215,6 +223,7 @@ var admin = {
           backgroundColor : '#dddddd'
         }
       });
+      return false;
     });
   },
 
@@ -234,6 +243,7 @@ var admin = {
           backgroundColor : '#dddddd'
         }
       });
+      return false;
     });
   },
 

@@ -21,6 +21,7 @@
 
     $(".close_product_dialog").click(function(event) {
       products.closeProductDialog();
+      return false;
     });
 
   });
@@ -70,6 +71,7 @@ var products = {
           window.admin.deleteProduct(pid);
           event.preventDefault();
           event.stopPropagation();
+          return false;
         });
       }
 
@@ -77,6 +79,7 @@ var products = {
         cart.addItem(pid);
         cart.showCart();
         event.stopPropagation();
+        return false;
       });
 
       if (pid !== undefined) {
@@ -87,20 +90,18 @@ var products = {
               $("#notice_connect_e").show().delay(5000).fadeOut("slow");
             } else {
 
-              $("#fb-share-button").click(function(e){
-                FB.ui(
-                    {
-                      method: 'share',
-                      href: 'http://localhost:8887/product?pid=' + pid,
-                    },
-                    function(response) {
-                      if (response && !response.error_code) {
-                      } else {
-                      }
-                    }
-                  );
+              $("#fb-share-button").click(function(e) {
+                FB.ui({
+                  method : 'share',
+                  href : 'http://localhost:8887/product?pid=' + pid,
+                }, function(response) {
+                  if (response && !response.error_code) {
+                  } else {
+                  }
+                });
+                return false;
               });
-              
+
               $("#sel_img").elevateZoom({
                 gallery : 'detail_box',
                 cursor : 'pointer',
@@ -116,6 +117,7 @@ var products = {
                 cart.addItem(pid);
                 cart.showCart();
                 event.stopPropagation();
+                return false;
               });
 
               $.blockUI({
@@ -147,10 +149,12 @@ var products = {
 
               $(".close_product_dialog").click(function(event) {
                 products.closeProductDialog();
-              });
+                return false;
+            });
             }
           });
           event.stopPropagation();
+          return false;
         });
       } else {
         if (window.admin !== undefined) {

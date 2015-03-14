@@ -1,44 +1,42 @@
 package net.shop
 package web.services
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import net.shift.common.DefaultLog
-import net.shift.common.FileSplit
 import net.shift.common.Path
-import net.shift.common.PathUtils._
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
 import net.shift.engine.http.DELETE
-import net.shift.engine.http.Header
-import net.shift.engine.http.MultiPart
 import net.shift.engine.http.MultiPartBody
 import net.shift.engine.http.POST
 import net.shift.engine.http.Resp
-import net.shift.engine.http.TextPart
 import net.shift.engine.utils.ShiftUtils
 import net.shift.html.Formlet
 import net.shift.html.Formlet.formToApp
+import net.shift.html.Formlet.inputCheck
 import net.shift.html.Formlet.inputDouble
 import net.shift.html.Formlet.inputFile
 import net.shift.html.Formlet.inputInt
 import net.shift.html.Formlet.inputOptional
 import net.shift.html.Formlet.inputSelect
 import net.shift.html.Formlet.inputText
-import net.shift.html.Formlet.inputCheck
-import net.shift.html.Formlet.listSemigroup
+import net.shift.html.Invalid
+import net.shift.html.Valid
 import net.shift.html.Validation
 import net.shift.loc.Language
 import net.shift.loc.Loc
 import net.shift.template.Selectors
 import net.shop.api.ProductDetail
-import net.shop.web.ShopApplication
-import net.shift.js._
-import JsDsl._
-import net.shop.model.ValidationFail
 import net.shop.model.FieldError
-import net.shop.web.services.FormImplicits._
-import net.shift.html.Valid
-import net.shift.html.Invalid
+import net.shop.model.ValidationFail
+import net.shop.web.ShopApplication
+import net.shop.web.services.FormImplicits.failSemigroup
+import net.shift.common.TimeUtils._
+import net.shift.io.FileSystem
+import net.shift.io.FileOps
+import net.shift.io.IO
 
 object ProductService extends ShiftUtils
   with Selectors
@@ -47,20 +45,20 @@ object ProductService extends ShiftUtils
   with FormValidation
   with SecuredService {
 
-  def deleteProduct = for {
+  def deleteProduct(implicit fs: FileSystem) = for {
     r <- DELETE
     Path("product" :: "delete" :: id :: Nil) <- path
     user <- auth
   } yield {
     ShopApplication.persistence.deleteProducts(id) match {
       case scala.util.Success(num) =>
-        scalax.file.Path.fromString(s"data/products/$id").deleteRecursively(true);
+        fs.deletePath(Path(s"data/products/$id"))
         service(_(Resp.ok))
       case scala.util.Failure(t) => service(_(Resp.notFound))
     }
   }
 
-  def updateProduct = for {
+  def updateProduct(implicit fs: FileSystem) = for {
     r <- POST
     Path("product" :: "update" :: pid :: Nil) <- path
     user <- auth
@@ -77,7 +75,7 @@ object ProductService extends ShiftUtils
             ShopApplication.persistence.updateProducts(merged) match {
               case scala.util.Success(p) =>
                 files.map { f =>
-                  scalax.file.Path.fromString(s"data/products/${p.head}/${f._1}").write(f._3)
+                  IO.arrayProducer(f._3)(FileOps.writer(Path(s"data/products/${p.head}/${f._1}")))
                 }
                 service(_(Resp.created))
               case scala.util.Failure(t) =>
@@ -92,27 +90,42 @@ object ProductService extends ShiftUtils
     }
   }
 
-  def createProduct = for {
+  def createProduct(implicit fs: FileSystem) = for {
     r <- POST
     Path("product" :: "create" :: Nil) <- path
     user <- auth
     mp <- multipartForm
   } yield {
-    extract(r.language, None, "create_", mp) match {
+    val extracted = duration(extract(r.language, None, "create_", mp)) { d =>
+      log.debug("Extraction : " + d)
+    }
+
+    extracted match {
       case (files, Valid(o)) =>
         val cpy = o.copy(images = Set(files.map(f => f._2): _*).toList)
-        ShopApplication.persistence.createProducts(cpy) match {
+        val create = duration(ShopApplication.persistence.createProducts(cpy)) { d =>
+          log.debug("Persist : " + d)
+        }
+
+        create match {
           case scala.util.Success(p) =>
-            files.map { f =>
-              scalax.file.Path.fromString(s"data/products/${p.head}/${f._1}").write(f._3)
+            Future {
+              duration(
+                files.map { f =>
+                  IO.arrayProducer(f._3)(FileOps.writer(Path(s"data/products/${p.head}/${f._1}")))
+                }) { d => log.debug("Write files: " + d) }
             }
+            log.debug("Send OK")
             service(_(Resp.created))
           case scala.util.Failure(t) =>
             error("Cannot create product ", t)
+            log.debug("Send ERROR")
             service(_(Resp.serverError))
         }
 
-      case (_, Invalid(msgs)) => validationFail(msgs)(r.language.name)
+      case (_, Invalid(msgs)) =>
+        log.debug("Send FAIL")
+        validationFail(msgs)(r.language.name)
 
     }
 

@@ -49,7 +49,6 @@ object ShopApplication extends ShiftApplication with ShopServices {
   lazy val persistence: Persistence = MongoDBPersistence
 
   def servingRule = for {
-    _ <- logReq
     _ <- withLanguage(Language("ro"))
     c <- staticFiles(Path("web/static")) |
       ajaxLogin |

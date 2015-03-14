@@ -11,6 +11,7 @@
       settings.updateUser("#updatesettings_form");
       e.stopPropagation();
       e.preventDefault();
+      return false;
     });
     
     $("#addresses").find('.del').click(function(event) {
@@ -20,6 +21,7 @@
       c.remove();
       event.stopPropagation();
       event.preventDefault();
+      return false;
     });
 
     settings.refreshAccordion();
@@ -88,6 +90,7 @@ var settings = {
         c.remove();
         event.stopPropagation();
         event.preventDefault();
+        return false;
       });
 
       $('.accordion > .accordion_title').unbind();

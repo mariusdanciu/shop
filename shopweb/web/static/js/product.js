@@ -8,6 +8,7 @@
       cart.addItem(pid);
       cart.showCart();
       event.stopPropagation();
+      return false;
     });
 
     $("#sel_img").elevateZoom({
@@ -30,6 +31,7 @@
         } else {
         }
       });
+      return false;
     });
 
     var content = $("#prod_desc").text();
