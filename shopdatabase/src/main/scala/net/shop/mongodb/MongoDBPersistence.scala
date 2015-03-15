@@ -208,6 +208,14 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     val mongos = order.map { orderToMongo }
     try {
       db("orders").insert(mongos: _*)
+
+      for {
+        o <- order
+        p <- o.items
+      } {
+        db("products").update(MongoDBObject("_id" -> new ObjectId(p.id)), $inc("soldCount" -> p.quantity))
+      }
+
       Success(mongos map { _.getOrElse("_id", "?").toString })
     } catch {
       case e: Exception => fail(e)
