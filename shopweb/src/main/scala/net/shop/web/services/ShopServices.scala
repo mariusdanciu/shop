@@ -45,6 +45,9 @@ import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.SettingsPageState
 import net.shift.io.IODefaults
+import net.shop.messaging.Messaging
+import net.shop.messaging.HitStat
+import java.util.Date
 
 trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults {
 
@@ -56,10 +59,24 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
   implicit val cartItemsSelector = bySnippetAttr[SnipState[CartState]]
   implicit val settingsSelector = bySnippetAttr[SnipState[SettingsPageState]]
 
-  def logReq = for {
+  def traceStats = for {
     r <- req
   } yield {
-    log.debug("Request: " + r.uri)
+    val path = r.path.toString()
+    if (!path.endsWith(".css") &&
+      !path.endsWith(".js") &&
+      !path.endsWith(".png") &&
+      !path.endsWith(".ico") &&
+      !path.endsWith(".jpg")) {
+      val uri = r.uri
+      (uri split ("\\?_=")).toList match {
+        case left :: right :: Nil =>
+          Messaging.send(HitStat(new Date(System.currentTimeMillis()), left))
+        case _ =>
+          Messaging.send(HitStat(new Date(System.currentTimeMillis()), uri))
+      }
+
+    }
     r
   }
   def ajaxLogin = for {

@@ -81,6 +81,9 @@ case class OrderLog(id: String,
 
 case class ProductLog(id: String, price: Double, quantity: Int)
 
+case class ServiceHit(year: Int, month: Int, day: Int, service: String)
+case class ServiceStat(hit: ServiceHit, count: Long)
+
 object Formatter {
   def format[T: Formatter](v: T)(implicit lang: String): String = {
     implicitly[Formatter[T]].write(v)

@@ -9,8 +9,6 @@
 
     $('#update_user').click(function(e) {
       settings.updateUser("#updatesettings_form");
-      e.stopPropagation();
-      e.preventDefault();
       return false;
     });
     
@@ -19,8 +17,6 @@
       var c = t.next();
       t.remove();
       c.remove();
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
@@ -88,8 +84,6 @@ var settings = {
         var c = t.next();
         t.remove();
         c.remove();
-        event.stopPropagation();
-        event.preventDefault();
         return false;
       });
 

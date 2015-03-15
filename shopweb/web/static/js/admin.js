@@ -22,15 +22,11 @@
 
     $("#create_category").click(function(event) {
       window.admin.saveCategory("#create_category_form");
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
     $("#update_category").click(function(event) {
       window.admin.saveCategory("#update_category_form");
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
@@ -39,8 +35,6 @@
         window.common.closeDialog();
         window.products.reloadProducts();
       });
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
@@ -193,8 +187,6 @@ var admin = {
   attachToProduct : function(successFunc) {
     $("#save_product").click(function(event) {
       admin.save("#edit_form", successFunc);
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
     $('#edit_product_tab').tabify();

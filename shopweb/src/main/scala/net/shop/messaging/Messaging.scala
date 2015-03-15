@@ -13,10 +13,13 @@ import net.shop.model.Formatters._
 import net.shift.loc.Loc
 import net.shop.web.ShopApplication
 import net.shift.io.IODefaults
+import java.util.Date
+import net.shop.api.ServiceHit
 
 sealed trait Message
 case class OrderDocument(l: Language, o: Order, doc: String) extends Message
 case class ForgotPassword(l: Language, email: String, doc: String) extends Message
+case class HitStat(date: Date, service: String) extends Message
 
 sealed trait ActorMessage
 case class StoreOrderStats(content: OrderDocument) extends ActorMessage
@@ -30,6 +33,7 @@ case class Mail(
 
 object Messaging extends IODefaults {
   val orderActor = ActorSystem("idid").actorOf(Props[OrderActor], "orderActor")
+  val hitsActor = ActorSystem("idid").actorOf(Props[HitsStatActor], "hitStatsActor")
 
   def send(m: Message) {
     m match {
@@ -50,7 +54,19 @@ object Messaging extends IODefaults {
           subject = Loc.loc0(l)("recover.password").text,
           message = doc)
 
+      case h @ HitStat(_, _) => hitsActor ! h
+
     }
+  }
+}
+
+class HitsStatActor extends Actor {
+  def receive = {
+    case h @ HitStat(_, _) => storeStats(h)
+  }
+
+  private def storeStats(s: HitStat) {
+    ShopApplication.persistence.storeServiceHit(ServiceHit(s.date.getYear, s.date.getMonth, s.date.getDate, s.service))
   }
 }
 

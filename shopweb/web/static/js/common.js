@@ -17,59 +17,45 @@
     }
 
     $("#menu").tabify();
+    
     $("#cart_symbol").click(function(event) {
       window.cart.showCart();
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
     $("#user_symbol").click(function(event) {
       window.user.showLogin();
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
     $("#cart_popup, #user_popup, #newuser_popup").click(function(event) {
       event.stopPropagation();
-      return false;
    });
 
     $("#authgo").click(function(event) {
       window.user.login("#login_form");
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
     $("#newuser").click(function(event) {
       window.user.hideLogin();
       window.user.showNewUser();
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
     $("#save_user").click(function(event) {
       window.user.createUser("#newuser_form");
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
     $('#forgotpass').click(function(event) {
       window.user.forgotPass("#login_form");
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
     $("#login_form").keydown(function(event) {
       if (event.keyCode == 13) {
         window.user.login("#login_form");
-        event.stopPropagation();
-        event.preventDefault();
         return false;
       }
     });
@@ -102,16 +88,12 @@
     $("#buy_step0").click(function(event) {
       cart.fetchUserInfo();
       cart.showStep0Links();
-      event.stopPropagation();
-      event.preventDefault();
       return false;
     });
 
     $("#buy_step1").click(function(event) {
       cart.fetchUserInfo();
       cart.showStep1Links();
-      event.stopPropagation();
-      event.preventDefault();
       return false;
    });
 
@@ -149,7 +131,6 @@
           }
         }
       });
-      event.preventDefault();
       return false;
     });
 
@@ -371,8 +352,6 @@ var cart = {
           currentAddress++;
           cart.populateAddress(currentAddress);
         }
-        e.stopPropagation();
-        e.preventDefault();
         return false;
      });
 
@@ -381,8 +360,6 @@ var cart = {
           currentAddress--;
           cart.populateAddress(currentAddress);
         }
-        e.stopPropagation();
-        e.preventDefault();
         return false;
      });
     } else {

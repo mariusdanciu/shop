@@ -4,35 +4,35 @@ package persistence
 import scala.util.Try
 import scala.util.Failure
 
-
-
 trait Persistence {
   def productById(id: String): Try[ProductDetail]
   def allProducts: Try[Iterator[ProductDetail]]
   def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]]
   def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]]
-  
+
   def categoryById(id: String): Try[Category]
   def allCategories: Try[Iterator[Category]]
-  
+
   def createProducts(prod: ProductDetail*): Try[Seq[String]]
   def updateProducts(prod: ProductDetail*): Try[Seq[String]]
   def deleteProducts(prod: String*): Try[Int]
-  
+
   def createCategories(prod: Category*): Try[Seq[String]]
   def updateCategories(prod: Category*): Try[Seq[String]]
   def deleteCategories(prod: String*): Try[Int]
-  
+
   def createUsers(user: UserDetail*): Try[Seq[String]]
   def updateUsers(user: UserDetail*): Try[Seq[String]]
   def deleteUsers(userId: String*): Try[Int]
   def allUsers: Try[Iterator[UserDetail]]
   def userByEmail(email: String): Try[UserDetail]
-  
+
   def createOrder(order: OrderLog*): Try[Seq[String]]
   def ordersByEmail(email: String): Try[Iterator[OrderLog]]
   def ordersByProduct(productId: String): Try[Iterator[OrderLog]]
-  
+
+  def storeServiceHit(h: ServiceHit): Try[String]
+  def allServiceStats(): Try[Iterator[ServiceStat]]
 }
 
 object SortSpec {

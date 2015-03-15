@@ -7,7 +7,6 @@
       var pid = $.url().param("pid");
       cart.addItem(pid);
       cart.showCart();
-      event.stopPropagation();
       return false;
     });
 
@@ -31,7 +30,6 @@
         } else {
         }
       });
-      return false;
     });
 
     var content = $("#prod_desc").text();

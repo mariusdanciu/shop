@@ -24,15 +24,11 @@ var categories = {
       if (window.admin !== undefined) {
         me.find('.edit_tag_close').click(function(event) {
           window.admin.deleteCategory(pid);
-          event.preventDefault();
-          event.stopPropagation();
           return false;
        });
 
         me.find('.edit_tag_update').click(function(event) {
           window.admin.editCategory(pid);
-          event.preventDefault();
-          event.stopPropagation();
           return false;
         });
 
@@ -41,8 +37,6 @@ var categories = {
       if (pid !== undefined) {
         me.click(function(event) {
           window.location.href = "/products?cat=" + pid;
-          event.preventDefault();
-          event.stopPropagation();
           return false;
        });
       } else {

@@ -3,16 +3,14 @@ package mongodb
 
 import scala.util.Success
 import scala.util.Try
-
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
-
 import net.shift.common.Config
 import net.shop.api._
 import net.shop.api.persistence._
 import ShopError._
-
+import net.shop.api.ServiceHit
 
 object MongoDBPersistence extends Persistence with MongoConversions {
 
@@ -23,6 +21,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
   db("products").ensureIndex(MongoDBObject("title.ro" -> "text", "description.ro" -> "text", "keywords" -> "text"))
   db("users").ensureIndex(MongoDBObject("firstName" -> "text", "lastName" -> "text", "phone" -> "text", "email" -> "text"))
   db("orders").ensureIndex(MongoDBObject("email" -> 1, "items.id" -> 1))
+  db("servicestats").ensureIndex(MongoDBObject("year" -> 1, "month" -> 1, "service" -> 1))
 
   def productById(id: String): Try[ProductDetail] = try {
     db("products").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
@@ -224,6 +223,24 @@ object MongoDBPersistence extends Persistence with MongoConversions {
   def ordersByProduct(productId: String): Try[Iterator[OrderLog]] = try {
     Success(
       db("orders").find("items.id" $in List(productId)) map mongoToOrder)
+  } catch {
+    case e: Exception => fail(e)
+  }
+
+  def storeServiceHit(h: ServiceHit): Try[String] = try {
+    val mongo = serviceHitToMongo(h)
+    val update = $inc("count" -> 1)
+    val result = db("servicestats").update(mongo, update, upsert = true)
+
+    Success(mongo.get("_id").getOrElse("?").toString())
+  } catch {
+    case e: Exception => fail(e)
+  }
+
+  def allServiceStats(): Try[Iterator[ServiceStat]] = try {
+    Success(for { p <- db("servicestats").find() } yield {
+      mongoToServiceStat(p)
+    })
   } catch {
     case e: Exception => fail(e)
   }

@@ -69,8 +69,6 @@ var products = {
       if (window.admin !== undefined) {
         me.find('.edit_tag_close').click(function(event) {
           window.admin.deleteProduct(pid);
-          event.preventDefault();
-          event.stopPropagation();
           return false;
         });
       }
@@ -153,7 +151,6 @@ var products = {
             });
             }
           });
-          event.stopPropagation();
           return false;
         });
       } else {
