@@ -508,7 +508,42 @@
    "code" : "206",
    "name" : "data.cookies.link",
    "text" : "Cookie-uri"
+ },
+ {
+   "code" : "207",
+   "name" : "my.account",
+   "text" : "Contul meu"
+ },
+ {
+   "code" : "208",
+   "name" : "my.orders",
+   "text" : "Comenzile mele"
+ },
+ {
+   "code" : "208",
+   "name" : "received",
+   "text" : "Primita"
+ },
+ {
+   "code" : "208",
+   "name" : "pending",
+   "text" : "In lucru"
+ },
+ {
+   "code" : "208",
+   "name" : "finalized",
+   "text" : "Finalizata"
+ },
+ {
+   "code" : "208",
+   "name" : "canceled",
+   "text" : "Anulata"
+ },
+ {
+   "code" : "208",
+   "name" : "modify.orders",
+   "text" : "Modifica comenzi"
  }
  
-
+ 
 ]

@@ -16,7 +16,7 @@ var categories = {
       window.common.closeDialog();
       return false;
     });
-    
+
     $(".cat_box").each(function(index) {
       var me = $(this);
       var pid = me.attr("id");
@@ -25,7 +25,7 @@ var categories = {
         me.find('.edit_tag_close').click(function(event) {
           window.admin.deleteCategory(pid);
           return false;
-       });
+        });
 
         me.find('.edit_tag_update').click(function(event) {
           window.admin.editCategory(pid);
@@ -38,7 +38,7 @@ var categories = {
         me.click(function(event) {
           window.location.href = "/products?cat=" + pid;
           return false;
-       });
+        });
       } else {
         if (window.admin !== undefined) {
           window.admin.attachCreateCategory(me);
@@ -50,8 +50,8 @@ var categories = {
 
   reloadCategories : function() {
     $("#item_list").load("/", function(response, status, xhr) {
-      if (status == "error") {
-        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+      if (status === "error") {
+        common.showError(xhr.statusText);
       } else {
         categories.refreshList();
       }

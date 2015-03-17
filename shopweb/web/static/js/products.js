@@ -11,8 +11,8 @@
 
     $('#sortSelect').on('change', function(evt, params) {
       $("#item_list").load(products.normUrl("/products", $(this).val()), function(response, status, xhr) {
-        if (status == "error") {
-          $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+        if (status === "error") {
+          common.showError(xhr.statusText);
         } else {
           products.refreshList();
         }
@@ -45,8 +45,8 @@ var products = {
 
   reloadProducts : function() {
     $("#item_list").load(products.normUrl("/products", $('#sortSelect').val()), function(response, status, xhr) {
-      if (status == "error") {
-        $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+      if (status === "error") {
+        common.showError(xhr.statusText);
       } else {
         products.refreshList();
       }
@@ -84,8 +84,8 @@ var products = {
         me.click(function(event) {
           var loc = "/productquickview?pid=" + pid;
           $("#product_dialog").load(loc, function(response, status, xhr) {
-            if (status == "error") {
-              $("#notice_connect_e").show().delay(5000).fadeOut("slow");
+            if (status === "error") {
+              common.showError(xhr.statusText);
             } else {
 
               $("#fb-share-button").click(function(e) {

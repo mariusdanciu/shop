@@ -5,8 +5,6 @@
     $("#update_category_form").keydown(function(event) {
       if (event.keyCode == 13) {
         window.admin.saveCategory("#update_category_form");
-        event.stopPropagation();
-        event.preventDefault();
         return false;
       }
     });
@@ -14,8 +12,6 @@
     $("#create_category_form").keydown(function(event) {
       if (event.keyCode == 13) {
         window.admin.saveCategory("#create_category_form");
-        event.stopPropagation();
-        event.preventDefault();
         return false;
       }
     });
@@ -38,6 +34,14 @@
       return false;
     });
 
+    $("#search_orders").keydown(function(event) {
+      if (event.keyCode == 13) {
+        console.log($("#search_orders").val());
+        admin.searchOrders("#orders_result", $("#search_orders").val());
+        return false;
+      }
+    });
+
     admin.addProp("#add_prop", "#prop_fields");
     admin.toggleDescription("create");
 
@@ -58,6 +62,16 @@
 })();
 
 var admin = {
+
+  searchOrders : function(selector, email) {
+    $(selector).load("/ordersview?email=" + email, function(response, status, xhr) {
+      if (status === "error") {
+        common.showError(xhr.statusText);
+      } else {
+        settings.refreshAccordion();
+      }
+    });
+  },
 
   saveCategory : function(formId) {
     window.admin.save(formId, function() {
@@ -86,51 +100,30 @@ var admin = {
 
   deleteProduct : function(id) {
     $.ajax({
-      cache: false,
+      cache : false,
       url : "/product/delete/" + id,
       timeout : 3000,
-      type : "DELETE",
-      error: function(x, t, m) {
-        if(m === "") {
-          common.showConnectionError();
-        } 
-      }
-    }).success(products.reloadProducts()).fail(function(msg, f) {
-      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
-    });
+      type : "DELETE"
+    }).success(products.reloadProducts());
   },
-  
+
   getCategory : function(id, categoryFunc) {
     $.ajax({
-      cache: false,
+      cache : false,
       url : "/category/" + id,
       timeout : 3000,
       type : "GET",
-      dataType: "json",
-      error: function(x, t, m) {
-        if(m === "") {
-          common.showConnectionError();
-        } 
-      }
-    }).success(categoryFunc).fail(function(msg, f) {
-      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
-    });
+      dataType : "json"
+    }).success(categoryFunc);
   },
 
   deleteCategory : function(id) {
     $.ajax({
-      cache: false,
+      cache : false,
       url : "/category/delete/" + id,
       timeout : 3000,
       type : "DELETE",
-      error: function(x, t, m) {
-        if(m === "") {
-          common.showConnectionError();
-        } 
-      }
-    }).success(categories.reloadCategories()).fail(function(msg, f) {
-      $("#notice_connect_e").show().delay(5000).fadeOut("slow");
-    });
+    }).success(categories.reloadCategories());
   },
 
   save : function(formId, successFunc) {
@@ -157,11 +150,6 @@ var admin = {
               common.showFormErrors(data.errors);
             }
           }
-        },
-        error: function(x, t, m) {
-          if(m === "") {
-            common.showConnectionError();
-          } 
         }
       });
     });
@@ -243,7 +231,7 @@ var admin = {
     admin.getCategory(cid, function(obj) {
       $('#update_category_form #title').val(obj.title);
       $('#update_category_form #pos').val(obj.position);
-      
+
       $('#update_category_form').attr("action", "/category/update/" + cid)
       $.blockUI({
         message : $("#category_update_dialog"),
@@ -260,8 +248,7 @@ var admin = {
         }
       });
     });
-    
-    
+
   }
 
 };

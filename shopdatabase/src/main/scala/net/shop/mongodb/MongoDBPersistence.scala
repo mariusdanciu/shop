@@ -195,10 +195,10 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     case e: Exception => fail(e)
   }
 
-  def userByEmail(email: String): Try[UserDetail] = try {
+  def userByEmail(email: String): Try[Option[UserDetail]] = try {
     db("users").findOne(MongoDBObject("email" -> email)) match {
-      case Some(obj) => Success(mongoToUser(obj))
-      case _         => fail(email + " not found")
+      case Some(obj) => Success(Some(mongoToUser(obj)))
+      case _         => Success(None)
     }
   } catch {
     case e: Exception => fail(e)

@@ -45,7 +45,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with ShopUtil
   val info = reqSnip("info") {
     s =>
       s.state.initialState.o match {
-        case OrderLog(id, time, Person(fn, ln, cnp), Address(_, _, country, region, city, address, zip), email, phone, _) =>
+        case OrderLog(id, time, Person(fn, ln, cnp), Address(_, _, country, region, city, address, zip), email, phone, _, _) =>
           bind(s.node) {
             case n attributes HasId("oid", a) / _     => <span>{ id }</span> % a
             case n attributes HasId("lname", a) / _   => <span>{ ln }</span> % a
@@ -61,7 +61,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with ShopUtil
             case Failure(f) => Success((s.state.initialState, errorTag(f toString)))
           }
 
-        case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(_, _, country, region, city, address, zip), email, phone, _) =>
+        case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(_, _, country, region, city, address, zip), email, phone, _, _) =>
           bind(s.node) {
             case n attributes HasId("oid", a) / _          => <span>{ id }</span> % a
             case n attributes HasId("cname", a) / _        => <span>{ cn }</span> % a

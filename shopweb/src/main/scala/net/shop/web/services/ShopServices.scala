@@ -1,17 +1,20 @@
 package net.shop
 package web.services
 
+import java.util.Date
+
 import scala.Option.option2Iterable
 import scala.util.Failure
 import scala.util.Success
+
 import org.json4s.DefaultFormats
 import org.json4s.jvalue2extractable
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization.write
 import org.json4s.string2JsonInput
+
 import net.shift.common.DefaultLog
 import net.shift.common.Path
-import net.shift.common.PathUtils._
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.AsyncResponse
@@ -25,18 +28,19 @@ import net.shift.engine.http.TextResponse
 import net.shift.engine.http.serviceServiceUtils
 import net.shift.engine.page.Html5
 import net.shift.engine.utils.ShiftUtils
+import net.shift.io.IODefaults
 import net.shift.loc.Loc
-import net.shift.security.BasicCredentials
-import net.shift.security.Credentials
-import net.shift.security.Permission
 import net.shift.security.User
 import net.shift.template.DynamicContent
 import net.shift.template.PageState
 import net.shift.template.Selectors
 import net.shift.template.SnipState
 import net.shop.api.Cart
+import net.shop.messaging.HitStat
+import net.shop.messaging.Messaging
 import net.shop.tryApplicative
 import net.shop.web.ShopApplication
+import net.shop.web.pages.AccountSettingsPage
 import net.shop.web.pages.CartItemNode
 import net.shop.web.pages.CartState
 import net.shop.web.pages.CategoryPage
@@ -44,10 +48,6 @@ import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.SettingsPageState
-import net.shift.io.IODefaults
-import net.shop.messaging.Messaging
-import net.shop.messaging.HitStat
-import java.util.Date
 
 trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults {
 
@@ -98,6 +98,11 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
   def ajaxProductDetail = for {
     r <- ajax
     p <- page(ProductPageState.build _, "productquickview", Path("web/templates/productquickview.html"), ProductDetailPage)
+  } yield p
+
+  def ajaxOrdersView = for {
+    r <- ajax
+    p <- settingsPage("ordersview", Path("web/templates/ordersview.html"), AccountSettingsPage)
   } yield p
 
   def tryLogout(r: Request, attempt: Attempt): Attempt = {

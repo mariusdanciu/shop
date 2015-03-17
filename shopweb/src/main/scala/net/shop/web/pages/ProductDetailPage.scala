@@ -126,17 +126,12 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
-  private def option2Try[T](o: Option[T]): Try[T] = o match {
-    case Some(v) => Success(v)
-    case _       => ShiftFailure("Empty").toFailure
-  }
-
   val details = reqSnip("details") {
     s =>
       {
         (for {
           p <- s.state.initialState.product
-          desc <- option2Try(p.description.get(s.state.lang.name))
+          desc <- p.description.get(s.state.lang.name)
         } yield {
           (ProductPageState(s.state.initialState.req, Success(p), s.state.user), Text(desc))
         }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }

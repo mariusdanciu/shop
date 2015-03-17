@@ -20,6 +20,7 @@
       return false;
     });
 
+    $("#settings_tab").tabify();
     settings.refreshAccordion();
   })
 })();
@@ -51,11 +52,6 @@ var settings = {
               common.showFormErrors(data.errors);
             }            
           }
-        },
-        error: function(x, t, m) {
-          if(m === "") {
-            common.showConnectionError();
-          } 
         }
       });
     });
@@ -94,7 +90,11 @@ var settings = {
   },
 
   refreshAccordion : function() {
+    console.log('refreshAccordion');
+    $('.accordion > .accordion_title').unbind();
+    opened = undefined;
     $('.accordion > .accordion_title').click(function() {
+      console.log('refreshAccordion');
       var allPanels = $('.accordion > .accordion_content');
       allPanels.slideUp();
       if (opened !== this) {

@@ -46,7 +46,7 @@ object SettingsService extends Selectors
         extract(r, usr) match {
           case Valid(u) =>
             ShopApplication.persistence.userByEmail(usr.name) match {
-              case scala.util.Success(ud) =>
+              case scala.util.Success(Some(ud)) =>
                 val merged = ud.copy(userInfo = u.user.userInfo,
                   companyInfo = u.user.companyInfo,
                   addresses = u.addresses,

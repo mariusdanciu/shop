@@ -1,90 +1,117 @@
 <html data-template="common">
 <head>
+<script type="text/javascript" src="/static/js/admin.js" data-permissions="write"></script>
 <script type="text/javascript" src="/static/js/accountsettings.js"></script>
 </head>
 
 <body>
   <div id="content" class="center page">
-    <div class="column">
-      <form action="/update/settings" id="updatesettings_form" method="POST" data-snip="settingsForm">
-        <div class="column left30 userinputs">
-          <div class="accordion">
-            <div class="accordion_title clickable">
-              <a href="#" data-loc="person"></a>
-            </div>
-            <div class="accordion_content">
-              <div class="fields">
-                <div class="row">
-                  <label for="update_firstName" data-loc="first.name"></label> <input id="update_firstName" type="text"
-                    name="update_firstName" />
-                </div>
-                <div class="row">
-                  <label for="update_lastName" data-loc="last.name"></label><input id="update_lastName" type="text" name="update_lastName" />
-                </div>
-                <div class="row">
-                  <label for="update_cnp" data-loc="cnp"></label><input id="update_cnp" type="text" name="update_cnp" />
-                </div>
-                <div class="row">
-                  <label for="update_phone" data-loc="phone"></label><input id="update_phone" type="text" name="update_phone" />
-                </div>
-              </div>
-            </div>
 
-            <div class="accordion_title clickable">
-              <a href="#" data-loc="company"></a>
-            </div>
-            <div class="accordion_content">
-              <div class="fields">
-                <div class="row">
-                  <label for="update_cname" data-loc="company.name"></label><input id="update_cname" name="update_cname" type="text" />
-                </div>
-                <div class="row">
-                  <label for="update_cif" data-loc="company.cif"></label><input id="update_cif" name="update_cif" type="text" />
-                </div>
-                <div class="row">
-                  <label for="update_cregcom" data-loc="company.reg.com"></label><input id="update_cregcom" name="update_cregcom"
-                    type="text" />
-                </div>
-                <div class="row">
-                  <label for="update_cbank" data-loc="company.bank"></label><input id="update_cbank" name="update_cbank" type="text" />
-                </div>
-                <div class="row">
-                  <label for="update_cbankaccount" data-loc="company.bank.account"></label><input id="update_cbankaccount"
-                    name="update_cbankaccount" type="text" />
-                </div>
-                <div class="row">
-                  <label for="update_cphone" data-loc="phone"></label><input id="update_cphone" name="update_cphone" type="text" />
-                </div>
-              </div>
-            </div>
-            <div class="fields paddingtop20 bordertop">
-              <div class="row">
-                <label for="update_password" data-loc="password"></label><input id="update_password" type="password" name="update_password" />
-              </div>
-              <div class="row">
-                <label for="update_password2" data-loc="retype.password"></label><input id="update_password2" type="password"
-                  name="update_password2" />
-              </div>
-            </div>
+    <div class="tab_select">
+      <ul id="settings_tab" class="create_product_tab">
+        <li class="active"><a href="#account" data-loc="my.account"></a></li>
+        <li><a href="#history" data-loc="my.orders"></a></li>
+        <li data-permissions="write"><a href="#edit_orders_status" data-loc="modify.orders"></a></li>
+      </ul>
+    </div>
 
-            <div id="update_user">
-              <div class="row bordertop top20 paddingtop10">
-                <a class="btn" href="#" data-loc="save"></a>
+    <div id="account">
+      <div class="row_simple top20">
+        <form action="/update/settings" id="updatesettings_form" method="POST" data-snip="settingsForm">
+          <div class="column left30 userinputs">
+            <div class="accordion">
+              <div class="accordion_title clickable">
+                <a href="#" data-loc="person"></a>
+              </div>
+              <div class="accordion_content">
+                <div class="fields">
+                  <div class="row">
+                    <label for="update_firstName" data-loc="first.name"></label> <input id="update_firstName" type="text"
+                      name="update_firstName" />
+                  </div>
+                  <div class="row">
+                    <label for="update_lastName" data-loc="last.name"></label><input id="update_lastName" type="text" name="update_lastName" />
+                  </div>
+                  <div class="row">
+                    <label for="update_cnp" data-loc="cnp"></label><input id="update_cnp" type="text" name="update_cnp" />
+                  </div>
+                  <div class="row">
+                    <label for="update_phone" data-loc="phone"></label><input id="update_phone" type="text" name="update_phone" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion_title clickable">
+                <a href="#" data-loc="company"></a>
+              </div>
+              <div class="accordion_content">
+                <div class="fields">
+                  <div class="row">
+                    <label for="update_cname" data-loc="company.name"></label><input id="update_cname" name="update_cname" type="text" />
+                  </div>
+                  <div class="row">
+                    <label for="update_cif" data-loc="company.cif"></label><input id="update_cif" name="update_cif" type="text" />
+                  </div>
+                  <div class="row">
+                    <label for="update_cregcom" data-loc="company.reg.com"></label><input id="update_cregcom" name="update_cregcom"
+                      type="text" />
+                  </div>
+                  <div class="row">
+                    <label for="update_cbank" data-loc="company.bank"></label><input id="update_cbank" name="update_cbank" type="text" />
+                  </div>
+                  <div class="row">
+                    <label for="update_cbankaccount" data-loc="company.bank.account"></label><input id="update_cbankaccount"
+                      name="update_cbankaccount" type="text" />
+                  </div>
+                  <div class="row">
+                    <label for="update_cphone" data-loc="phone"></label><input id="update_cphone" name="update_cphone" type="text" />
+                  </div>
+                </div>
+              </div>
+              <div class="fields paddingtop20 bordertop">
+                <div class="row">
+                  <label for="update_password" data-loc="password"></label><input id="update_password" type="password"
+                    name="update_password" />
+                </div>
+                <div class="row">
+                  <label for="update_password2" data-loc="retype.password"></label><input id="update_password2" type="password"
+                    name="update_password2" />
+                </div>
+              </div>
+
+              <div id="update_user">
+                <div class="row bordertop top20 paddingtop10">
+                  <a class="btn" href="#" data-loc="save"></a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="column left30 addressinputs">
-          <div class="fields">
-            <div class="row">
-              <label for="addr_name">Adauga adresa</label> <input class="left" id="addr_name" type="text" />
+          <div class="column left30 addressinputs">
+            <div class="fields">
+              <div class="row">
+                <label for="addr_name">Adauga adresa</label> <input class="left" id="addr_name" type="text" />
+              </div>
+            </div>
+            <div id="addresses" class="accordion">
+              <div data-snip="addresses"></div>
             </div>
           </div>
-          <div id="addresses" class="accordion">
-            <div data-snip="addresses"></div>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
+    </div>
+
+    <div id="history">
+      <div class="row_simple top20">
+        <div data-snip="loadordersview"></div>
+      </div>
+    </div>
+
+    <div id="edit_orders_status" data-permissions="write">
+      <div class="row_simple top20">
+        <label for="username" data-loc="email"></label> <input id="search_orders" type="text" name="username" />
+      </div>
+      <div id="orders_result" class="row_simple top20">
+      </div>
     </div>
 
     <div data-snip="address_template"></div>

@@ -1,4 +1,5 @@
-package net.shop.web.pages
+package net.shop
+package web.pages
 
 import net.shift.loc.Loc
 import net.shop.utils.ShopUtils
@@ -25,10 +26,20 @@ import scala.xml.Elem
 import net.shift.template.Attributes
 import net.shift.io.IODefaults
 import net.shift.common.XmlUtils
+import net.shop.utils.ShopUtils
+import net.shift.common.ShiftFailure
+import net.shop.api.OrderReceived
+import net.shop.api.OrderFinalized
+import net.shop.api.OrderCanceled
+import net.shop.api.OrderPending
+import scala.util.Try
+import scala.util.Failure
 
 object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with IODefaults { self =>
 
-  override def snippets = List(title, settingsForm, addressTemplate, addresses) ++ super.snippets
+  val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy - hh:mm")
+
+  override def snippets = List(title, settingsForm, addressTemplate, addresses, loadordersview, orders) ++ super.snippets
 
   val title = reqSnip("title") {
     s => Success((s.state.initialState, <h1>{ Loc.loc0(s.state.lang)("settings").text }</h1>))
@@ -40,7 +51,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with I
         s.state.user match {
           case Some(user) =>
             val r = ShopApplication.persistence.userByEmail(user.name) match {
-              case scala.util.Success(ud) =>
+              case scala.util.Success(Some(ud)) =>
                 (Some(ud), bind(s.node) {
                   case HasName("update_firstName", a)    => node("input", a.attrs + ("value" -> ud.userInfo.firstName))
                   case HasName("update_lastName", a)     => node("input", a.attrs + ("value" -> ud.userInfo.lastName))
@@ -96,6 +107,70 @@ object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with I
         Success((s.state.initialState, res))
       }
   }
+
+  val loadordersview = reqSnip("loadordersview") {
+    s =>
+      Html5.runPageFromFile(s.state, Path(s"web/templates/ordersview.html"), this).map { e => (e._1.state.initialState, e._2) }
+  }
+
+  val orders = reqSnip("orders") {
+    s =>
+      {
+        val email = s.state.initialState.req.param("email").getOrElse(List("")).head
+        def userDetail(state: SettingsPageState): Try[Option[UserDetail]] = {
+          state.user match {
+            case Some(u) => Success(Some(u))
+            case _       => ShopApplication.persistence.userByEmail(email)
+          }
+        }
+
+        userDetail(s.state.initialState) match {
+          case Success(Some(u)) =>
+            for {
+              orders <- ShopApplication.persistence.ordersByEmail(u.email)
+            } yield {
+
+              val v = orders.flatMap { o =>
+
+                (bind(s.node.head.child) {
+                  case HasClass("order_title", a) => node("a", a.attrs) / Text(s"Comanda ${o.id} din data ${dateFormat.format(o.time)}")
+                  case _ attributes HasClass("order_items", a) / childs =>
+
+                    o.items flatMap { item =>
+                      <tr> {
+                        val prod = ShopApplication.persistence.productById(item.id)
+                        val title = prod.map { _.title_?(s.state.lang.name) } getOrElse ""
+                        def img(a: Attributes): NodeSeq = prod.map { p => node("img", a.attrs + ("src" -> imagePath(item.id, "thumb", p.images.head))) } getOrElse NodeSeq.Empty
+
+                        bind(childs) {
+                          case HasClass("c1", a)                     => img(a)
+                          case "td" attributes HasClass("c2", a) / _ => <td>{ title }</td> % a
+                          case "td" attributes HasClass("c3", a) / _ => <td>{ item.quantity }</td> % a
+                          case "td" attributes HasClass("c4", a) / _ => <td>{ item.price }</td> % a
+                        } getOrElse NodeSeq.Empty
+                      }</tr>
+                    }
+
+                  case HasClass("total", a) => Text((0.0 /: o.items)((acc, e) => acc + e.price * e.quantity) toString)
+
+                  case HasClass("order_status", a) => node("span", a.attrs) / (o.status match {
+                    case OrderReceived  => Text(Loc.loc0(s.state.lang)("received").text)
+                    case OrderPending   => Text(Loc.loc0(s.state.lang)("pending").text)
+                    case OrderFinalized => Text(Loc.loc0(s.state.lang)("finalized").text)
+                    case OrderCanceled  => Text(Loc.loc0(s.state.lang)("canceled").text)
+                  })
+
+                }) getOrElse NodeSeq.Empty
+              }
+              (s.state.initialState, NodeSeq.fromSeq(v.toSeq))
+            }
+          case Success(None) => Success((s.state.initialState, Text(Loc.loc(s.state.lang)("user.not.found", List(email)).text)))
+          case Failure(t)    => Failure(t)
+        }
+
+      }
+  }
+
 }
 
 case class SettingsPageState(req: Request, user: Option[UserDetail])

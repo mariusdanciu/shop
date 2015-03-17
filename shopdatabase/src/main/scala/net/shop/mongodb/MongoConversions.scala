@@ -19,6 +19,7 @@ import net.shop.api.ProductLog
 import java.util.Date
 import net.shop.api.ServiceHit
 import net.shop.api.ServiceStat
+import net.shop.api.OrderStatus
 
 trait MongoConversions {
 
@@ -63,6 +64,7 @@ trait MongoConversions {
       item.result
     }
     db += "items" -> items
+    db += "status" -> obj.status.index
     db.result
   }
 
@@ -105,7 +107,8 @@ trait MongoConversions {
       address = mongoToAddress(obj.getAsOrElse[DBObject]("address", MongoDBObject.newBuilder.result())),
       email = obj.getAsOrElse[String]("email", ""),
       phone = obj.getAsOrElse[String]("phone", ""),
-      items = itemsObj)
+      items = itemsObj,
+      status = OrderStatus.fromIndex(obj.getAsOrElse[Int]("status", 0)))
   }
 
   def productToMongo(obj: ProductDetail): MongoDBObject = {

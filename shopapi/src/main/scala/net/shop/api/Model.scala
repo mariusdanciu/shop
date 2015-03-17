@@ -68,13 +68,39 @@ case class Order(id: String,
   def toOrderLog = OrderLog(id, new Date(), submitter, address, email, phone, items map { i => i._1.toProductLog(i._2) })
 }
 
+object OrderStatus {
+  def fromIndex(v: Int) = v match {
+    case 0 => OrderReceived
+    case 1 => OrderPending
+    case 2 => OrderFinalized
+    case _ => OrderCanceled
+  }
+}
+
+sealed trait OrderStatus {
+  def index: Int
+}
+case object OrderReceived extends OrderStatus {
+  def index = 0
+}
+case object OrderPending extends OrderStatus {
+  def index = 1
+}
+case object OrderFinalized extends OrderStatus {
+  def index = 2
+}
+case object OrderCanceled extends OrderStatus {
+  def index = 3
+}
+
 case class OrderLog(id: String,
                     time: Date,
                     submitter: Submitter,
                     address: Address,
                     email: String,
                     phone: String,
-                    items: List[ProductLog]) {
+                    items: List[ProductLog],
+                    status: OrderStatus = OrderReceived) {
 
   lazy val total = (0.0 /: items)((a, i) => a + i.price * i.quantity)
 }

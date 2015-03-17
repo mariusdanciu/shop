@@ -17,6 +17,15 @@ html,body {
 	font-weight: 300;
 }
 
+table {
+	width: 100%;
+}
+
+table tr th {
+	border-bottom: 1px solid #dddddd;
+}
+
+
 div, span, input, textarea, select {
   font-size: 16px;
 }
@@ -84,10 +93,6 @@ ul {
 li a {
 	font-size: 18px;
 	text-decoration: none;
-}
-
-h3 span {
-	color: #99AA88;
 }
 
 a:link {
@@ -536,6 +541,10 @@ h1 {
 	float: left;
 	padding: 20px 40px 20px 20px;
 	position: relative;
+}
+
+.order_status {
+	float: right; 
 }
 
 .upload_form_fields input, .select_row select, #order input {
@@ -1065,7 +1074,6 @@ h1 {
 }
 
 .accordion {
-  max-height: 400px;
 }
 
 .accordion .accordion_title, .accordion .accordion_content {
@@ -1079,11 +1087,11 @@ h1 {
 
 .accordion .accordion_title {
   border-top: 1px solid #cccccc;
-  height: 20px;
+  height: 24px;
 }
 
 .accordion .accordion_title a, .accordion .accordion_title a {
-  display: block;
+  display: inline;
 }
 
 .address_template {

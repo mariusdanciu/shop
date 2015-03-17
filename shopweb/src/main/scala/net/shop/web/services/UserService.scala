@@ -49,7 +49,7 @@ object UserService extends Selectors
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
     ShopApplication.persistence.userByEmail(user.name) match {
-      case Success(ud) =>
+      case Success(Some(ud)) =>
         implicit val l = r.language.name
         service(_(JsonResponse(Formatter.format(ud))))
       case _ =>
@@ -63,7 +63,7 @@ object UserService extends Selectors
   } yield {
     val email = Base64.decodeString(b64)
     (for {
-      ud <- ShopApplication.persistence.userByEmail(email)
+      Some(ud) <- ShopApplication.persistence.userByEmail(email)
       (_, n) <- Html5.runPageFromFile(PageState(ud, r.language), Path(s"web/templates/forgotpassword_${r.language.name}.html"), ForgotPasswordPage)
     } yield {
       Messaging.send(ForgotPassword(r.language, email, n.toString))

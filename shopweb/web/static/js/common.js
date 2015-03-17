@@ -15,6 +15,14 @@
         }
       }
     }
+    
+    $( document ).ajaxError(function( event, request, settings, thrownError ) {
+      if (thrownError == "") {
+        common.showConnectionError();
+      } else {
+        common.showError(request.responseText);
+      }
+    });
 
     $("#menu").tabify();
     
@@ -124,11 +132,6 @@
               common.showFormErrors(data.errors);
             }
           }
-        },
-        error : function(x, t, m) {
-          if (m === "") {
-            common.showConnectionError();
-          }
         }
       });
       return false;
@@ -154,6 +157,7 @@
 })();
 
 var common = {
+  
   closeDialog : function() {
     $.unblockUI();
     $("#user_popup").hide();
@@ -169,8 +173,7 @@ var common = {
     $("#notice_e").show().delay(5000).fadeOut("slow");
   },
 
-  showConnectionError : function(text) {
-    $("#notice_connect_e").html(text);
+  showConnectionError : function() {
     $("#notice_connect_e").show().delay(5000).fadeOut("slow");
   },
 
@@ -224,11 +227,6 @@ var user = {
           common.closeDialog();
           common.showError(m.responseText);
         }
-      },
-      error : function(x, t, m) {
-        if (m === "") {
-          common.showConnectionError();
-        }
       }
     }).success(function(m) {
       common.closeDialog();
@@ -255,11 +253,6 @@ var user = {
           common.closeDialog();
           common.showError(m.responseText);
         }
-      },
-      error : function(x, t, m) {
-        if (m === "") {
-          common.showConnectionError();
-        }
       }
     });
   },
@@ -285,11 +278,6 @@ var user = {
               common.showFormErrors(data.errors);
             }
           }
-        },
-        error : function(x, t, m) {
-          if (m === "") {
-            common.showConnectionError();
-          }
         }
       });
     });
@@ -308,12 +296,7 @@ var cart = {
       dataType : "json",
       timeout : 3000,
       cache: false,
-      context : $("#cart_content"),
-      error : function(x, t, m) {
-        if (m === "") {
-          common.showConnectionError();
-        }
-      }
+      context : $("#cart_content")
     }).done(function(data) {
       cart.populateForm(data);
     });
@@ -484,12 +467,7 @@ var cart = {
         dataType : "json",
         timeout : 3000,
         cache: false,
-        context : $("#cart_content"),
-        error : function(x, t, m) {
-          if (m === "") {
-            common.showConnectionError();
-          }
-        }
+        context : $("#cart_content")
       }).done(function(data) {
         $(this).empty();
         var ul = document.createElement("ul");
