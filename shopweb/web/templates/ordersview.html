@@ -3,7 +3,12 @@
 
   <div data-snip="orders">
     <div class="accordion_title clickable">
-      <span><a href="#" class="order_title"></a></span> <span class="order_status"></span>
+      <span><a href="#" class="order_title"></a></span> <span class="status"></span> <select class="edit_status">
+        <option value="0" data-loc="received"></option>
+        <option value="1" data-loc="pending"></option>
+        <option value="2" data-loc="finalized"></option>
+        <option value="-1" data-loc="canceled"></option>
+      </select>
     </div>
     <div class="accordion_content order_content">
       <table>

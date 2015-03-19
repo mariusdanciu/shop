@@ -25,7 +25,7 @@ trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
 
   def reqSnip(name: String) = snip[T](name) _
 
-  implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
+  implicit def snipsSelector[T] = bySnippetAttr[T]
 
   val order = snip[T]("order") {
     s =>

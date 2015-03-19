@@ -5,10 +5,6 @@
 
     products.refreshList();
 
-    $("#sortSelect").chosen({
-      "disable_search" : true
-    });
-
     $('#sortSelect').on('change', function(evt, params) {
       $("#item_list").load(products.normUrl("/products", $(this).val()), function(response, status, xhr) {
         if (status === "error") {

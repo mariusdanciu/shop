@@ -3,6 +3,9 @@ package api
 
 import java.util.Date
 import scala.util.Failure
+import net.shift.security.User
+import net.shift.security.Permissions
+import net.shift.security.Permission
 
 case class UserInfo(firstName: String, lastName: String, cnp: String, phone: String)
 case class CompanyInfo(name: String, cif: String, regCom: String, bank: String, bankAccount: String, phone: String)
@@ -13,7 +16,9 @@ case class UserDetail(id: Option[String] = None,
                       addresses: List[Address],
                       email: String,
                       password: String,
-                      permissions: List[String])
+                      permissions: List[String]) {
+  lazy val securityUser: User = User(email, None, permissions.map(Permission(_)).toSet)
+}
 
 case class Address(id: Option[String] = None,
                    name: String,
@@ -90,7 +95,7 @@ case object OrderFinalized extends OrderStatus {
   def index = 2
 }
 case object OrderCanceled extends OrderStatus {
-  def index = 3
+  def index = -1
 }
 
 case class OrderLog(id: String,

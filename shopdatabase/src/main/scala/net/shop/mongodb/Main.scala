@@ -3,7 +3,6 @@ package mongodb
 
 import com.mongodb.casbah.Imports._
 import java.io.File
-import net.shift.common.PathUtils._
 import net.shift.common.Path
 
 import net.shop.api._

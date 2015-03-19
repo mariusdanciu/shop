@@ -6,7 +6,6 @@ import scala.util.Success
 import net.shift.common.Base64
 import net.shift.common.DefaultLog
 import net.shift.common.Path
-import net.shift.common.PathUtils._
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http._
@@ -34,6 +33,7 @@ import net.shift.html.Formlet
 import net.shop.model.FieldError
 import net.shift.html.Valid
 import net.shift.html.Invalid
+import net.shift.common.Config
 
 object UserService extends Selectors
   with TraversingSpec
@@ -41,11 +41,11 @@ object UserService extends Selectors
   with FormValidation
   with SecuredService {
 
-  implicit val reqSelector = bySnippetAttr[SnipState[UserDetail]]
+  implicit val reqSelector = bySnippetAttr[UserDetail]
 
   def userInfo = for {
     r <- GET
-    Path("userinfo" :: Nil) <- path
+    Path(_, "userinfo" :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
     ShopApplication.persistence.userByEmail(user.name) match {
@@ -59,7 +59,7 @@ object UserService extends Selectors
 
   def forgotPassword = for {
     r <- POST
-    Path("forgotpassword" :: b64 :: Nil) <- path
+    Path(_, "forgotpassword" :: b64 :: Nil) <- path
   } yield {
     val email = Base64.decodeString(b64)
     (for {
@@ -76,7 +76,7 @@ object UserService extends Selectors
 
   def createUser = for {
     r <- POST
-    Path("create" :: "user" :: Nil) <- path
+    Path(_, "create" :: "user" :: Nil) <- path
   } yield {
     implicit val loc = r.language
     extract(r) match {
@@ -88,13 +88,15 @@ object UserService extends Selectors
           cnp = u.cnp,
           phone = u.phone)
 
+        val perms = List("read") ++ (if (Config.string("admin.user") == u.email) List("write") else Nil )
+            
         val usr = UserDetail(id = None,
           userInfo = ui,
           companyInfo = CompanyInfo("", "", "", "", "", ""),
           addresses = Nil,
           email = u.email,
           password = u.password,
-          permissions = List("read"))
+          permissions = perms)
 
         ShopApplication.persistence.createUsers(usr) match {
           case scala.util.Success(ids) =>

@@ -89,7 +89,7 @@ trait FormValidation extends IODefaults {
 
   def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationFail, String] =
     required(name, title, s => ShopApplication.persistence.userByEmail(s) match {
-      case scala.util.Success(email) => Invalid(ValidationFail(FieldError(name, Loc.loc0(lang)("user.already.exists").text)))
+      case scala.util.Success(Some(email)) => Invalid(ValidationFail(FieldError(name, Loc.loc0(lang)("user.already.exists").text)))
       case _                         => Valid(s)
     })
 

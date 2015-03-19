@@ -34,6 +34,12 @@ import net.shop.api.OrderCanceled
 import net.shop.api.OrderPending
 import scala.util.Try
 import scala.util.Failure
+import net.shift.security.Permission
+import net.shift.html.Formlet
+import net.shift.security.User
+import net.shop.api.OrderLog
+import net.shift.loc.Language
+import net.shift.template.HasValue
 
 object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with IODefaults { self =>
 
@@ -116,6 +122,8 @@ object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with I
   val orders = reqSnip("orders") {
     s =>
       {
+        val logedInUser = s.state.user
+        val l = s.state.lang
         val email = s.state.initialState.req.param("email").getOrElse(List("")).head
         def userDetail(state: SettingsPageState): Try[Option[UserDetail]] = {
           state.user match {
@@ -153,22 +161,56 @@ object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with I
 
                   case HasClass("total", a) => Text((0.0 /: o.items)((acc, e) => acc + e.price * e.quantity) toString)
 
-                  case HasClass("order_status", a) => node("span", a.attrs) / (o.status match {
-                    case OrderReceived  => Text(Loc.loc0(s.state.lang)("received").text)
-                    case OrderPending   => Text(Loc.loc0(s.state.lang)("pending").text)
-                    case OrderFinalized => Text(Loc.loc0(s.state.lang)("finalized").text)
-                    case OrderCanceled  => Text(Loc.loc0(s.state.lang)("canceled").text)
-                  })
+                  case HasClass("status", a) =>
+                    val e = for {
+                      u <- option2Try(logedInUser)
+                      n <- u.notThesePermissions(Permission("write")) {
+                        NodeSeq.Empty ++ (node("span", Map("class" -> "order_status")) / (o.status match {
+                          case OrderReceived  => Text(Loc.loc0(l)("received").text)
+                          case OrderPending   => Text(Loc.loc0(l)("pending").text)
+                          case OrderFinalized => Text(Loc.loc0(l)("finalized").text)
+                          case OrderCanceled  => Text(Loc.loc0(l)("canceled").text)
+                        }))
+                      }
+                    } yield n
+
+                    e getOrElse NodeSeq.Empty
+
+                  case _ attributes HasClass("edit_status", a) / childs =>
+                    val e = for {
+                      u <- option2Try(logedInUser)
+                      n <- u.requireAll(Permission("write")) {
+                        makeSelect(o, childs)
+                      }
+                    } yield n
+
+                    e getOrElse NodeSeq.Empty
 
                 }) getOrElse NodeSeq.Empty
               }
-              (s.state.initialState, NodeSeq.fromSeq(v.toSeq))
+              (SettingsPageState(s.state.initialState.req, Some(u)), NodeSeq.fromSeq(v.toSeq))
             }
           case Success(None) => Success((s.state.initialState, Text(Loc.loc(s.state.lang)("user.not.found", List(email)).text)))
           case Failure(t)    => Failure(t)
         }
 
       }
+  }
+
+  private def makeSelect(o: OrderLog, childs: NodeSeq): NodeSeq = {
+
+    bind(childs) {
+      case "option" attributes HasValue("0", a) / _ if (o.status == OrderReceived)  => node("option", a.attrs + ("selected" -> "true"))
+      case "option" attributes HasValue("1", a) / _ if (o.status == OrderPending)   => node("option", a.attrs + ("selected" -> "true"))
+      case "option" attributes HasValue("2", a) / _ if (o.status == OrderFinalized) => node("option", a.attrs + ("selected" -> "true"))
+      case "option" attributes HasValue("-1", a) / _ if (o.status == OrderCanceled) => node("option", a.attrs + ("selected" -> "true"))
+    } match {
+      case Success(n) => <select id={ o.id } class="order_edit_status">
+                           { n }
+                         </select>
+      case _ => NodeSeq.Empty
+    }
+
   }
 
 }

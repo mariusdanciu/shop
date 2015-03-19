@@ -47,7 +47,7 @@ object ProductService extends ShiftUtils
 
   def deleteProduct(implicit fs: FileSystem) = for {
     r <- DELETE
-    Path("product" :: "delete" :: id :: Nil) <- path
+    Path(_, "product" :: "delete" :: id :: Nil) <- path
     user <- auth
   } yield {
     ShopApplication.persistence.deleteProducts(id) match {
@@ -60,7 +60,7 @@ object ProductService extends ShiftUtils
 
   def updateProduct(implicit fs: FileSystem) = for {
     r <- POST
-    Path("product" :: "update" :: pid :: Nil) <- path
+    Path(_, "product" :: "update" :: pid :: Nil) <- path
     user <- auth
     mp <- multipartForm
   } yield {
@@ -92,7 +92,7 @@ object ProductService extends ShiftUtils
 
   def createProduct(implicit fs: FileSystem) = for {
     r <- POST
-    Path("product" :: "create" :: Nil) <- path
+    Path(_, "product" :: "create" :: Nil) <- path
     user <- auth
     mp <- multipartForm
   } yield {

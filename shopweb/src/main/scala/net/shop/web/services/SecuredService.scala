@@ -20,8 +20,7 @@ trait SecuredService extends ShiftUtils with IODefaults {
 
         ShopApplication.persistence.userByEmail(email) match {
           case Success(Some(ud)) if (ud.password == password) =>
-            val extraPerms = if (ud.email == Config.string("admin.user")) List("write") else Nil
-            Some(User(ud.email, None, (ud.permissions ++ extraPerms).map(Permission(_)).toSet))
+            Some(User(ud.email, None, ud.permissions.map(Permission(_)).toSet))
           case _ =>
             None
         }

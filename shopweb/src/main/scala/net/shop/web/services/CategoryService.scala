@@ -3,7 +3,6 @@ package web.services
 
 import net.shift.common.DefaultLog
 import net.shift.common.Path
-import net.shift.common.PathUtils._
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
@@ -47,7 +46,7 @@ object CategoryService extends Selectors
 
   def getCategory(implicit fs: FileSystem) = for {
     r <- GET
-    Path("category" :: id :: Nil) <- path
+    Path(_, "category" :: id :: Nil) <- path
     user <- auth
   } yield {
     ShopApplication.persistence.categoryById(id) match {
@@ -61,7 +60,7 @@ object CategoryService extends Selectors
 
   def deleteCategory(implicit fs: FileSystem) = for {
     r <- DELETE
-    Path("category" :: "delete" :: id :: Nil) <- path
+    Path(_, "category" :: "delete" :: id :: Nil) <- path
     user <- auth
   } yield {
     ShopApplication.persistence.deleteCategories(id) match {
@@ -74,7 +73,7 @@ object CategoryService extends Selectors
 
   def updateCategory(implicit fs: FileSystem) = for {
     r <- POST
-    Path("category" :: "update" :: id :: Nil) <- path
+    Path(_, "category" :: "update" :: id :: Nil) <- path
     user <- auth
     mp <- multipartForm
   } yield {
@@ -100,7 +99,7 @@ object CategoryService extends Selectors
 
   def createCategory = for {
     r <- POST
-    Path("category" :: "create" :: Nil) <- path
+    Path(_, "category" :: "create" :: Nil) <- path
     user <- auth
     mp <- multipartForm
   } yield {

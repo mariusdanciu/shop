@@ -22,6 +22,8 @@
 
     $("#settings_tab").tabify();
     settings.refreshAccordion();
+    
+
   })
 })();
 
@@ -40,7 +42,6 @@ var settings = {
         cache : false,
         timeout : 3000,
         data : $(formId).serialize(),
-        timeout : 3000,
         statusCode : {
           201 : function(msg) {
             common.showNotice(msg);
@@ -90,11 +91,10 @@ var settings = {
   },
 
   refreshAccordion : function() {
-    console.log('refreshAccordion');
     $('.accordion > .accordion_title').unbind();
+    $('.order_edit_status').unbind();
     opened = undefined;
     $('.accordion > .accordion_title').click(function() {
-      console.log('refreshAccordion');
       var allPanels = $('.accordion > .accordion_content');
       allPanels.slideUp();
       if (opened !== this) {
@@ -105,6 +105,20 @@ var settings = {
       }
       return false;
     });
+    $('.order_edit_status').click(function(e){
+      return false;
+    });
+    $('.order_edit_status').change(function(e) {
+      var self = $(this);
+      $.ajax({
+        url : '/order/updatestatus/' + self.attr("id") + "/" + self.val(),
+        type : "POST",
+        cache : false,
+        timeout : 3000,
+      });
+      
+    });
+    
   }
 
 }

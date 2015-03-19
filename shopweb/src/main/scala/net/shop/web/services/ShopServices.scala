@@ -55,9 +55,9 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     resp(TextResponse("Sorry ... service not found"))
   }
 
-  implicit val reqSelector = bySnippetAttr[SnipState[Request]]
-  implicit val cartItemsSelector = bySnippetAttr[SnipState[CartState]]
-  implicit val settingsSelector = bySnippetAttr[SnipState[SettingsPageState]]
+  implicit val reqSelector = bySnippetAttr[Request]
+  implicit val cartItemsSelector = bySnippetAttr[CartState]
+  implicit val settingsSelector = bySnippetAttr[SettingsPageState]
 
   def traceStats = for {
     r <- req
@@ -92,7 +92,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
 
   def ajaxCategoriesList = for {
     r <- ajax
-    p <- page("/", Path("web/templates/categorieslist.html"), CategoryPage)
+    p <- page("", Path("web/templates/categorieslist.html"), CategoryPage)
   } yield p
 
   def ajaxProductDetail = for {
@@ -134,17 +134,17 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     u <- user
   } yield {
     val logout = !r.param("logout").isEmpty
-    tryLogout(r, Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[SnipState[T]], fs))
+    tryLogout(r, Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[T], fs))
   }
 
   def productsVariantImages = for {
-    Path("data" :: "products" :: id :: variant :: file :: Nil) <- path
+    Path(_, "data" :: "products" :: id :: variant :: file :: Nil) <- path
     input <- fileOf(Path(s"data/products/$id/$variant/$file"))
   } yield service(resp =>
     resp(new ImageResponse(input, "image/jpg")))
 
   def categoriesImages = for {
-    Path("data" :: "categories" :: file :: Nil) <- path
+    Path(_, "data" :: "categories" :: file :: Nil) <- path
     input <- fileOf(Path(s"data/categories/$file"))
   } yield service(resp =>
     resp(new ImageResponse(input, "image/png")))
@@ -152,12 +152,12 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
   def getCart() = for {
     r <- req
     lang <- language
-    Path("getcart" :: Nil) <- path
+    Path(_, "getcart" :: Nil) <- path
   } yield service(resp =>
     r.cookie("cart") match {
       case Some(c) => {
         implicit val formats = DefaultFormats
-        implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
+        implicit def snipsSelector[T] = bySnippetAttr[T]
         listTraverse.sequence(for {
           item <- readCart(c.value).items
           prod <- ShopApplication.persistence.productById(item.id).toOption

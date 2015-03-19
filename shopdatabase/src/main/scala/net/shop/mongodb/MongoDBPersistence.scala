@@ -221,6 +221,14 @@ object MongoDBPersistence extends Persistence with MongoConversions {
       case e: Exception => fail(e)
     }
   }
+
+  def updateOrderStatus(orderId: String, status: OrderStatus): Try[Boolean] = try {
+    val update = db("orders").update(MongoDBObject("id" -> orderId), $set(("status" -> status.index)))
+    Success(update.getN == 1)
+  } catch {
+    case e: Exception => fail(e)
+  }
+
   def ordersByEmail(email: String): Try[Iterator[OrderLog]] = try {
     Success(
       db("orders").find(MongoDBObject("email" -> email)) map mongoToOrder)

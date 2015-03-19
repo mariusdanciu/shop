@@ -59,7 +59,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       ajaxOrdersView |
       productsVariantImages |
       categoriesImages |
-      page("/", Path("web/categories.html"), CategoryPage) |
+      page("", Path("web/categories.html"), CategoryPage) |
       page(ProductPageState.build _, "product", Path("web/product.html"), ProductDetailPage) |
       page("products", Path("web/products.html"), ProductsPage) |
       page("terms", Path("web/terms.html"), TermsPage) |
@@ -80,6 +80,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       UserService.userInfo |
       UserService.forgotPassword |
       SettingsService.updateSettings |
+      SettingsService.updateOrderStatus |
       OrderService.orderByEmail |
       OrderService.orderByProduct |
       service(notFoundService)

@@ -30,7 +30,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with ShopUtil
 
   def reqSnip(name: String) = snip[OrderState](name) _
 
-  implicit def snipsSelector[T] = bySnippetAttr[SnipState[T]]
+  implicit def snipsSelector[T] = bySnippetAttr[T]
 
   def orderTemplate(state: OrderState): Try[NodeSeq] =
     Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_${state.lang.name}.html"), this).map(in => in._2)

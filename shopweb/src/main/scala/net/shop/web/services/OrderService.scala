@@ -52,7 +52,7 @@ object OrderService extends HttpPredicates with FormValidation {
   def order = {
     for {
       r <- POST
-      Path("order" :: Nil) <- path
+      Path(_, "order" :: Nil) <- path
     } yield service(resp => {
       val params = r.params.map { case (k, v) => (k, v.head) }
 
@@ -108,7 +108,7 @@ object OrderService extends HttpPredicates with FormValidation {
 
   def orderByEmail = for {
     r <- GET
-    Path("orders" :: Nil) <- path
+    Path(_, "orders" :: Nil) <- path
     email <- param("email")
   } yield service(resp => {
     import Formatters._
@@ -124,7 +124,7 @@ object OrderService extends HttpPredicates with FormValidation {
 
   def orderByProduct = for {
     r <- GET
-    Path("orders" :: Nil) <- path
+    Path(_, "orders" :: Nil) <- path
     id <- param("productid")
   } yield service(resp => {
     import Formatters._

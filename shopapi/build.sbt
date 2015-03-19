@@ -6,4 +6,5 @@ version := buildProps.getProperty("version") + "." + buildProps.getProperty("bui
 
 scalaVersion := "2.11.2"
 
+libraryDependencies += "shift" % "shift-common_2.11" %  buildProps.getProperty("shift.version")
 

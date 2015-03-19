@@ -17,6 +17,17 @@ html,body {
 	font-weight: 300;
 }
 
+select {
+    border: 1px solid #111;
+    background: transparent;
+    width: 100px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
 table {
 	width: 100%;
 }
@@ -1186,4 +1197,12 @@ h1 {
   -webkit-transform: rotate(45deg);
   background: #e60;
   font-size: 20px;
+}
+
+.order_edit_status {
+  float: right;
+}
+
+#sortSelect {
+ width: 150px;
 }

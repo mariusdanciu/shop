@@ -6,7 +6,6 @@ import net.shift.common.TraversingSpec
 import net.shift.engine.utils.ShiftUtils
 import net.shift.common.DefaultLog
 import net.shift.template.Selectors
-import net.shift.common.PathUtils._
 import net.shift.engine.http.POST
 import net.shift.common.Path
 import net.shift.loc.Loc
@@ -26,6 +25,9 @@ import net.shop.model.FieldError
 import net.shop.web.services.FormImplicits._
 import net.shift.html.Valid
 import net.shift.html.Invalid
+import net.shop.api.OrderStatus
+import scala.util.Success
+import scala.util.Failure
 
 object SettingsService extends Selectors
   with TraversingSpec
@@ -33,11 +35,20 @@ object SettingsService extends Selectors
   with FormValidation
   with SecuredService {
 
-  val k = updateSettings
+  def updateOrderStatus = for {
+    r <- POST
+    Path(_, "order" :: "updatestatus" :: orderId :: status :: Nil) <- path
+    u <- permissions(Loc.loc0(r.language)("user.not.found").text)
+  } yield {
+    ShopApplication.persistence.updateOrderStatus(orderId, OrderStatus.fromIndex(status.toInt)) match {
+      case Success(_)   => service(_(Resp.ok))
+      case Failure(msg) => service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("order.not.found", List(orderId)).text)))
+    }
+  }
 
   def updateSettings = for {
     r <- POST
-    Path("update" :: "settings" :: Nil) <- path
+    Path(_, "update" :: "settings" :: Nil) <- path
     u <- user
   } yield {
     u match {
