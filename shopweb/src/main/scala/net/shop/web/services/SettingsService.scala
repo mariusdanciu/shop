@@ -28,6 +28,7 @@ import net.shift.html.Invalid
 import net.shop.api.OrderStatus
 import scala.util.Success
 import scala.util.Failure
+import net.shift.security.Permission
 
 object SettingsService extends Selectors
   with TraversingSpec
@@ -38,7 +39,7 @@ object SettingsService extends Selectors
   def updateOrderStatus = for {
     r <- POST
     Path(_, "order" :: "updatestatus" :: orderId :: status :: Nil) <- path
-    u <- permissions(Loc.loc0(r.language)("user.not.found").text)
+    u <- permissions(Loc.loc0(r.language)("user.not.found").text, Permission("write"))
   } yield {
     ShopApplication.persistence.updateOrderStatus(orderId, OrderStatus.fromIndex(status.toInt)) match {
       case Success(_)   => service(_(Resp.ok))
