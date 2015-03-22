@@ -83,7 +83,7 @@ object CategoryService extends Selectors
         ShopApplication.persistence.updateCategories(cpy) match {
           case scala.util.Success(p) =>
             file.map { f =>
-              IO.arrayProducer(f._2)(FileOps.writer(Path(s"data/categories/${cpy.id.getOrElse("")}")))
+              IO.arrayProducer(f._2)(FileOps.writer(Path(s"data/categories/${cpy.id.getOrElse("")}.png")))
             }
             service(_(Resp.created))
 

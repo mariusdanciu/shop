@@ -149,6 +149,7 @@ var admin = {
             if (data.errors) {
               common.showFormErrors(data.errors);
             }
+            return false;
           }
         }
       });
