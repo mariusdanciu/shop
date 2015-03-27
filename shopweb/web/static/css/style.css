@@ -308,6 +308,15 @@ a:active {
 	right: 10px;
 }
 
+.info_tag_price strike {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.info_tag_price * {
+    font-size: 22px;	
+}
+
 .info_tag_cart {
 	position: relative;
 	top: 10px;

@@ -47,11 +47,17 @@ import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.SettingsPageState
 import net.shift.engine.http.Response
 import net.shift.common.State
+import net.shift.engine.http.Header
 
 trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults {
 
-  def notFoundService(resp: AsyncResponse) {
-    resp(Resp.redirect("/"))
+  def notFoundService = for {
+    r <- req
+  } yield {
+    r.header("X-Requested-With") match {
+      case Some(Header(_, "XMLHttpRequest", _)) => service(_(Resp.ok))
+      case _                                    => service(_(Resp.redirect("/")))
+    }
   }
 
   implicit val reqSelector = bySnippetAttr[Request]

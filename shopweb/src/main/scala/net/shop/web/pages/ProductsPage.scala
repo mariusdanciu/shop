@@ -27,12 +27,19 @@ import net.shop.utils.ShopUtils
 import net.shift.security.User
 import net.shift.common.XmlUtils._
 import net.shift.common.NodeOps._
+import net.shift.engine.page.Html5
+import net.shift.common.Path
 
 object ProductsPage extends Cart[Request] with ShopUtils {
 
-  override def snippets = List(title, item, catList) ++ cartSnips
+  override def snippets = List(title, item, catList, prodListTemplate) ++ cartSnips
 
   val cartSnips = super.snippets
+  
+  val prodListTemplate = reqSnip("prod_list_template") {
+    s => 
+       Html5.runPageFromFile(s.state, Path(s"web/templates/productslist.html"), this).map { e => (e._1.state.initialState, e._2)}
+  }
 
   val title = reqSnip("title") {
     s =>

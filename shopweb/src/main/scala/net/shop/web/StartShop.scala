@@ -83,7 +83,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       SettingsService.updateOrderStatus |
       OrderService.orderByEmail |
       OrderService.orderByProduct |
-      service(notFoundService)
+      notFoundService
     s <- refresh(c)
     t <- tryLogout(r, s)
   } yield t
