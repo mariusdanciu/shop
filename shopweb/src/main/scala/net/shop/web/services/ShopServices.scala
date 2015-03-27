@@ -2,17 +2,14 @@ package net.shop
 package web.services
 
 import java.util.Date
-
 import scala.Option.option2Iterable
 import scala.util.Failure
 import scala.util.Success
-
 import org.json4s.DefaultFormats
 import org.json4s.jvalue2extractable
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization.write
 import org.json4s.string2JsonInput
-
 import net.shift.common.DefaultLog
 import net.shift.common.Path
 import net.shift.common.TraversingSpec
@@ -48,11 +45,13 @@ import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.SettingsPageState
+import net.shift.engine.http.Response
+import net.shift.common.State
 
 trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults {
 
   def notFoundService(resp: AsyncResponse) {
-    resp(TextResponse("Sorry ... service not found"))
+    resp(Resp.redirect("/"))
   }
 
   implicit val reqSelector = bySnippetAttr[Request]
@@ -105,7 +104,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     p <- settingsPage("ordersview", Path("web/templates/ordersview.html"), AccountSettingsPage)
   } yield p
 
-  def tryLogout(r: Request, attempt: Attempt): Attempt = {
+  def tryLogout(r: Request, attempt: Attempt) = State.put[Request, Attempt] {
     val logout = !r.param("logout").isEmpty
     if (logout)
       attempt.map(_.withResponse { _ dropSecurityCookies })
@@ -113,12 +112,22 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
       attempt
   }
 
+  def refresh(attempt: Attempt) = for {
+    u <- user
+    serv <- State.put[Request, Attempt](attempt)
+  } yield {
+    u match {
+      case Some(usr) => serv.map(_.withResponse { _ securityCookies (usr) })
+      case _         => serv
+    }
+  }
+
   def page[T](uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
     r <- path(uri)
     u <- user
   } yield {
     val logout = !r.param("logout").isEmpty
-    tryLogout(r, Html5.pageFromFile(PageState(r, r.language, if (logout) None else u), filePath, snipets))
+    Html5.pageFromFile(PageState(r, r.language, if (logout) None else u), filePath, snipets)
   }
 
   def settingsPage(uri: String, filePath: Path, snipets: DynamicContent[SettingsPageState]) = for {
@@ -126,7 +135,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     u <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
     val logout = !r.param("logout").isEmpty
-    tryLogout(r, Html5.pageFromFile(PageState(SettingsPageState(r, None), r.language, Some(u)), filePath, snipets))
+    Html5.pageFromFile(PageState(SettingsPageState(r, None), r.language, Some(u)), filePath, snipets)
   }
 
   def page[T](f: (Request, Option[User]) => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
@@ -134,7 +143,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     u <- user
   } yield {
     val logout = !r.param("logout").isEmpty
-    tryLogout(r, Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[T], fs))
+    Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[T], fs)
   }
 
   def productsVariantImages = for {

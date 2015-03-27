@@ -175,6 +175,7 @@ a:active {
 	border-top: 1px solid #dddddd;
 	background-color: #333333;
 	position: relative;
+	top: 10px;
 }
 
 .footer * {
@@ -250,7 +251,7 @@ a:active {
 }
 
 .item_box:hover {
-	box-shadow: 0px 0px 20px 1px rgba(50, 50, 50, 0.45);
+	box-shadow: 0px 0px 40px 1px rgba(50, 50, 50, 0.45);
 	z-index: 1;
 	cursor: pointer;
 	position: relative;
@@ -267,21 +268,20 @@ a:active {
 }
 
 .info_tag {
-	background: #555555;
-	color: #ffffff;
+	background: #ffffff;
+	color: #000000;
 	border-radius: 0 0 10px 10px;
-	height: 68px;
+	height: 67px;
 	margin: 0;
 	position: relative;
 	top: 316px;
-	width: 100%;
+	margin: 0 1px;
 }
 
 .cat_info_tag {
 	border: none;
 	top: 138px;
-	width: 100%;
-	height: 38px;
+	height: 37px;
 }
 
 .edit_tag {
@@ -324,7 +324,6 @@ a:active {
 }
 
 .cat_text {
-	font-size: 14px;
 	top: 10px;
 }
 

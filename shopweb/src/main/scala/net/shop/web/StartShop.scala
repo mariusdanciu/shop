@@ -50,7 +50,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
 
   def servingRule = for {
     _ <- traceStats
-    _ <- withLanguage(Language("ro"))
+    r <- withLanguage(Language("ro"))
     c <- staticFiles(Path("web/static")) |
       ajaxLogin |
       ajaxProductsList |
@@ -84,7 +84,9 @@ object ShopApplication extends ShiftApplication with ShopServices {
       OrderService.orderByEmail |
       OrderService.orderByProduct |
       service(notFoundService)
-  } yield c
+    s <- refresh(c)
+    t <- tryLogout(r, s)
+  } yield t
 
 }
 
