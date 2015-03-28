@@ -28,6 +28,12 @@ select {
 	appearance: none;
 }
 
+strike {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+
 table {
 	width: 100%;
 }
@@ -308,10 +314,6 @@ a:active {
 	right: 10px;
 }
 
-.info_tag_price strike {
-	margin-left: 5px;
-	margin-right: 5px;
-}
 
 .info_tag_price * {
     font-size: 22px;	

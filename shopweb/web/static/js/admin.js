@@ -104,7 +104,7 @@ var admin = {
       url : "/product/delete/" + id,
       timeout : 3000,
       type : "DELETE"
-    }).success(products.reloadProducts());
+    }).success(products.reloadProducts);
   },
 
   getCategory : function(id, categoryFunc) {

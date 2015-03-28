@@ -34,11 +34,14 @@ trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
       } map ((s.state.initialState, _))
   }
 
-  def priceTag(p: ProductDetail): Elem = p.discountPrice match {
-    case Some(discount) => <span>{ <span>{ discount }</span> ++ <strike>{ p.price }</strike> <span>RON</span> }</span>
-    case _              => <span>{ s"${p.price} RON" }</span>
+  def priceTag(p: ProductDetail): Elem = {
+    def price(p: Double) = if ((p % 1) == 0) "%.0f" format p else "%.2f" format p
+    
+    p.discountPrice match {
+      case Some(discount) => <span>{ <span>{ price(discount) }</span> ++ <strike>{ price(p.price) }</strike> <span>RON</span> }</span>
+      case _              => <span>{ s"${price(p.price)} RON" }</span>
+    }
   }
-
   val connectError = snip[T]("connect_error") {
     s => Success((s.state.initialState, <div id="notice_connect_e">{ Loc.loc0(s.state.lang)("connect.fail").text }</div>))
   }
