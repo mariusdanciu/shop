@@ -24,7 +24,7 @@
       var pid = $.url().param("pid");
       FB.ui({
         method : 'share',
-        href : 'http://localhost:8887/product?pid=' + pid,
+        href : 'http://idid.ro/product?pid=' + pid,
       }, function(response) {
         if (response && !response.error_code) {
         } else {

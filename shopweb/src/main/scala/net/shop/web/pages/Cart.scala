@@ -33,10 +33,10 @@ trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
         case "form" attributes _ => <form id="order_form">{ OrderForm.form(s.state.lang).html }</form>
       } map ((s.state.initialState, _))
   }
+  def price(p: Double) = if ((p % 1) == 0) "%.0f" format p else "%.2f" format p
 
   def priceTag(p: ProductDetail): Elem = {
-    def price(p: Double) = if ((p % 1) == 0) "%.0f" format p else "%.2f" format p
-    
+
     p.discountPrice match {
       case Some(discount) => <span>{ <span>{ price(discount) }</span> ++ <strike>{ price(p.price) }</strike> <span>RON</span> }</span>
       case _              => <span>{ s"${price(p.price)} RON" }</span>
