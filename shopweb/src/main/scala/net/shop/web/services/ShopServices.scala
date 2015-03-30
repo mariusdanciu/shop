@@ -156,13 +156,13 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     Path(_, "data" :: "products" :: id :: variant :: file :: Nil) <- path
     input <- fileOf(Path(s"data/products/$id/$variant/$file"))
   } yield service(resp =>
-    resp(new ImageResponse(input, "image/jpg")))
+    resp(new ImageResponse(input, "image/jpg").withHeaders(Header("cache-control", "max-age=86400"))))
 
   def categoriesImages = for {
     Path(_, "data" :: "categories" :: file :: Nil) <- path
     input <- fileOf(Path(s"data/categories/$file"))
   } yield service(resp =>
-    resp(new ImageResponse(input, "image/png")))
+    resp(new ImageResponse(input, "image/png").withHeaders(Header("cache-control", "max-age=86400"))))
 
   def getCart() = for {
     r <- req
