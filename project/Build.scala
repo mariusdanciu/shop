@@ -68,6 +68,9 @@ object ShopBuild extends Build {
       IO.copyFile(web, libDir / web.name);
       IO.copyFile(db, libDir / db.name);
       IO.copyFile(scriptsDir / "start.sh", distDir / "start.sh");
+      IO.copyFile(scriptsDir / "startall.sh", distDir / "startall.sh");
+      IO.copyFile(scriptsDir / "stop.sh", distDir / "stop.sh");
+      IO.copyFile(scriptsDir / "stopall.sh", distDir / "stopall.sh");
       TarGzBuilder.makeTarGZ("target/idid_" + sv + "_" + v + "_.tar.gz")
     }
   }
