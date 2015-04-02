@@ -18,14 +18,21 @@ import net.shift.template.Snippet._
 import net.shop.api.ProductDetail
 import net.shop.web.services.OrderForm
 import net.shift.io.IODefaults
+import net.shift.loc.Language
 
 trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
 
-  def snippets = List(order, connectError, user)
+  def snippets = List(title, order, connectError, user)
 
   def reqSnip(name: String) = snip[T](name) _
 
   implicit def snipsSelector[T] = bySnippetAttr[T]
+
+  def pageTitle(state: PageState[T]): String
+  
+  val title = reqSnip("title") {
+    s => Success((s.state.initialState, Text(pageTitle(s.state))))
+  }
 
   val order = snip[T]("order") {
     s =>

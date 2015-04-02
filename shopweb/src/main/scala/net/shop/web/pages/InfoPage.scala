@@ -20,40 +20,24 @@ import net.shop.utils.ShopUtils
 
 object TermsPage extends Cart[Request] with ShopUtils { self =>
 
-  override def snippets = List(title) ++ super.snippets
-
-  val title = reqSnip("title") {
-    s => Success((s.state.initialState, <h1>{ Loc.loc0(s.state.lang)("terms.link").text }</h1>))
-  }
+  def pageTitle(s: PageState[Request]) = Loc.loc0(s.lang)("terms.link").text
 
 }
 
 object DataProtectionPage extends Cart[Request] with ShopUtils { self =>
 
-  override def snippets = List(title) ++ super.snippets
-
-  val title = reqSnip("title") {
-    s => Success((s.state.initialState, <h1>{ Loc.loc0(s.state.lang)("data.protection.link").text }</h1>))
-  }
+  def pageTitle(s: PageState[Request]) = Loc.loc0(s.lang)("data.protection.link").text
 
 }
 
 object ReturnPolicyPage extends Cart[Request] with ShopUtils { self =>
 
-  override def snippets = List(title) ++ super.snippets
-
-  val title = reqSnip("title") {
-    s => Success((s.state.initialState, <h1>{ Loc.loc0(s.state.lang)("return.policy.link").text }</h1>))
-  }
+  def pageTitle(s: PageState[Request]) = Loc.loc0(s.lang)("return.policy.link").text
 
 }
 
 object CookiesPage extends Cart[Request] with ShopUtils { self =>
 
-  override def snippets = List(title) ++ super.snippets
-
-  val title = reqSnip("title") {
-    s => Success((s.state.initialState, <h1>{ Loc.loc0(s.state.lang)("data.cookies.link").text }</h1>))
-  }
+  def pageTitle(s: PageState[Request]) = Loc.loc0(s.lang)("data.cookies.link").text
 
 }

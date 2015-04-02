@@ -548,7 +548,11 @@
    "code" : "208",
    "name" : "modify.orders",
    "text" : "Modifica comenzi"
+ },
+ {
+   "code" : "208",
+   "name" : "search",
+   "text" : "Cauta"
  }
- 
  
 ]

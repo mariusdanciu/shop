@@ -32,27 +32,25 @@ import net.shift.common.Path
 
 object ProductsPage extends Cart[Request] with ShopUtils {
 
-  override def snippets = List(title, item, catList, prodListTemplate) ++ cartSnips
+  override def snippets = List(item, catList, prodListTemplate) ++ cartSnips
 
   val cartSnips = super.snippets
-  
+
   val prodListTemplate = reqSnip("prod_list_template") {
-    s => 
-       Html5.runPageFromFile(s.state, Path(s"web/templates/productslist.html"), this).map { e => (e._1.state.initialState, e._2)}
+    s =>
+      Html5.runPageFromFile(s.state, Path(s"web/templates/productslist.html"), this).map { e => (e._1.state.initialState, e._2) }
   }
 
-  val title = reqSnip("title") {
-    s =>
-      val v = (s.state.initialState.param("cat"), s.state.initialState.param("search")) match {
-        case (Some(cat :: _), None) =>
-          ShopApplication.persistence.categoryById(cat) match {
-            case Success(c) => Text(c.title.getOrElse(s.state.lang.name, "???"))
-            case _          => NodeSeq.Empty
-          }
-        case (None, Some(search :: _)) => Text(s""""$search"""")
-        case _                         => NodeSeq.Empty
-      }
-      Success((s.state.initialState, <h1>{ v }</h1>))
+  def pageTitle(s: PageState[Request]) = {
+    (s.initialState.param("cat"), s.initialState.param("search")) match {
+      case (Some(cat :: _), None) =>
+        ShopApplication.persistence.categoryById(cat) match {
+          case Success(c) => c.title.getOrElse(s.lang.name, "???")
+          case _          => ""
+        }
+      case (None, Some(search :: _)) => s""""$search""""
+      case _                         => ""
+    }
   }
 
   val item = reqSnip("item") {

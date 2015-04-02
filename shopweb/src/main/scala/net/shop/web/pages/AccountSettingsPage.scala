@@ -45,11 +45,9 @@ object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with I
 
   val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy - hh:mm")
 
-  override def snippets = List(title, settingsForm, addressTemplate, addresses, loadordersview, orders) ++ super.snippets
+  override def snippets = List(settingsForm, addressTemplate, addresses, loadordersview, orders) ++ super.snippets
 
-  val title = reqSnip("title") {
-    s => Success((s.state.initialState, <h1>{ Loc.loc0(s.state.lang)("settings").text }</h1>))
-  }
+  def pageTitle(s: PageState[SettingsPageState]) = Loc.loc0(s.lang)("settings").text
 
   val settingsForm = reqSnip("settingsForm") {
     s =>

@@ -21,33 +21,23 @@
   <div class="wrap">
     <div class="header">
       <div id="product_title">
-        <div id="cart_symbol">
-          <a href="#"><img src="/static/images/cart.png" /></a>
-        </div>
         <div id="title_text">
-          <h1 data-snip="title"></h1>
+            <span data-snip="title"></span>
         </div>
-        <div id="logout" class="top_items top5" data-permissions="read">
-          <a href="#"><img src="/static/images/logout.png" /></a>
+        <div class="header_symbol">
+          <ul>
+            <li id="logout" data-permissions="read"><a href="#"><img src="/static/images/logout.png" /></a></li>
+            <li id="current_user"><span data-snip="user"></span></li>
+            <li id="user_symbol"><a href="#"><img src="/static/images/user.png" /></a></li>
+            <li id="cart_symbol"><a href="#"><img src="/static/images/cart_black.png" /></a></li>
+            <li id="settings_symbol" data-permissions="read"><a href="/accountsettings"><img src="/static/images/settings.png" /></a></li>
+            <li id="search" class="top_items"><input id="search_text" type="text" placeholder="loc:search" /></li>
+
+          </ul>
         </div>
-        <div id="current_user" class="top_items">
-          <span data-snip="user"></span>
-        </div>
-        <div id="user_symbol" class="clickable top_items top5"></div>
-        <div id="settings_symbol" class="clickable top_items top5" data-permissions="read">
-          <a href="/accountsettings"><img src="/static/images/settings.png" /></a>
-        </div>
-        <div id="search" class="top_items">
-          <div>
-            <input id="search_text" type="text" />
-          </div>
-        </div>        
-        <div id="logo" class="top_items">
-          <a href="/">
-          <span>I </span>
-          <span>d</span>
-          <span>i</span>
-          <span>d</span>
+
+        <div id="logo" class="top_items" title="LOGO TEMPORAR :)">
+          <a href="/"> <span>I </span> <span>d</span> <span>i</span> <span>d</span>
           </a>
         </div>
         <div class="fb_area top_items"></div>
@@ -79,7 +69,7 @@
         <ul>
           <li><a href="/cookies" data-loc="data.cookies.link"></a></li>
         </ul>
-      </div>      
+      </div>
     </div>
   </div>
 
@@ -95,8 +85,8 @@
       </div>
     </form>
     <div class="row_simple auth bordertop top10">
-      <a id="authgo" href="#" data-loc="authenticate"></a> <a id="forgotpass" href="#" data-loc="forgot.password"></a> <a id="newuser"
-        href="#" data-loc="new.user"></a>
+      <a id="authgo" href="#" data-loc="authenticate"></a> <a id="forgotpass" href="#" data-loc="forgot.password"></a> <a id="newuser" href="#"
+        data-loc="new.user"></a>
     </div>
   </div>
 

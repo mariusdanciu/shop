@@ -33,7 +33,6 @@ strike {
 	margin-right: 5px;
 }
 
-
 table {
 	width: 100%;
 }
@@ -68,7 +67,7 @@ input {
 
 textarea, input, select, .preview {
 	border: 1px solid #bbbbbb;
-	box-shadow: 0px 0px 15px 1px #dddddd;
+	box-shadow: 0px 0px 15px 1px #ddd;
 }
 
 input[type=checkbox] {
@@ -150,11 +149,13 @@ a:active {
 	position: fixed;
 	width: 100%;
 	z-index: 80;
-	background-color: #333333;
+	background-color: #ffffff;
+	border-bottom: 1px solid #dddddd;
+	box-shadow: 0px 0px 15px 1px #ddd;
 }
 
 .header * {
-	color: #ffffff;
+	color: #000000;
 }
 
 .page {
@@ -233,7 +234,7 @@ a:active {
 
 .cat_box {
 	border-radius: 10px;
-	box-shadow: inset 0px 0px 1px 1px #dddddd;
+	box-shadow: inset 0px 0px 1px 1px #ddd;
 	height: 216px;
 	width: 156px;
 	position: relative;
@@ -242,7 +243,7 @@ a:active {
 
 .cat_box:hover {
 	cursor: pointer;
-	box-shadow: 0px 0px 20px 1px rgba(50, 50, 50, 0.45);
+	box-shadow: 0px 0px 20px 1px #999;
 	z-index: 1;
 }
 
@@ -252,12 +253,12 @@ a:active {
 	border-radius: 10px;
 	z-index: 0;
 	position: relative;
-	box-shadow: inset 0px 0px 1px 1px #dddddd;
+	box-shadow: inset 0px 0px 1px 1px #ddd;
 	overflow: hidden;
 }
 
 .item_box:hover {
-	box-shadow: 0px 0px 40px 1px rgba(50, 50, 50, 0.45);
+	box-shadow: 0px 0px 40px 1px #999;
 	z-index: 1;
 	cursor: pointer;
 	position: relative;
@@ -314,9 +315,8 @@ a:active {
 	right: 10px;
 }
 
-
 .info_tag_price * {
-    font-size: 22px;	
+	font-size: 22px;
 }
 
 .info_tag_cart {
@@ -366,20 +366,15 @@ a:active {
 
 #product_title #title_text {
 	float: left;
+	margin-left: 10px;
+	margin-top: 10px;
+	font-size: 20px;
 }
 
 h1 {
 	padding-left: 10px;
 	margin-top: 10px;
 	font-size: 32px;
-}
-
-#cart_symbol {
-	width: 32px;
-	height: 32px;
-	float: left;
-	margin-top: 4px;
-	margin-left: 10px;
 }
 
 #cart_content {
@@ -400,6 +395,7 @@ h1 {
 	z-index: 9999;
 	top: 60px;
 	opacity: 0.95;
+	right: 0px;
 }
 
 #user_popup {
@@ -698,22 +694,18 @@ h1 {
 	border: 1px solid #dddddd !important;
 }
 
-#user_symbol {
-	height: 32px;
-	width: 32px;
-	background: url('/static/images/user.png');
-}
-
-.top_items {
+.header_symbol {
 	position: relative;
 	float: right;
 	margin-right: 10px;
+	top: 5px;
 }
 
-#search div {
-	float: left;
-	margin-top: 4px;
+.header_symbol ul li {
+	margin-left: 10px;
+	float: right;
 }
+
 
 #search input {
 	border: 1px solid #cccccc;
@@ -723,6 +715,7 @@ h1 {
 	font-size: 20px;
 	background-image: url("/static/images/search.png");
 	background-repeat: no-repeat;
+	text-indent: 32px;
 }
 
 #search_text:hover {
@@ -749,15 +742,19 @@ h1 {
 }
 
 #logo {
-	position: relative;
-	float: right;
-	right: 10px;
-	top: 15px;
+    bottom: 0;
+    float: right;
+    left: 0;
+    margin: 0 auto;
+    position: absolute;
+    right: 0;
+    top: 10px;
+    width: 100px;
 }
 
 #logo span {
 	font-family: 'Julee', cursive;
-	font-size: 32px;
+	font-size: 48px;
 }
 
 #logo span:nth-child(1) {
@@ -766,18 +763,15 @@ h1 {
 
 #logo span:nth-child(2) {
 	color: #00ee00;
-	font-size: 24px;
 	top: 0px;
 }
 
 #logo span:nth-child(3) {
 	color: #FF7519;
-	font-size: 32px;
 }
 
 #logo span:nth-child(4) {
 	color: #00ee00;
-	font-size: 24px;
 }
 
 #logo a {
@@ -870,7 +864,7 @@ h1 {
 
 .blockMsg {
 	border-radius: 10px;
-	box-shadow: 0 0 30px 1px #222222;
+	box-shadow: 0 0 30px 1px #999;
 }
 
 .zoomContainer {
@@ -890,6 +884,7 @@ h1 {
 	float: left;
 	position: relative;
 	height: 50px;
+	font-size: 24px;
 }
 
 .content_dialog {
@@ -1010,16 +1005,6 @@ h1 {
 
 .create_toggle_text, .edit_toggle_text {
 	margin-top: 5px;
-}
-
-.form_box {
-	width: 400px;
-	position: relative;
-	top: 60px;
-	border: 1px solid #cccccc;
-	border-radius: 10px;
-	box-shadow: 0px 0px 15px 1px #dddddd;
-	padding: 10px;
 }
 
 .auth {

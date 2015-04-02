@@ -27,22 +27,22 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
 
   val noImage = "/static/images/noimage.png"
 
-  override def snippets = List(meta, title, catlink, productLink, images, detailPrice, stock, details, specs, edit) ++ super.snippets
+  override def snippets = List(meta, catlink, productLink, images, detailPrice, stock, details, specs, edit) ++ super.snippets
 
   val meta = reqSnip("fb_meta") {
     s =>
       {
         s.state.initialState.req.param("pid") match {
           case Some(id :: _) => ShopApplication.persistence.productById(id) match {
-            case Success(prod) => 
+            case Success(prod) =>
               val fb = bind(s.node) {
-                case "meta" attributes a / _  if (a.hasAttr(("property", "og:url"))) => node("meta", a.attrs + ("content" -> s"http://${Config.string("host")}/product?pid=${prod.stringId}"))
-                case "meta" attributes a / _  if (a.hasAttr(("property", "og:title"))) => node("meta", a.attrs + ("content" -> prod.title_?(s.state.lang.name)))
-                case "meta" attributes a / _  if (a.hasAttr(("property", "og:description"))) => node("meta", a.attrs + ("content" -> prod.title_?(s.state.lang.name)))
-                case "meta" attributes a / _  if (a.hasAttr(("property", "og:image"))) => node("meta", a.attrs + ("content" -> s"http://${Config.string("host")}${imagePath(prod.stringId, "normal", prod.images.head) }"))
-                case "meta" attributes a / _  if (a.hasAttr(("property", "product:price:amount"))) => node("meta", a.attrs + ("content" ->  price(prod.price)))
+                case "meta" attributes a / _ if (a.hasAttr(("property", "og:url")))               => node("meta", a.attrs + ("content" -> s"http://${Config.string("host")}/product?pid=${prod.stringId}"))
+                case "meta" attributes a / _ if (a.hasAttr(("property", "og:title")))             => node("meta", a.attrs + ("content" -> prod.title_?(s.state.lang.name)))
+                case "meta" attributes a / _ if (a.hasAttr(("property", "og:description")))       => node("meta", a.attrs + ("content" -> prod.title_?(s.state.lang.name)))
+                case "meta" attributes a / _ if (a.hasAttr(("property", "og:image")))             => node("meta", a.attrs + ("content" -> s"http://${Config.string("host")}${imagePath(prod.stringId, "normal", prod.images.head)}"))
+                case "meta" attributes a / _ if (a.hasAttr(("property", "product:price:amount"))) => node("meta", a.attrs + ("content" -> price(prod.price)))
               }
-              for {n <- fb} yield {
+              for { n <- fb } yield {
                 (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), n)
               }
             case Failure(t) =>
@@ -52,17 +52,11 @@ object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
         }
       }
   }
-
-  val title = reqSnip("title") {
-    s =>
-      {
-        s.state.initialState.product match {
-          case Success(prod) => Success(s.state.initialState, <h1>{ prod.title_?(s.state.lang.name) }</h1>)
-          case Failure(t) =>
-            Success(s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no_product").text))
-        }
-      }
-  }
+  def pageTitle(s: PageState[ProductPageState]) =
+    s.initialState.product match {
+      case Success(prod) => prod.title_?(s.lang.name)
+      case Failure(t)    => Loc.loc0(s.lang)("no_product").text
+    }
 
   val catlink = reqSnip("catlink") {
     s =>

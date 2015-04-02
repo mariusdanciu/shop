@@ -1,8 +1,11 @@
 package net.shop
 package web.pages
 
+import scala.util.Failure
+import scala.util.Success
 import scala.xml._
 import scala.xml._
+
 import net.shift._
 import net.shift._
 import net.shift.engine.http._
@@ -12,19 +15,14 @@ import net.shift.template._
 import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
-import net.shop.web.ShopApplication
-import scala.util.Success
-import scala.util.Failure
 import net.shop.utils.ShopUtils
-import net.shift.security.User
+import net.shop.web.ShopApplication
 
 object CategoryPage extends Cart[Request] with ShopUtils { self =>
 
   override def snippets = List(title, item) ++ super.snippets
 
-  val title = reqSnip("title") {
-    s => Success((s.state.initialState, <h1>{ Loc.loc0(s.state.lang)("categories").text }</h1>))
-  }
+  def pageTitle(s: PageState[Request]) = Loc.loc0(s.lang)("categories").text
 
   val item = reqSnip("item") {
     s =>
