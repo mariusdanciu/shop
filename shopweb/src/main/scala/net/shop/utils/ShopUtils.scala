@@ -25,5 +25,6 @@ object ShopUtils {
 
   def uuid = ("" /: Range.apply(0, 7))((acc, v) => acc + random.nextInt(9))
 
+  def price(p: Double) = if ((p % 1) == 0) "%.0f" format p else "%.2f" format p
 }
 

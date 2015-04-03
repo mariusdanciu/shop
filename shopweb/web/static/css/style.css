@@ -313,6 +313,8 @@ a:active {
 	font-size: 22px;
 	float: right;
 	right: 10px;
+	font-weight: 400;
+	color:#0b0;
 }
 
 .info_tag_price * {

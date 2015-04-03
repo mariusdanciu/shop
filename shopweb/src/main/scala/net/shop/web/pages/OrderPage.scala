@@ -95,7 +95,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
                     <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "normal", p.images.head)}") e
                   case "td" attributes HasClass("c1", a) / _ => <td>{ p.title_?(s.state.lang.name) }</td> % a
                   case "td" attributes HasClass("c2", a) / _ => <td>{ prod.quantity }</td> % a
-                  case "td" attributes HasClass("c3", a) / _ => <td>{ p.price }</td> % a
+                  case "td" attributes HasClass("c3", a) / _ => <td>{ p.actualPrice }</td> % a
                 }) match {
                   case Success(n) => acc ++ n
                   case Failure(f) => acc ++ errorTag(f toString)

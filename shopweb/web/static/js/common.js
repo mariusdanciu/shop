@@ -385,7 +385,7 @@ var cart = {
 			total += num * price;
 		});
 
-		$("#total").text(parseFloat(total).toFixed(2) + " RON");
+		$("#total").text(parseFloat(total).toFixed(2) + " Lei");
 	},
 
 	items : function() {

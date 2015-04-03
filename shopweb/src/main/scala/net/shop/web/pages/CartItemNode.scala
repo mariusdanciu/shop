@@ -25,13 +25,15 @@ object CartItemNode extends DynamicContent[CartState] {
   val item = reqSnip("item") {
     s =>
       bind(s.node) {
-        case HasClass("thumb", a) => 
+        case HasClass("thumb", a) =>
           node("img", (a.attrs + ("src" -> imagePath("thumb", s.state.initialState.prod)) + ("title" -> s.state.initialState.item.comment)))
         case HasClass("cart_title", a) => <span>{ s.state.initialState.prod.title_?(s.state.lang.name) }</span> % a
-        case "input" attributes a / _ => (<input id={ "q_" + s.state.initialState.prod.stringId }/> % a attr ("value", s.state.initialState.item.count toString)) e
+        case "input" attributes a / _  => (<input id={ "q_" + s.state.initialState.prod.stringId }/> % a attr ("value", s.state.initialState.item.count toString)) e
         case "a" attributes a / childs => <a id={ "del_" + s.state.initialState.prod.stringId } href="#">{ childs }</a> % a
-        case "img" attributes a / _ => <img/> % a e
-        case "span" attributes a / _ if a.hasClass("cart_price") => <span>{ s.state.initialState.prod.price }</span> % a
+        case "img" attributes a / _    => <img/> % a e
+        case "span" attributes a / _ if a.hasClass("cart_price") => <span>{
+          s.state.initialState.prod.discountPrice.map { price } getOrElse price(s.state.initialState.prod.price)
+        }</span> % a
       } map ((s.state.initialState, _))
   }
 

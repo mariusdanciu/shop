@@ -42,10 +42,12 @@ case class ProductDetail(id: Option[String] = None,
                          keyWords: List[String]) {
 
   def stringId = id getOrElse "?"
+  
+  def actualPrice = discountPrice getOrElse price
 
   def title_?(l: String) = title.getOrElse(l, "???")
 
-  def toProductLog(quantity: Int) = ProductLog(stringId, price, quantity)
+  def toProductLog(quantity: Int) = ProductLog(stringId, actualPrice, quantity)
 }
 
 case class CartItem(id: String, count: Int, comment: String = "")

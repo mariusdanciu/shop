@@ -154,12 +154,12 @@ object AccountSettingsPage extends Cart[SettingsPageState]  with IODefaults { se
                           case HasClass("c1", a)                     => img(a)
                           case "td" attributes HasClass("c2", a) / _ => <td>{ title }</td> % a
                           case "td" attributes HasClass("c3", a) / _ => <td>{ item.quantity }</td> % a
-                          case "td" attributes HasClass("c4", a) / _ => <td>{ item.price }</td> % a
+                          case "td" attributes HasClass("c4", a) / _ => <td>{ price(item.price) }</td> % a
                         } getOrElse NodeSeq.Empty
                       }</tr>
                     }
 
-                  case HasClass("total", a) => Text((0.0 /: o.items)((acc, e) => acc + e.price * e.quantity) toString)
+                  case HasClass("total", a) => Text(price((0.0 /: o.items)((acc, e) => acc + e.price * e.quantity)))
 
                   case HasClass("status", a) =>
                     val e = for {

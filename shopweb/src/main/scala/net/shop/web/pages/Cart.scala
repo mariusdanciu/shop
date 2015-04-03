@@ -19,6 +19,7 @@ import net.shop.api.ProductDetail
 import net.shop.web.services.OrderForm
 import net.shift.io.IODefaults
 import net.shift.loc.Language
+import net.shop.utils.ShopUtils._
 
 trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
 
@@ -40,13 +41,12 @@ trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
         case "form" attributes _ => <form id="order_form">{ OrderForm.form(s.state.lang).html }</form>
       } map ((s.state.initialState, _))
   }
-  def price(p: Double) = if ((p % 1) == 0) "%.0f" format p else "%.2f" format p
+
 
   def priceTag(p: ProductDetail): Elem = {
-
     p.discountPrice match {
-      case Some(discount) => <span>{ <span>{ price(discount) }</span> ++ <strike>{ price(p.price) }</strike> <span>RON</span> }</span>
-      case _              => <span>{ s"${price(p.price)} RON" }</span>
+      case Some(discount) => <span>{ <span>{ price(discount) }</span> ++ <strike>{ price(p.price) }</strike> <span>Lei</span> }</span>
+      case _              => <span>{ s"${price(p.price)} Lei" }</span>
     }
   }
   val connectError = snip[T]("connect_error") {
