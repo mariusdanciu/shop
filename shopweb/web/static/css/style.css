@@ -706,7 +706,6 @@ h1 {
 	float: right;
 }
 
-
 #search input {
 	border: 1px solid #cccccc;
 	width: 200px;
@@ -742,14 +741,14 @@ h1 {
 }
 
 #logo {
-    bottom: 0;
-    float: right;
-    left: 0;
-    margin: 0 auto;
-    position: absolute;
-    right: 0;
-    top: 10px;
-    width: 100px;
+	bottom: 0;
+	float: right;
+	left: 0;
+	margin: 0 auto;
+	position: absolute;
+	right: 0;
+	top: 10px;
+	width: 100px;
 }
 
 #logo span {
@@ -853,7 +852,7 @@ h1 {
 }
 
 #product_dialog, #product_create_dialog, #category_create_dialog,
-	#category_update_dialog, #newuser_popup {
+	#item_order_dialog, #category_update_dialog, #newuser_popup {
 	display: none;
 	padding: 10px;
 }
@@ -871,12 +870,12 @@ h1 {
 	z-index: 999;
 }
 
-.close_dialog, .close_product_dialog {
+.close_dialog, .close_product_dialog, .close_item_order_dialog {
 	float: right;
 	position: relative;
 }
 
-.close_dialog:hover, .close_product_dialog:hover {
+.close_dialog:hover, .close_product_dialog:hover, .close_item_order_dialog:hover {
 	cursor: pointer;
 }
 
@@ -1200,4 +1199,11 @@ h1 {
 
 #updatesettings_form input, #search_orders {
 	width: 250px;
+}
+
+#product_comments {
+	width: 360px;
+	height: 200px;
+	display: inline-block;
+	resize: none;
 }

@@ -11,13 +11,13 @@ object ShopUtils {
 
   def dataPath = Config.string("data.folder", "../data")
   
-  def categoryImagePath(cat: Category): String = s"/${dataPath}/categories/${cat.stringId}.png"
+  def categoryImagePath(cat: Category): String = s"/data/categories/${cat.stringId}.png"
 
-  def imagePath(id: String, variant: String, prod: String): String = s"/${dataPath}/products/$id/$variant/$prod"
+  def imagePath(id: String, variant: String, prod: String): String = s"/data/products/$id/$variant/$prod"
 
   def imagePath(variant: String, prod: ProductDetail): String =
     prod.images match {
-      case h :: _ => s"/${dataPath}/products/${prod.stringId}/$variant/${h}"
+      case h :: _ => s"/data/products/${prod.stringId}/$variant/${h}"
       case Nil    => "/static/images/noimage.png"
     }
 

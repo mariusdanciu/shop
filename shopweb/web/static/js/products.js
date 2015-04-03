@@ -15,7 +15,7 @@
       });
     })
 
-    $(".close_product_dialog").click(function(event) {
+    $(".close_product_dialog, .close_item_order_dialog").click(function(event) {
       products.closeProductDialog();
       return false;
     });
@@ -70,8 +70,31 @@ var products = {
       }
 
       me.find('.info_tag_cart').click(function(event) {
-        cart.addItem(pid);
-        cart.showCart();
+    	  
+    	  $('#order_product').unbind().click(function(event){
+    		  var text = $('#product_comments').val();
+    		  products.closeProductDialog();
+    	      cart.addItem(pid, text);
+    	      cart.showCart();
+    	      event.stopPropagation(); 	
+    	      return false;
+    	  });
+    	  
+          $.blockUI({
+              message : $("#item_order_dialog"),
+              css : {
+                top : '100px',
+                left : ($(window).width() - 400) / 2 + 'px',
+                width : '400px',
+                border : 'none',
+                cursor : null
+              },
+              overlayCSS : {
+                cursor : null,
+                backgroundColor : '#dddddd'
+              }
+            });  
+    	    
         event.stopPropagation();
         return false;
       });

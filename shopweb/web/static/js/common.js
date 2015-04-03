@@ -396,7 +396,7 @@ var cart = {
 		return [];
 	},
 
-	addItem : function(id) {
+	addItem : function(id, text) {
 		var c = $.cookie("cart");
 		if (c) {
 			var cart = $.parseJSON(c);
@@ -410,6 +410,7 @@ var cart = {
 			if (!found) {
 				cart.items.push({
 					id : id,
+					comment: text,
 					count : 1
 				});
 			} else {

@@ -48,7 +48,7 @@ case class ProductDetail(id: Option[String] = None,
   def toProductLog(quantity: Int) = ProductLog(stringId, price, quantity)
 }
 
-case class CartItem(id: String, count: Int)
+case class CartItem(id: String, count: Int, comment: String = "")
 
 case class Cart(items: List[CartItem])
 

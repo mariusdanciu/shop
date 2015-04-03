@@ -179,7 +179,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
           item <- readCart(c.value).items
           prod <- ShopApplication.persistence.productById(item.id).toOption
         } yield {
-          Html5.runPageFromFile(PageState(CartState(item.count, prod), r.language), Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
+          Html5.runPageFromFile(PageState(CartState(item, prod), r.language), Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
         }) match {
           case Success(list) => resp(JsonResponse(write(list)))
           case Failure(t) =>

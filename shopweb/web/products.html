@@ -64,10 +64,9 @@
                     <label for="create_stock" data-loc="stock"></label> <input id="create_stock" type="text" name="create__stock" />
                   </div>
                   <div class="row">
-                    <input id="create_unique" type="checkbox" name="create_unique" />
-                    <label for="create_unique" data-loc="unique.product"></label> 
+                    <input id="create_unique" type="checkbox" name="create_unique" /> <label for="create_unique" data-loc="unique.product"></label>
                   </div>
-                  
+
                 </div>
               </div>
 
@@ -108,6 +107,21 @@
 
     <div id="item_list">
       <div data-snip="prod_list_template"></div>
+    </div>
+
+    <div id="item_order_dialog">
+      <div class="title_dialog" data-loc="order.comments"></div>
+      <div class="close_item_order_dialog">
+        <img src="/static/images/close.png" />
+      </div>
+      <div class="content_dialog">
+        <textarea id="product_comments"></textarea>
+      </div>
+      <div class="dialog_footer">
+        <div id="order_product">
+          <a href="#" class="btn" data-loc="add_to_cart"></a>
+        </div>
+      </div>
     </div>
   </div>
 
