@@ -608,7 +608,7 @@ h1 {
 }
 
 .prod_specs .column1 {
-	width: 150px;
+	width: 200px;
 	border-right: 1px solid #cccccc;
 	float: left;
 	margin-right: 10px;
@@ -1206,4 +1206,9 @@ h1 {
 	height: 200px;
 	display: inline-block;
 	resize: none;
+}
+
+#galery{
+	max-height: 130px;
+	overflow: auto;
 }
