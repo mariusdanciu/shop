@@ -40,8 +40,10 @@ import net.shift.security.User
 import net.shop.api.OrderLog
 import net.shift.loc.Language
 import net.shift.template.HasValue
+import ShopUtils._
 
-object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with IODefaults { self =>
+
+object AccountSettingsPage extends Cart[SettingsPageState]  with IODefaults { self =>
 
   val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy - hh:mm")
 
@@ -215,7 +217,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with ShopUtils with I
 
 case class SettingsPageState(req: Request, user: Option[UserDetail])
 
-object AddressPage extends DynamicContent[Address] with ShopUtils with Selectors { self =>
+object AddressPage extends DynamicContent[Address]  with Selectors { self =>
   override def snippets = List(addr)
 
   val addr = snip[Address]("addr") {

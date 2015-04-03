@@ -12,9 +12,10 @@ import net.shift.template.Snippet._
 import net.shift.template.Snippet._
 import net.shift.common.XmlUtils._
 import net.shop.api.ProductDetail
-import net.shop.utils.ShopUtils
+import net.shop.utils.ShopUtils._
 
-object CartItemNode extends DynamicContent[CartState] with ShopUtils {
+
+object CartItemNode extends DynamicContent[CartState] {
 
   def snippets = List(item)
 

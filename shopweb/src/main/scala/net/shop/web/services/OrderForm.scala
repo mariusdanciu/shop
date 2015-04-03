@@ -9,7 +9,7 @@ import net.shift.html.Formlet.listSemigroup
 import net.shift.html.Validation
 import net.shift.loc.Language
 import net.shift.loc.Loc
-import net.shop.utils.ShopUtils
+import net.shop.utils.ShopUtils._
 import net.shop.api.ProductDetail
 import net.shop.api.Person
 import net.shop.api.Company
@@ -21,7 +21,7 @@ import net.shop.web.services.FormImplicits._
 import net.shift.html.Valid
 import net.shift.html.Invalid
 
-object OrderForm extends ShopUtils {
+object OrderForm {
 
   type ValidationInput = Map[String, EnvValue]
   type ValidationFunc[T] = ValidationInput => Validation[ValidationFail, T]

@@ -15,7 +15,7 @@ import net.shift.template.Binds._
 import net.shift.template.DynamicContent
 import net.shift.template.Snippet.snip
 import net.shop.api.ProductDetail
-import net.shop.utils.ShopUtils
+import net.shop.utils.ShopUtils._
 import net.shop.web.ShopApplication
 import net.shift.common.NodeOps._
 import net.shift.loc.Language
@@ -23,7 +23,7 @@ import net.shift.common.ShiftFailure
 import net.shift.security.User
 import net.shift.common.Config
 
-object ProductDetailPage extends Cart[ProductPageState] with ShopUtils {
+object ProductDetailPage extends Cart[ProductPageState] {
 
   val noImage = "/static/images/noimage.png"
 

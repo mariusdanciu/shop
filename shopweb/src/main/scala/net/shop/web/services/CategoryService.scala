@@ -36,6 +36,7 @@ import net.shift.io.IODefaults
 import net.shift.io.IO
 import net.shift.io.FileSystem
 import net.shift.io.FileOps
+import net.shop.utils.ShopUtils._
 
 object CategoryService extends Selectors
   with TraversingSpec
@@ -51,7 +52,7 @@ object CategoryService extends Selectors
   } yield {
     ShopApplication.persistence.categoryById(id) match {
       case scala.util.Success(cat) =>
-        fs.deletePath(Path(s"data/categories/$id"))
+        fs.deletePath(Path(s"${dataPath}/categories/$id"))
         implicit val l = r.language.name
         service(_(JsonResponse(Formatter.format(cat))))
       case scala.util.Failure(t) => service(_(Resp.notFound))
@@ -65,7 +66,7 @@ object CategoryService extends Selectors
   } yield {
     ShopApplication.persistence.deleteCategories(id) match {
       case scala.util.Success(num) =>
-        fs.deletePath(Path(s"data/categories/$id"));
+        fs.deletePath(Path(s"${dataPath}/categories/$id"));
         service(_(Resp.ok))
       case scala.util.Failure(t) => service(_(Resp.notFound))
     }
@@ -83,7 +84,7 @@ object CategoryService extends Selectors
         ShopApplication.persistence.updateCategories(cpy) match {
           case scala.util.Success(p) =>
             file.map { f =>
-              IO.arrayProducer(f._2)(FileOps.writer(Path(s"data/categories/${cpy.id.getOrElse("")}.png")))
+              IO.arrayProducer(f._2)(FileOps.writer(Path(s"${dataPath}/categories/${cpy.id.getOrElse("")}.png")))
             }
             service(_(Resp.created))
 
@@ -109,7 +110,7 @@ object CategoryService extends Selectors
         ShopApplication.persistence.createCategories(o) match {
           case scala.util.Success(p) =>
             file.map { f =>
-              IO.arrayProducer(f._2)(FileOps.writer(Path(s"data/categories/${p.head}.png")))
+              IO.arrayProducer(f._2)(FileOps.writer(Path(s"${dataPath}/categories/${p.head}.png")))
             }
             service(_(Resp.created))
           case scala.util.Failure(t) =>

@@ -23,14 +23,14 @@ import net.shop.api.persistence.SortSpec
 import net.shop.api.persistence.NoSort
 import net.shop.api.persistence.SortByName
 import net.shop.api.persistence.SortByPrice
-import net.shop.utils.ShopUtils
+import net.shop.utils.ShopUtils._
 import net.shift.security.User
 import net.shift.common.XmlUtils._
 import net.shift.common.NodeOps._
 import net.shift.engine.page.Html5
 import net.shift.common.Path
 
-object ProductsPage extends Cart[Request] with ShopUtils {
+object ProductsPage extends Cart[Request]  {
 
   override def snippets = List(item, catList, prodListTemplate) ++ cartSnips
 

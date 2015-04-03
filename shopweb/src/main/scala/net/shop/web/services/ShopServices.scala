@@ -49,6 +49,7 @@ import net.shift.engine.http.Response
 import net.shift.common.State
 import net.shift.engine.http.Header
 import net.shift.common.Config
+import utils.ShopUtils._
 
 trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults {
 
@@ -155,13 +156,13 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
 
   def productsVariantImages = for {
     Path(_, "data" :: "products" :: id :: variant :: file :: Nil) <- path
-    input <- fileOf(Path(s"${Config.string("data.folder", "../data")}/products/$id/$variant/$file"))
+    input <- fileOf(Path(s"${dataPath}/products/$id/$variant/$file"))
   } yield service(resp =>
     resp(new ImageResponse(input, "image/jpg").withHeaders(Header("cache-control", "max-age=86400"))))
 
   def categoriesImages = for {
     Path(_, "data" :: "categories" :: file :: Nil) <- path
-    input <- fileOf(Path(s"${Config.string("data.folder", "../data")}/categories/$file"))
+    input <- fileOf(Path(s"${dataPath}/categories/$file"))
   } yield service(resp =>
     resp(new ImageResponse(input, "image/png").withHeaders(Header("cache-control", "max-age=86400"))))
 

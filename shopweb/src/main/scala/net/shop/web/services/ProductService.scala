@@ -37,6 +37,7 @@ import net.shift.common.TimeUtils._
 import net.shift.io.FileSystem
 import net.shift.io.FileOps
 import net.shift.io.IO
+import utils.ShopUtils._
 
 object ProductService extends ShiftUtils
   with Selectors
@@ -52,7 +53,7 @@ object ProductService extends ShiftUtils
   } yield {
     ShopApplication.persistence.deleteProducts(id) match {
       case scala.util.Success(num) =>
-        fs.deletePath(Path(s"data/products/$id"))
+        fs.deletePath(Path(s"${dataPath}/products/$id"))
         service(_(Resp.ok))
       case scala.util.Failure(t) => service(_(Resp.notFound))
     }
@@ -75,7 +76,7 @@ object ProductService extends ShiftUtils
             ShopApplication.persistence.updateProducts(merged) match {
               case scala.util.Success(p) =>
                 files.map { f =>
-                  IO.arrayProducer(f._3)(FileOps.writer(Path(s"data/products/${p.head}/${f._1}")))
+                  IO.arrayProducer(f._3)(FileOps.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
                 }
                 service(_(Resp.created))
               case scala.util.Failure(t) =>
@@ -112,7 +113,7 @@ object ProductService extends ShiftUtils
             Future {
               duration(
                 files.map { f =>
-                  IO.arrayProducer(f._3)(FileOps.writer(Path(s"data/products/${p.head}/${f._1}")))
+                  IO.arrayProducer(f._3)(FileOps.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
                 }) { d => log.debug("Write files: " + d) }
             }
             log.debug("Send OK")

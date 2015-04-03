@@ -18,25 +18,25 @@ import scala.util.Success
 import scala.util.Failure
 import net.shop.utils.ShopUtils
 
-object TermsPage extends Cart[Request] with ShopUtils { self =>
+object TermsPage extends Cart[Request] { self =>
 
   def pageTitle(s: PageState[Request]) = Loc.loc0(s.lang)("terms.link").text
 
 }
 
-object DataProtectionPage extends Cart[Request] with ShopUtils { self =>
+object DataProtectionPage extends Cart[Request] { self =>
 
   def pageTitle(s: PageState[Request]) = Loc.loc0(s.lang)("data.protection.link").text
 
 }
 
-object ReturnPolicyPage extends Cart[Request] with ShopUtils { self =>
+object ReturnPolicyPage extends Cart[Request] { self =>
 
   def pageTitle(s: PageState[Request]) = Loc.loc0(s.lang)("return.policy.link").text
 
 }
 
-object CookiesPage extends Cart[Request] with ShopUtils { self =>
+object CookiesPage extends Cart[Request] { self =>
 
   def pageTitle(s: PageState[Request]) = Loc.loc0(s.lang)("data.cookies.link").text
 

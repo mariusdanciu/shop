@@ -13,7 +13,7 @@ import Snippet.snip
 import net.shop.model._
 import net.shop.web.ShopApplication
 import scala.util.Success
-import net.shop.utils.ShopUtils
+import net.shop.utils.ShopUtils._
 import scala.util.Failure
 import Binds._
 import net.shift.common.Config
@@ -24,7 +24,7 @@ import net.shop.api.Company
 import net.shop.api.Address
 import net.shift.io.IODefaults
 
-object OrderPage extends DynamicContent[OrderState] with Selectors with ShopUtils with IODefaults {
+object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaults {
 
   override def snippets = List(logo, info, content, total)
 
