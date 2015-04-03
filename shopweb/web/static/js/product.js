@@ -3,10 +3,38 @@
 
     $('#product_details_tab').tabify();
 
+    $(".close_item_order_dialog").click(function(event) {
+        common.closeDialog();
+        return false;
+      });
+    
     $("#add_to_cart").click(function(event) {
       var pid = $.url().param("pid");
-      cart.addItem(pid);
-      cart.showCart();
+      
+	  $('#order_product').unbind().click(function(event){
+		  var text = $('#product_comments').val();
+		  common.closeDialog();
+	      cart.addItem(pid, text);
+	      cart.showCart();
+	      event.stopPropagation(); 	
+	      return false;
+	  });
+	  
+      $.blockUI({
+          message : $("#item_order_dialog"),
+          css : {
+            top : '100px',
+            left : ($(window).width() - 400) / 2 + 'px',
+            width : '400px',
+            border : 'none',
+            cursor : null
+          },
+          overlayCSS : {
+            cursor : null,
+            backgroundColor : '#dddddd'
+          }
+        });  
+      
       return false;
     });
 
