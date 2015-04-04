@@ -11,29 +11,10 @@
     $("#add_to_cart").click(function(event) {
       var pid = $.url().param("pid");
       
-	  $('#order_product').unbind().click(function(event){
-		  var text = $('#product_comments').val();
-		  common.closeDialog();
-	      cart.addItem(pid, text);
-	      cart.showCart();
-	      event.stopPropagation(); 	
-	      return false;
-	  });
-	  
-      $.blockUI({
-          message : $("#item_order_dialog"),
-          css : {
-            top : '100px',
-            left : ($(window).width() - 400) / 2 + 'px',
-            width : '400px',
-            border : 'none',
-            cursor : null
-          },
-          overlayCSS : {
-            cursor : null,
-            backgroundColor : '#dddddd'
-          }
-        });  
+      common.closeDialog();
+	  cart.addItem(pid);
+	  cart.showCart();
+	  event.stopPropagation(); 	
       
       return false;
     });

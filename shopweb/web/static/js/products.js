@@ -57,23 +57,6 @@ var products = {
     }, 400);
   },
   
-  showOrderItemDialog: function() {
-      $.blockUI({
-          message : $("#item_order_dialog"),
-          css : {
-            top : '100px',
-            left : ($(window).width() - 400) / 2 + 'px',
-            width : '400px',
-            border : 'none',
-            cursor : null
-          },
-          overlayCSS : {
-            cursor : null,
-            backgroundColor : '#dddddd'
-          }
-        });  	  
-  },
-
   refreshList : function() {
     $(".item_box").each(function(index) {
       var me = $(this);
@@ -87,18 +70,9 @@ var products = {
       }
 
       me.find('.info_tag_cart').click(function(event) {
-    	  
-    	  $('#order_product').unbind().click(function(event){
-    		  var text = $('#product_comments').val();
-    		  products.closeProductDialog();
-    	      cart.addItem(pid, text);
-    	      cart.showCart();
-    	      event.stopPropagation(); 	
-    	      return false;
-    	  });
-    	  
-    	  products.showOrderItemDialog();
-    	    
+    	products.closeProductDialog();
+    	cart.addItem(pid);
+    	cart.showCart();
         event.stopPropagation();
         return false;
       });
@@ -135,16 +109,9 @@ var products = {
 
               $('#add_to_cart').click(function(event) {
             	
-            	  $('#order_product').unbind().click(function(event){
-            		  var text = $('#product_comments').val();
-            		  products.closeProductDialog();
-            	      cart.addItem(pid, text);
-            	      cart.showCart();
-            	      event.stopPropagation(); 	
-            	      return false;
-            	  });
-            	  
-            	products.showOrderItemDialog();
+            	products.closeProductDialog();
+            	cart.addItem(pid);
+            	cart.showCart();
             	  
                 event.stopPropagation();
                 return false;
