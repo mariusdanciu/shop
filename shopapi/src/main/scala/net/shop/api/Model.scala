@@ -44,7 +44,7 @@ case class ProductDetail(id: Option[String] = None,
                          keyWords: List[String]) {
 
   def stringId = id getOrElse "?"
-  
+
   def actualPrice = discountPrice getOrElse price
 
   def title_?(l: String) = title.getOrElse(l, "???")
@@ -72,9 +72,10 @@ case class Order(id: String,
                  email: String,
                  phone: String,
                  terms: Boolean,
+                 transport: Transport,
                  items: List[(ProductDetail, Map[String, String], Int)]) {
 
-  def toOrderLog = OrderLog(id, new Date(), submitter, address, email, phone, items map { i => i._1.toProductLog(i._2, i._3) })
+  def toOrderLog = OrderLog(id, new Date(), submitter, address, email, phone, transport, items map { i => i._1.toProductLog(i._2, i._3) })
 }
 
 object OrderStatus {
@@ -102,12 +103,15 @@ case object OrderCanceled extends OrderStatus {
   def index = -1
 }
 
+case class Transport(name: String, price: Float)
+
 case class OrderLog(id: String,
                     time: Date,
                     submitter: Submitter,
                     address: Address,
                     email: String,
                     phone: String,
+                    transport: Transport,
                     items: List[ProductLog],
                     status: OrderStatus = OrderReceived) {
 

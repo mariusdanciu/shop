@@ -578,6 +578,16 @@
    "code" : "208",
    "name" : "add.text",
    "text" : "Adauga camp text"
+ },
+ {
+   "code" : "208",
+   "name" : "transport.1",
+   "text" : "Transport prin curier rapid - 19.99 Lei"
+ },
+ {
+   "code" : "208",
+   "name" : "transport.2",
+   "text" : "Transport prin Posta Romana - 9.99 Lei"
  }
  
 ]

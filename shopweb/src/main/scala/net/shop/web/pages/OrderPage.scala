@@ -26,7 +26,7 @@ import net.shift.io.IODefaults
 
 object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaults {
 
-  override def snippets = List(logo, info, content, total)
+  override def snippets = List(logo, info, content, total, transport)
 
   def reqSnip(name: String) = snip[OrderState](name) _
 
@@ -45,7 +45,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
   val info = reqSnip("info") {
     s =>
       s.state.initialState.o match {
-        case OrderLog(id, time, Person(fn, ln, cnp), Address(_, _, country, region, city, address, zip), email, phone, _, _) =>
+        case OrderLog(id, time, Person(fn, ln, cnp), Address(_, _, country, region, city, address, zip), email, phone, _, _, _) =>
           bind(s.node) {
             case n attributes HasId("oid", a) / _     => <span>{ id }</span> % a
             case n attributes HasId("lname", a) / _   => <span>{ ln }</span> % a
@@ -61,7 +61,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
             case Failure(f) => Success((s.state.initialState, errorTag(f toString)))
           }
 
-        case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(_, _, country, region, city, address, zip), email, phone, _, _) =>
+        case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(_, _, country, region, city, address, zip), email, phone, _, _, _) =>
           bind(s.node) {
             case n attributes HasId("oid", a) / _          => <span>{ id }</span> % a
             case n attributes HasId("cname", a) / _        => <span>{ cn }</span> % a
@@ -96,7 +96,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
                   case "td" attributes HasClass("c1", a) / _ => <td>{ p.title_?(s.state.lang.name) }</td> % a
                   case "td" attributes HasClass("c2", a) / _ => <td>{ prod.quantity }</td> % a
                   case "td" attributes HasClass("c3", a) / _ => <td>{ p.actualPrice }</td> % a
-                  case "td" attributes HasClass("c4", a) / _ => <td><ul class="userOptions">{ prod.userOptions.flatMap{ o => <li>{o._1 + " : " + o._2}</li>} }</ul></td> % a
+                  case "td" attributes HasClass("c4", a) / _ => <td><ul class="userOptions">{ prod.userOptions.flatMap { o => <li>{ o._1 + " : " + o._2 }</li> } }</ul></td> % a
                 }) match {
                   case Success(n) => acc ++ n
                   case Failure(f) => acc ++ errorTag(f toString)
@@ -110,7 +110,14 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
   }
 
   val total = reqSnip("total") {
-    s => Success((s.state.initialState, Text(s.state.initialState.o.total.formatted("%.2f"))))
+    s =>
+      Success((s.state.initialState, Text(
+        price(s.state.initialState.o.total + s.state.initialState.o.transport.price))))
+  }
+
+  val transport = reqSnip("transport") {
+    s =>
+      Success((s.state.initialState, Text(s.state.initialState.o.transport.name)))
   }
 }
 

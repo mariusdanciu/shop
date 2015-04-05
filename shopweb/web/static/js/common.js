@@ -1,6 +1,8 @@
 (function() {
 	$(function() {
 
+		window.submitText = $(".submit_pf").text();
+		
 		if (!window.console) {
 			var console = {
 				log : function() {
@@ -158,6 +160,15 @@
 				window.location.href = '/products?search=' + text;
 			}
 		});
+		
+		$("#transport_pf").change(function(){
+			cart.updateSubmitText("pf");
+		});
+		
+		$("#transport_pj").change(function(){
+			cart.updateSubmitText("pj");
+		});
+
 
 		window.cart.loadView();
 
@@ -386,16 +397,24 @@ var cart = {
 		window.cart.loadView();
 	},
 
-	computeTotal : function() {
+	
+	computeTotal : function(add) {
 		var total = 0;
 
 		$(".cart_item").each(function() {
 			var num = $(this).find("input").val();
 			var price = $(this).find(".cart_price").text();
 			total += num * price;
+			if (add) {
+				total += add;
+			}
 		});
 
-		$("#total").text(parseFloat(total).toFixed(2) + " Lei");
+		return parseFloat(total).toFixed(2);
+	},
+	
+	showTotal : function() {
+		$("#total").text(cart.computeTotal() + " Lei");
 	},
 
 	items : function() {
@@ -417,6 +436,11 @@ var cart = {
 					found = a[i];
 				}
 			}
+			
+			if (! userOpts) {
+				userOpts = {};
+			}
+			
 			if (!found) {
 				cart.items.push( {
 					id : id,
@@ -431,11 +455,13 @@ var cart = {
 			$.cookie("cart", JSON.stringify({
 				items : [ {
 					id : id,
+					userOptions: {},
 					count : 1
 				} ]
 			}));
 		}
 
+		console.log(cart);
 	},
 
 	setItemCount : function(id, count) {
@@ -452,7 +478,7 @@ var cart = {
 				}
 			}
 			$.cookie("cart", JSON.stringify(cart));
-			window.cart.computeTotal();
+			window.cart.showTotal();
 			$(this).focus();
 		}
 	},
@@ -504,7 +530,7 @@ var cart = {
 				}
 
 				$(this).append(ul);
-				window.cart.computeTotal();
+				window.cart.showTotal();
 
 				$('#cart_content').show();
 				$('#cart_footer').show();
@@ -542,8 +568,24 @@ var cart = {
 		$('#buy_step1').show();
 		$('#buy_step0').hide();
 	},
+	
+	updateSubmitText : function(suffix) {
+		var tr = $("#transport_" + suffix).val();
+		var transport = 19.99;
+		console.log(tr);
+		if (tr == "2") {
+			transport = 9.99;
+		}
+		var pret = cart.computeTotal(transport);
+		var text = window.submitText + " <b> " + pret + " Lei </b>";
+		$(".submit_" + suffix).html(text);
+	},
 
 	showStep1Links : function() {
+		
+		cart.updateSubmitText("pf");
+		cart.updateSubmitText("pj");
+		
 		$('#cart_content').hide();
 		$('#order').show();
 		$('#buy_step0').show();

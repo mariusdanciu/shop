@@ -20,6 +20,7 @@ import net.shop.model.FieldError
 import net.shop.web.services.FormImplicits._
 import net.shift.html.Valid
 import net.shift.html.Invalid
+import net.shop.api.Transport
 
 object OrderForm {
 
@@ -37,7 +38,7 @@ object OrderForm {
 
       env.get(name) match {
         case Some(FormField(e)) if (!e.isEmpty()) => f(e)
-        case _                  => failed
+        case _                                    => failed
       }
     }
 
@@ -79,8 +80,15 @@ object OrderForm {
       case _                     => Invalid(ValidationFail(FieldError(id, Loc.loc0(lang)("terms.and.conds.err").text)))
     }
 
+  def validTransport(id: String)(implicit lang: Language): ValidationFunc[Transport] =
+    env => env.get("transport") match {
+      case Some(FormField("1")) => Valid(Transport(Loc.loc0(lang)("transport.1").text, 19.99f))
+      case Some(FormField("2")) => Valid(Transport(Loc.loc0(lang)("transport.2").text, 9.99f))
+      case _                    => Invalid(ValidationFail(FieldError(id, "error")))
+    }
+
   def inputItems(name: String)(f: ValidationInput => Validation[ValidationFail, List[(ProductDetail, Map[String, String], Int)]]) =
-    new Formlet[List[(ProductDetail,  Map[String, String], Int)], Map[String, EnvValue], ValidationFail] {
+    new Formlet[List[(ProductDetail, Map[String, String], Int)], Map[String, EnvValue], ValidationFail] {
       val validate = f
       override def html = NodeSeq.Empty;
     }
@@ -109,6 +117,7 @@ object OrderForm {
       inputText("email")(validEmail("email", "email")) <*>
       inputText("phone")(validPhone("phone", "phone")) <*>
       inputCheck("terms", "true")(validTerms("terms")) <*>
+      inputSelect("transport", Nil)(validTransport("transport_pf")) <*>
       inputItems("items")(validItems)
   }
 
@@ -138,6 +147,7 @@ object OrderForm {
       inputText("cemail")(validEmail("cemail", "cemail")) <*>
       inputText("cphone")(validPhone("cphone", "cphone")) <*>
       inputCheck("cterms", "true")(validTerms("cterms")) <*>
+      inputSelect("transport", Nil)(validTransport("transport_pj")) <*>
       inputItems("items")(validItems)
   }
 

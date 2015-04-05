@@ -22,7 +22,7 @@
     <div class="header">
       <div id="product_title">
         <div id="title_text">
-            <span data-snip="title"></span>
+          <span data-snip="title"></span>
         </div>
         <div class="header_symbol">
           <ul>
@@ -182,16 +182,22 @@
             </div>
           </div>
           <div class="row">
+            <select id="transport_pf" class="transport"  name="transport">
+              <option value="1" data-loc="transport.1"></option>
+              <option value="2" data-loc="transport.2"></option>
+            </select>
+          </div>
+
+          <div class="row">
             <div id="terms_wrapper">
               <input id="terms" name="terms" type="checkbox" /> <label for="terms" data-loc="terms.and.conds"></label>
             </div>
             <div class="order_button">
-              <a id="buy_final" class="btn" href="#" data-loc="buy_final"></a>
+              <a id="buy_final" class="btn submit_pf" href="#" data-loc="buy_final"></a>
             </div>
           </div>
 
         </form>
-
       </div>
       <div id="pj" class="content">
         <form id="order_form_company">
@@ -236,13 +242,20 @@
             </div>
           </div>
           <div class="row">
+            <select id="transport_pj" class="transport" name="transport">
+              <option value="1" data-loc="transport.1"></option>
+              <option value="2" data-loc="transport.2"></option>
+            </select>
+          </div>
+          <div class="row">
             <div id="terms_wrapper">
               <input id="cterms" name="terms" type="checkbox" /> <label for="cterms" data-loc="terms.and.conds"></label>
             </div>
             <div class="order_button">
-              <a id="c_buy_final_comp" class="btn" href="#" data-loc="buy_final"></a>
+              <a id="c_buy_final_comp" class="btn submit_pj" href="#" data-loc="buy_final"> <span></span></a>
             </div>
           </div>
+
         </form>
       </div>
     </div>

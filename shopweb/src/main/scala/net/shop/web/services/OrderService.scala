@@ -75,6 +75,7 @@ object OrderService extends HttpPredicates with FormValidation with TraversingSp
       value match {
         case JString(str)  => (k, OrderForm.FormField(str))
         case JArray(items) => extractItems(items)
+        case JInt(v)  => (k, OrderForm.FormField(v toString))
       }
     }
 

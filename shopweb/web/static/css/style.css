@@ -1235,3 +1235,10 @@ h1 {
 	margin-right: 30px;
 	
 }
+
+.transport {
+	width: 375px;
+	height: 35px;
+	cursor: pointer;
+	background: #fff;
+}

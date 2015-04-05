@@ -20,13 +20,13 @@ import java.util.Date
 import net.shop.api.ServiceHit
 import net.shop.api.ServiceStat
 import net.shop.api.OrderStatus
+import net.shop.api.Transport
 
 trait MongoConversions {
 
   def orderToMongo(obj: OrderLog): DBObject = {
     val db = MongoDBObject.newBuilder
     val submitter = MongoDBObject.newBuilder
-    val address = MongoDBObject.newBuilder
     obj submitter match {
       case Person(firstName, lastName, cnp) =>
         submitter += "firstName" -> firstName
@@ -40,12 +40,6 @@ trait MongoConversions {
         submitter += "bank" -> bank
         submitter += "bankAccount" -> bankAccount
     }
-    address += "name" -> obj.address.name
-    address += "country" -> obj.address.country
-    address += "region" -> obj.address.region
-    address += "city" -> obj.address.city
-    address += "address" -> obj.address.address
-    address += "zipCode" -> obj.address.zipCode
 
     db += "id" -> obj.id
     db += "time" -> obj.time
@@ -53,6 +47,7 @@ trait MongoConversions {
     db += "address" -> addressToMongo(obj.address)
     db += "email" -> obj.email
     db += "phone" -> obj.phone
+    db += "transport" -> transportToMongo(obj.transport)
 
     val items = for { prod <- obj.items } yield {
       val item = MongoDBObject.newBuilder
@@ -109,9 +104,22 @@ trait MongoConversions {
       address = mongoToAddress(obj.getAsOrElse[DBObject]("address", MongoDBObject.newBuilder.result())),
       email = obj.getAsOrElse[String]("email", ""),
       phone = obj.getAsOrElse[String]("phone", ""),
+      transport = mongoToTransport(obj.getAsOrElse[DBObject]("transport", MongoDBObject.newBuilder.result())),
       items = itemsObj,
       status = OrderStatus.fromIndex(obj.getAsOrElse[Int]("status", 0)))
   }
+
+  def transportToMongo(obj: Transport): MongoDBObject = {
+    val db = MongoDBObject.newBuilder
+    db += "name" -> obj.name
+    db += "price" -> obj.price
+    db.result
+  }
+
+  def mongoToTransport(obj: DBObject): Transport =
+    Transport(
+      name = obj.getAsOrElse[String]("email", ""),
+      price = obj.getAsOrElse[Float]("price", 0.0f))
 
   def productToMongo(obj: ProductDetail): MongoDBObject = {
     val db = MongoDBObject.newBuilder
@@ -174,9 +182,9 @@ trait MongoConversions {
     db += "zipCode" -> addr.zipCode
     db.result
   }
-  
+
   import scala.collection.JavaConversions._
-  
+
   def mongoToProduct(obj: DBObject): ProductDetail =
     ProductDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
