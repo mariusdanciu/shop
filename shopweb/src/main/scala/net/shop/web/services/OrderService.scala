@@ -1,52 +1,84 @@
 package net.shop
 package web.services
 
-import scala.concurrent._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
+
+import org.json4s.JsonAST.JArray
+import org.json4s.JsonAST.JField
+import org.json4s.JsonAST.JInt
+import org.json4s.JsonAST.JObject
+import org.json4s.JsonAST.JString
+import org.json4s.JsonAST.JValue
+import org.json4s.jvalue2monadic
+import org.json4s.native.JsonMethods.parse
+import org.json4s.string2JsonInput
+
+import OrderForm.FormField
+import OrderForm.OrderItems
 import net.shift.common.Path
+import net.shift.common.ShiftFailure
+import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
+import net.shift.engine.http.GET
 import net.shift.engine.http.HttpPredicates
-import net.shift.engine.http.JsonResponse
-import net.shift.html._
-import net.shift.js._
-import net.shift.loc.Language
-import net.shop.messaging._
-import net.shop.web.ShopApplication
 import net.shift.engine.http.JsResponse
+import net.shift.engine.http.JsonResponse
+import net.shift.engine.http.POST
+import net.shift.engine.http.Response.augmentResponse
+import net.shift.html.Invalid
+import net.shift.html.Valid
+import net.shift.io.IO
+import net.shift.js.JsDsl
+import net.shift.js.JsStatement
+import net.shift.loc.Language
 import net.shift.loc.Loc
+import net.shop.api.Company
+import net.shop.api.Formatter
+import net.shop.api.Person
+import net.shop.api.ShopError
+import net.shop.messaging.Messaging
+import net.shop.messaging.OrderDocument
+import net.shop.model.Formatters.ErrorJsonWriter
+import net.shop.model.Formatters.JsonOrdersWriter
+import net.shop.web.ShopApplication
 import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
-import net.shop.api.Company
-import net.shop.api.Person
-import net.shop.model._
-import net.shift.engine.http.POST
-import net.shift.engine.http.GET
-import net.shop.api.Formatter
-import net.shop.api.ShopError
 
-object OrderService extends HttpPredicates with FormValidation {
+object OrderService extends HttpPredicates with FormValidation with TraversingSpec {
 
-  private def normalizeParams(lang: Language, params: Map[String, String]): Try[Map[String, OrderForm.type#EnvValue]] = {
-    import OrderForm._
-    val init: Try[Map[String, OrderForm.type#EnvValue]] = Success(Map.empty[String, OrderForm.type#EnvValue])
-    (init /: params) {
-      case (Failure(t), _) => Failure(t)
-      case (Success(acc), (k, v)) if (k startsWith "item") =>
-        val dk = k drop 5
-
-        ShopApplication.persistence.productById(dk) map { prod =>
-          (acc get "items") match {
-            case Some(OrderItems(l)) => acc + ("items" -> OrderItems(l ++ List((prod, v.toInt))))
-            case _                   => acc + ("items" -> OrderItems(List((prod, v.toInt))))
+  private def extractOrder(json: String) = {
+    def extractItems(items: List[JValue]): (String, OrderForm.EnvValue) = listTraverse.sequence(for {
+      JObject(o) <- items
+    } yield {
+      o match {
+        case ("name", JString(id)) :: ("userOptions", l) :: ("value", JInt(count)) :: Nil =>
+          ShopApplication.persistence.productById(id) map { prod =>
+            val opts = for {
+              JObject(lo) <- l;
+              (k, JString(v)) <- lo
+            } yield {
+              (k, v)
+            }
+            (prod, opts.toMap, count toInt)
           }
+      }
+    }).map(m => ("items", OrderForm.OrderItems(m))) getOrElse (("items", OrderForm.NotFound))
 
-        }
-      case (Success(acc), (k, v)) =>
-        Success(acc + (k -> FormField(v)))
+    val list = for {
+      JObject(child) <- parse(json)
+      JField(k, value) <- child if (k != "name" && k != "userOptions" && k != "value")
+    } yield {
+      value match {
+        case JString(str)  => (k, OrderForm.FormField(str))
+        case JArray(items) => extractItems(items)
+      }
     }
+
+    list toMap
   }
 
   def order = {
@@ -56,9 +88,13 @@ object OrderService extends HttpPredicates with FormValidation {
     } yield service(resp => {
       val params = r.params.map { case (k, v) => (k, v.head) }
 
+      val json = IO.toString(r.readBody)
+
+      val norms = json.map { extractOrder }
+
       import JsDsl._
 
-      normalizeParams(r.language, params) match {
+      norms match {
         case Success(norm) =>
 
           val v = if (norm.contains("cif")) OrderForm.companyForm(r.language) else OrderForm.form(r.language)
@@ -84,8 +120,9 @@ object OrderService extends HttpPredicates with FormValidation {
                     OrderPage.orderCompanyTemplate(OrderState(o.toOrderLog, r.language))
                   case c: Person =>
                     OrderPage.orderTemplate(OrderState(o.toOrderLog, r.language))
-                }) map { n => Messaging.send(OrderDocument(r.language, o, n toString)) }
-
+                }) map { n =>
+                  Messaging.send(OrderDocument(r.language, o, n toString))
+                }
               }
             case Invalid(msgs) =>
               respValidationFail(resp, msgs)(r.language.name)
@@ -111,7 +148,9 @@ object OrderService extends HttpPredicates with FormValidation {
     Path(_, "orders" :: Nil) <- path
     email <- param("email")
   } yield service(resp => {
-    import Formatters._
+
+    import model.Formatters._
+
     implicit val l = r.language.name
     ShopApplication.persistence.ordersByEmail(email) match {
       case Success(orders) =>
@@ -127,12 +166,12 @@ object OrderService extends HttpPredicates with FormValidation {
     Path(_, "orders" :: Nil) <- path
     id <- param("productid")
   } yield service(resp => {
-    import Formatters._
+    import model.Formatters._
     implicit val l = r.language.name
     ShopApplication.persistence.ordersByProduct(id) match {
       case Success(orders) =>
         resp(JsonResponse(Formatter.format(orders.toList)))
-      case Failure(t : ShopError) =>
+      case Failure(t: ShopError) =>
         resp(JsonResponse(Formatter.format(t)).code(500))
       case Failure(t) =>
         resp(JsonResponse(Formatter.format(ShopError(t.getMessage, t))).code(500))

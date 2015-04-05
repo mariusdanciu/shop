@@ -150,7 +150,9 @@ object ProductService extends ShiftUtils
     val productFormlet = Formlet(product) <*>
       inputText(fieldPrefix + "title")(validateMapField(fieldPrefix + "title", ?("title").text)) <*>
       inputText(fieldPrefix + "description")(validateMapField(fieldPrefix + "description", ?("description").text)) <*>
-      inputText(fieldPrefix + "properties")(validateProps(?("properties").text)) <*>
+      inputText(fieldPrefix + "properties")(validateProps) <*>
+      inputText(fieldPrefix + "options")(validateOptions) <*>
+      inputText(fieldPrefix + "userText")(validateUserText) <*>
       inputDouble(fieldPrefix + "price")(validateDouble(fieldPrefix + "price", ?("price").text)) <*>
       inputOptional(fieldPrefix + "discount_price")(validateOptional(fieldPrefix + "discount_price", s => Option(s.toDouble))) <*>
       inputInt(fieldPrefix + "soldCount")(validateDefault(0)) <*>
@@ -160,21 +162,28 @@ object ProductService extends ShiftUtils
       inputFile("files")(validateDefault(Nil)) <*>
       inputText(fieldPrefix + "keywords")(optionalListField(fieldPrefix + "keywords", ?("keywords").text))
 
-    (files, productFormlet validate params flatMap {
-      case p @ ProductDetail(_,
-        _,
-        _,
-        _,
-        price,
-        Some(discountPrice),
-        _,
-        _,
-        _,
-        _,
-        _,
-        _) if (discountPrice >= price) => Invalid(ValidationFail(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text)))
-      case p => Valid(p)
-    })
+    try {
+      (files, productFormlet validate params flatMap {
+        case p @ ProductDetail(_,
+          _,
+          _,
+          _,
+          _,
+          _,
+          price,
+          Some(discountPrice),
+          _,
+          _,
+          _,
+          _,
+          _,
+          _) if (discountPrice >= price) => Invalid(ValidationFail(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text)))
+        case p => Valid(p)
+      })
+    } catch {
+      case e: Exception => e.printStackTrace()
+       (Nil, Invalid(ValidationFail(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text))))
+    }
   }
 
   def split(content: String) = content.split("\\s*,\\s*").toList

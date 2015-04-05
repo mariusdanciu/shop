@@ -60,6 +60,7 @@ trait MongoConversions {
       item += "id" -> prod.id
       item += "price" -> prod.price
       item += "quantity" -> prod.quantity
+      item += "userOptions" -> prod.userOptions
 
       item.result
     }
@@ -98,7 +99,8 @@ trait MongoConversions {
       ProductLog(
         id = dbItem.getAsOrElse[String]("id", ""),
         price = dbItem.getAsOrElse[Double]("price", 0.0),
-        quantity = dbItem.getAsOrElse[Int]("quantity", 0))
+        quantity = dbItem.getAsOrElse[Int]("quantity", 0),
+        userOptions = dbItem.getAsOrElse[Map[String, String]]("userOptions", Map.empty))
     }
 
     OrderLog(id = obj.getAsOrElse[String]("id", ""),
@@ -116,6 +118,8 @@ trait MongoConversions {
     db += "title" -> MongoDBObject(obj.title.toList)
     db += "description" -> MongoDBObject(obj.description.toList)
     db += "properties" -> MongoDBObject(obj.properties.toList)
+    db += "options" -> MongoDBObject(obj.options.toList)
+    db += "userText" -> obj.userText
     db += "price" -> obj.price
     db += "discountPrice" -> obj.discountPrice
     db += "soldCount" -> obj.soldCount
@@ -170,11 +174,16 @@ trait MongoConversions {
     db += "zipCode" -> addr.zipCode
     db.result
   }
+  
+  import scala.collection.JavaConversions._
+  
   def mongoToProduct(obj: DBObject): ProductDetail =
     ProductDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
       description = obj.getAsOrElse[Map[String, String]]("description", Map.empty),
       properties = obj.getAsOrElse[Map[String, String]]("properties", Map.empty),
+      options = obj.getAsOrElse[Map[String, java.util.List[String]]]("options", Map.empty).map(p => (p._1, p._2.toList)),
+      userText = obj.getAsOrElse[List[String]]("userText", Nil),
       price = obj.getAsOrElse[Double]("price", 0.0),
       discountPrice = obj.getAs[Double]("discountPrice"),
       soldCount = obj.getAs[Int]("soldCount") getOrElse 0,

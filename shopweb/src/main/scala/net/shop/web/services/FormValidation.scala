@@ -58,11 +58,27 @@ trait FormValidation extends IODefaults {
       }
     }
 
-  def validateProps(title: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
+  def validateProps(implicit lang: Language): ValidationFunc[ValidationMap] =
     env => {
       (env.get("pkey"), env.get("pval")) match {
         case (Some(k), Some(v)) => Valid(k.zip(v).toMap)
         case _                  => Valid(Map.empty)
+      }
+    }
+
+  def validateOptions(implicit lang: Language): ValidationFunc[Map[String, List[String]]] =
+    env => {
+      (env.get("customkey"), env.get("customval")) match {
+        case (Some(k), Some(v)) => Valid(k.zip(v).map(pair => (pair._1, pair._2.split("\\s*,\\s*").toList)).toMap)
+        case _                  => Valid(Map.empty)
+      }
+    }
+
+  def validateUserText(implicit lang: Language): ValidationFunc[List[String]] =
+    env => {
+      (env.get("customtext")) match {
+        case Some(k) => Valid(k)
+        case _       => Valid(Nil)
       }
     }
 
@@ -76,13 +92,26 @@ trait FormValidation extends IODefaults {
     optional(name, title, Nil, s => Valid(s.split("\\s*,\\s*").toList))
 
   def validateInt(name: String, title: String)(implicit lang: Language): ValidationFunc[Int] =
-    required(name, title, s => Valid(s.toInt))
+    required(name, title, s =>
+      try {
+        Valid(s.toInt)
+      } catch {
+        case e: Exception => Invalid(ValidationFail(FieldError(name, Loc.loc(lang)("field.incorrect", Seq(title)).text)))
+      })
 
   def validateBoolean(name: String, title: String)(implicit lang: Language): ValidationFunc[Boolean] =
-    optional(name, title, false,  s => Valid(s.toBoolean))
-    
+    optional(name, title, false, s => {
+      Valid(!s.isEmpty())
+    })
+
   def validateDouble(name: String, title: String)(implicit lang: Language): ValidationFunc[Double] =
-    required(name, title, s => Valid(s.toDouble))
+    required(name, title, s =>
+      try {
+        val d = s.toDouble
+        Valid(d)
+      } catch {
+        case e: Exception => Invalid(ValidationFail(FieldError(name, Loc.loc(lang)("field.incorrect", Seq(title)).text)))
+      })
 
   def validateText(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationFail, String] =
     optional(name, title, "", Valid(_))
@@ -90,7 +119,7 @@ trait FormValidation extends IODefaults {
   def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationFail, String] =
     required(name, title, s => ShopApplication.persistence.userByEmail(s) match {
       case scala.util.Success(Some(email)) => Invalid(ValidationFail(FieldError(name, Loc.loc0(lang)("user.already.exists").text)))
-      case _                         => Valid(s)
+      case _                               => Valid(s)
     })
 
   def validateOptional[T](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[ValidationFail, Option[T]] = env => {

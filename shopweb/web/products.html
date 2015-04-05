@@ -13,7 +13,7 @@
   <div id="content" class="center page">
 
     <div class="navigation">
-      <a href="/" data-loc="categories"></a><span> | </span> <span data-loc="sort"></span> <select id="sortSelect" data-placeholder="...">
+      <a href="/"><img src="/static/images/home.png"/></a><span> | </span> <span data-loc="sort"></span> <select id="sortSelect" data-placeholder="...">
         <option value=""></option>
         <option value="bynameasc" data-loc="sort.by.name.asc"></option>
         <option value="bynamedesc" data-loc="sort.by.name.desc"></option>
@@ -40,6 +40,7 @@
                 <ul id="create_product_tab" class="create_product_tab">
                   <li class="active"><a href="#fields" data-loc="product.info"></a></li>
                   <li><a href="#create_specs" data-loc="specs"></a></li>
+                  <li><a href="#create_customize" data-loc="customize"></a></li>
                   <li><a href="#create_textzone" data-loc="description"></a></li>
                   <li><a href="#files" data-loc="files"></a></li>
                 </ul>
@@ -76,6 +77,19 @@
                   <img id="add_prop" class="clickable" src="/static/images/plus.png" />
                 </div>
                 <div id="prop_fields" class="row"></div>
+              </div>
+
+              <div id="create_customize" class="form_specs tab_content">
+                <ul>
+                  <li>
+                    <div class="specs_title" data-loc="add.options"></div> <img id="add_custom_prop" class="clickable" src="/static/images/plus.png" />
+                  </li>
+                  <li>
+                    <div class="specs_title" data-loc="add.text"></div> <img id="add_custom_text" class="clickable" src="/static/images/plus.png" />
+                  </li>
+                </ul>
+                <div id="prop_custom_fields" class="row"></div>
+
               </div>
 
               <div id="create_textzone" class="form_textzone tab_content">

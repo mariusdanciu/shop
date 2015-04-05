@@ -96,6 +96,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
                   case "td" attributes HasClass("c1", a) / _ => <td>{ p.title_?(s.state.lang.name) }</td> % a
                   case "td" attributes HasClass("c2", a) / _ => <td>{ prod.quantity }</td> % a
                   case "td" attributes HasClass("c3", a) / _ => <td>{ p.actualPrice }</td> % a
+                  case "td" attributes HasClass("c4", a) / _ => <td><ul class="userOptions">{ prod.userOptions.flatMap{ o => <li>{o._1 + " : " + o._2}</li>} }</ul></td> % a
                 }) match {
                   case Success(n) => acc ++ n
                   case Failure(f) => acc ++ errorTag(f toString)

@@ -27,7 +27,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
 
   val noImage = "/static/images/noimage.png"
 
-  override def snippets = List(meta, catlink, productLink, images, detailPrice, stock, details, specs, edit) ++ super.snippets
+  override def snippets = List(meta, catlink, productLink, images, detailPrice, stock, details, specs, customize, edit) ++ super.snippets
 
   val meta = reqSnip("fb_meta") {
     s =>
@@ -175,6 +175,29 @@ object ProductDetailPage extends Cart[ProductPageState] {
       }
   }
 
+  val customize = reqSnip("customize") {
+    s =>
+      {
+        (for {
+          p <- s.state.initialState.product
+        } yield {
+          val n = (p.options flatMap {
+            o =>
+              (bind(s.node) {
+                case HasClass("content", a) => <span>{ o._1 }</span><select class="item_option custom_option" name={ o._1 }>{
+                  o._2.map { i => <option value={ i }>{ i }</option> }
+                }</select>
+              }).getOrElse(NodeSeq.Empty)
+          }) ++ (p.userText flatMap { o =>
+            (bind(s.node) {
+              case HasClass("content", a) => <span>{ o }</span><input type="text" name={ s"$o" } class="item_option custom_text"/>
+            }).getOrElse(NodeSeq.Empty)
+          })
+          (ProductPageState(s.state.initialState.req, Success(p), s.state.user), NodeSeq.fromSeq(n.toSeq))
+        }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
+      }
+  }
+
   val edit = reqSnip("edit") {
     s =>
       {
@@ -199,6 +222,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
               node("input", if (!p.unique) a else a + ("checked" -> p.unique.toString))
             case HasId("edit_description", attrs)                           => node("textarea", attrs.attrs) / Text(desc)
             case _ attributes HasClass("edit_props_sample", attrs) / childs => handleProperties(childs, p)
+            case _ attributes HasClass("edit_user_options", attrs) / childs => handleUserOptions(childs, p)
           }) match {
             case Success(n) => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), n)
             case _          => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node)
@@ -224,9 +248,9 @@ object ProductDetailPage extends Cart[ProductPageState] {
   private def handleProperties(childs: NodeSeq, p: ProductDetail) = NodeSeq.fromSeq((p.properties flatMap {
     case (k, v) =>
       bind(node("div", Map("class" -> "row")) / childs) {
-        case "k:input" attributes attrs / _ =>
+        case HasName("pkey", attrs) =>
           node("input", attrs.attrs + ("value" -> k))
-        case "v:input" attributes attrs / _ =>
+        case HasName("pval", attrs) =>
           node("input", attrs.attrs + ("value" -> v))
       } match {
         case Success(n) => n
@@ -234,6 +258,27 @@ object ProductDetailPage extends Cart[ProductPageState] {
       }
   }).toSeq)
 
+  private def handleUserOptions(n: NodeSeq, p: ProductDetail) = {
+    bind(n) {
+      case _ attributes HasClass("edit_custom_options_sample", attrs) / childs =>
+        NodeSeq.fromSeq(p.options.flatMap {
+          case (k, v) =>
+            bind(childs) {
+              case HasName("customkey", attrs) =>
+                node("input", attrs.attrs + ("value" -> k))
+              case HasName("customval", attrs) =>
+                node("input", attrs.attrs + ("value" -> v.mkString(", ")))
+            } getOrElse NodeSeq.Empty
+        } toList)
+      case _ attributes HasClass("edit_custom_text_sample", attrs) / childs =>
+        p.userText.flatMap { t =>
+          bind(childs) {
+            case HasName("customtext", attrs) =>
+              node("input", attrs.attrs + ("value" -> t))
+          } getOrElse NodeSeq.Empty
+        }
+    }  getOrElse NodeSeq.Empty
+  }
 }
 
 object ProductPageState {

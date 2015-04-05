@@ -543,7 +543,18 @@ h1 {
 	float: left;
 	position: relative;
 	width: 100%;
-	height: 30px;
+	height: 40px;
+}
+
+.navigation span {
+	bottom: 7px;
+	position: relative;
+}
+
+.navigation select {
+	bottom: 5px;
+	margin-left: 10px;
+	position: relative;
 }
 
 .detailPrice {
@@ -1213,4 +1224,14 @@ h1 {
 #galery{
 	max-height: 130px;
 	overflow: auto;
+}
+
+.item_option {
+	margin-left: 10px;
+}
+
+#create_customize ul li, #edit_customize ul li {
+	float: left;
+	margin-right: 30px;
+	
 }

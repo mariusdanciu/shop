@@ -10,9 +10,16 @@
     
     $("#add_to_cart").click(function(event) {
       var pid = $.url().param("pid");
-      
+      var userOptions = {};
+      $(".custom_option").each(function(i) {
+    	userOptions[$(this).attr("name")] = $(this).val();
+      });
+      $(".custom_text").each(function(i) {
+    	userOptions[$(this).attr("name")] = $(this).val();
+      });
+
       common.closeDialog();
-	  cart.addItem(pid);
+	  cart.addItem(pid, userOptions);
 	  cart.showCart();
 	  event.stopPropagation(); 	
       

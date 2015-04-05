@@ -175,7 +175,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
       case Some(c) => {
         implicit val formats = DefaultFormats
         implicit def snipsSelector[T] = bySnippetAttr[T]
-        listTraverse.sequence(for {
+        val norm = listTraverse.sequence(for {
           item <- readCart(c.value).items
           prod <- ShopApplication.persistence.productById(item.id).toOption
         } yield {

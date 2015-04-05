@@ -32,6 +32,8 @@ case class ProductDetail(id: Option[String] = None,
                          title: Map[String, String],
                          description: Map[String, String],
                          properties: Map[String, String],
+                         options: Map[String, List[String]],
+                         userText: List[String],
                          price: Double,
                          discountPrice: Option[Double],
                          soldCount: Int,
@@ -47,10 +49,10 @@ case class ProductDetail(id: Option[String] = None,
 
   def title_?(l: String) = title.getOrElse(l, "???")
 
-  def toProductLog(quantity: Int) = ProductLog(stringId, actualPrice, quantity)
+  def toProductLog(userOptions: Map[String, String], quantity: Int) = ProductLog(stringId, actualPrice, quantity, userOptions)
 }
 
-case class CartItem(id: String, count: Int, comment: String = "")
+case class CartItem(id: String, count: Int, userOptions: Map[String, String] = Map.empty)
 
 case class Cart(items: List[CartItem])
 
@@ -70,9 +72,9 @@ case class Order(id: String,
                  email: String,
                  phone: String,
                  terms: Boolean,
-                 items: List[(ProductDetail, Int)]) {
+                 items: List[(ProductDetail, Map[String, String], Int)]) {
 
-  def toOrderLog = OrderLog(id, new Date(), submitter, address, email, phone, items map { i => i._1.toProductLog(i._2) })
+  def toOrderLog = OrderLog(id, new Date(), submitter, address, email, phone, items map { i => i._1.toProductLog(i._2, i._3) })
 }
 
 object OrderStatus {
@@ -112,7 +114,7 @@ case class OrderLog(id: String,
   lazy val total = (0.0 /: items)((a, i) => a + i.price * i.quantity)
 }
 
-case class ProductLog(id: String, price: Double, quantity: Int)
+case class ProductLog(id: String, price: Double, quantity: Int, userOptions: Map[String, String])
 
 case class ServiceHit(year: Int, month: Int, day: Int, service: String)
 case class ServiceStat(hit: ServiceHit, count: Long)

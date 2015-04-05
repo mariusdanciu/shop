@@ -108,11 +108,21 @@ var products = {
               });
 
               $('#add_to_cart').click(function(event) {
+
+            	var userOptions = {};
+                $(".custom_option").each(function(i) {
+                	userOptions[$(this).attr("name")] = $(this).val();
+                });
+                $(".custom_text").each(function(i) {
+                	userOptions[$(this).attr("name")] = $(this).val();
+                });
+
+                
+            	cart.addItem(pid, userOptions);
+            	cart.showCart();
             	
             	products.closeProductDialog();
-            	cart.addItem(pid);
-            	cart.showCart();
-            	  
+           	  
                 event.stopPropagation();
                 return false;
               });

@@ -114,19 +114,29 @@
 					var form = (clicked !== "c_buy_final_comp") ? "#order_form"
 							: "#order_form_company";
 
+					var formObj = {};
 					var obj = $(form).serializeArray();
+					
+					$.each(obj, function() {
+						formObj[this.name] = this.value;
+					});
+					
 					var items = cart.items();
+					formObj["items"] = [];
 					for (e in items) {
-						obj.push({
-							name : "item." + items[e].id,
+						formObj["items"].push({
+							name : items[e].id,
+							userOptions: items[e].userOptions,
 							value : items[e].count
 						})
 					}
-
+					
+					
 					cart.cleanFormMessages();
 					$.ajax({
 						url : "/order",
-						data : obj,
+						contentType: 'application/json; charset=UTF-8', 
+						data : JSON.stringify(formObj),
 						cache : false,
 						timeout : 3000,
 						type : 'POST',
@@ -396,7 +406,7 @@ var cart = {
 		return [];
 	},
 
-	addItem : function(id, text) {
+	addItem : function(id, userOpts) {
 		var c = $.cookie("cart");
 		if (c) {
 			var cart = $.parseJSON(c);
@@ -408,11 +418,11 @@ var cart = {
 				}
 			}
 			if (!found) {
-				cart.items.push({
+				cart.items.push( {
 					id : id,
-					comment: text,
+					userOptions: userOpts,
 					count : 1
-				});
+				} );
 			} else {
 				found.count = found.count + 1;
 			}

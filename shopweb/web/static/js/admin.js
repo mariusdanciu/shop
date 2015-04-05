@@ -36,13 +36,17 @@
 
     $("#search_orders").keydown(function(event) {
       if (event.keyCode == 13) {
-        console.log($("#search_orders").val());
         admin.searchOrders("#orders_result", $("#search_orders").val());
         return false;
       }
     });
 
-    admin.addProp("#add_prop", "#prop_fields");
+    admin.addProp("#add_prop", "#prop_fields", "pkey", "pval");
+    
+    admin.addText("#add_custom_text", "#prop_custom_fields", "customtext");
+    admin.addProp("#add_custom_prop", "#prop_custom_fields", "customkey", "customval");
+    
+    
     admin.toggleDescription("create");
 
     document.onkeydown = function(evt) {
@@ -80,10 +84,10 @@ var admin = {
     });
   },
 
-  addProp : function(elem, holder) {
+  addProp : function(elem, holder, key, val) {
     $(elem).click(function(event) {
       var div = $("<div class='row'></div>");
-      div.append("<input type='text' name='pkey'/><input type='text' name='pval'/>");
+      div.append("<input type='text' name='" + key + "'/><input type='text' name='" + val + "'/>");
 
       var remove = $("<img class='clickable' src='/static/images/minus.png'/>");
       remove.click(function(e) {
@@ -97,6 +101,23 @@ var admin = {
 
     });
   },
+  
+  addText : function(elem, holder, key) {
+	    $(elem).click(function(event) {
+	      var div = $("<div class='row'></div>");
+	      div.append("<input type='text' name='" + key + "'/>");
+	      var remove = $("<img class='clickable' src='/static/images/minus.png'/>");
+	      remove.click(function(e) {
+	        div.remove();
+	        return false;
+	      });
+
+	      div.append(remove);
+	      $(holder).append(div);
+	      return false;
+
+	    });
+	  },
 
   deleteProduct : function(id) {
     $.ajax({
@@ -179,12 +200,18 @@ var admin = {
       return false;
     });
     $('#edit_product_tab').tabify();
-    $("#edit_specs .row img").click(function(e) {
+    $("#edit_specs .row img, #prop_edit_custom_fields .row img").click(function(e) {
       var row = $(this).parent();
       row.remove();
       return false;
     });
-    admin.addProp("#edit_add_prop", "#edit_prop_fields");
+    
+    
+    admin.addProp("#edit_add_prop", "#edit_prop_fields", "pkey", "pval");
+    admin.addText("#add_edit_custom_text", "#prop_edit_custom_fields", "customtext");
+    admin.addProp("#add_edit_custom_prop", "#prop_edit_custom_fields", "customkey", "customval");
+
+    
     admin.toggleDescription("edit");
   },
 
@@ -194,8 +221,8 @@ var admin = {
         message : $("#product_create_dialog"),
         css : {
           top : '70px',
-          left : ($(window).width() - 550) / 2 + 'px',
-          width : '550px',
+          left : ($(window).width() - 580) / 2 + 'px',
+          width : '580px',
           border : 'none',
           cursor : null
         },

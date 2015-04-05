@@ -120,6 +120,11 @@
    "text" : "Campul '%s' este obligatoriu"
  },
  {
+   "code" : "121",
+   "name" : "field.incorrect",
+   "text" : "Campul '%s' este incorect"
+ },
+ {
    "code" : "122",
    "name" : "cnp",
    "text" : "CNP"
@@ -558,6 +563,22 @@
    "code" : "208",
    "name" : "order.comments",
    "text" : "Comentarii"
+ },
+ {
+   "code" : "208",
+   "name" : "customize",
+   "text" : "Personalizare"
+ },
+ {
+   "code" : "208",
+   "name" : "add.options",
+   "text" : "Adauga optiuni"
+ },
+ {
+   "code" : "208",
+   "name" : "add.text",
+   "text" : "Adauga camp text"
  }
  
 ]
+
