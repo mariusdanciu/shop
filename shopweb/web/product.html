@@ -28,7 +28,16 @@
       <div id="pleft">
         <div data-snip="images">
           <div id="detail_box">
-            <b:img />
+            <b:img id="sel_img"></b:img>
+            <span id="gallery_left" class="left clickable"> <img src="/static/images/left.png" />
+            </span>
+            <div id="gallery">
+              <ul>
+                <li id="thumb"><a href="#"></a></li>
+              </ul>
+            </div>
+            <span id="gallery_right" class="left clickable"> <img src="/static/images/right.png" />
+            </span>
           </div>
         </div>
       </div>
@@ -52,7 +61,7 @@
             <ul id="product_details_tab">
               <li class="active"><a href="#prod_desc" data-loc="description"></a></li>
               <li><a href="#prod_specs" data-loc="specs"></a></li>
-               <li><a href="#prod_customize" data-loc="customize"></a></li>
+              <li><a href="#prod_customize" data-loc="customize"></a></li>
             </ul>
           </div>
           <div class="tab_continue"></div>

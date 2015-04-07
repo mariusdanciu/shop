@@ -346,18 +346,18 @@ a:active {
 }
 
 #pleft {
-	width: 360px;
+	width: 390px;
 	float: left;
 }
 
 #pright {
-	width: 910px;
+	width: 870px;
 	float: left;
 	margin-left: 20px;
 }
 
 .quickview #pright {
-	width: 700px;
+	width: 670px;
 }
 
 #product_title {
@@ -718,7 +718,7 @@ h1 {
 
 #gallery ul {
 	width: 4000px;
-	transition: transform 0.5s ease-in-out;
+	transition: transform 0.3s ease-in-out;
 }
 
 #gallery ul li {
@@ -1264,4 +1264,8 @@ h1 {
 	height: 35px;
 	cursor: pointer;
 	background: #fff;
+}
+
+#sel_img {
+	margin-left: 37px;
 }

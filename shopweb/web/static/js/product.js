@@ -1,8 +1,27 @@
 (function() {
   $(function() {
-
+	var galleryOffset = 0;
+    var total = $("#gallery ul li").length;
+    if (total > 3) {
+        $('#gallery_right').click(function() {
+    	  if (galleryOffset * -4 < total * 100) {
+    		  galleryOffset -= 100;
+    	  }
+    	  $("#gallery ul").css({"transform" : "translate(" + galleryOffset + "px, 0px)"});
+    	  return false;
+        });
+      
+        $('#gallery_left').click(function() {
+    	  if (galleryOffset * 4 < 0) {
+    		  galleryOffset += 100;
+    	  }
+    	  $("#gallery ul").css({"transform" : "translate(" + galleryOffset + "px, 0px)"});
+       return false;
+      });
+    }  
+	  
     $('#product_details_tab').tabify();
-
+    
     $(".close_item_order_dialog").click(function(event) {
         common.closeDialog();
         return false;
