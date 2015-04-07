@@ -26,11 +26,13 @@ object CartItemNode extends DynamicContent[CartState] {
     s =>
       bind(s.node) {
         case HasClass("thumb", a) =>
-          val title = ("" /: s.state.initialState.item.userOptions){(a, e) => a + e._1 + "  :  " + e._2 + "\n"}
-          node("img", (a.attrs + ("src" -> imagePath("thumb", s.state.initialState.prod)) + ("title" -> title)))
+          val title = ("" /: s.state.initialState.item.userOptions) { (a, e) => a + e._1 + " : " + e._2 + "\n" }
+          <a href={s"/product?pid=${s.state.initialState.prod.stringId}"}>{
+            node("img", ((a.attrs - "class") + ("src" -> imagePath("thumb", s.state.initialState.prod)) + ("title" -> title)))
+          }</a>
         case HasClass("cart_title", a) => <span>{ s.state.initialState.prod.title_?(s.state.lang.name) }</span> % a
-        case "input" attributes a / _  => (<input id={ "q_" + s.state.initialState.prod.stringId }/> % a attr ("value", s.state.initialState.item.count toString)) e
-        case "a" attributes a / childs => <a id={ "del_" + s.state.initialState.prod.stringId } href="#">{ childs }</a> % a
+        case "input" attributes a / _  => (<input/> % a attr ("value", s.state.initialState.item.count toString)) e
+        case "a" attributes a / childs => <a id={ "del_" + s.state.initialState.index } href="#">{ childs }</a> % a
         case "img" attributes a / _    => <img/> % a e
         case "span" attributes a / _ if a.hasClass("cart_price") => <span>{
           s.state.initialState.prod.discountPrice.map { price } getOrElse price(s.state.initialState.prod.price)
@@ -40,5 +42,5 @@ object CartItemNode extends DynamicContent[CartState] {
 
 }
 
-case class CartState(item: CartItem, prod: ProductDetail)
+case class CartState(index: Int, item: CartItem, prod: ProductDetail)
 

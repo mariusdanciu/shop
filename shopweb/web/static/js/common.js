@@ -405,10 +405,10 @@ var cart = {
 			var num = $(this).find("input").val();
 			var price = $(this).find(".cart_price").text();
 			total += num * price;
-			if (add) {
-				total += add;
-			}
 		});
+		if (add) {
+			total += add;
+		}
 
 		return parseFloat(total).toFixed(2);
 	},
@@ -441,7 +441,7 @@ var cart = {
 				userOpts = {};
 			}
 			
-			if (!found) {
+			if (!found || JSON.stringify(found.userOptions) !== JSON.stringify(userOpts)) {
 				cart.items.push( {
 					id : id,
 					userOptions: userOpts,
@@ -461,10 +461,9 @@ var cart = {
 			}));
 		}
 
-		console.log(cart);
 	},
 
-	setItemCount : function(id, count) {
+	setItemCount : function(pos, count) {
 		var c = $.cookie("cart");
 		if (c) {
 			if (count === "")
@@ -473,7 +472,7 @@ var cart = {
 			var cart = $.parseJSON(c);
 			var a = cart.items;
 			for (i in a) {
-				if (a[i].id === id) {
+				if (i == pos) {
 					a[i].count = parseInt(count);
 				}
 			}
@@ -483,14 +482,14 @@ var cart = {
 		}
 	},
 
-	removeItem : function(id) {
+	removeItem : function(pos) {
 		var c = $.cookie("cart");
 		if (c) {
 			var cart = $.parseJSON(c);
 			var a = cart.items;
 			var na = [];
 			for (i in a) {
-				if (a[i].id != id) {
+				if (i != pos) {
 					na.push(a[i])
 				}
 			}
@@ -536,20 +535,19 @@ var cart = {
 				$('#cart_footer').show();
 
 				$(".cart_item ul li input").each(function(index) {
-					var me = $(this);
-					var id = me.attr("id").substring(2);
-
-					$('#q_' + id).on("keyup change", function(e) {
-						window.cart.setItemCount(id, $(this).val());
+					
+					$(this).on("keyup change", function(e) {
+						window.cart.setItemCount(index, $(this).val());
 						e.preventDefault();
+						return false;
 					});
 				});
 
 				$(".del_cart_item a").each(function(index) {
 					var me = $(this);
-					var id = me.attr("id").substring(4);
+					var pos = me.attr("id").substring(4);
 					me.click(function(e) {
-						window.cart.removeItem(id);
+						window.cart.removeItem(pos);
 						e.preventDefault();
 						return false;
 					});
@@ -572,7 +570,6 @@ var cart = {
 	updateSubmitText : function(suffix) {
 		var tr = $("#transport_" + suffix).val();
 		var transport = 19.99;
-		console.log(tr);
 		if (tr == "2") {
 			transport = 9.99;
 		}

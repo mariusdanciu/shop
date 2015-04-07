@@ -88,35 +88,26 @@ object ProductDetailPage extends Cart[ProductPageState] {
     s =>
       (s.state.initialState.product flatMap { prod =>
         bind(s.node) {
-          case "b:img" attributes _ =>
-            prod.images match {
-              case Nil =>
-                <img id="sel_img" src={ noImage } title={ prod.title_?(s.state.lang.name) } data-zoom-image={ noImage }></img> ++
-                  <div id="gallery">
-                    <a href="#" data-image={ noImage } data-zoom-image={ noImage }>
-                      <img id="img_1" src={ noImage }/>
-                    </a>
-                  </div>
-              case images =>
-                val list = NodeSeq.fromSeq(for {
-                  p <- images zipWithIndex
-                } yield {
-                  val normal = imagePath(prod.stringId, "normal", p._1)
-                  val large = imagePath(prod.stringId, "large", p._1)
-                  val thumb = imagePath(prod.stringId, "thumb", p._1)
-                  <a href="#" data-image={ normal } data-zoom-image={ large }>
-                    <img id={ s"img_${p._2}" } src={ thumb }/>
-                  </a>
-                })
 
-                val path = imagePath(prod.stringId, "normal", images.head)
-                val large = imagePath(prod.stringId, "large", images.head)
+          case "b:img" attributes a =>
 
-                <img id="sel_img" src={ path } title={ prod.title_?(s.state.lang.name) } data-zoom-image={ large }></img> ++
-                  <div id="gallery">
-                    { list }
-                  </div>
-            }
+            val p = if (prod.images.isEmpty) noImage else imagePath(prod.stringId, "normal", prod.images.head)
+            val large = if (prod.images.isEmpty) noImage else imagePath(prod.stringId, "large", prod.images.head)
+
+            node("img", a.attrs.attrs + ("src" -> p) + ("title" -> prod.title_?(s.state.lang.name)) + ("data-zoom-image" -> large))
+
+          case e attributes HasId("thumb", a) =>
+            NodeSeq.fromSeq(for {
+              p <- prod.images zipWithIndex
+            } yield {
+              val normal = imagePath(prod.stringId, "normal", p._1)
+              val large = imagePath(prod.stringId, "large", p._1)
+              val thumb = imagePath(prod.stringId, "thumb", p._1)
+              (node(e, a.attrs - "id") / <a href="#" data-image={ normal } data-zoom-image={ large }>
+                                           <img id={ s"img_${p._2}" } src={ thumb }/>
+                                         </a>).e
+            })
+
         } map { b => (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), b) }
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
@@ -277,7 +268,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
               node("input", attrs.attrs + ("value" -> t))
           } getOrElse NodeSeq.Empty
         }
-    }  getOrElse NodeSeq.Empty
+    } getOrElse NodeSeq.Empty
   }
 }
 

@@ -30,7 +30,7 @@ import net.shift.common.NodeOps._
 import net.shift.engine.page.Html5
 import net.shift.common.Path
 
-object ProductsPage extends Cart[Request]  {
+object ProductsPage extends Cart[Request] {
 
   override def snippets = List(item, catList, prodListTemplate) ++ cartSnips
 
@@ -60,9 +60,13 @@ object ProductsPage extends Cart[Request]  {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
-                case "li" attributes HasClass("item", a) / childs            => <li>{ childs }</li>
-                case "div" attributes HasClass("item_box", a) / childs       => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
-                case "div" attributes HasClass("info_tag_text", a) / childs  => <div>{ prod title_? (s.state.lang.name) }</div> % a
+                case "li" attributes HasClass("item", a) / childs           => <li>{ childs }</li>
+                case "div" attributes HasClass("item_box", a) / childs      => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
+                case "div" attributes HasClass("info_tag_text", a) / childs => <div>{ prod title_? (s.state.lang.name) }</div> % a
+                case "div" attributes HasClass("info_tag_cart", a) / childs => if (prod.options.isEmpty && prod.userText.isEmpty)
+                  node("div", a.attrs) / childs
+                else
+                  NodeSeq.Empty
                 case "div" attributes HasClass("info_tag_price", a) / childs => priceTag(prod) % a
                 case "div" attributes HasId("unique_ribbon", a) / childs => if (prod.unique)
                   <div class="unique_label" data-loc="unique"></div>

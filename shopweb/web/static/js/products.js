@@ -2,6 +2,8 @@
   $(function() {
 
     $.blockUI.defaults.baseZ = 90;
+    
+    window.galleryOffset = 0;
 
     products.refreshList();
 
@@ -127,6 +129,25 @@ var products = {
                 return false;
               });
 
+              var total = $("#gallery ul li").length;
+              if (total > 3) {
+                $('#gallery_right').click(function() {
+            	  if (window.galleryOffset * -4 < total * 100) {
+            		  window.galleryOffset -= 100;
+            	  }
+            	  $("#gallery ul").css({"transform" : "translate(" + window.galleryOffset + "px, 0px)"});
+            	  return false;
+                });
+              
+                $('#gallery_left').click(function() {
+            	  if (window.galleryOffset * 4 < 0) {
+            		  window.galleryOffset += 100;
+            	  }
+            	  $("#gallery ul").css({"transform" : "translate(" + window.galleryOffset + "px, 0px)"});
+            	  return false;
+                });
+              }
+              
               $.blockUI({
                 message : $("#product_dialog"),
                 css : {

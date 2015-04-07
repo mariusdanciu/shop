@@ -1,7 +1,7 @@
 <html data-template="common">
 <head>
 <script type="text/javascript" src="/static/js/blockui.js"></script>
-<script type="text/javascript" src="/static/js/admin.js"></script>
+<script type="text/javascript" src="/static/js/admin.js" data-permissions="write"></script>
 <script type="text/javascript" src="/static/js/categories.js"></script>
 </head>
 
@@ -10,8 +10,7 @@
     <div id="item_list">
       <ul>
         <li data-permissions="write">
-          <div class="cat_box cat_add_item">
-          </div>
+          <div class="cat_box cat_add_item"></div>
         </li>
         <li data-snip="item">
           <div class="cat_box">
@@ -76,7 +75,7 @@
                 <div class="row">
                   <label for="title" data-loc="title"></label><input id="title" type="text" name="title" />
                 </div>
-                 <div class="row">
+                <div class="row">
                   <label for="pos" data-loc="list.pos"></label><input id="pos" type="text" name="pos" />
                 </div>
                 <div class="row">
