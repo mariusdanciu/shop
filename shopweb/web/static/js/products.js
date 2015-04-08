@@ -22,6 +22,15 @@
       return false;
     });
 
+    $("#item_list").load(products.normUrl("/products", $(this).val()), function(response, status, xhr) {
+        if (status === "error") {
+          common.showError(xhr.statusText);
+        } else {
+          products.refreshList();
+          $("#item_list").fadeIn({duration: 2000});
+        }
+      });
+    
   });
 
 })();

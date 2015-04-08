@@ -219,6 +219,7 @@ a:active {
 #item_list {
 	float: left;
 	width: 100%;
+	display: none;
 }
 
 #item_list ul { #

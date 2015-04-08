@@ -2,7 +2,7 @@
   $(function() {
     $.blockUI.defaults.baseZ = 90;
 
-    categories.refreshList();
+    categories.reloadCategories();
 
   });
 
@@ -54,6 +54,7 @@ var categories = {
         common.showError(xhr.statusText);
       } else {
         categories.refreshList();
+        $("#item_list").fadeIn({duration: 2000});
       }
     });
   }
