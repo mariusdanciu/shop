@@ -26,12 +26,12 @@
         </div>
         <div class="header_symbol">
           <ul>
-            <li id="logout" data-permissions="read"><a href="#"><img src="/static/images/logout.png" /></a></li>
+            <li id="logout" data-permissions="read"><a href="#"><span class="sprite sprite-logout" /></a></li>
             <li id="current_user"><span data-snip="user"></span></li>
-            <li id="user_symbol"><a href="#"><img src="/static/images/user.png" /></a></li>
-            <li id="cart_symbol"><a href="#"><img src="/static/images/cart_black.png" /></a></li>
-            <li id="settings_symbol" data-permissions="read"><a href="/accountsettings"><img src="/static/images/settings.png" /></a></li>
-            <li id="search" class="top_items"><input id="search_text" type="text" placeholder="loc:search" /></li>
+            <li id="user_symbol"><a href="#"><span class="sprite sprite-user" /></a></li>
+            <li id="cart_symbol"><a href="#"><span class="sprite sprite-cart_black /static/images/cart_black.png" /></a></li>
+            <li id="settings_symbol" data-permissions="read"><a href="/accountsettings"><span class="sprite sprite-settings" /></a></li>
+            <li id="search" class="top_items"><input id="search_text" class="sprite sprite-search" type="text" placeholder="loc:search" /></li>
 
           </ul>
         </div>
@@ -94,11 +94,11 @@
   <div id="newuser_popup">
     <div class="title_dialog" data-loc="new.user"></div>
     <div class="close_dialog">
-      <img src="/static/images/close.png" />
+      <span class="sprite sprite-close" />
     </div>
     <div class="content_dialog">
       <div class="column">
-        <img src="/static/images/useradd.png" />
+        <span class="sprite sprite-useradd" />
       </div>
       <div class="column userinputs">
         <form action="/create/user" id="newuser_form" method="POST">

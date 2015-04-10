@@ -103,7 +103,7 @@ case object OrderCanceled extends OrderStatus {
   def index = -1
 }
 
-case class Transport(name: String, price: Float)
+case class Transport(name: String, price: Double)
 
 case class OrderLog(id: String,
                     time: Date,

@@ -14,7 +14,7 @@
   <div id="content" class="center page">
 
     <div class="navigation">
-      <a href="/"><img src="/static/images/home.png"/></a><span> | </span> <span data-loc="sort"></span> <select id="sortSelect" data-placeholder="...">
+      <a href="/"><span class="sprite sprite-home home"/></a><span> | </span> <span data-loc="sort"></span> <select id="sortSelect" data-placeholder="...">
         <option value=""></option>
         <option value="bynameasc" data-loc="sort.by.name.asc"></option>
         <option value="bynamedesc" data-loc="sort.by.name.desc"></option>
@@ -29,7 +29,7 @@
       <div class="product_content quickview">
         <div class="title_dialog" data-loc="new.product"></div>
         <div class="close_product_dialog">
-          <img src="/static/images/close.png" />
+          <span class="sprite sprite-close" />
         </div>
         <div class="content_dialog">
 
@@ -65,7 +65,7 @@
                   <div class="row">
                     <label for="create_stock" data-loc="stock"></label> <input id="create_stock" type="text" name="create__stock" />
                   </div>
-                  <div class="row">
+                  <div class="row unique_prod">
                     <input id="create_unique" type="checkbox" name="create_unique" /> <label for="create_unique" data-loc="unique.product"></label>
                   </div>
 
@@ -75,7 +75,7 @@
               <div id="create_specs" class="form_specs tab_content">
                 <div>
                   <div class="specs_title" data-loc="add.specs"></div>
-                  <img id="add_prop" class="clickable" src="/static/images/plus.png" />
+                  <span id="add_prop" class="clickable sprite sprite-plus" />
                 </div>
                 <div id="prop_fields" class="row"></div>
               </div>
@@ -83,10 +83,10 @@
               <div id="create_customize" class="form_specs tab_content">
                 <ul>
                   <li>
-                    <div class="specs_title" data-loc="add.options"></div> <img id="add_custom_prop" class="clickable" src="/static/images/plus.png" />
+                    <div class="specs_title" data-loc="add.options"></div> <span id="add_custom_prop" class="clickable sprite sprite-plus"/>
                   </li>
                   <li>
-                    <div class="specs_title" data-loc="add.text"></div> <img id="add_custom_text" class="clickable" src="/static/images/plus.png" />
+                    <div class="specs_title" data-loc="add.text"></div> <span id="add_custom_text" class="clickable sprite sprite-plus"/>
                   </li>
                 </ul>
                 <div id="prop_custom_fields" class="row"></div>

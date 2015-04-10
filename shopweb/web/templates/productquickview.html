@@ -7,7 +7,7 @@
   </div>
 
   <div class="close_product_dialog">
-    <img src="/static/images/close.png" />
+    <span class="sprite sprite-close" />
   </div>
   <div class="content_dialog">
     <div id="pleft">
@@ -15,14 +15,14 @@
         <div id="detail_box">
           <b:img id="sel_img"></b:img>
           <div>
-            <span id="gallery_left" class="left clickable"> <img src="/static/images/left.png" />
+            <span id="gallery_left" class="left clickable"> <span class="sprite sprite-left" />
             </span>
             <div id="gallery">
               <ul>
                 <li id="thumb"><a href="#"></a></li>
               </ul>
             </div>
-            <span id="gallery_right" class="left clickable"> <img src="/static/images/right.png" />
+            <span id="gallery_right" class="left clickable"> <span class="sprite sprite-right" />
             </span>
           </div>
         </div>
@@ -36,7 +36,7 @@
             <a href="#"><img src="/static/images/facebook.png" /></a>
           </div>
           <div id="add_to_cart_box">
-            <a id="add_to_cart" href="#"><img src="/static/images/cart_black.png" /></a>
+            <a id="add_to_cart" href="#"><span class="sprite sprite-cart_black" /></a>
           </div>
           <div class="detailPrice">
             <span data-snip="detailPrice"></span>
@@ -116,7 +116,7 @@
                     <div class="row">
                       <label for="edit_stock" data-loc="stock"></label> <input id="edit_stock" type="text" name="edit_stock" />
                     </div>
-                    <div class="row">
+                    <div class="row unique_prod">
                       <input id="edit_unique" type="checkbox" name="edit_unique" /> <label for="edit_unique" data-loc="unique.product"></label>
                     </div>
                   </div>
@@ -131,11 +131,11 @@
               <div id="edit_specs" class="form_specs tab_content">
                 <div>
                   <div class="specs_title" data-loc="add.specs"></div>
-                  <img id="edit_add_prop" class="clickable" src="/static/images/plus.png" />
+                  <span id="edit_add_prop" class="clickable sprite sprite-plus" />
                 </div>
                 <div id="edit_prop_fields" class="row">
                   <div class="edit_props_sample">
-                    <input type='text' name='pkey' /> <input type='text' name='pval' /> <img class='clickable' src='/static/images/minus.png' />
+                    <input type='text' name='pkey' /> <input type='text' name='pval' /> <span class='clickable sprite sprite-minus top5' />
                   </div>
                 </div>
               </div>
@@ -154,24 +154,22 @@
               <div id="edit_customize" class="form_specs tab_content">
                 <ul>
                   <li>
-                    <div class="specs_title" data-loc="add.options"></div> <img id="add_edit_custom_prop" class="clickable"
-                    src="/static/images/plus.png" />
+                    <div class="specs_title" data-loc="add.options"></div> <span id="add_edit_custom_prop" class="clickable sprite sprite-plus" />
                   </li>
                   <li>
-                    <div class="specs_title" data-loc="add.text"></div> <img id="add_edit_custom_text" class="clickable" src="/static/images/plus.png" />
+                    <div class="specs_title" data-loc="add.text"></div> <span id="add_edit_custom_text" class="clickable sprite sprite-plus" />
                   </li>
                 </ul>
                 <div id="prop_edit_custom_fields" class="row">
                   <div class="edit_user_options">
                     <div class="edit_custom_options_sample">
                       <div class='row'>
-                        <input type='text' name='customkey' /> <input type='text' name='customval' /> <img class='clickable'
-                          src='/static/images/minus.png' />
+                        <input type='text' name='customkey' /> <input type='text' name='customval' /> <span class='clickable sprite sprite-minus top5' />
                       </div>
                     </div>
                     <div class="edit_custom_text_sample">
                       <div class='row'>
-                        <input type='text' name='customtext' /> <img class='clickable' src='/static/images/minus.png' />
+                        <input type='text' name='customtext' /> <span class='clickable sprite sprite-minus top5' />
                       </div>
                     </div>
                   </div>

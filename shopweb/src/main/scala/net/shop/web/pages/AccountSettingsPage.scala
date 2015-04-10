@@ -42,8 +42,7 @@ import net.shift.loc.Language
 import net.shift.template.HasValue
 import ShopUtils._
 
-
-object AccountSettingsPage extends Cart[SettingsPageState]  with IODefaults { self =>
+object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { self =>
 
   val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy - hh:mm")
 
@@ -138,6 +137,7 @@ object AccountSettingsPage extends Cart[SettingsPageState]  with IODefaults { se
               orders <- ShopApplication.persistence.ordersByEmail(u.email)
             } yield {
 
+              
               val v = orders.flatMap { o =>
 
                 (bind(s.node.head.child) {
@@ -159,7 +159,10 @@ object AccountSettingsPage extends Cart[SettingsPageState]  with IODefaults { se
                       }</tr>
                     }
 
-                  case HasClass("total", a) => Text(price((0.0 /: o.items)((acc, e) => acc + e.price * e.quantity)))
+                  case HasClass("transport", a) => 
+                    Text(o.transport.name)
+
+                  case HasClass("total", a) => Text(price(((0.0 /: o.items)((acc, e) => acc + e.price * e.quantity)) + o.transport.price))
 
                   case HasClass("status", a) =>
                     val e = for {
@@ -217,7 +220,7 @@ object AccountSettingsPage extends Cart[SettingsPageState]  with IODefaults { se
 
 case class SettingsPageState(req: Request, user: Option[UserDetail])
 
-object AddressPage extends DynamicContent[Address]  with Selectors { self =>
+object AddressPage extends DynamicContent[Address] with Selectors { self =>
   override def snippets = List(addr)
 
   val addr = snip[Address]("addr") {

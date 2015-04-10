@@ -6,7 +6,9 @@
 
 <body>
   <div id="content" class="center page">
-
+    <div>
+      <a href="/"><span class="sprite sprite-home home" /></a>
+    </div>
     <div class="tab_select">
       <ul id="settings_tab" class="create_product_tab">
         <li class="active"><a href="#account" data-loc="my.account"></a></li>
@@ -26,8 +28,7 @@
               <div class="accordion_content">
                 <div class="fields">
                   <div class="row">
-                    <label for="update_firstName" data-loc="first.name"></label> <input id="update_firstName" type="text"
-                      name="update_firstName" />
+                    <label for="update_firstName" data-loc="first.name"></label> <input id="update_firstName" type="text" name="update_firstName" />
                   </div>
                   <div class="row">
                     <label for="update_lastName" data-loc="last.name"></label><input id="update_lastName" type="text" name="update_lastName" />
@@ -53,8 +54,7 @@
                     <label for="update_cif" data-loc="company.cif"></label><input id="update_cif" name="update_cif" type="text" />
                   </div>
                   <div class="row">
-                    <label for="update_cregcom" data-loc="company.reg.com"></label><input id="update_cregcom" name="update_cregcom"
-                      type="text" />
+                    <label for="update_cregcom" data-loc="company.reg.com"></label><input id="update_cregcom" name="update_cregcom" type="text" />
                   </div>
                   <div class="row">
                     <label for="update_cbank" data-loc="company.bank"></label><input id="update_cbank" name="update_cbank" type="text" />
@@ -70,8 +70,7 @@
               </div>
               <div class="fields paddingtop20 bordertop">
                 <div class="row">
-                  <label for="update_password" data-loc="password"></label><input id="update_password" type="password"
-                    name="update_password" />
+                  <label for="update_password" data-loc="password"></label><input id="update_password" type="password" name="update_password" />
                 </div>
                 <div class="row">
                   <label for="update_password2" data-loc="retype.password"></label><input id="update_password2" type="password"
@@ -110,8 +109,7 @@
       <div class="row_simple top20">
         <label for="username" data-loc="email"></label> <input id="search_orders" type="text" name="username" />
       </div>
-      <div id="orders_result" class="row_simple top20">
-      </div>
+      <div id="orders_result" class="row top20"></div>
     </div>
 
     <div data-snip="address_template"></div>

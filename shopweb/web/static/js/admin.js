@@ -88,7 +88,7 @@ var admin = {
             var div = $("<div class='row'></div>");
             div.append("<input type='text' name='" + key + "'/><input type='text' name='" + val + "'/>");
 
-            var remove = $("<img class='clickable' src='/static/images/minus.png'/>");
+            var remove = $("<span class='clickable sprite sprite-minus top5'/>");
             remove.click(function(e) {
                 div.remove();
                 return false;
@@ -105,7 +105,7 @@ var admin = {
         $(elem).click(function(event) {
             var div = $("<div class='row'></div>");
             div.append("<input type='text' name='" + key + "'/>");
-            var remove = $("<img class='clickable' src='/static/images/minus.png'/>");
+            var remove = $("<span class='clickable sprite sprite-minus top5'/>");
             remove.click(function(e) {
                 div.remove();
                 return false;
@@ -199,7 +199,7 @@ var admin = {
             return false;
         });
         $('#edit_product_tab').tabify();
-        $("#edit_specs .row img, #prop_edit_custom_fields .row img").click(function(e) {
+        $("#edit_specs .row span, #prop_edit_custom_fields .row span").click(function(e) {
             var row = $(this).parent();
             row.remove();
             return false;

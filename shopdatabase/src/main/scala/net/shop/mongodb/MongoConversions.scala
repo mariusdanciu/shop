@@ -118,8 +118,8 @@ trait MongoConversions {
 
   def mongoToTransport(obj: DBObject): Transport =
     Transport(
-      name = obj.getAsOrElse[String]("email", ""),
-      price = obj.getAsOrElse[Float]("price", 0.0f))
+      name = obj.getAsOrElse[String]("name", ""),
+      price = obj.getAsOrElse[Double]("price", 0.0))
 
   def productToMongo(obj: ProductDetail): MongoDBObject = {
     val db = MongoDBObject.newBuilder

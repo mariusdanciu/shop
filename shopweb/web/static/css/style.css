@@ -75,17 +75,37 @@ input[type=checkbox] {
 }
 
 input[type="checkbox"]+label {
-	background: url('/static/images/unchecked_checkbox.png') no-repeat;
-	height: 26px;
-	padding-right: 35px;
-	background-position: right;
+	background-image: url('/static/images/spritesheet.png');
+    background-repeat: no-repeat;
+    width: 350px;
+    height: 26px;
+    background-position: 310px -819px;
 }
 
 input[type="checkbox"]:checked+label {
-	background: url('/static/images/checked_checkbox.png') no-repeat;
-	height: 26px;
-	background-position: right;
+    background-image: url('/static/images/spritesheet.png');
+    background-repeat: no-repeat;	
+    width: 350px;
+    height: 26px;
+    background-position: 310px -297px;
 }
+
+.unique_prod input[type="checkbox"]+label {
+	background-image: url('/static/images/spritesheet.png');
+    background-repeat: no-repeat;
+    width: 150px;
+    height: 26px;
+    background-position: 95px -823px;
+}
+
+.unique_prod input[type="checkbox"]:checked+label {
+    background-image: url('/static/images/spritesheet.png');
+    background-repeat: no-repeat;	
+    width: 150px;
+    height: 26px;
+    background-position: 95px -301px;
+}
+
 
 label:hover {
 	cursor: pointer;
@@ -161,6 +181,7 @@ a:active {
 .page {
 	position: relative;
 	padding-top: 70px;
+	padding-bottom: 120px;
 }
 
 .wrap {
@@ -585,10 +606,10 @@ h1 {
 .upload_form_fields input, .select_row select, #order input {
 	width: 250px;
 	margin-right: 5px;
+	float: left;
 }
 
 #upload_form label, #order form label {
-	text-align: right;
 	position: relative;
 }
 
@@ -598,9 +619,9 @@ h1 {
 	overflow: auto;
 }
 
-#order input, .fields input, .fields span, .upload_form_fields .fields select
-	{
+#order input, .fields input, .fields span, .upload_form_fields .fields select {
 	float: right;
+	margin-left: 10px;
 }
 
 .fields span {
@@ -650,7 +671,8 @@ h1 {
 }
 
 #edit_fields select {
-	height: 222px;
+	height: 219px;
+	width: 160px;
 }
 
 .upload_form_fields {
@@ -749,8 +771,6 @@ h1 {
 	height: 32px;
 	color: #000000;
 	font-size: 20px;
-	background-image: url("/static/images/search.png");
-	background-repeat: no-repeat;
 	text-indent: 32px;
 }
 
@@ -941,12 +961,16 @@ h1 {
 	margin-right: 7px;
 }
 
-.add_item {
-	background: url('/static/images/add-item.png') no-repeat center;
+.add_item div {
+	position: relative;
+	top: 148px;
+	left: 92px;
 }
 
-.cat_add_item {
-	background: url('/static/images/add-item-small.png') no-repeat center;
+.cat_add_item div {
+	position: relative;
+	top: 74px;
+	left: 46px;
 }
 
 .create_product_tab, #product_details_tab {
@@ -1052,19 +1076,23 @@ h1 {
 .auth a {
 	display: inline-block;
 	padding-top: 10px;
+	padding-bottom: 10px;
 	padding-right: 10px;
 }
 
 .top5 {
-	margin-top: 5px;
+	top: 5px;
+	position: relative;
 }
 
 .top10 {
-	margin-top: 10px;
+	top: 10px;
+	position: relative;
 }
 
 .top20 {
-	margin-top: 20px;
+	top: 20px;
+    position: relative;
 }
 
 .paddingtop10 {
@@ -1269,4 +1297,129 @@ h1 {
 
 #sel_img {
 	margin-left: 37px;
+}
+
+.home {
+	position: relative;
+	top: 0px;
+}
+
+.sprite {
+    background-image: url('/static/images/spritesheet.png');
+    background-repeat: no-repeat;
+    display: inline-block;
+}
+
+.sprite-add {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -5px;
+}
+
+.sprite-add-item {
+    width: 128px;
+    height: 128px;
+    background-position: -5px -47px;
+}
+
+.sprite-add-item-small {
+    width: 64px;
+    height: 64px;
+    background-position: -5px -185px;
+}
+
+.sprite-cart_black {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -259px;
+}
+
+.sprite-checked_checkbox {
+    width: 26px;
+    height: 26px;
+    background-position: -5px -301px;
+}
+
+.sprite-close {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -337px;
+}
+
+.sprite-edit {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -379px;
+}
+
+.sprite-exclamation {
+    width: 64px;
+    height: 64px;
+    background-position: -5px -421px;
+}
+
+.sprite-home {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -495px;
+}
+
+.sprite-left {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -537px;
+}
+
+.sprite-logout {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -579px;
+}
+
+.sprite-minus {
+    width: 24px;
+    height: 24px;
+    background-position: -5px -621px;
+}
+
+.sprite-plus {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -655px;
+}
+
+.sprite-right {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -697px;
+}
+
+.sprite-search {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -739px;
+}
+
+.sprite-settings {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -781px;
+}
+
+.sprite-unchecked_checkbox {
+    width: 26px;
+    height: 26px;
+    background-position: -5px -823px;
+}
+
+.sprite-user {
+    width: 32px;
+    height: 32px;
+    background-position: -5px -859px;
+}
+
+.sprite-useradd {
+    width: 128px;
+    height: 128px;
+    background-position: -5px -901px;
 }

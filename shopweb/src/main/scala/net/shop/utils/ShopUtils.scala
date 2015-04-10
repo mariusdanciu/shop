@@ -21,7 +21,7 @@ object ShopUtils {
       case Nil    => "/static/images/noimage.png"
     }
 
-  def errorTag(text: String) = <div class="error"><div><img src="/static/images/exclamation.png"/></div><span>{ text }</span></div>
+  def errorTag(text: String) = <div class="error"><div><span class="sprite sprite-exclamation"/></div><span>{ text }</span></div>
 
   def uuid = ("" /: Range.apply(0, 7))((acc, v) => acc + random.nextInt(9))
 
