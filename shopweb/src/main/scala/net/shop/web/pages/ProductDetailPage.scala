@@ -22,10 +22,9 @@ import net.shift.loc.Language
 import net.shift.common.ShiftFailure
 import net.shift.security.User
 import net.shift.common.Config
+import net.shop.api.ShopError
 
 object ProductDetailPage extends Cart[ProductPageState] {
-
-  val noImage = "/static/images/noimage.png"
 
   override def snippets = List(meta, catlink, productLink, images, detailPrice, stock, details, specs, customize, edit) ++ super.snippets
 
@@ -45,17 +44,18 @@ object ProductDetailPage extends Cart[ProductPageState] {
               for { n <- fb } yield {
                 (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), n)
               }
+            case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
             case Failure(t) =>
-              Success(s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no_product").text))
+              ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
           }
-          case _ => Success(s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no_product").text))
+          case _ => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
         }
       }
   }
   def pageTitle(s: PageState[ProductPageState]) =
     s.initialState.product match {
       case Success(prod) => prod.title_?(s.lang.name)
-      case Failure(t)    => Loc.loc0(s.lang)("no_product").text
+      case Failure(t)    => ""
     }
 
   val catlink = reqSnip("catlink") {
@@ -87,28 +87,33 @@ object ProductDetailPage extends Cart[ProductPageState] {
   val images = reqSnip("images") {
     s =>
       (s.state.initialState.product flatMap { prod =>
-        bind(s.node) {
+        prod.images match {
+          case Nil => Success(s.state.initialState, NodeSeq.Empty)
+          case images =>
+            bind(s.node) {
 
-          case "b:img" attributes a =>
+              case "b:img" attributes a =>
 
-            val p = if (prod.images.isEmpty) noImage else imagePath(prod.stringId, "normal", prod.images.head)
-            val large = if (prod.images.isEmpty) noImage else imagePath(prod.stringId, "large", prod.images.head)
+                val p = imagePath(prod.stringId, "normal", prod.images.head)
+                val large = imagePath(prod.stringId, "large", prod.images.head)
 
-            node("img", a.attrs.attrs + ("src" -> p) + ("title" -> prod.title_?(s.state.lang.name)) + ("data-zoom-image" -> large))
+                node("img", a.attrs.attrs + ("src" -> p) + ("title" -> prod.title_?(s.state.lang.name)) + ("data-zoom-image" -> large))
 
-          case e attributes HasId("thumb", a) =>
-            NodeSeq.fromSeq(for {
-              p <- prod.images zipWithIndex
-            } yield {
-              val normal = imagePath(prod.stringId, "normal", p._1)
-              val large = imagePath(prod.stringId, "large", p._1)
-              val thumb = imagePath(prod.stringId, "thumb", p._1)
-              (node(e, a.attrs - "id") / <a href="#" data-image={ normal } data-zoom-image={ large }>
-                                           <img id={ s"img_${p._2}" } src={ thumb }/>
-                                         </a>).e
-            })
+              case e attributes HasId("thumb", a) =>
+                NodeSeq.fromSeq(for {
+                  p <- prod.images zipWithIndex
+                } yield {
+                  val normal = imagePath(prod.stringId, "normal", p._1)
+                  val large = imagePath(prod.stringId, "large", p._1)
+                  val thumb = imagePath(prod.stringId, "thumb", p._1)
+                  (node(e, a.attrs - "id") / <a href="#" data-image={ normal } data-zoom-image={ large }>
+                                               <img id={ s"img_${p._2}" } src={ thumb }/>
+                                             </a>).e
+                })
 
-        } map { b => (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), b) }
+            } map { b => (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), b) }
+        }
+
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 

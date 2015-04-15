@@ -126,7 +126,8 @@ object OrderService extends HttpPredicates with FormValidation with TraversingSp
                 }
               }
             case Invalid(msgs) =>
-              respValidationFail(resp, msgs)(r.language.name)
+              implicit val l = r.language
+              respValidationFail(resp, msgs)
           }
 
         case Failure(t) =>
@@ -152,7 +153,7 @@ object OrderService extends HttpPredicates with FormValidation with TraversingSp
 
     import model.Formatters._
 
-    implicit val l = r.language.name
+    implicit val l = r.language
     ShopApplication.persistence.ordersByEmail(email) match {
       case Success(orders) =>
         resp(JsonResponse(Formatter.format(orders.toList)))
@@ -168,7 +169,7 @@ object OrderService extends HttpPredicates with FormValidation with TraversingSp
     id <- param("productid")
   } yield service(resp => {
     import model.Formatters._
-    implicit val l = r.language.name
+    implicit val l = r.language
     ShopApplication.persistence.ordersByProduct(id) match {
       case Success(orders) =>
         resp(JsonResponse(Formatter.format(orders.toList)))

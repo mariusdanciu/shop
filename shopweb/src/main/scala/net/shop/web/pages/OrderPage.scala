@@ -23,6 +23,8 @@ import net.shop.api.Person
 import net.shop.api.Company
 import net.shop.api.Address
 import net.shift.io.IODefaults
+import net.shift.loc.Loc
+import net.shop.api.ShopError
 
 object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaults {
 
@@ -99,6 +101,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
                   case "td" attributes HasClass("c4", a) / _ => <td><ul class="userOptions">{ prod.userOptions.flatMap { o => <li>{ o._1 + " : " + o._2 }</li> } }</ul></td> % a
                 }) match {
                   case Success(n) => acc ++ n
+                  case Failure(ShopError(msg, _)) => acc ++ errorTag(Loc.loc0(s.state.lang)(msg).text)
                   case Failure(f) => acc ++ errorTag(f toString)
                 }
               case Failure(f) => errorTag(f getMessage)

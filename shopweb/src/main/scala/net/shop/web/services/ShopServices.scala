@@ -50,6 +50,7 @@ import net.shift.common.State
 import net.shift.engine.http.Header
 import net.shift.common.Config
 import utils.ShopUtils._
+import net.shop.api.ShopError
 
 trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults {
 
@@ -151,7 +152,9 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     u <- user
   } yield {
     val logout = !r.param("logout").isEmpty
-    Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[T], fs)
+    val p = Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[T], fs)
+    
+    p
   }
 
   def productsVariantImages = for {
@@ -183,6 +186,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
           Html5.runPageFromFile(PageState(CartState(index, item, prod), r.language), Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
         }) match {
           case Success(list) => resp(JsonResponse(write(list)))
+          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
           case Failure(t) =>
             log.error("Failed processing cart ", t)
             resp(JsonResponse(write(Nil)))

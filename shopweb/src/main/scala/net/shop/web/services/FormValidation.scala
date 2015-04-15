@@ -20,6 +20,7 @@ import net.shop.model.FieldError
 import net.shop.model.Formatters.ValidationErrorWriter
 import net.shop.model.ValidationFail
 import net.shop.web.ShopApplication
+import net.shift.io.FileSystem
 
 object FormImplicits extends IODefaults {
   implicit val o = new Ordering[Double] {
@@ -171,12 +172,12 @@ trait FormValidation extends IODefaults {
     case _ => None
   }
 
-  def validationFail(msgs: ValidationFail)(implicit lang: String) =
+  def validationFail(msgs: ValidationFail)(implicit lang: Language, fs: FileSystem) =
     service(r => {
       r(JsonResponse(Formatter.format(msgs)).code(403))
     })
 
-  def respValidationFail(resp: net.shift.engine.http.AsyncResponse, msgs: ValidationFail)(implicit lang: String) =
+  def respValidationFail(resp: net.shift.engine.http.AsyncResponse, msgs: ValidationFail)(implicit lang: Language, fs: FileSystem) =
     resp(JsonResponse(Formatter.format(msgs)).code(403))
 
 }

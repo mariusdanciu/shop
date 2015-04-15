@@ -34,6 +34,7 @@ import net.shop.model.FieldError
 import net.shift.html.Valid
 import net.shift.html.Invalid
 import net.shift.common.Config
+import net.shop.api.ShopError
 
 object UserService extends Selectors
   with TraversingSpec
@@ -50,8 +51,9 @@ object UserService extends Selectors
   } yield {
     ShopApplication.persistence.userByEmail(user.name) match {
       case Success(Some(ud)) =>
-        implicit val l = r.language.name
+        implicit val l = r.language
         service(_(JsonResponse(Formatter.format(ud))))
+      case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
       case _ =>
         service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
     }
@@ -88,8 +90,8 @@ object UserService extends Selectors
           cnp = u.cnp,
           phone = u.phone)
 
-        val perms = List("read") ++ (if (Config.string("admin.user") == u.email) List("write") else Nil )
-            
+        val perms = List("read") ++ (if (Config.string("admin.user") == u.email) List("write") else Nil)
+
         val usr = UserDetail(id = None,
           userInfo = ui,
           companyInfo = CompanyInfo("", "", "", "", "", ""),
@@ -101,12 +103,14 @@ object UserService extends Selectors
         ShopApplication.persistence.createUsers(usr) match {
           case scala.util.Success(ids) =>
             service(_(Resp.created))
+          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create user ", t)
             service(_(Resp.serverError.withBody(Loc.loc0(r.language)("user.cannot.create").text)))
         }
 
-      case Invalid(msgs) => validationFail(msgs)(r.language.name)
+      case Invalid(msgs) =>
+        validationFail(msgs)
     }
   }
 

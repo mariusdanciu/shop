@@ -29,6 +29,7 @@ import net.shift.common.XmlUtils._
 import net.shift.common.NodeOps._
 import net.shift.engine.page.Html5
 import net.shift.common.Path
+import net.shop.api.ShopError
 
 object ProductsPage extends Cart[Request] {
 
@@ -77,7 +78,7 @@ object ProductsPage extends Cart[Request] {
                 case Failure(f) => errorTag(f toString)
               }
             }
-          case Failure(t) => errorTag(Loc.loc0(s.state.lang)("no_category").text)
+          case Failure(t) => errorTag(Loc.loc0(s.state.lang)("no.category").text)
         }
         Success((s.state.initialState, prods.toSeq))
       }
@@ -93,7 +94,8 @@ object ProductsPage extends Cart[Request] {
               Success((s.state.initialState, e / NodeSeq.fromSeq(v)))
             case _ => Success((s.state.initialState, NodeSeq.Empty))
           }
-        case Failure(t) => Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no_category").text)))
+        case Failure(ShopError(msg, _)) => Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)(msg).text)))
+        case Failure(t)                 => Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no.category").text)))
       }
   }
 

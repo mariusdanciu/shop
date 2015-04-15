@@ -38,6 +38,7 @@ import net.shift.io.FileSystem
 import net.shift.io.FileOps
 import net.shift.io.IO
 import utils.ShopUtils._
+import net.shop.api.ShopError
 
 object ProductService extends ShiftUtils
   with Selectors
@@ -55,7 +56,8 @@ object ProductService extends ShiftUtils
       case scala.util.Success(num) =>
         fs.deletePath(Path(s"${dataPath}/products/$id"))
         service(_(Resp.ok))
-      case scala.util.Failure(t) => service(_(Resp.notFound))
+      case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
+      case scala.util.Failure(t)                 => service(_(Resp.notFound))
     }
   }
 
@@ -69,25 +71,23 @@ object ProductService extends ShiftUtils
       case (files, Valid(o)) =>
         val cpy = o.copy(images = Set(files.map(f => f._2): _*).toList)
 
-        ShopApplication.persistence.productById(pid) match {
-          case scala.util.Success(p) =>
-            val merged = cpy.copy(images = p.images ++ cpy.images)
-
-            ShopApplication.persistence.updateProducts(merged) match {
-              case scala.util.Success(p) =>
-                files.map { f =>
-                  IO.arrayProducer(f._3)(FileOps.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
-                }
-                service(_(Resp.created))
-              case scala.util.Failure(t) =>
-                error("Cannot create product ", t)
-                service(_(Resp.serverError))
-            }
-
-          case scala.util.Failure(f) => service(_(Resp.notFound))
+        (for {
+          p <- ShopApplication.persistence.productById(pid)
+          u <- ShopApplication.persistence.updateProducts(cpy.copy(images = p.images ++ cpy.images))
+        } yield {
+          files.map { f =>
+            IO.arrayProducer(f._3)(FileOps.writer(Path(s"${dataPath}/products/${u.head}/${f._1}")))
+          }
+          service(_(Resp.created))
+        }) match {
+          case scala.util.Success(s)                 => s
+          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
+          case scala.util.Failure(t)                 => service(_(Resp.serverError))
         }
 
-      case (_, Invalid(msgs)) => validationFail(msgs)(r.language.name)
+      case (_, Invalid(msgs)) =>
+        implicit val l = r.language
+        validationFail(msgs)
     }
   }
 
@@ -116,17 +116,17 @@ object ProductService extends ShiftUtils
                   IO.arrayProducer(f._3)(FileOps.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
                 }) { d => log.debug("Write files: " + d) }
             }
-            log.debug("Send OK")
             service(_(Resp.created))
+          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create product ", t)
-            log.debug("Send ERROR")
             service(_(Resp.serverError))
         }
 
       case (_, Invalid(msgs)) =>
         log.debug("Send FAIL")
-        validationFail(msgs)(r.language.name)
+        implicit val l = r.language
+        validationFail(msgs)
 
     }
 
@@ -181,8 +181,9 @@ object ProductService extends ShiftUtils
         case p => Valid(p)
       })
     } catch {
-      case e: Exception => e.printStackTrace()
-       (Nil, Invalid(ValidationFail(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text))))
+      case e: Exception =>
+        e.printStackTrace()
+        (Nil, Invalid(ValidationFail(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text))))
     }
   }
 

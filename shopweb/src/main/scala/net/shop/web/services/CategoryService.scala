@@ -37,6 +37,7 @@ import net.shift.io.IO
 import net.shift.io.FileSystem
 import net.shift.io.FileOps
 import net.shop.utils.ShopUtils._
+import net.shop.api.ShopError
 
 object CategoryService extends Selectors
   with TraversingSpec
@@ -53,9 +54,10 @@ object CategoryService extends Selectors
     ShopApplication.persistence.categoryById(id) match {
       case scala.util.Success(cat) =>
         fs.deletePath(Path(s"${dataPath}/categories/$id"))
-        implicit val l = r.language.name
+        implicit val l = r.language
         service(_(JsonResponse(Formatter.format(cat))))
-      case scala.util.Failure(t) => service(_(Resp.notFound))
+      case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
+      case scala.util.Failure(t)                 => service(_(Resp.notFound))
     }
   }
 
@@ -68,7 +70,8 @@ object CategoryService extends Selectors
       case scala.util.Success(num) =>
         fs.deletePath(Path(s"${dataPath}/categories/$id"));
         service(_(Resp.ok))
-      case scala.util.Failure(t) => service(_(Resp.notFound))
+      case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
+      case scala.util.Failure(t)                 => service(_(Resp.notFound))
     }
   }
 
@@ -88,11 +91,14 @@ object CategoryService extends Selectors
             }
             service(_(Resp.created))
 
+          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             service(_(Resp.serverError.asText.withBody("category.create.fail")))
         }
 
-      case (_, Invalid(msgs)) => validationFail(msgs)(r.language.name)
+      case (_, Invalid(msgs)) => 
+        implicit val l = r.language
+        validationFail(msgs)
 
     }
 
@@ -113,13 +119,16 @@ object CategoryService extends Selectors
               IO.arrayProducer(f._2)(FileOps.writer(Path(s"${dataPath}/categories/${p.head}.png")))
             }
             service(_(Resp.created))
+
+          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create category ", t)
             service(_(Resp.serverError))
         }
 
-      case (_, Invalid(msgs)) => validationFail(msgs)(r.language.name)
-
+      case (_, Invalid(msgs)) => 
+        implicit val l = r.language
+        validationFail(msgs)
     }
 
   }

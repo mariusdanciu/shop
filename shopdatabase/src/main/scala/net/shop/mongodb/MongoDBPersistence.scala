@@ -26,10 +26,10 @@ object MongoDBPersistence extends Persistence with MongoConversions {
   def productById(id: String): Try[ProductDetail] = try {
     db("products").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
       case Some(obj) => Success(mongoToProduct(obj))
-      case _         => fail("Item " + id + " not found")
+      case _         => fail("no.product")
     }
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
   def allProducts: Try[Iterator[ProductDetail]] = try {
@@ -37,7 +37,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
       mongoToProduct(p)
     })
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
   def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = try {
@@ -54,7 +54,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
       mongoToProduct(p)
     })
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
   def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = try {
@@ -65,16 +65,16 @@ object MongoDBPersistence extends Persistence with MongoConversions {
         mongoToProduct(p)
       })
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
   def categoryById(id: String): Try[Category] = try {
     db("categories").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
       case Some(obj) => Success(mongoToCategory(obj))
-      case _         => fail("Item " + id + " not found")
+      case _         => fail("no.category")
     }
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
   def allCategories: Try[Iterator[Category]] = try {
@@ -82,14 +82,14 @@ object MongoDBPersistence extends Persistence with MongoConversions {
       mongoToCategory(p)
     })
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def deleteProducts(ids: String*): Try[Int] = try {
     val num = (0 /: ids)((acc, id) => db("products").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
     Success(num)
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def createProducts(prod: ProductDetail*): Try[Seq[String]] = try {
@@ -97,7 +97,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     db("products").insert(mongos: _*)
     Success(mongos map { p => p.get("_id").getOrElse("?").toString() })
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def updateProducts(prod: ProductDetail*): Try[Seq[String]] = try {
@@ -116,7 +116,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     builder.execute()
     Success(ids)
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def createCategories(cats: Category*): Try[Seq[String]] = try {
@@ -124,7 +124,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     db("categories").insert(mongos: _*)
     Success(mongos map { p => p.getOrElse("_id", "?").toString })
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def updateCategories(c: Category*): Try[Seq[String]] = try {
@@ -143,14 +143,14 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     builder.execute()
     Success(ids)
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def deleteCategories(ids: String*): Try[Int] = try {
     val num = (0 /: ids)((acc, id) => db("categories").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
     Success(num)
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def createUsers(user: UserDetail*): Try[Seq[String]] = try {
@@ -158,7 +158,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     db("users").insert(mongos: _*)
     Success(mongos map { p => p.getOrElse("_id", "?").toString })
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def updateUsers(user: UserDetail*): Try[Seq[String]] = try {
@@ -177,14 +177,14 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     builder.execute()
     Success(ids)
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def deleteUsers(ids: String*): Try[Int] = try {
     val num = (0 /: ids)((acc, id) => db("users").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
     Success(num)
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def allUsers: Try[Iterator[UserDetail]] = try {
@@ -192,7 +192,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
       mongoToUser(p)
     })
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error")
   }
 
   def userByEmail(email: String): Try[Option[UserDetail]] = try {
@@ -201,7 +201,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
       case _         => Success(None)
     }
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
   def createOrder(order: OrderLog*): Try[Seq[String]] = {
@@ -218,7 +218,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
 
       Success(mongos map { _.getOrElse("_id", "?").toString })
     } catch {
-      case e: Exception => fail(e)
+      case e: Exception => fail("internal.error", e)
     }
   }
 
@@ -226,21 +226,21 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     val update = db("orders").update(MongoDBObject("id" -> orderId), $set(("status" -> status.index)))
     Success(update.getN == 1)
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
   def ordersByEmail(email: String): Try[Iterator[OrderLog]] = try {
     Success(
       db("orders").find(MongoDBObject("email" -> email)) map mongoToOrder)
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
   def ordersByProduct(productId: String): Try[Iterator[OrderLog]] = try {
     Success(
       db("orders").find("items.id" $in List(productId)) map mongoToOrder)
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
   def storeServiceHit(h: ServiceHit): Try[String] = try {
@@ -250,7 +250,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
 
     Success(mongo.get("_id").getOrElse("?").toString())
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
   def allServiceStats(): Try[Iterator[ServiceStat]] = try {
@@ -258,7 +258,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
       mongoToServiceStat(p)
     })
   } catch {
-    case e: Exception => fail(e)
+    case e: Exception => fail("internal.error", e)
   }
 
 }

@@ -29,6 +29,7 @@ import net.shop.api.OrderStatus
 import scala.util.Success
 import scala.util.Failure
 import net.shift.security.Permission
+import net.shop.api.ShopError
 
 object SettingsService extends Selectors
   with TraversingSpec
@@ -42,8 +43,9 @@ object SettingsService extends Selectors
     u <- permissions(Loc.loc0(r.language)("user.not.found").text, Permission("write"))
   } yield {
     ShopApplication.persistence.updateOrderStatus(orderId, OrderStatus.fromIndex(status.toInt)) match {
-      case Success(_)   => service(_(Resp.ok))
-      case Failure(msg) => service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("order.not.found", List(orderId)).text)))
+      case Success(_)                            => service(_(Resp.ok))
+      case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
+      case Failure(msg)                          => service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("order.not.found", List(orderId)).text)))
     }
   }
 
@@ -68,7 +70,8 @@ object SettingsService extends Selectors
               case _ => service(_(Resp.serverError.asText.withBody(Loc.loc0(r.language)("login.fail").text)))
             }
             service(_(Resp.created.asText.withBody(Loc.loc0(r.language)("settings.saved").text)))
-          case Invalid(e) => validationFail(e)(r.language.name)
+          case Invalid(e) =>
+            validationFail(e)
         }
       case None => service(_(Resp.forbidden.asText.withBody(Loc.loc0(r.language)("login.fail").text)))
     }

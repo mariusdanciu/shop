@@ -18,7 +18,7 @@ object ShopUtils {
   def imagePath(variant: String, prod: ProductDetail): String =
     prod.images match {
       case h :: _ => s"/data/products/${prod.stringId}/$variant/${h}"
-      case Nil    => "/static/images/noimage.png"
+      case Nil    => ""
     }
 
   def errorTag(text: String) = <div class="error"><div><span class="sprite sprite-exclamation"/></div><span>{ text }</span></div>

@@ -1,23 +1,23 @@
 [
  {
    "code" : "100",
-   "name" : "no_categories",
+   "name" : "internal.error",
+   "text" : "Eroare interna"
+ },
+ {
+   "code" : "100",
+   "name" : "no.categories",
    "text" : "Categoriile nu pot fi obtinute"
  },
  {
    "code" : "101",
-   "name" : "no_category",
+   "name" : "no.category",
    "text" : "Categorie inexistenta"
  },
  {
    "code" : "102",
-   "name" : "no_product",
+   "name" : "no.product",
    "text" : "Produs inexistent"
- },
- {
-   "code" : "103",
-   "name" : "add_to_cart",
-   "text" : "Adauga in cos"
  },
  {
    "code" : "104",

@@ -6,6 +6,8 @@ import scala.util.Failure
 import net.shift.security.User
 import net.shift.security.Permissions
 import net.shift.security.Permission
+import net.shift.loc.Language
+import net.shift.io.FileSystem
 
 case class UserInfo(firstName: String, lastName: String, cnp: String, phone: String)
 case class CompanyInfo(name: String, cif: String, regCom: String, bank: String, bankAccount: String, phone: String)
@@ -124,18 +126,18 @@ case class ServiceHit(year: Int, month: Int, day: Int, service: String)
 case class ServiceStat(hit: ServiceHit, count: Long)
 
 object Formatter {
-  def format[T: Formatter](v: T)(implicit lang: String): String = {
+  def format[T: Formatter](v: T)(implicit lang: Language, fs: FileSystem): String = {
     implicitly[Formatter[T]].write(v)
   }
 }
 
 trait Formatter[T] {
-  def write(value: T)(implicit lang: String): String
+  def write(value: T)(implicit lang: Language, fs: FileSystem): String
 }
 
 object ShopError {
   def fail(msg: String) = Failure(new ShopError(msg))
-  def fail(e: Throwable) = Failure(new ShopError(e))
+  def fail(msg: String, e: Throwable) = Failure(new ShopError(msg, e))
 }
 
 case class ShopError(msg: String, e: Throwable) extends RuntimeException(msg, e) {
