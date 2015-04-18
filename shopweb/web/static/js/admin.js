@@ -41,6 +41,16 @@
             }
         });
 
+        $("#search_received_orders").click(function(event) {
+            admin.receivedOrders("#pending_orders_result");
+            return false;
+        });
+        
+        $("#search_pending_orders").click(function(event) {
+            admin.pendingOrders("#pending_orders_result");
+            return false;
+        });
+
         admin.addProp("#add_prop", "#prop_fields", "pkey", "pval");
 
         admin.addText("#add_custom_text", "#prop_custom_fields", "customtext");
@@ -65,6 +75,26 @@
 })();
 
 var admin = {
+
+    receivedOrders : function(selector) {
+        $(selector).load("/ordersview/received", function(response, status, xhr) {
+            if (status === "error") {
+                common.showError(xhr.statusText);
+            } else {
+                settings.refreshAccordion();
+            }
+        });
+    },
+    
+    pendingOrders : function(selector) {
+        $(selector).load("/ordersview/pending", function(response, status, xhr) {
+            if (status === "error") {
+                common.showError(xhr.statusText);
+            } else {
+                settings.refreshAccordion();
+            }
+        });
+    },
 
     searchOrders : function(selector, email) {
         $(selector).load("/ordersview?email=" + email, function(response, status, xhr) {

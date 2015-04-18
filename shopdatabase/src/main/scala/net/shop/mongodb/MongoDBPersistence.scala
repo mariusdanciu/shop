@@ -236,6 +236,12 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     case e: Exception => fail("internal.error", e)
   }
 
+  def ordersByStatus(status: OrderStatus): Try[Iterator[OrderLog]] = try {
+    Success(db("orders").find(MongoDBObject("status" -> status.index)) map mongoToOrder)
+  } catch {
+    case e: Exception => fail("internal.error", e)
+  }
+
   def ordersByProduct(productId: String): Try[Iterator[OrderLog]] = try {
     Success(
       db("orders").find("items.id" $in List(productId)) map mongoToOrder)

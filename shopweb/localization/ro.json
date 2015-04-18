@@ -526,6 +526,11 @@
  },
  {
    "code" : "208",
+   "name" : "orders",
+   "text" : "Comenzi"
+ },
+ {
+   "code" : "208",
    "name" : "my.orders",
    "text" : "Comenzile mele"
  },
@@ -553,6 +558,16 @@
    "code" : "208",
    "name" : "modify.orders",
    "text" : "Modifica comenzi"
+ },
+ {
+   "code" : "208",
+   "name" : "pending.orders",
+   "text" : "Comenzi in asteptare"
+ },
+ {
+   "code" : "208",
+   "name" : "received.orders",
+   "text" : "Comenzi primite"
  },
  {
    "code" : "208",

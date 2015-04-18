@@ -121,23 +121,34 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
   val orders = reqSnip("orders") {
     s =>
       {
-        val logedInUser = s.state.user
-        val l = s.state.lang
         val email = s.state.initialState.req.param("email").getOrElse(List("")).head
         def userDetail(state: SettingsPageState): Try[Option[UserDetail]] = {
           state.user match {
             case Some(u) => Success(Some(u))
-            case _       => ShopApplication.persistence.userByEmail(email)
+            case _ =>
+              if (!email.isEmpty())
+                ShopApplication.persistence.userByEmail(email)
+              else
+                ShopApplication.persistence.userByEmail(s.state.user.map { _ name } getOrElse "")
           }
         }
+
+        def query(u: UserDetail) =
+          s.state.initialState.req.path match {
+            case Path(_, _ :: "received" :: Nil) => ShopApplication.persistence.ordersByStatus(OrderReceived)
+            case Path(_, _ :: "pending" :: Nil)  => ShopApplication.persistence.ordersByStatus(OrderPending)
+            case _                               => ShopApplication.persistence.ordersByEmail(u.email)
+          }
+
+        val loggedinUser = s.state.user
+        val l = s.state.lang
 
         userDetail(s.state.initialState) match {
           case Success(Some(u)) =>
             for {
-              orders <- ShopApplication.persistence.ordersByEmail(u.email)
+              orders <- query(u)
             } yield {
 
-              
               val v = orders.flatMap { o =>
 
                 (bind(s.node.head.child) {
@@ -159,14 +170,14 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
                       }</tr>
                     }
 
-                  case HasClass("transport", a) => 
+                  case HasClass("transport", a) =>
                     Text(o.transport.name)
 
                   case HasClass("total", a) => Text(price(((0.0 /: o.items)((acc, e) => acc + e.price * e.quantity)) + o.transport.price))
 
                   case HasClass("status", a) =>
                     val e = for {
-                      u <- option2Try(logedInUser)
+                      u <- option2Try(loggedinUser)
                       n <- u.notThesePermissions(Permission("write")) {
                         NodeSeq.Empty ++ (node("span", Map("class" -> "order_status")) / (o.status match {
                           case OrderReceived  => Text(Loc.loc0(l)("received").text)
@@ -181,7 +192,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
 
                   case _ attributes HasClass("edit_status", a) / childs =>
                     val e = for {
-                      u <- option2Try(logedInUser)
+                      u <- option2Try(loggedinUser)
                       n <- u.requireAll(Permission("write")) {
                         makeSelect(o, childs)
                       }

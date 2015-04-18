@@ -29,6 +29,7 @@ trait Persistence {
 
   def createOrder(order: OrderLog*): Try[Seq[String]]
   def ordersByEmail(email: String): Try[Iterator[OrderLog]]
+  def ordersByStatus(status: OrderStatus): Try[Iterator[OrderLog]]
   def ordersByProduct(productId: String): Try[Iterator[OrderLog]]
   def updateOrderStatus(orderId: String, status: OrderStatus): Try[Boolean]
 

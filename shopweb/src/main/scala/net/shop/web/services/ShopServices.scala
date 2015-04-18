@@ -140,10 +140,10 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
   }
 
   def settingsPage(uri: String, filePath: Path, snipets: DynamicContent[SettingsPageState]) = for {
-    r <- path(uri)
+    r <- req
+    _ <- startsWith(Path(uri))
     u <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
-    val logout = !r.param("logout").isEmpty
     Html5.pageFromFile(PageState(SettingsPageState(r, None), r.language, Some(u)), filePath, snipets)
   }
 
@@ -152,9 +152,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     u <- user
   } yield {
     val logout = !r.param("logout").isEmpty
-    val p = Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[T], fs)
-    
-    p
+    Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[T], fs)
   }
 
   def productsVariantImages = for {

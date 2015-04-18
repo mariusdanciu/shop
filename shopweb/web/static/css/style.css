@@ -1141,7 +1141,7 @@ h1 {
 }
 
 .accordion {
-	
+	margin-top: 20px;
 }
 
 .accordion .accordion_title, .accordion .accordion_content {
