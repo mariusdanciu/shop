@@ -1424,3 +1424,13 @@ h1 {
     height: 128px;
     background-position: -5px -901px;
 }
+
+.order_info {
+	margin-bottom: 20px;
+	width: auto;
+}
+
+.order_info td {
+	padding-right: 20px;	
+	
+}

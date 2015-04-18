@@ -1,52 +1,52 @@
 package net.shop
 package web.pages
 
-import net.shift.loc.Loc
-import net.shop.utils.ShopUtils
-import net.shift.engine.http.Request
+import scala.util.Failure
 import scala.util.Success
-import net.shift.template.Binds._
-import net.shift.common.XmlUtils._
-import net.shift.template.HasName
-import net.shift.common.NodeOps._
-import net.shift.common.NodeOps
-import net.shop.web.ShopApplication
+import scala.util.Try
 import scala.xml.NodeSeq
-import net.shift.template.PageState
-import net.shift.engine.page.Html5
-import net.shift.common.Path
-import net.shop.api.UserDetail
-import net.shift.template.DynamicContent
-import net.shop.api.Address
-import net.shift.template.Selectors
-import net.shift.template.Snippet._
-import net.shift.template.HasClass
+import scala.xml.NodeSeq.seqToNodeSeq
 import scala.xml.Text
 import scala.xml.Elem
-import net.shift.template.Attributes
+import net.shift.common.NodeOps.node
+import net.shift.common.Path
+import net.shift.common.XmlUtils.elem2NodeOps
+import net.shift.common.XmlUtils.nodeOps2Elem
+import net.shift.engine.http.Request
+import net.shift.engine.page.Html5
 import net.shift.io.IODefaults
-import net.shift.common.XmlUtils
-import net.shop.utils.ShopUtils
-import net.shift.common.ShiftFailure
-import net.shop.api.OrderReceived
-import net.shop.api.OrderFinalized
-import net.shop.api.OrderCanceled
-import net.shop.api.OrderPending
-import scala.util.Try
-import scala.util.Failure
+import net.shift.loc.Loc
 import net.shift.security.Permission
-import net.shift.html.Formlet
-import net.shift.security.User
-import net.shop.api.OrderLog
-import net.shift.loc.Language
+import net.shift.template.Attributes
+import net.shift.template.Binds.attrs2MetaData
+import net.shift.template.Binds.bind
+import net.shift.template.DynamicContent
+import net.shift.template.HasClass
+import net.shift.template.HasId
+import net.shift.template.HasName
 import net.shift.template.HasValue
-import ShopUtils._
+import net.shift.template.PageState
+import net.shift.template.Selectors
+import net.shift.template.Snippet.snip
+import net.shop.api.Address
+import net.shop.api.OrderCanceled
+import net.shop.api.OrderFinalized
+import net.shop.api.OrderLog
+import net.shop.api.OrderPending
+import net.shop.api.OrderReceived
+import net.shop.api.UserDetail
+import net.shop.utils.ShopUtils._
+import net.shop.web.ShopApplication
+import net.shift.template.Binds._
+import net.shift.common.XmlUtils._
+import net.shop.api.Person
+import net.shop.api.Company
 
 object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { self =>
 
   val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy - hh:mm")
 
-  override def snippets = List(settingsForm, addressTemplate, addresses, loadordersview, orders) ++ super.snippets
+  override def snippets = List(settingsForm, addressTemplate, addresses, orders) ++ super.snippets
 
   def pageTitle(s: PageState[SettingsPageState]) = Loc.loc0(s.lang)("settings").text
 
@@ -113,11 +113,6 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
       }
   }
 
-  val loadordersview = reqSnip("loadordersview") {
-    s =>
-      Html5.runPageFromFile(s.state, Path(s"web/templates/ordersview.html"), this).map { e => (e._1.state.initialState, e._2) }
-  }
-
   val orders = reqSnip("orders") {
     s =>
       {
@@ -152,6 +147,41 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
               val v = orders.flatMap { o =>
 
                 (bind(s.node.head.child) {
+
+                  case _ attributes HasId("person_info", a) / childs => o match {
+                    case OrderLog(id, time, Person(fn, ln, cnp), Address(_, _, country, region, city, address, zip), email, phone, _, _, _) =>
+                      bind(childs) {
+                        case n attributes HasId("oid", a) / _     => <span>{ id }</span> % a
+                        case n attributes HasId("lname", a) / _   => <span>{ ln }</span> % a
+                        case n attributes HasId("fname", a) / _   => <span>{ fn }</span> % a
+                        case n attributes HasId("cnp", a) / _     => <span>{ cnp }</span> % a
+                        case n attributes HasId("region", a) / _  => <span>{ region }</span> % a
+                        case n attributes HasId("city", a) / _    => <span>{ city }</span> % a
+                        case n attributes HasId("address", a) / _ => <span>{ address }</span> % a
+                        case n attributes HasId("email", a) / _   => <span>{ email }</span> % a
+                        case n attributes HasId("phone", a) / _   => <span>{ phone }</span> % a
+                      } getOrElse NodeSeq.Empty
+                    case _ => NodeSeq.Empty
+                  }
+
+                  case _ attributes HasId("company_info", a) / childs => o match {
+                    case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(_, _, country, region, city, address, zip), email, phone, _, _, _) =>
+                      bind(childs) {
+                        case n attributes HasId("oid", a) / _          => <span>{ id }</span> % a
+                        case n attributes HasId("cname", a) / _        => <span>{ cn }</span> % a
+                        case n attributes HasId("cif", a) / _          => <span>{ cif }</span> % a
+                        case n attributes HasId("cregcom", a) / _      => <span>{ regCom }</span> % a
+                        case n attributes HasId("cbank", a) / _        => <span>{ bank }</span> % a
+                        case n attributes HasId("cbankaccount", a) / _ => <span>{ account }</span> % a
+                        case n attributes HasId("cregion", a) / _      => <span>{ region }</span> % a
+                        case n attributes HasId("ccity", a) / _        => <span>{ city }</span> % a
+                        case n attributes HasId("caddress", a) / _     => <span>{ address }</span> % a
+                        case n attributes HasId("cemail", a) / _       => <span>{ email }</span> % a
+                        case n attributes HasId("cphone", a) / _       => <span>{ phone }</span> % a
+                      } getOrElse NodeSeq.Empty
+                    case _ => NodeSeq.Empty
+                  }
+
                   case HasClass("order_title", a) => node("a", a.attrs) / Text(s"Comanda ${o.id} din data ${dateFormat.format(o.time)}")
                   case _ attributes HasClass("order_items", a) / childs =>
 

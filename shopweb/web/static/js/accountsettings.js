@@ -20,6 +20,11 @@
             return false;
         });
 
+        $("#my_orders").click(function(event) {
+            settings.myOrders("#my_orders_result");
+            return false;
+        });
+
         $("#settings_tab").tabify();
         settings.refreshAccordion();
 
@@ -29,6 +34,15 @@
 var opened = undefined;
 
 var settings = {
+    myOrders : function(selector) {
+        $(selector).load("/ordersview/myorders", function(response, status, xhr) {
+            if (status === "error") {
+                common.showError(xhr.statusText);
+            } else {
+                settings.refreshAccordion();
+            }
+        });
+    },
 
     updateUser : function(formId) {
         $(formId).each(function() {

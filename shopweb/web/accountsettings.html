@@ -11,10 +11,10 @@
     </div>
     <div class="tab_select">
       <ul id="settings_tab" class="create_product_tab">
-        <li class="active"><a href="#account" data-loc="my.account"></a></li>
+        <li data-permissions="write" class="active"><a href="#pending_orders" data-loc="orders"></a></li>
         <li><a href="#history" data-loc="my.orders"></a></li>
         <li data-permissions="write"><a href="#edit_orders_status" data-loc="modify.orders"></a></li>
-        <li data-permissions="write"><a href="#pending_orders" data-loc="orders"></a></li>
+        <li><a href="#account" data-loc="my.account"></a></li>
       </ul>
     </div>
 
@@ -102,8 +102,9 @@
 
     <div id="history">
       <div class="row_simple top20">
-        <div data-snip="loadordersview"></div>
+        <span id="my_orders" class="btn" data-loc="search" />
       </div>
+      <div id="my_orders_result" class="row_simple top20"></div>
     </div>
 
     <div id="edit_orders_status" data-permissions="write">
@@ -115,8 +116,8 @@
 
     <div id="pending_orders" data-permissions="write">
       <div class="row_simple top20">
-        <span id="search_received_orders" class="btn" data-loc="received.orders" />
-        <span id="search_pending_orders" class="btn" data-loc="pending.orders" />
+        <span id="search_received_orders" class="btn" data-loc="received.orders" /> <span id="search_pending_orders" class="btn"
+          data-loc="pending.orders" />
       </div>
       <div id="pending_orders_result" class="row_simple top20"></div>
     </div>
