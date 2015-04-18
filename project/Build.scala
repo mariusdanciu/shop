@@ -41,7 +41,6 @@ object ShopBuild extends Build {
 	    
 	    IO.copyDirectory ( showWebDir / "web", distDir / "web");
 	    IO.copyDirectory ( showWebDir / "config", distDir / "config");
-	    IO.copyDirectory ( showWebDir / "data", distDir / "data");
 	    IO.copyDirectory ( showWebDir / "localization", distDir / "localization");
 	    
 	    pack
@@ -71,7 +70,7 @@ object ShopBuild extends Build {
       IO.copyFile(scriptsDir / "startall.sh", distDir / "startall.sh");
       IO.copyFile(scriptsDir / "stop.sh", distDir / "stop.sh");
       IO.copyFile(scriptsDir / "stopall.sh", distDir / "stopall.sh");
-      TarGzBuilder.makeTarGZ("target/idid_" + sv + "_" + v + "_.tar.gz")
+      TarGzBuilder.makeTarGZ("target/idid_" + sv + "_" + v + "_.tar.gz", "idid_" + sv + "_" + v)
     }
   }
   
@@ -106,31 +105,36 @@ object TarGzBuilder {
   import org.apache.commons.compress.compressors.gzip._
   
   
-  def makeTarGZ(name: String) {
+  def makeTarGZ(name: String, folder: String) {
      val tOut = new TarArchiveOutputStream(new GzipCompressorOutputStream(new BufferedOutputStream(new FileOutputStream(new File(name)))))
      try {
-       populateTarGz(tOut, "./dist")
+       populateTarGz(tOut, folder, "./dist")
      } finally {
        tOut.close();
      } 
   }
   
   
-  def populateTarGz(tOut: TarArchiveOutputStream, path: String, base: String = null) {
+  def populateTarGz(tOut: TarArchiveOutputStream, folder: String, path: String, base: String = null) {
     val f = new File(path);
-    val entryName = if (base == null) "idid" else (base + f.getName());
-    val tarEntry = new TarArchiveEntry(f, entryName);
-    tOut.putArchiveEntry(tarEntry);
+    val entryName = if (base == null) folder else (base + f.getName())
+    val tarEntry = new TarArchiveEntry(f, entryName)
+    
+    if (entryName.endsWith(".sh"))
+      tarEntry.setMode(484)
+    
+      
+    tOut.putArchiveEntry(tarEntry)
 
     if (f.isFile()) {
-      IO.transfer(f, tOut);
-      tOut.closeArchiveEntry();
+      IO.transfer(f, tOut)
+      tOut.closeArchiveEntry()
     } else {
-      tOut.closeArchiveEntry();
-      val children = f.listFiles();
+      tOut.closeArchiveEntry()
+      val children = f.listFiles()
       if (children != null){
         for (child <- children) {
-          populateTarGz(tOut, child.getAbsolutePath(), entryName + "/");
+          populateTarGz(tOut, folder, child.getAbsolutePath(), entryName + "/")
         }
       }
     }
