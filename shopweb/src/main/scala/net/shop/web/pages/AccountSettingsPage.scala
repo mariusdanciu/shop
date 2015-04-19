@@ -46,7 +46,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
 
   val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy - hh:mm")
 
-  override def snippets = List(settingsForm, addressTemplate, addresses, orders) ++ super.snippets
+  override def snippets = List(settingsForm, addressTemplate, addresses, orders, users) ++ super.snippets
 
   def pageTitle(s: PageState[SettingsPageState]) = Loc.loc0(s.lang)("settings").text
 
@@ -69,6 +69,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
                   case HasName("update_cbank", a)        => node("input", a.attrs + ("value" -> ud.companyInfo.bank))
                   case HasName("update_cbankaccount", a) => node("input", a.attrs + ("value" -> ud.companyInfo.bankAccount))
                   case HasName("update_cphone", a)       => node("input", a.attrs + ("value" -> ud.companyInfo.phone))
+
                 })
               case _ => (None, Success(NodeSeq.Empty))
             }
@@ -238,6 +239,41 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
           case Failure(t)    => Failure(t)
         }
 
+      }
+  }
+
+  val users = reqSnip("users") {
+    s =>
+      {
+        ShopApplication.persistence.allUsers match {
+          case Success(users) =>
+            val n = users.flatMap { user =>
+              bind(s.node.head.child) {
+                case HasClass("user_title", a)       => <span>{ user.email }</span>
+
+                case HasId("update_firstName", a)    => node("span", a.attrs) / Text(user.userInfo.firstName)
+                case HasId("update_lastName", a)     => node("span", a.attrs) / Text(user.userInfo.lastName)
+                case HasId("update_cnp", a)          => node("span", a.attrs) / Text(user.userInfo.cnp)
+                case HasId("update_phone", a)        => node("span", a.attrs) / Text(user.userInfo.phone)
+
+                case HasId("update_cname", a)        => node("span", a.attrs) / Text(user.companyInfo.name)
+                case HasId("update_cif", a)          => node("span", a.attrs) / Text(user.companyInfo.cif)
+                case HasId("update_cregcom", a)      => node("span", a.attrs) / Text(user.companyInfo.regCom)
+                case HasId("update_cbank", a)        => node("span", a.attrs) / Text(user.companyInfo.bank)
+                case HasId("update_cbankaccount", a) => node("span", a.attrs) / Text(user.companyInfo.bankAccount)
+                case HasId("update_cphone", a)       => node("span", a.attrs) / Text(user.companyInfo.phone)
+
+                case HasId("addresses", a) =>
+                  user.addresses.flatMap{addr =>
+                      <li>{s"${addr.address}, ${addr.city}, ${addr.region}, ${addr.country}, ${addr.zipCode}"}</li>
+                  }
+
+              } getOrElse NodeSeq.Empty
+            }
+            Success((s.state.initialState, NodeSeq.fromSeq(n.toSeq)))
+
+          case Failure(t) => Failure(t)
+        }
       }
   }
 

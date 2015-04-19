@@ -365,6 +365,11 @@
    "text" : "Utilizator"
  },
  {
+   "code" : "172",
+   "name" : "users",
+   "text" : "Utilizatori"
+ },
+ {
    "code" : "173",
    "name" : "password",
    "text" : "Parola"

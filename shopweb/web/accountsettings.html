@@ -12,6 +12,7 @@
     <div class="tab_select">
       <ul id="settings_tab" class="create_product_tab">
         <li data-permissions="write" class="active"><a href="#pending_orders" data-loc="orders"></a></li>
+        <li data-permissions="write"><a href="#users" data-loc="users"></a></li>
         <li><a href="#history" data-loc="my.orders"></a></li>
         <li data-permissions="write"><a href="#edit_orders_status" data-loc="modify.orders"></a></li>
         <li><a href="#account" data-loc="my.account"></a></li>
@@ -100,6 +101,12 @@
       </div>
     </div>
 
+    <div id="users">
+      <div class="row_simple top20">
+        <span id="search_users" class="btn" data-loc="search" />
+      </div>
+      <div id="users_result" class="row_simple top20"></div>
+    </div>
     <div id="history">
       <div class="row_simple top20">
         <span id="my_orders" class="btn" data-loc="search" />

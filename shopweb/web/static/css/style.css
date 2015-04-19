@@ -639,7 +639,6 @@ h1 {
 .row_simple {
 	clear: both;
 	width: 100%;
-	display: inline-block;
 }
 
 .upload_form_fields .row img {
@@ -1149,7 +1148,7 @@ h1 {
 	border-bottom: 0;
 }
 
-.accordion>.accordion_content {
+.accordion > .accordion_content {
 	display: none;
 }
 
@@ -1158,10 +1157,14 @@ h1 {
 	height: 24px;
 }
 
+
 .accordion .accordion_title a, .accordion .accordion_title a {
 	display: inline;
 }
 
+ .accordion_title {
+   clear: both;
+ }
 .address_template {
 	display: none;
 }
@@ -1433,4 +1436,13 @@ h1 {
 .order_info td {
 	padding-right: 20px;	
 	
+}
+
+.width100 {
+	width: 100px;
+}
+
+.left_sep {
+	padding-left: 30px;
+	border-left: 1px solid #ccc;
 }

@@ -45,9 +45,14 @@
             admin.receivedOrders("#pending_orders_result");
             return false;
         });
-        
+
         $("#search_pending_orders").click(function(event) {
             admin.pendingOrders("#pending_orders_result");
+            return false;
+        });
+        
+        $("#search_users").click(function(event) {
+            admin.users("#users_result");
             return false;
         });
         
@@ -77,6 +82,16 @@
 
 var admin = {
 
+    users : function(selector) {
+        $(selector).load("/usersview", function(response, status, xhr) {
+            if (status === "error") {
+                common.showError(xhr.statusText);
+            } else {
+                settings.refreshAccordion();
+            }
+        });
+    },
+
     receivedOrders : function(selector) {
         $(selector).load("/ordersview/received", function(response, status, xhr) {
             if (status === "error") {
@@ -86,7 +101,7 @@ var admin = {
             }
         });
     },
-    
+
     pendingOrders : function(selector) {
         $(selector).load("/ordersview/pending", function(response, status, xhr) {
             if (status === "error") {

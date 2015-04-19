@@ -57,6 +57,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       ajaxCategoriesList |
       ajaxProductDetail |
       ajaxOrdersView |
+      ajaxUsersView |
       productsVariantImages |
       categoriesImages |
       page("", Path("web/categories.html"), CategoryPage) |

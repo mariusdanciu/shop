@@ -108,6 +108,11 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     p <- page(ProductPageState.build _, "productquickview", Path("web/templates/productquickview.html"), ProductDetailPage)
   } yield p
 
+  def ajaxUsersView = for {
+    r <- ajax
+    p <- usersPage("usersview", Path("web/templates/users.html"), AccountSettingsPage)
+  } yield p
+
   def ajaxOrdersView = for {
     r <- ajax
     p <- settingsPage("ordersview", Path("web/templates/ordersview.html"), AccountSettingsPage)
@@ -147,6 +152,14 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     Html5.pageFromFile(PageState(SettingsPageState(r, None), r.language, Some(u)), filePath, snipets)
   }
 
+  def usersPage(uri: String, filePath: Path, snipets: DynamicContent[SettingsPageState]) = for {
+    r <- req
+    _ <- path(uri)
+    u <- userRequired(Loc.loc0(r.language)("login.fail").text)
+  } yield {
+    Html5.pageFromFile(PageState(SettingsPageState(r, None), r.language, Some(u)), filePath, snipets)
+  }
+
   def page[T](f: (Request, Option[User]) => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
     r <- path(uri)
     u <- user
@@ -176,14 +189,14 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
       case Some(c) => {
         implicit val formats = DefaultFormats
         implicit def snipsSelector[T] = bySnippetAttr[T]
-        
+
         listTraverse.sequence(for {
           (item, index) <- readCart(c.value).items.zipWithIndex
           prod <- ShopApplication.persistence.productById(item.id).toOption
         } yield {
           Html5.runPageFromFile(PageState(CartState(index, item, prod), r.language), Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
         }) match {
-          case Success(list) => resp(JsonResponse(write(list)))
+          case Success(list)                         => resp(JsonResponse(write(list)))
           case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
           case Failure(t) =>
             log.error("Failed processing cart ", t)
