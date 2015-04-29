@@ -187,6 +187,12 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     case e: Exception => fail("internal.error")
   }
 
+  def deleteUserByEmail(email: String): Try[Int] = try {
+    Success(db("users").remove(MongoDBObject("email" -> email)).getN)
+  } catch {
+    case e: Exception => fail("internal.error")
+  }
+
   def allUsers: Try[Iterator[UserDetail]] = try {
     Success(for { p <- db("users").find() } yield {
       mongoToUser(p)
