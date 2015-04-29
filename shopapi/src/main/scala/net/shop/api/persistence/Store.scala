@@ -23,6 +23,7 @@ trait Persistence {
 
   def createUsers(user: UserDetail*): Try[Seq[String]]
   def updateUsers(user: UserDetail*): Try[Seq[String]]
+  def deleteUserByEmail(email: String): Try[Int]
   def deleteUsers(userId: String*): Try[Int]
   def allUsers: Try[Iterator[UserDetail]]
   def userByEmail(email: String): Try[Option[UserDetail]]
