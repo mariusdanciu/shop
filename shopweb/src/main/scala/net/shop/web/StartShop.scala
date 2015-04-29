@@ -79,6 +79,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       CategoryService.getCategory |
       UserService.createUser |
       UserService.userInfo |
+      UserService.deleteUser |
       UserService.forgotPassword |
       SettingsService.updateSettings |
       SettingsService.updateOrderStatus |

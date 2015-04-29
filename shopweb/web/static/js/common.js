@@ -292,7 +292,7 @@ var user = {
                 data : $(formId).serialize(),
                 statusCode : {
                     201 : function() {
-                        common.closeDialog();
+                        window.location.href = "/";
                     },
                     403 : function(msg) {
                         var data = JSON.parse(msg.responseText);

@@ -12,6 +12,11 @@
             return false;
         });
 
+        $('#delete_user').click(function(e) {
+            settings.deleteUser();
+            return false;
+        });
+
         $("#addresses").find('.del').click(function(event) {
             var t = $(this).parent();
             var c = t.next();
@@ -40,6 +45,27 @@ var settings = {
                 common.showError(xhr.statusText);
             } else {
                 settings.refreshAccordion();
+            }
+        });
+    },
+
+    deleteUser : function() {
+        $.ajax({
+            url : "delete/user?logout=true",
+            type : "DELETE",
+            cache : false,
+            timeout : 3000,
+            statusCode : {
+                200 : function(msg) {
+                    window.location.href = "/";
+                },
+
+                403 : function(msg) {
+                    var data = JSON.parse(msg.responseText);
+                    if (data.errors) {
+                        common.showFormErrors(data.errors);
+                    }
+                }
             }
         });
     },

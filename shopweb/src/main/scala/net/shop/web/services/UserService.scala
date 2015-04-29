@@ -35,14 +35,35 @@ import net.shift.html.Valid
 import net.shift.html.Invalid
 import net.shift.common.Config
 import net.shop.api.ShopError
+import net.shop.model.Formatters
+import net.shift.io.IODefaults
+import net.shift.security.User
+import net.shift.security.Permission
 
 object UserService extends Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
-  with SecuredService {
+  with SecuredService
+  with IODefaults {
 
   implicit val reqSelector = bySnippetAttr[UserDetail]
+
+  def deleteUser = for {
+    r <- DELETE
+    _ <- path("delete/user")
+    user <- userRequired(Loc.loc0(r.language)("login.fail").text)
+  } yield {
+    ShopApplication.persistence.deleteUserByEmail(user.name) match {
+      case Success(1) =>
+        service(_(Resp.ok))
+      case scala.util.Failure(err : ShopError) => 
+        implicit val lang = r.language
+        service(_(JsonResponse(Formatter.format(err)).code(500)))
+      case _ =>
+        service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
+    }
+  }
 
   def userInfo = for {
     r <- GET
@@ -102,7 +123,7 @@ object UserService extends Selectors
 
         ShopApplication.persistence.createUsers(usr) match {
           case scala.util.Success(ids) =>
-            service(_(Resp.created))
+            service(_(Resp.created.securityCookies(User(usr.email, None, usr.permissions.map{Permission(_)}.toSet))))
           case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create user ", t)
