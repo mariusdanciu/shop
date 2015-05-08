@@ -82,12 +82,43 @@
 
 var admin = {
 
+        
+    deleteUser : function(email, okFunc) {
+        $.ajax({
+            url : "delete/user/" + email,
+            type : "DELETE",
+            cache : false,
+            timeout : 3000,
+            statusCode : {
+                200 : function(msg) {
+                    okFunc();
+                },
+
+                403 : function(msg) {
+                    var data = JSON.parse(msg.responseText);
+                    if (data.errors) {
+                        common.showFormErrors(data.errors);
+                    }
+                }
+            }
+        });        
+    },
+    
     users : function(selector) {
         $(selector).load("/usersview", function(response, status, xhr) {
             if (status === "error") {
                 common.showError(xhr.statusText);
             } else {
                 settings.refreshAccordion();
+                
+                $(".delusr").click(function(e) {
+                    var email = $(this).attr("data-email");
+                    window.admin.deleteUser(email, function() {
+                        console.log(email);
+                        window.admin.users(selector);
+                    });
+                    return false;
+                })
             }
         });
     },

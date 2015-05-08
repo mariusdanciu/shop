@@ -613,6 +613,11 @@
    "code" : "208",
    "name" : "delete.user",
    "text" : "Sterge utilizatorul"
+ },
+ {
+   "code" : "208",
+   "name" : "no.permissions",
+   "text" : "Operatiune neautorizata"
  }
  
 ]

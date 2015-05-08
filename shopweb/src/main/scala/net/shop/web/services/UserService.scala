@@ -39,6 +39,7 @@ import net.shop.model.Formatters
 import net.shift.io.IODefaults
 import net.shift.security.User
 import net.shift.security.Permission
+import net.shift.common.PathObj
 
 object UserService extends Selectors
   with TraversingSpec
@@ -49,7 +50,27 @@ object UserService extends Selectors
 
   implicit val reqSelector = bySnippetAttr[UserDetail]
 
-  def deleteUser = for {
+  def deleteAnyUser = for {
+    r <- DELETE
+    PathObj(_, "delete" :: "user" :: email :: Nil) <- path
+    user <- userRequired(Loc.loc0(r.language)("login.fail").text)
+  } yield {
+    implicit val lang = r.language
+    if (user.hasAllPermissions(Permission("write"))) {
+      ShopApplication.persistence.deleteUserByEmail(email) match {
+        case Success(1) =>
+          service(_(Resp.ok))
+        case scala.util.Failure(err: ShopError) =>
+          service(_(JsonResponse(Formatter.format(err)).code(500)))
+        case _ =>
+          service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
+      }
+    } else {
+      service(_(JsonResponse(Formatter.format(new ShopError("no.permissions"))).code(403)))
+    }
+  }
+
+  def deleteThisUser = for {
     r <- DELETE
     _ <- path("delete/user")
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
@@ -57,7 +78,7 @@ object UserService extends Selectors
     ShopApplication.persistence.deleteUserByEmail(user.name) match {
       case Success(1) =>
         service(_(Resp.ok))
-      case scala.util.Failure(err : ShopError) => 
+      case scala.util.Failure(err: ShopError) =>
         implicit val lang = r.language
         service(_(JsonResponse(Formatter.format(err)).code(500)))
       case _ =>
@@ -123,7 +144,7 @@ object UserService extends Selectors
 
         ShopApplication.persistence.createUsers(usr) match {
           case scala.util.Success(ids) =>
-            service(_(Resp.created.securityCookies(User(usr.email, None, usr.permissions.map{Permission(_)}.toSet))))
+            service(_(Resp.created.securityCookies(User(usr.email, None, usr.permissions.map { Permission(_) }.toSet))))
           case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create user ", t)

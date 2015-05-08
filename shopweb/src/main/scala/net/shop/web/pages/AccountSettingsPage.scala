@@ -267,6 +267,11 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
                   user.addresses.flatMap{addr =>
                       <li>{s"${addr.address}, ${addr.city}, ${addr.region}, ${addr.country}, ${addr.zipCode}"}</li>
                   }
+                  
+                case n attributes HasClass("deleteuser", _) / childs => 
+                  bind(childs) {
+                  case n attributes a / _ => node(n, a.attrs + ("data-email" -> user.email))
+                } getOrElse NodeSeq.Empty
 
               } getOrElse NodeSeq.Empty
             }
