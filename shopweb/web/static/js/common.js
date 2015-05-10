@@ -422,7 +422,7 @@ var cart = {
                     found = a[i];
                 }
             }
-
+            
             if (!userOpts) {
                 userOpts = {};
             }

@@ -197,6 +197,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
                           case "td" attributes HasClass("c2", a) / _ => <td>{ title }</td> % a
                           case "td" attributes HasClass("c3", a) / _ => <td>{ item.quantity }</td> % a
                           case "td" attributes HasClass("c4", a) / _ => <td>{ price(item.price) }</td> % a
+                          case "td" attributes HasClass("c5", a) / _ => <td>{ optsToNode(item.userOptions) }</td> % a
                         } getOrElse NodeSeq.Empty
                       }</tr>
                     }
@@ -240,6 +241,14 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
         }
 
       }
+  }
+  
+  private def optsToNode(opts: Map[String, String]) : NodeSeq = {
+    NodeSeq.fromSeq((for {(k, v) <- opts} yield {
+      <div class="row_simple">
+        <span>{k + " : " + v}</span>
+			</div>
+    }).toSeq)
   }
 
   val users = reqSnip("users") {
