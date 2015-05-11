@@ -160,6 +160,7 @@ a:active {
 
 .btn:hover {
 	border: 1px solid #000000;
+	background: #efefef;
 	text-decoration: none;
 	cursor: pointer;
 }
