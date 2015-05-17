@@ -86,7 +86,8 @@ object ShopApplication extends ShiftApplication with ShopServices {
       SettingsService.updateOrderStatus |
       OrderService.orderByEmail |
       OrderService.orderByProduct |
-      notFoundService
+      staticTextFiles("google339a4b5281321c21.html") |
+      notFoundService 
     s <- refresh(c)
     t <- tryLogout(r, s)
   } yield t

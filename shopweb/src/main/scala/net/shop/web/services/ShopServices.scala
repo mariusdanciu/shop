@@ -51,6 +51,7 @@ import net.shift.engine.http.Header
 import net.shift.common.Config
 import utils.ShopUtils._
 import net.shop.api.ShopError
+import net.shop.web.pages.LoginPage
 
 trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults {
 
@@ -142,6 +143,13 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
   } yield {
     val logout = !r.param("logout").isEmpty
     Html5.pageFromFile(PageState(r, r.language, if (logout) None else u), filePath, snipets)
+  }
+
+  def staticTextFiles[T](paths: String*) = for {
+    p <- path
+    input <- fileOf(Path(s"web/$p"))
+  } yield {
+    service(_(TextResponse(input)))
   }
 
   def settingsPage(uri: String, filePath: Path, snipets: DynamicContent[SettingsPageState]) = for {
