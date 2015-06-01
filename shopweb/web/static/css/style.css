@@ -1285,6 +1285,7 @@ h1 {
 
 .item_option {
 	margin-left: 10px;
+	width: 400px;
 }
 
 #create_customize ul li, #edit_customize ul li {
