@@ -4,32 +4,29 @@ package web.pages
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-import scala.xml._
-import scala.xml._
-import net.shift._
-import net.shift._
-import net.shift.engine.http._
-import net.shift.engine.http._
-import net.shift.loc.Loc
-import net.shift.template._
-import net.shift.template._
-import net.shift.template.Binds._
-import net.shift.template.Snippet._
-import net.shift.template.Snippet._
-import net.shop.api.ProductDetail
-import net.shop.web.ShopApplication
-import net.shift.common.State
-import net.shop.api.persistence.SortSpec
-import net.shop.api.persistence.NoSort
-import net.shop.api.persistence.SortByName
-import net.shop.api.persistence.SortByPrice
-import net.shop.utils.ShopUtils._
-import net.shift.security.User
-import net.shift.common.XmlUtils._
-import net.shift.common.NodeOps._
-import net.shift.engine.page.Html5
+import scala.xml.Elem
+import scala.xml.NodeSeq
+import scala.xml.NodeSeq.seqToNodeSeq
+
+import net.shift.common.BNode
+import net.shift.common.BNodeImplicits.attrs2MetaData
+import net.shift.common.BNodeImplicits.bind2Elem
+import net.shift.common.BNodeImplicits.elem2ToBind
 import net.shift.common.Path
+import net.shift.engine.http.Request
+import net.shift.engine.page.Html5
+import net.shift.loc.Loc
+import net.shift.template.Binds.bind
+import net.shift.template.HasClass
+import net.shift.template.HasId
+import net.shift.template.PageState
+import net.shop.api.ProductDetail
 import net.shop.api.ShopError
+import net.shop.api.persistence.NoSort
+import net.shop.api.persistence.SortSpec
+import net.shop.utils.ShopUtils.errorTag
+import net.shop.utils.ShopUtils.imagePath
+import net.shop.web.ShopApplication
 
 object ProductsPage extends Cart[Request] {
 
@@ -61,15 +58,15 @@ object ProductsPage extends Cart[Request] {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
-                case "li" attributes HasClass("item", a) / childs           => <li>{ childs }</li>
-                case "div" attributes HasClass("item_box", a) / childs      => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
-                case "div" attributes HasClass("info_tag_text", a) / childs => <div>{ prod title_? (s.state.lang.name) }</div> % a
-                case "div" attributes HasClass("info_tag_cart", a) / childs => if (prod.options.isEmpty && prod.userText.isEmpty)
-                  node("div", a.attrs) / childs
+                case BNode("li", HasClass("item", a), childs)           => <li>{ childs }</li>
+                case BNode("div", HasClass("item_box", a), childs)      => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
+                case BNode("div", HasClass("info_tag_text", a), childs) => <div>{ prod title_? (s.state.lang.name) }</div> % a
+                case BNode("div", HasClass("info_tag_cart", a), childs) => if (prod.options.isEmpty && prod.userText.isEmpty)
+                  BNode("div", a) / childs
                 else
                   NodeSeq.Empty
-                case "div" attributes HasClass("info_tag_price", a) / childs => priceTag(prod) % a
-                case "div" attributes HasId("unique_ribbon", a) / childs => if (prod.unique)
+                case BNode("div", HasClass("info_tag_price", a), childs) => priceTag(prod) % a
+                case BNode("div", HasId("unique_ribbon", a), childs) => if (prod.unique)
                   <div class="unique_label" data-loc="unique"></div>
                 else
                   NodeSeq.Empty

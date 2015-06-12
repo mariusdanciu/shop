@@ -25,6 +25,8 @@ import net.shop.api.Address
 import net.shift.io.IODefaults
 import net.shift.loc.Loc
 import net.shop.api.ShopError
+import net.shift.common.BNode
+import net.shift.common.BNodeImplicits._
 
 object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaults {
 
@@ -49,15 +51,15 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
       s.state.initialState.o match {
         case OrderLog(id, time, Person(fn, ln, cnp), Address(_, _, country, region, city, address, zip), email, phone, _, _, _) =>
           bind(s.node) {
-            case n attributes HasId("oid", a) / _     => <span>{ id }</span> % a
-            case n attributes HasId("lname", a) / _   => <span>{ ln }</span> % a
-            case n attributes HasId("fname", a) / _   => <span>{ fn }</span> % a
-            case n attributes HasId("cnp", a) / _     => <span>{ cnp }</span> % a
-            case n attributes HasId("region", a) / _  => <span>{ region }</span> % a
-            case n attributes HasId("city", a) / _    => <span>{ city }</span> % a
-            case n attributes HasId("address", a) / _ => <span>{ address }</span> % a
-            case n attributes HasId("email", a) / _   => <span>{ email }</span> % a
-            case n attributes HasId("phone", a) / _   => <span>{ phone }</span> % a
+            case BNode(n, HasId("oid", a), _ )     => <span>{ id }</span> % a
+            case BNode(n, HasId("lname", a), _ )   => <span>{ ln }</span> % a
+            case BNode(n, HasId("fname", a), _ )   => <span>{ fn }</span> % a
+            case BNode(n, HasId("cnp", a), _ )     => <span>{ cnp }</span> % a
+            case BNode(n, HasId("region", a), _ )  => <span>{ region }</span> % a
+            case BNode(n, HasId("city", a), _ )    => <span>{ city }</span> % a
+            case BNode(n, HasId("address", a), _ ) => <span>{ address }</span> % a
+            case BNode(n, HasId("email", a), _ )   => <span>{ email }</span> % a
+            case BNode(n, HasId("phone", a), _ )   => <span>{ phone }</span> % a
           } match {
             case Success(n) => Success((s.state.initialState, n))
             case Failure(f) => Success((s.state.initialState, errorTag(f toString)))
@@ -65,17 +67,17 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
 
         case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(_, _, country, region, city, address, zip), email, phone, _, _, _) =>
           bind(s.node) {
-            case n attributes HasId("oid", a) / _          => <span>{ id }</span> % a
-            case n attributes HasId("cname", a) / _        => <span>{ cn }</span> % a
-            case n attributes HasId("cif", a) / _          => <span>{ cif }</span> % a
-            case n attributes HasId("cregcom", a) / _      => <span>{ regCom }</span> % a
-            case n attributes HasId("cbank", a) / _        => <span>{ bank }</span> % a
-            case n attributes HasId("cbankaccount", a) / _ => <span>{ account }</span> % a
-            case n attributes HasId("cregion", a) / _      => <span>{ region }</span> % a
-            case n attributes HasId("ccity", a) / _        => <span>{ city }</span> % a
-            case n attributes HasId("caddress", a) / _     => <span>{ address }</span> % a
-            case n attributes HasId("cemail", a) / _       => <span>{ email }</span> % a
-            case n attributes HasId("cphone", a) / _       => <span>{ phone }</span> % a
+            case BNode(n, HasId("oid", a), _ )          => <span>{ id }</span> % a
+            case BNode(n, HasId("cname", a), _ )        => <span>{ cn }</span> % a
+            case BNode(n, HasId("cif", a), _ )          => <span>{ cif }</span> % a
+            case BNode(n, HasId("cregcom", a), _ )      => <span>{ regCom }</span> % a
+            case BNode(n, HasId("cbank", a), _ )        => <span>{ bank }</span> % a
+            case BNode(n, HasId("cbankaccount", a), _ ) => <span>{ account }</span> % a
+            case BNode(n, HasId("cregion", a), _ )      => <span>{ region }</span> % a
+            case BNode(n, HasId("ccity", a), _ )        => <span>{ city }</span> % a
+            case BNode(n, HasId("caddress", a), _ )     => <span>{ address }</span> % a
+            case BNode(n, HasId("cemail", a), _ )       => <span>{ email }</span> % a
+            case BNode(n, HasId("cphone", a), _ )       => <span>{ phone }</span> % a
           } match {
             case Success(n) => Success((s.state.initialState, n))
             case Failure(f) => Success((s.state.initialState, errorTag(f toString)))
@@ -93,12 +95,12 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
             ShopApplication.persistence.productById(prod.id) match {
               case Success(p) =>
                 (bind(s.node) {
-                  case "img" attributes a / _ =>
-                    <img/> % a attr ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "normal", p.images.head)}") e
-                  case "td" attributes HasClass("c1", a) / _ => <td>{ p.title_?(s.state.lang.name) }</td> % a
-                  case "td" attributes HasClass("c2", a) / _ => <td>{ prod.quantity }</td> % a
-                  case "td" attributes HasClass("c3", a) / _ => <td>{ p.actualPrice }</td> % a
-                  case "td" attributes HasClass("c4", a) / _ => <td><ul class="userOptions">{ prod.userOptions.flatMap { o => <li>{ o._1 + " : " + o._2 }</li> } }</ul></td> % a
+                  case BNode("img", a, _ ) =>
+                    <img/> % (a + ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "normal", p.images.head)}"))
+                  case BNode("td", HasClass("c1", a), _ ) => <td>{ p.title_?(s.state.lang.name) }</td> % a
+                  case BNode("td", HasClass("c2", a), _ ) => <td>{ prod.quantity }</td> % a
+                  case BNode("td", HasClass("c3", a), _ ) => <td>{ p.actualPrice }</td> % a
+                  case BNode("td", HasClass("c4", a), _ ) => <td><ul class="userOptions">{ prod.userOptions.flatMap { o => <li>{ o._1 + " : " + o._2 }</li> } }</ul></td> % a
                 }) match {
                   case Success(n) => acc ++ n
                   case Failure(ShopError(msg, _)) => acc ++ errorTag(Loc.loc0(s.state.lang)(msg).text)
