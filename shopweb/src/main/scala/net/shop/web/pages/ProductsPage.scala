@@ -8,10 +8,8 @@ import scala.xml.Elem
 import scala.xml.NodeSeq
 import scala.xml.NodeSeq.seqToNodeSeq
 
-import net.shift.common.BNode
-import net.shift.common.BNodeImplicits.attrs2MetaData
-import net.shift.common.BNodeImplicits.bind2Elem
-import net.shift.common.BNodeImplicits.elem2ToBind
+import net.shift.common.Xml
+import net.shift.common.XmlImplicits._
 import net.shift.common.Path
 import net.shift.engine.http.Request
 import net.shift.engine.page.Html5
@@ -58,15 +56,15 @@ object ProductsPage extends Cart[Request] {
           case Success(list) =>
             list flatMap { prod =>
               bind(s.node) {
-                case BNode("li", HasClass("item", a), childs)           => <li>{ childs }</li>
-                case BNode("div", HasClass("item_box", a), childs)      => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
-                case BNode("div", HasClass("info_tag_text", a), childs) => <div>{ prod title_? (s.state.lang.name) }</div> % a
-                case BNode("div", HasClass("info_tag_cart", a), childs) => if (prod.options.isEmpty && prod.userText.isEmpty)
-                  BNode("div", a) / childs
+                case Xml("li", HasClass("item", a), childs)           => <li>{ childs }</li>
+                case Xml("div", HasClass("item_box", a), childs)      => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
+                case Xml("div", HasClass("info_tag_text", a), childs) => <div>{ prod title_? (s.state.lang.name) }</div> % a
+                case Xml("div", HasClass("info_tag_cart", a), childs) => if (prod.options.isEmpty && prod.userText.isEmpty)
+                  Xml("div", a) / childs
                 else
                   NodeSeq.Empty
-                case BNode("div", HasClass("info_tag_price", a), childs) => priceTag(prod) % a
-                case BNode("div", HasId("unique_ribbon", a), childs) => if (prod.unique)
+                case Xml("div", HasClass("info_tag_price", a), childs) => priceTag(prod) % a
+                case Xml("div", HasId("unique_ribbon", a), childs) => if (prod.unique)
                   <div class="unique_label" data-loc="unique"></div>
                 else
                   NodeSeq.Empty

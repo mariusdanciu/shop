@@ -19,9 +19,9 @@ import net.shop.web.services.OrderForm
 import net.shift.io.IODefaults
 import net.shift.loc.Language
 import net.shop.utils.ShopUtils._
-import net.shift.common.BNode
+import net.shift.common.Xml
 import net.shift.common.Attributes
-import net.shift.common.BNodeImplicits._
+import net.shift.common.XmlImplicits._
 
 trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
 
@@ -40,7 +40,7 @@ trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
   val order = snip[T]("order") {
     s =>
       bind(s.node) {
-        case BNode("form", _, _) => <form id="order_form">{ OrderForm.form(s.state.lang).html }</form>
+        case Xml("form", _, _) => <form id="order_form">{ OrderForm.form(s.state.lang).html }</form>
       } map ((s.state.initialState, _))
   }
 
@@ -58,8 +58,8 @@ trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
   val user = snip[T]("user") {
     s =>
       bind(s.node) {
-        case BNode(name, attrs, _) =>
-          BNode(name, attrs) / (s.state.user.map(u => Text(u.name)).getOrElse(NodeSeq.Empty))
+        case Xml(name, attrs, _) =>
+          Xml(name, attrs) / (s.state.user.map(u => Text(u.name)).getOrElse(NodeSeq.Empty))
       } map ((s.state.initialState, _))
   }
 }

@@ -17,8 +17,8 @@ import net.shift.template.Snippet._
 import net.shop.utils.ShopUtils._
 import net.shop.web.ShopApplication
 import net.shop.api.ShopError
-import net.shift.common.BNode
-import net.shift.common.BNodeImplicits._
+import net.shift.common.Xml
+import net.shift.common.XmlImplicits._
 
 
 object CategoryPage extends Cart[Request] { self =>
@@ -34,9 +34,9 @@ object CategoryPage extends Cart[Request] { self =>
           case Success(list) =>
             list flatMap { cat =>
               (bind(s.node) {
-                case BNode("li", HasClass("item", a), childs)             => <li>{ childs }</li>
-                case BNode("div", HasClass("cat_box", a), childs)         => <div id={ cat stringId } style={ "background: url('" + categoryImagePath(cat) + "') no-repeat" }>{ childs }</div> % a
-                case BNode("div", HasClasses("info_tag_text" :: _, a), _) => <div>{ cat.title_?(s.state.lang.name) }</div> % a
+                case Xml("li", HasClass("item", a), childs)             => <li>{ childs }</li>
+                case Xml("div", HasClass("cat_box", a), childs)         => <div id={ cat stringId } style={ "background: url('" + categoryImagePath(cat) + "') no-repeat" }>{ childs }</div> % a
+                case Xml("div", HasClasses("info_tag_text" :: _, a), _) => <div>{ cat.title_?(s.state.lang.name) }</div> % a
               }) match {
                 case Success(n)                 => n
                 case Failure(ShopError(msg, _)) => errorTag(Loc.loc0(s.state.lang)(msg).text)

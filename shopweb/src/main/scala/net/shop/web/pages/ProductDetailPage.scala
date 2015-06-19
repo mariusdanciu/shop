@@ -23,9 +23,8 @@ import net.shift.security.User
 import net.shift.common.Config
 import net.shop.api.ShopError
 import net.shift.common.Attributes
-import net.shift.common.BNode
-import net.shift.common.BNodeImplicits._
-
+import net.shift.common.Xml
+import net.shift.common.XmlImplicits._
 
 object ProductDetailPage extends Cart[ProductPageState] {
 
@@ -38,11 +37,11 @@ object ProductDetailPage extends Cart[ProductPageState] {
           case Some(id :: _) => ShopApplication.persistence.productById(id) match {
             case Success(prod) =>
               val fb = bind(s.node) {
-                case BNode("meta",  a, _) if (a.hasAttr(("property", "og:url")))               => BNode("meta", a + ("content",  s"http://${Config.string("host")}/product?pid=${prod.stringId}")).toElem
-                case BNode("meta",  a, _) if (a.hasAttr(("property", "og:title")))             => BNode("meta", a + ("content",  prod.title_?(s.state.lang.name))).toElem
-                case BNode("meta",  a, _) if (a.hasAttr(("property", "og:description")))       => BNode("meta", a + ("content",  prod.title_?(s.state.lang.name))).toElem
-                case BNode("meta",  a, _) if (a.hasAttr(("property", "og:image")))             => BNode("meta", a + ("content",  s"http://${Config.string("host")}${imagePath(prod.stringId, "normal", prod.images.head)}")).toElem
-                case BNode("meta",  a, _) if (a.hasAttr(("property", "product:price:amount"))) => BNode("meta", a + ("content",  price(prod.price))).toElem
+                case Xml("meta", a, _) if (a.hasAttr(("property", "og:url")))               => Xml("meta", a + ("content", s"http://${Config.string("host")}/product?pid=${prod.stringId}"))
+                case Xml("meta", a, _) if (a.hasAttr(("property", "og:title")))             => Xml("meta", a + ("content", prod.title_?(s.state.lang.name)))
+                case Xml("meta", a, _) if (a.hasAttr(("property", "og:description")))       => Xml("meta", a + ("content", prod.title_?(s.state.lang.name)))
+                case Xml("meta", a, _) if (a.hasAttr(("property", "og:image")))             => Xml("meta", a + ("content", s"http://${Config.string("host")}${imagePath(prod.stringId, "normal", prod.images.head)}"))
+                case Xml("meta", a, _) if (a.hasAttr(("property", "product:price:amount"))) => Xml("meta", a + ("content", price(prod.price)))
               }
               for { n <- fb } yield {
                 (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), n)
@@ -79,7 +78,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
         for {
           prod <- s.state.initialState.product
           el <- bind(s.node) {
-            case BNode("a", _, _) => <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.state.lang)("product.page").text }</a>
+            case Xml("a", _, _) => <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.state.lang)("product.page").text }</a>
           }
         } yield {
           el
@@ -95,24 +94,24 @@ object ProductDetailPage extends Cart[ProductPageState] {
           case images =>
             bind(s.node) {
 
-              case BNode("b:img", a, _) =>
+              case Xml("b:img", a, _) =>
 
                 val p = imagePath(prod.stringId, "normal", prod.images.head)
                 val large = imagePath(prod.stringId, "large", prod.images.head)
 
-                BNode("img", a + ("src", p) + ("title", prod.title_?(s.state.lang.name)) + ("data-zoom-image", large)).toElem
+                Xml("img", a + ("src", p) + ("title", prod.title_?(s.state.lang.name)) + ("data-zoom-image", large))
 
-              case BNode(e, HasId("thumb", a), _) =>
+              case Xml(e, HasId("thumb", a), _) =>
                 NodeSeq.fromSeq(for {
                   p <- prod.images zipWithIndex
                 } yield {
                   val normal = imagePath(prod.stringId, "normal", p._1)
                   val large = imagePath(prod.stringId, "large", p._1)
                   val thumb = imagePath(prod.stringId, "thumb", p._1)
-                 
-                  (BNode(e, a - "id") / <a href="#" data-image={ normal } data-zoom-image={ large }>
-                                               <img id={ s"img_${p._2}" } src={ thumb }/>
-                                             </a>).toElem
+
+                  (Xml(e, a - "id") / <a href="#" data-image={ normal } data-zoom-image={ large }>
+                                        <img id={ s"img_${p._2}" } src={ thumb }/>
+                                      </a>)
                 })
 
             } map { b => (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), b) }
@@ -209,20 +208,20 @@ object ProductDetailPage extends Cart[ProductPageState] {
           val discountPrice = p.discountPrice.map(_.toString()).getOrElse("")
 
           (bind(s.node) {
-            case BNode("form", attrs, childs)    => BNode("form", attrs + ("action", ("/product/update/" + p.stringId))) / childs toElem
-            case HasId("edit_pid", attrs)            => BNode("input", attrs + ("value", p.stringId)) toElem
-            case HasId("edit_title", attrs)          => BNode("input", attrs + ("value", title)) toElem
-            case HasId("edit_price", attrs)          => BNode("input", attrs + ("value", p.price.toString())) toElem
-            case HasId("edit_discount_price", attrs) => BNode("input", attrs + ("value", discountPrice)) toElem
-            case HasId("edit_categories", attrs)     => handleCategories(attrs, s.state.lang, p.categories.toSet) toElem
-            case HasId("edit_keywords", attrs)       => BNode("input", attrs + ("value", p.keyWords.mkString(", "))) toElem
-            case HasId("edit_stock", attrs)          => BNode("input", attrs + ("value", p.stock.map(_ toString).getOrElse(""))) toElem
+            case Xml("form", attrs, childs)          => Xml("form", attrs + ("action", ("/product/update/" + p.stringId))) / childs
+            case HasId("edit_pid", attrs)            => Xml("input", attrs + ("value", p.stringId))
+            case HasId("edit_title", attrs)          => Xml("input", attrs + ("value", title))
+            case HasId("edit_price", attrs)          => Xml("input", attrs + ("value", p.price.toString()))
+            case HasId("edit_discount_price", attrs) => Xml("input", attrs + ("value", discountPrice))
+            case HasId("edit_categories", attrs)     => handleCategories(attrs, s.state.lang, p.categories.toSet)
+            case HasId("edit_keywords", attrs)       => Xml("input", attrs + ("value", p.keyWords.mkString(", ")))
+            case HasId("edit_stock", attrs)          => Xml("input", attrs + ("value", p.stock.map(_ toString).getOrElse("")))
             case HasId("edit_unique", attrs) =>
               val a = attrs + ("value", "true")
-              BNode("input", if (!p.unique) a else a + ("checked",  p.unique.toString)) toElem
-            case HasId("edit_description", attrs)                           => BNode("textarea", attrs) / Text(desc) toElem
-            case BNode(_, HasClass("edit_props_sample", attrs), childs) => handleProperties(childs, p)
-            case BNode(_, HasClass("edit_user_options", attrs), childs) => handleUserOptions(childs, p)
+              Xml("input", if (!p.unique) a else a + ("checked", p.unique.toString))
+            case HasId("edit_description", attrs)                     => Xml("textarea", attrs) / Text(desc)
+            case Xml(_, HasClass("edit_props_sample", attrs), childs) => handleProperties(childs, p)
+            case Xml(_, HasClass("edit_user_options", attrs), childs) => handleUserOptions(childs, p)
           }) match {
             case Success(n) => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), n)
             case _          => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node)
@@ -231,27 +230,27 @@ object ProductDetailPage extends Cart[ProductPageState] {
       }
   }
 
-  private def handleCategories(attrs: Attributes, l: Language, categs: Set[String]) = BNode("select", attrs) / {
+  private def handleCategories(attrs: Attributes, l: Language, categs: Set[String]) = Xml("select", attrs) / {
     ShopApplication.persistence.allCategories match {
       case Success(cats) => NodeSeq.fromSeq((for { c <- cats } yield {
-        val opt = BNode("option", Attributes("value", c.stringId)) / Text(c.title_?(l.name))
+        val opt = Xml("option", Attributes("value", c.stringId)) / Text(c.title_?(l.name))
         if (categs.contains(c.stringId)) {
-          (opt addAttr ("selected", "true")).toElem
+          (opt addAttr ("selected", "true"))
         } else {
-          opt toElem
+          opt
         }
       }).toSeq)
-      case _ => BNode("select", attrs).toElem
+      case _ => Xml("select", attrs)
     }
   }
 
   private def handleProperties(childs: NodeSeq, p: ProductDetail) = NodeSeq.fromSeq((p.properties flatMap {
     case (k, v) =>
-      bind(BNode("div", Attributes("class", "row")) / childs) {
+      bind(Xml("div", Attributes("class", "row")) / childs) {
         case HasName("pkey", attrs) =>
-          BNode("input", attrs + ("value", k))
+          Xml("input", attrs + ("value", k))
         case HasName("pval", attrs) =>
-          BNode("input", attrs + ("value", v))
+          Xml("input", attrs + ("value", v))
       } match {
         case Success(n) => n
         case _          => NodeSeq.Empty
@@ -260,21 +259,21 @@ object ProductDetailPage extends Cart[ProductPageState] {
 
   private def handleUserOptions(n: NodeSeq, p: ProductDetail) = {
     bind(n) {
-      case BNode(_, HasClass("edit_custom_options_sample", attrs), childs) =>
+      case Xml(_, HasClass("edit_custom_options_sample", attrs), childs) =>
         NodeSeq.fromSeq(p.options.flatMap {
           case (k, v) =>
             bind(childs) {
               case HasName("customkey", attrs) =>
-                BNode("input", attrs + ("value", k))
+                Xml("input", attrs + ("value", k))
               case HasName("customval", attrs) =>
-                BNode("input", attrs + ("value",  v.mkString(", ")))
+                Xml("input", attrs + ("value", v.mkString(", ")))
             } getOrElse NodeSeq.Empty
         } toList)
-      case BNode(_, HasClass("edit_custom_text_sample", attrs), childs) =>
+      case Xml(_, HasClass("edit_custom_text_sample", attrs), childs) =>
         p.userText.flatMap { t =>
           bind(childs) {
             case HasName("customtext", attrs) =>
-              BNode("input", attrs + ("value", t))
+              Xml("input", attrs + ("value", t))
           } getOrElse NodeSeq.Empty
         }
     } getOrElse NodeSeq.Empty

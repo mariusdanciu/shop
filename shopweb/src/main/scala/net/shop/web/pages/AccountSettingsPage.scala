@@ -36,9 +36,9 @@ import net.shift.template.Binds._
 import net.shift.common.XmlUtils._
 import net.shop.api.Person
 import net.shop.api.Company
-import net.shift.common.BNode
+import net.shift.common.Xml
 import net.shift.common.Attributes
-import net.shift.common.BNodeImplicits._
+import net.shift.common.XmlImplicits._
 
 object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { self =>
 
@@ -56,17 +56,17 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
             val r = ShopApplication.persistence.userByEmail(user.name) match {
               case scala.util.Success(Some(ud)) =>
                 (Some(ud), bind(s.node) {
-                  case HasName("update_firstName", a)    => BNode("input", a + ("value", ud.userInfo.firstName))
-                  case HasName("update_lastName", a)     => BNode("input", a + ("value", ud.userInfo.lastName))
-                  case HasName("update_cnp", a)          => BNode("input", a + ("value", ud.userInfo.cnp))
-                  case HasName("update_phone", a)        => BNode("input", a + ("value", ud.userInfo.phone))
+                  case HasName("update_firstName", a)    => Xml("input", a + ("value", ud.userInfo.firstName))
+                  case HasName("update_lastName", a)     => Xml("input", a + ("value", ud.userInfo.lastName))
+                  case HasName("update_cnp", a)          => Xml("input", a + ("value", ud.userInfo.cnp))
+                  case HasName("update_phone", a)        => Xml("input", a + ("value", ud.userInfo.phone))
 
-                  case HasName("update_cname", a)        => BNode("input", a + ("value", ud.companyInfo.name))
-                  case HasName("update_cif", a)          => BNode("input", a + ("value", ud.companyInfo.cif))
-                  case HasName("update_cregcom", a)      => BNode("input", a + ("value", ud.companyInfo.regCom))
-                  case HasName("update_cbank", a)        => BNode("input", a + ("value", ud.companyInfo.bank))
-                  case HasName("update_cbankaccount", a) => BNode("input", a + ("value", ud.companyInfo.bankAccount))
-                  case HasName("update_cphone", a)       => BNode("input", a + ("value", ud.companyInfo.phone))
+                  case HasName("update_cname", a)        => Xml("input", a + ("value", ud.companyInfo.name))
+                  case HasName("update_cif", a)          => Xml("input", a + ("value", ud.companyInfo.cif))
+                  case HasName("update_cregcom", a)      => Xml("input", a + ("value", ud.companyInfo.regCom))
+                  case HasName("update_cbank", a)        => Xml("input", a + ("value", ud.companyInfo.bank))
+                  case HasName("update_cbankaccount", a) => Xml("input", a + ("value", ud.companyInfo.bankAccount))
+                  case HasName("update_cphone", a)       => Xml("input", a + ("value", ud.companyInfo.phone))
 
                 })
               case _ => (None, Success(NodeSeq.Empty))
@@ -147,55 +147,55 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
 
                 (bind(s.node.head.child) {
 
-                  case BNode(_, HasId("person_info", a), childs) => o match {
+                  case Xml(_, HasId("person_info", a), childs) => o match {
                     case OrderLog(id, time, Person(fn, ln, cnp), Address(_, _, country, region, city, address, zip), email, phone, _, _, _) =>
                       bind(childs) {
-                        case BNode(_, HasId("oid", a), _)     => <span>{ id }</span> % a
-                        case BNode(_, HasId("lname", a), _)   => <span>{ ln }</span> % a
-                        case BNode(_, HasId("fname", a), _)   => <span>{ fn }</span> % a
-                        case BNode(_, HasId("cnp", a), _)     => <span>{ cnp }</span> % a
-                        case BNode(_, HasId("region", a), _)  => <span>{ region }</span> % a
-                        case BNode(_, HasId("city", a), _)    => <span>{ city }</span> % a
-                        case BNode(_, HasId("address", a), _) => <span>{ address }</span> % a
-                        case BNode(_, HasId("email", a), _)   => <span>{ email }</span> % a
-                        case BNode(_, HasId("phone", a), _)   => <span>{ phone }</span> % a
+                        case Xml(_, HasId("oid", a), _)     => <span>{ id }</span> % a
+                        case Xml(_, HasId("lname", a), _)   => <span>{ ln }</span> % a
+                        case Xml(_, HasId("fname", a), _)   => <span>{ fn }</span> % a
+                        case Xml(_, HasId("cnp", a), _)     => <span>{ cnp }</span> % a
+                        case Xml(_, HasId("region", a), _)  => <span>{ region }</span> % a
+                        case Xml(_, HasId("city", a), _)    => <span>{ city }</span> % a
+                        case Xml(_, HasId("address", a), _) => <span>{ address }</span> % a
+                        case Xml(_, HasId("email", a), _)   => <span>{ email }</span> % a
+                        case Xml(_, HasId("phone", a), _)   => <span>{ phone }</span> % a
                       } getOrElse NodeSeq.Empty
                     case _ => NodeSeq.Empty
                   }
 
-                  case BNode(_, HasId("company_info", a), childs) => o match {
+                  case Xml(_, HasId("company_info", a), childs) => o match {
                     case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(_, _, country, region, city, address, zip), email, phone, _, _, _) =>
                       bind(childs) {
-                        case BNode(_, HasId("oid", a), _)          => <span>{ id }</span> % a
-                        case BNode(_, HasId("cname", a), _)        => <span>{ cn }</span> % a
-                        case BNode(_, HasId("cif", a), _)          => <span>{ cif }</span> % a
-                        case BNode(_, HasId("cregcom", a), _)      => <span>{ regCom }</span> % a
-                        case BNode(_, HasId("cbank", a), _)        => <span>{ bank }</span> % a
-                        case BNode(_, HasId("cbankaccount", a), _) => <span>{ account }</span> % a
-                        case BNode(_, HasId("cregion", a), _)      => <span>{ region }</span> % a
-                        case BNode(_, HasId("ccity", a), _)        => <span>{ city }</span> % a
-                        case BNode(_, HasId("caddress", a), _)     => <span>{ address }</span> % a
-                        case BNode(_, HasId("cemail", a), _)       => <span>{ email }</span> % a
-                        case BNode(_, HasId("cphone", a), _)       => <span>{ phone }</span> % a
+                        case Xml(_, HasId("oid", a), _)          => <span>{ id }</span> % a
+                        case Xml(_, HasId("cname", a), _)        => <span>{ cn }</span> % a
+                        case Xml(_, HasId("cif", a), _)          => <span>{ cif }</span> % a
+                        case Xml(_, HasId("cregcom", a), _)      => <span>{ regCom }</span> % a
+                        case Xml(_, HasId("cbank", a), _)        => <span>{ bank }</span> % a
+                        case Xml(_, HasId("cbankaccount", a), _) => <span>{ account }</span> % a
+                        case Xml(_, HasId("cregion", a), _)      => <span>{ region }</span> % a
+                        case Xml(_, HasId("ccity", a), _)        => <span>{ city }</span> % a
+                        case Xml(_, HasId("caddress", a), _)     => <span>{ address }</span> % a
+                        case Xml(_, HasId("cemail", a), _)       => <span>{ email }</span> % a
+                        case Xml(_, HasId("cphone", a), _)       => <span>{ phone }</span> % a
                       } getOrElse NodeSeq.Empty
                     case _ => NodeSeq.Empty
                   }
 
-                  case HasClass("order_title", a) => BNode("a", a) / Text(s"Comanda ${o.id} din data ${dateFormat.format(o.time)}")
-                  case BNode(_, HasClass("order_items", a), childs) =>
+                  case HasClass("order_title", a) => Xml("a", a) / Text(s"Comanda ${o.id} din data ${dateFormat.format(o.time)}")
+                  case Xml(_, HasClass("order_items", a), childs) =>
 
                     o.items flatMap { item =>
                       <tr> {
                         val prod = ShopApplication.persistence.productById(item.id)
                         val title = prod.map { _.title_?(s.state.lang.name) } getOrElse ""
-                        def img(a: Attributes): NodeSeq = prod.map { p => BNode("img", a + ("src", imagePath(item.id, "thumb", p.images.head))).toElem } getOrElse NodeSeq.Empty
+                        def img(a: Attributes): NodeSeq = prod.map { p => Xml("img", a + ("src", imagePath(item.id, "thumb", p.images.head))) } getOrElse NodeSeq.Empty
 
                         bind(childs) {
                           case HasClass("c1", a)                     => img(a)
-                          case BNode("td", HasClass("c2", a), _) => <td>{ title }</td> % a
-                          case BNode("td", HasClass("c3", a), _) => <td>{ item.quantity }</td> % a
-                          case BNode("td", HasClass("c4", a), _) => <td>{ price(item.price) }</td> % a
-                          case BNode("td", HasClass("c5", a), _) => <td>{ optsToNode(item.userOptions) }</td> % a
+                          case Xml("td", HasClass("c2", a), _) => <td>{ title }</td> % a
+                          case Xml("td", HasClass("c3", a), _) => <td>{ item.quantity }</td> % a
+                          case Xml("td", HasClass("c4", a), _) => <td>{ price(item.price) }</td> % a
+                          case Xml("td", HasClass("c5", a), _) => <td>{ optsToNode(item.userOptions) }</td> % a
                         } getOrElse NodeSeq.Empty
                       }</tr>
                     }
@@ -209,7 +209,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
                     val e = for {
                       u <- option2Try(loggedinUser)
                       n <- u.notThesePermissions(Permission("write")) {
-                        NodeSeq.Empty ++ (BNode("span", Attributes("class", "order_status")) / (o.status match {
+                        NodeSeq.Empty ++ (Xml("span", Attributes("class", "order_status")) / (o.status match {
                           case OrderReceived  => Text(Loc.loc0(l)("received").text)
                           case OrderPending   => Text(Loc.loc0(l)("pending").text)
                           case OrderFinalized => Text(Loc.loc0(l)("finalized").text)
@@ -220,7 +220,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
 
                     e getOrElse NodeSeq.Empty
 
-                  case BNode(_, HasClass("edit_status", a), childs) =>
+                  case Xml(_, HasClass("edit_status", a), childs) =>
                     val e = for {
                       u <- option2Try(loggedinUser)
                       n <- u.requireAll(Permission("write")) {
@@ -258,26 +258,26 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
               bind(s.node.head.child) {
                 case HasClass("user_title", a)       => <span>{ user.email }</span>
 
-                case HasId("update_firstName", a)    => BNode("span", a) / Text(user.userInfo.firstName)
-                case HasId("update_lastName", a)     => BNode("span", a) / Text(user.userInfo.lastName)
-                case HasId("update_cnp", a)          => BNode("span", a) / Text(user.userInfo.cnp)
-                case HasId("update_phone", a)        => BNode("span", a) / Text(user.userInfo.phone)
+                case HasId("update_firstName", a)    => Xml("span", a) / Text(user.userInfo.firstName)
+                case HasId("update_lastName", a)     => Xml("span", a) / Text(user.userInfo.lastName)
+                case HasId("update_cnp", a)          => Xml("span", a) / Text(user.userInfo.cnp)
+                case HasId("update_phone", a)        => Xml("span", a) / Text(user.userInfo.phone)
 
-                case HasId("update_cname", a)        => BNode("span", a) / Text(user.companyInfo.name)
-                case HasId("update_cif", a)          => BNode("span", a) / Text(user.companyInfo.cif)
-                case HasId("update_cregcom", a)      => BNode("span", a) / Text(user.companyInfo.regCom)
-                case HasId("update_cbank", a)        => BNode("span", a) / Text(user.companyInfo.bank)
-                case HasId("update_cbankaccount", a) => BNode("span", a) / Text(user.companyInfo.bankAccount)
-                case HasId("update_cphone", a)       => BNode("span", a) / Text(user.companyInfo.phone)
+                case HasId("update_cname", a)        => Xml("span", a) / Text(user.companyInfo.name)
+                case HasId("update_cif", a)          => Xml("span", a) / Text(user.companyInfo.cif)
+                case HasId("update_cregcom", a)      => Xml("span", a) / Text(user.companyInfo.regCom)
+                case HasId("update_cbank", a)        => Xml("span", a) / Text(user.companyInfo.bank)
+                case HasId("update_cbankaccount", a) => Xml("span", a) / Text(user.companyInfo.bankAccount)
+                case HasId("update_cphone", a)       => Xml("span", a) / Text(user.companyInfo.phone)
 
                 case HasId("addresses", a) =>
                   user.addresses.flatMap { addr =>
                     <li>{ s"${addr.address}, ${addr.city}, ${addr.region}, ${addr.country}, ${addr.zipCode}" }</li>
                   }
 
-                case BNode(n, HasClass("deleteuser", _), childs) =>
+                case Xml(n, HasClass("deleteuser", _), childs) =>
                   bind(childs) {
-                    case BNode(n, a,  _) => BNode(n, a + ("data-email", user.email))
+                    case Xml(n, a,  _) => Xml(n, a + ("data-email", user.email))
                   } getOrElse NodeSeq.Empty
 
               } getOrElse NodeSeq.Empty
@@ -292,10 +292,10 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
   private def makeSelect(o: OrderLog, childs: NodeSeq): NodeSeq = {
 
     bind(childs) {
-      case BNode("option", HasValue("0", a), _ ) if (o.status == OrderReceived)  => BNode("option", a + ("selected", "true"))
-      case BNode("option", HasValue("1", a), _ ) if (o.status == OrderPending)   => BNode("option", a + ("selected", "true"))
-      case BNode("option", HasValue("2", a), _ ) if (o.status == OrderFinalized) => BNode("option", a + ("selected", "true"))
-      case BNode("option", HasValue("-1", a), _ ) if (o.status == OrderCanceled) => BNode("option", a + ("selected", "true"))
+      case Xml("option", HasValue("0", a), _ ) if (o.status == OrderReceived)  => Xml("option", a + ("selected", "true"))
+      case Xml("option", HasValue("1", a), _ ) if (o.status == OrderPending)   => Xml("option", a + ("selected", "true"))
+      case Xml("option", HasValue("2", a), _ ) if (o.status == OrderFinalized) => Xml("option", a + ("selected", "true"))
+      case Xml("option", HasValue("-1", a), _ ) if (o.status == OrderCanceled) => Xml("option", a + ("selected", "true"))
     } match {
       case Success(n) => <select id={ o.id } class="order_edit_status">
                            { n }
@@ -319,14 +319,14 @@ object AddressPage extends DynamicContent[Address] with Selectors { self =>
 
         val name = s.state.initialState.name
 
-        def augmentInput(a: Attributes, v: String) = BNode("input", a +
+        def augmentInput(a: Attributes, v: String) = Xml("input", a +
           ("value", v) +
           ("id", augmentAttr(a.attrs, "id", name)) +
           ("name", augmentAttr(a.attrs, "name", name)))
 
         val res = bind(s.node) {
-          case HasClass("addr_title", a) => BNode("a", a) / Text(name)
-          case BNode("label", a, _)      => BNode("label", a + ("for", augmentAttr(a.attrs, "for", name)))
+          case HasClass("addr_title", a) => Xml("a", a) / Text(name)
+          case Xml("label", a, _)      => Xml("label", a + ("for", augmentAttr(a.attrs, "for", name)))
           case HasName("addr_region", a) => augmentInput(a, s.state.initialState.region)
           case HasName("addr_city", a)   => augmentInput(a, s.state.initialState.city)
           case HasName("addr_addr", a)   => augmentInput(a, s.state.initialState.address)
