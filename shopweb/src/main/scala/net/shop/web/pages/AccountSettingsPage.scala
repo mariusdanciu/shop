@@ -37,7 +37,7 @@ import net.shift.common.XmlUtils._
 import net.shop.api.Person
 import net.shop.api.Company
 import net.shift.common.Xml
-import net.shift.common.Attributes
+import net.shift.common.XmlAttr
 import net.shift.common.XmlImplicits._
 
 object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { self =>
@@ -188,7 +188,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
                       <tr> {
                         val prod = ShopApplication.persistence.productById(item.id)
                         val title = prod.map { _.title_?(s.state.lang.name) } getOrElse ""
-                        def img(a: Attributes): NodeSeq = prod.map { p => Xml("img", a + ("src", imagePath(item.id, "thumb", p.images.head))) } getOrElse NodeSeq.Empty
+                        def img(a: XmlAttr): NodeSeq = prod.map { p => Xml("img", a + ("src", imagePath(item.id, "thumb", p.images.head))) } getOrElse NodeSeq.Empty
 
                         bind(childs) {
                           case HasClass("c1", a)                     => img(a)
@@ -209,7 +209,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
                     val e = for {
                       u <- option2Try(loggedinUser)
                       n <- u.notThesePermissions(Permission("write")) {
-                        NodeSeq.Empty ++ (Xml("span", Attributes("class", "order_status")) / (o.status match {
+                        NodeSeq.Empty ++ (Xml("span", XmlAttr("class", "order_status")) / (o.status match {
                           case OrderReceived  => Text(Loc.loc0(l)("received").text)
                           case OrderPending   => Text(Loc.loc0(l)("pending").text)
                           case OrderFinalized => Text(Loc.loc0(l)("finalized").text)
@@ -319,7 +319,7 @@ object AddressPage extends DynamicContent[Address] with Selectors { self =>
 
         val name = s.state.initialState.name
 
-        def augmentInput(a: Attributes, v: String) = Xml("input", a +
+        def augmentInput(a: XmlAttr, v: String) = Xml("input", a +
           ("value", v) +
           ("id", augmentAttr(a.attrs, "id", name)) +
           ("name", augmentAttr(a.attrs, "name", name)))

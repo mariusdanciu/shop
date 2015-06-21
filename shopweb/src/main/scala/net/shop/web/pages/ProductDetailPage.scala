@@ -22,7 +22,7 @@ import net.shift.common.ShiftFailure
 import net.shift.security.User
 import net.shift.common.Config
 import net.shop.api.ShopError
-import net.shift.common.Attributes
+import net.shift.common.XmlAttr
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 
@@ -230,10 +230,10 @@ object ProductDetailPage extends Cart[ProductPageState] {
       }
   }
 
-  private def handleCategories(attrs: Attributes, l: Language, categs: Set[String]) = Xml("select", attrs) / {
+  private def handleCategories(attrs: XmlAttr, l: Language, categs: Set[String]) = Xml("select", attrs) / {
     ShopApplication.persistence.allCategories match {
       case Success(cats) => NodeSeq.fromSeq((for { c <- cats } yield {
-        val opt = Xml("option", Attributes("value", c.stringId)) / Text(c.title_?(l.name))
+        val opt = Xml("option", XmlAttr("value", c.stringId)) / Text(c.title_?(l.name))
         if (categs.contains(c.stringId)) {
           (opt addAttr ("selected", "true"))
         } else {
@@ -246,7 +246,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
 
   private def handleProperties(childs: NodeSeq, p: ProductDetail) = NodeSeq.fromSeq((p.properties flatMap {
     case (k, v) =>
-      bind(Xml("div", Attributes("class", "row")) / childs) {
+      bind(Xml("div", XmlAttr("class", "row")) / childs) {
         case HasName("pkey", attrs) =>
           Xml("input", attrs + ("value", k))
         case HasName("pval", attrs) =>

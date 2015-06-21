@@ -10,7 +10,6 @@ import net.shift.engine.ShiftApplication
 import net.shift.engine.ShiftApplication.rule
 import net.shift.engine.ShiftApplication.service
 import net.shift.loc.Language
-import net.shift.netty.NettyServer
 import net.shop.mongodb.MongoDBPersistence
 import net.shop.web.pages.CategoryPage
 import net.shop.web.pages.LoginPage
@@ -31,6 +30,9 @@ import net.shop.web.pages.ReturnPolicyPage
 import net.shop.web.pages.DataProtectionPage
 import net.shift.io.IODefaults
 import net.shop.web.pages.CookiesPage
+import net.shop.api.persistence.Persistence
+import net.shop.mongodb.MongoDBPersistence
+import net.shift.spray.SprayServer
 
 object StartShop extends App with DefaultLog with IODefaults {
 
@@ -39,7 +41,7 @@ object StartShop extends App with DefaultLog with IODefaults {
   Config load ()
 
   val port = Config.int("port")
-  NettyServer.start(port, ShopApplication)
+  SprayServer.start(port, ShopApplication)
 
   println("Server started on port " + port)
 }

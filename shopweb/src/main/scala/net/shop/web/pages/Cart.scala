@@ -20,7 +20,7 @@ import net.shift.io.IODefaults
 import net.shift.loc.Language
 import net.shop.utils.ShopUtils._
 import net.shift.common.Xml
-import net.shift.common.Attributes
+import net.shift.common.XmlAttr
 import net.shift.common.XmlImplicits._
 
 trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
