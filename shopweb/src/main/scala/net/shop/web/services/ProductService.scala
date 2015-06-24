@@ -50,7 +50,7 @@ object ProductService extends ShiftUtils
   def deleteProduct(implicit fs: FileSystem) = for {
     r <- DELETE
     Path(_, "product" :: "delete" :: id :: Nil) <- path
-    user <- auth
+    user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
     ShopApplication.persistence.deleteProducts(id) match {
       case scala.util.Success(num) =>
@@ -64,7 +64,7 @@ object ProductService extends ShiftUtils
   def updateProduct(implicit fs: FileSystem) = for {
     r <- POST
     Path(_, "product" :: "update" :: pid :: Nil) <- path
-    user <- auth
+    user <- userRequired(Loc.loc0(r.language)("login.fail").text)
     mp <- multipartForm
   } yield {
     extract(r.language, Some(pid), "edit_", mp) match {
@@ -94,7 +94,7 @@ object ProductService extends ShiftUtils
   def createProduct(implicit fs: FileSystem) = for {
     r <- POST
     Path(_, "product" :: "create" :: Nil) <- path
-    user <- userRequired
+    user <- userRequired(Loc.loc0(r.language)("login.fail").text)
     mp <- multipartForm
   } yield {
     val extracted = duration(extract(r.language, None, "create_", mp)) { d =>
