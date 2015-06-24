@@ -7,7 +7,7 @@ html, body {
 	line-height: 1.5em;
 	background-color: white;
 	height: 100%;
-	min-width: 1270px;
+	min-width: 1070px;
 }
 
 * {
@@ -16,6 +16,12 @@ html, body {
 	font-family: 'Dosis', sans-serif;
 	font-weight: 300;
 }
+
+*, *:before, *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+ }
 
 select {
 	border: 1px solid #111;
@@ -185,6 +191,11 @@ a:active {
 	padding-bottom: 120px;
 }
 
+.controls {
+	width: 100%;
+	position: relative;
+}
+
 .wrap {
 	min-height: 100%;
 	height: auto !important;
@@ -193,7 +204,7 @@ a:active {
 }
 
 .center {
-	max-width: 1280px;
+	max-width: 1070px;
 	margin: auto;
 	position: relative;
 }
@@ -262,6 +273,7 @@ a:active {
 	width: 156px;
 	position: relative;
 	z-index: 0;
+	margin: 0 20px 20px 0;
 }
 
 .cat_box:hover {
@@ -278,6 +290,7 @@ a:active {
 	position: relative;
 	box-shadow: inset 0px 0px 1px 1px #ddd;
 	overflow: hidden;
+	margin: 0 40px 20px 0;
 }
 
 .item_box:hover {
@@ -570,8 +583,8 @@ h1 {
 .navigation {
 	float: left;
 	position: relative;
-	width: 100%;
-	height: 40px;
+	top: 20px;
+	left: 20px;
 }
 
 .navigation span {
@@ -1307,127 +1320,7 @@ h1 {
 
 .home {
 	position: relative;
-	top: 0px;
-}
-
-.sprite {
-    background-image: url('/static/images/spritesheet.png');
-    background-repeat: no-repeat;
-    display: inline-block;
-}
-
-.sprite-add {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -5px;
-}
-
-.sprite-add-item {
-    width: 128px;
-    height: 128px;
-    background-position: -5px -47px;
-}
-
-.sprite-add-item-small {
-    width: 64px;
-    height: 64px;
-    background-position: -5px -185px;
-}
-
-.sprite-cart_black {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -259px;
-}
-
-.sprite-checked_checkbox {
-    width: 26px;
-    height: 26px;
-    background-position: -5px -301px;
-}
-
-.sprite-close {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -337px;
-}
-
-.sprite-edit {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -379px;
-}
-
-.sprite-exclamation {
-    width: 64px;
-    height: 64px;
-    background-position: -5px -421px;
-}
-
-.sprite-home {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -495px;
-}
-
-.sprite-left {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -537px;
-}
-
-.sprite-logout {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -579px;
-}
-
-.sprite-minus {
-    width: 24px;
-    height: 24px;
-    background-position: -5px -621px;
-}
-
-.sprite-plus {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -655px;
-}
-
-.sprite-right {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -697px;
-}
-
-.sprite-search {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -739px;
-}
-
-.sprite-settings {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -781px;
-}
-
-.sprite-unchecked_checkbox {
-    width: 26px;
-    height: 26px;
-    background-position: -5px -823px;
-}
-
-.sprite-user {
-    width: 32px;
-    height: 32px;
-    background-position: -5px -859px;
-}
-
-.sprite-useradd {
-    width: 128px;
-    height: 128px;
-    background-position: -5px -901px;
+	float: left;
 }
 
 .order_info {

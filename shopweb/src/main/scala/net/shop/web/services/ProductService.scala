@@ -94,7 +94,7 @@ object ProductService extends ShiftUtils
   def createProduct(implicit fs: FileSystem) = for {
     r <- POST
     Path(_, "product" :: "create" :: Nil) <- path
-    user <- auth
+    user <- userRequired
     mp <- multipartForm
   } yield {
     val extracted = duration(extract(r.language, None, "create_", mp)) { d =>

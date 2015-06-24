@@ -12,27 +12,18 @@ import org.json4s.native.Serialization.write
 import org.json4s.string2JsonInput
 import net.shift.common.DefaultLog
 import net.shift.common.Path
+import net.shift.common.State
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http.AsyncResponse
-import net.shift.engine.http.Attempt
-import net.shift.engine.http.ImageResponse
-import net.shift.engine.http.JsonResponse
-import net.shift.engine.http.Request
-import net.shift.engine.http.Resp
-import net.shift.engine.http.Response.augmentResponse
-import net.shift.engine.http.TextResponse
-import net.shift.engine.http.serviceServiceUtils
-import net.shift.engine.page.Html5
+import net.shift.engine.http._
 import net.shift.engine.utils.ShiftUtils
 import net.shift.io.IODefaults
 import net.shift.loc.Loc
 import net.shift.security.User
 import net.shift.template.DynamicContent
-import net.shift.template.PageState
 import net.shift.template.Selectors
-import net.shift.template.SnipState
 import net.shop.api.Cart
+import net.shop.api.ShopError
 import net.shop.messaging.HitStat
 import net.shop.messaging.Messaging
 import net.shop.tryApplicative
@@ -41,17 +32,14 @@ import net.shop.web.pages.AccountSettingsPage
 import net.shop.web.pages.CartItemNode
 import net.shop.web.pages.CartState
 import net.shop.web.pages.CategoryPage
+import net.shop.web.pages.LoginPage
 import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.SettingsPageState
-import net.shift.engine.http.Response
-import net.shift.common.State
-import net.shift.engine.http.Header
-import net.shift.common.Config
 import utils.ShopUtils._
-import net.shop.api.ShopError
-import net.shop.web.pages.LoginPage
+import net.shift.template.PageState
+import net.shift.engine.page.Html5
 
 trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults {
 
@@ -59,8 +47,9 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     r <- req
   } yield {
     r.header("X-Requested-With") match {
-      case Some(Header(_, "XMLHttpRequest", _)) => service(_(Resp.ok))
-      case _                                    => service(_(Resp.redirect("/")))
+      case Some(Header(_, "XMLHttpRequest", _)) =>
+        service(_(Resp.ok))
+      case _ => service(_(Resp.redirect("/")))
     }
   }
 

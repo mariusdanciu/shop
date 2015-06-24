@@ -19,9 +19,11 @@
         }
 
         $(document).ajaxError(function(event, request, settings, thrownError) {
+
             if (thrownError == "") {
                 common.showConnectionError();
             } else {
+                window.console.log(request.responseText);
                 var ct = request.getResponseHeader("content-type") || "";
                 if (ct.indexOf('text') > -1) {
                     common.showError(request.responseText);

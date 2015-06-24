@@ -74,16 +74,19 @@ object ProductDetailPage extends Cart[ProductPageState] {
 
   val productLink = reqSnip("productlink") {
     s =>
-      ((s.state.initialState.product flatMap { p =>
-        for {
+      val r = for {
           prod <- s.state.initialState.product
-          el <- bind(s.node) {
-            case Xml("a", _, _) => <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.state.lang)("product.page").text }</a>
+          el <- {
+            bind(s.node) {
+              case Xml("a", _, _) => 
+                <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.state.lang)("product.page").text }</a>
+            }
           }
         } yield {
           el
         }
-      }) map { (s.state.initialState, _) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
+      
+      (r map { (s.state.initialState, _) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
   val images = reqSnip("images") {

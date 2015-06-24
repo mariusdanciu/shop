@@ -8,7 +8,8 @@
 <script type="text/javascript" src="/static/js/products.js"></script>
 
 <title>idid.ro - Produse handmade de calitate</title>
-<meta name="description" content="O gama variata de produse lucrate manual (handmade) : Bijuterii, jucarii, tablouri, vase ceramice si sticla, ceasuri, genti, perne etc."/>
+<meta name="description"
+  content="O gama variata de produse lucrate manual (handmade) : Bijuterii, jucarii, tablouri, vase ceramice si sticla, ceasuri, genti, perne etc." />
 
 </head>
 
@@ -16,14 +17,19 @@
 
   <div id="content" class="center page">
 
-    <div class="navigation">
-      <a href="/"><span class="sprite sprite-home home"/></a><span> | </span> <span data-loc="sort"></span> <select id="sortSelect" data-placeholder="...">
-        <option value=""></option>
-        <option value="bynameasc" data-loc="sort.by.name.asc"></option>
-        <option value="bynamedesc" data-loc="sort.by.name.desc"></option>
-        <option value="bypriceasc" data-loc="sort.by.price.asc"></option>
-        <option value="bypricedesc" data-loc="sort.by.price.desc"></option>
-      </select>
+    <div class="controls">
+      <div class="home">
+        <a href="/"><span class="sprite sprite-back" /></a>
+      </div>
+      <div class="navigation">
+        <span data-loc="sort"></span> <select id="sortSelect" data-placeholder="...">
+          <option value=""></option>
+          <option value="bynameasc" data-loc="sort.by.name.asc"></option>
+          <option value="bynamedesc" data-loc="sort.by.name.desc"></option>
+          <option value="bypriceasc" data-loc="sort.by.price.asc"></option>
+          <option value="bypricedesc" data-loc="sort.by.price.desc"></option>
+        </select>
+      </div>
     </div>
 
     <div id="product_dialog"></div>
@@ -86,10 +92,10 @@
               <div id="create_customize" class="form_specs tab_content">
                 <ul>
                   <li>
-                    <div class="specs_title" data-loc="add.options"></div> <span id="add_custom_prop" class="clickable sprite sprite-plus"/>
+                    <div class="specs_title" data-loc="add.options"></div> <span id="add_custom_prop" class="clickable sprite sprite-plus" />
                   </li>
                   <li>
-                    <div class="specs_title" data-loc="add.text"></div> <span id="add_custom_text" class="clickable sprite sprite-plus"/>
+                    <div class="specs_title" data-loc="add.text"></div> <span id="add_custom_text" class="clickable sprite sprite-plus" />
                   </li>
                 </ul>
                 <div id="prop_custom_fields" class="row"></div>
@@ -123,8 +129,7 @@
       </div>
     </div>
 
-    <div id="item_list">
-    </div>
+    <div id="item_list"></div>
 
   </div>
 
