@@ -184,15 +184,26 @@ a:active {
 	color: #000000;
 }
 
+.products_page {
+	position: relative;
+	padding-top: 140px;
+	padding-bottom: 120px;
+}
+
 .page {
 	position: relative;
 	padding-top: 70px;
 	padding-bottom: 120px;
 }
 
+
 .controls {
 	width: 100%;
-	position: relative;
+	position: fixed;
+	top: 60px;
+	height: 50px;
+	z-index: 10;
+	background-color: #f6f6f6;
 }
 
 .wrap {
