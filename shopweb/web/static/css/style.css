@@ -178,7 +178,6 @@ a:active {
 	z-index: 80;
 	background-color: #ffffff;
 	border-bottom: 1px solid #dddddd;
-	box-shadow: 0px 0px 15px 1px #ddd;
 }
 
 .header * {
