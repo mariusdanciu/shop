@@ -85,7 +85,8 @@ input[type="checkbox"]+label {
     background-repeat: no-repeat;
     width: 350px;
     height: 26px;
-    background-position: 310px -819px;
+    background-position: -5px -881px;
+    padding: 2px 0px 0px 40px;
 }
 
 input[type="checkbox"]:checked+label {
@@ -93,7 +94,8 @@ input[type="checkbox"]:checked+label {
     background-repeat: no-repeat;	
     width: 350px;
     height: 26px;
-    background-position: 310px -297px;
+    background-position: -5px -359px;
+    padding: 2px 0px 0px 40px;
 }
 
 .unique_prod input[type="checkbox"]+label {
@@ -101,7 +103,8 @@ input[type="checkbox"]:checked+label {
     background-repeat: no-repeat;
     width: 150px;
     height: 26px;
-    background-position: 95px -823px;
+    background-position: -5px -881px;
+    padding: 2px 0px 0px 40px;
 }
 
 .unique_prod input[type="checkbox"]:checked+label {
@@ -109,7 +112,8 @@ input[type="checkbox"]:checked+label {
     background-repeat: no-repeat;	
     width: 150px;
     height: 26px;
-    background-position: 95px -301px;
+    background-position: -5px -359px;
+    padding: 2px 0px 0px 40px;
 }
 
 
@@ -493,7 +497,6 @@ h1 {
 
 #cart_empty {
 	display: none;
-	height: 30px;
 	padding: 20px;
 	float: left;
 	position: relative;
@@ -860,11 +863,6 @@ h1 {
 
 .terms {
 	float: left;
-}
-
-#terms_wrapper label {
-	padding-top: 5px;
-	padding-bottom: 5px;
 }
 
 #notice_e, #notice_connect_e {

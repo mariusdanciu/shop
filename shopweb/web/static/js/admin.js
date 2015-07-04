@@ -165,7 +165,7 @@ var admin = {
             var div = $("<div class='row'></div>");
             div.append("<input type='text' name='" + key + "'/><input type='text' name='" + val + "'/>");
 
-            var remove = $("<span class='clickable sprite sprite-minus top5'/>");
+            var remove = $("<div class='clickable sprite sprite-minus top5 left left10'></div>");
             remove.click(function(e) {
                 div.remove();
                 return false;
@@ -182,7 +182,7 @@ var admin = {
         $(elem).click(function(event) {
             var div = $("<div class='row'></div>");
             div.append("<input type='text' name='" + key + "'/>");
-            var remove = $("<span class='clickable sprite sprite-minus top5'/>");
+            var remove = $("<span class='clickable sprite sprite-minus top5 left left10'/>");
             remove.click(function(e) {
                 div.remove();
                 return false;
@@ -296,7 +296,7 @@ var admin = {
                 css : {
                     top : '70px',
                     left : ($(window).width() - 580) / 2 + 'px',
-                    width : '580px',
+                    width : '600px',
                     border : 'none',
                     cursor : null
                 },
