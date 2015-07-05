@@ -37,18 +37,6 @@ object ProductsPage extends Cart[Request] {
       Html5.runPageFromFile(s.state, Path(s"web/templates/productslist.html"), this).map { e => (e._1.state.initialState, e._2) }
   }
 
-  def pageTitle(s: PageState[Request]) = {
-    (s.initialState.param("cat"), s.initialState.param("search")) match {
-      case (Some(cat :: _), None) =>
-        ShopApplication.persistence.categoryById(cat) match {
-          case Success(c) => c.title.getOrElse(s.lang.name, "???")
-          case _          => ""
-        }
-      case (None, Some(search :: _)) => s""""$search""""
-      case _                         => ""
-    }
-  }
-
   val item = reqSnip("item") {
     s =>
       {

@@ -73,7 +73,7 @@ input {
 
 textarea, input, select, .preview {
 	border: 1px solid #bbbbbb;
-	box-shadow: 0px 0px 15px 1px #ddd;
+	box-shadow: 0px 0px 5px 1px #ddd;
 }
 
 input[type=checkbox] {
@@ -176,7 +176,7 @@ a:active {
 }
 
 .header {
-	height: 60px;
+	height: 120px;
 	position: fixed;
 	width: 100%;
 	z-index: 80;
@@ -190,13 +190,13 @@ a:active {
 
 .products_page {
 	position: relative;
-	padding-top: 140px;
+	padding-top: 200px;
 	padding-bottom: 120px;
 }
 
 .page {
 	position: relative;
-	padding-top: 70px;
+	padding-top: 130px;
 	padding-bottom: 120px;
 }
 
@@ -204,7 +204,7 @@ a:active {
 .controls {
 	width: 100%;
 	position: fixed;
-	top: 60px;
+	top: 120px;
 	height: 50px;
 	z-index: 10;
 	background-color: #f8f8f8;
@@ -410,18 +410,6 @@ a:active {
 	width: 670px;
 }
 
-#product_title {
-	width: 100%;
-	position: relative;
-	top: 10px;
-}
-
-#product_title #title_text {
-	float: left;
-	margin-left: 10px;
-	margin-top: 10px;
-	font-size: 20px;
-}
 
 h1 {
 	padding-left: 10px;
@@ -445,9 +433,9 @@ h1 {
 	box-shadow: 0px 0px 27px #999;
 	position: fixed;
 	z-index: 9999;
-	top: 60px;
+	top: 120px;
 	opacity: 0.95;
-	right: 0px;
+	right: 260px;
 }
 
 #user_popup {
@@ -784,7 +772,7 @@ h1 {
 	position: relative;
 	float: right;
 	margin-right: 10px;
-	top: 5px;
+	top: 70px;
 }
 
 .header_symbol ul li {
@@ -825,14 +813,20 @@ h1 {
 }
 
 #logo {
-	bottom: 0;
-	float: right;
-	left: 0;
-	margin: 0 auto;
-	position: absolute;
-	right: 0;
 	top: 10px;
-	width: 100px;
+	float: left;
+	position: relative;
+}
+
+#logo_img {
+	background-image : url('/static/images/idid_color2_120.png');
+    background-repeat: no-repeat;	
+	width: 141px;
+	height: 120px;
+}
+
+#logo_img:hover {
+	background-image : url('/static/images/idid_color120.png');
 }
 
 #logo span {
@@ -1328,6 +1322,7 @@ h1 {
 .home {
 	position: relative;
 	float: left;
+	top: 7px;
 }
 
 .order_info {

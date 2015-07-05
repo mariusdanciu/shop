@@ -54,12 +54,6 @@ object ProductDetailPage extends Cart[ProductPageState] {
         }
       }
   }
-  def pageTitle(s: PageState[ProductPageState]) =
-    s.initialState.product match {
-      case Success(prod) => prod.title_?(s.lang.name)
-      case Failure(t)    => ""
-    }
-
   val catlink = reqSnip("catlink") {
     s =>
       ((s.state.initialState.product map { p =>

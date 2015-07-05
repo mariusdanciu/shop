@@ -23,9 +23,7 @@ import net.shift.common.XmlImplicits._
 
 object CategoryPage extends Cart[Request] { self =>
 
-  override def snippets = List(title, item) ++ super.snippets
-
-  def pageTitle(s: PageState[Request]) = Loc.loc0(s.lang)("categories").text
+  override def snippets = List(item) ++ super.snippets
 
   val item = reqSnip("item") {
     s =>

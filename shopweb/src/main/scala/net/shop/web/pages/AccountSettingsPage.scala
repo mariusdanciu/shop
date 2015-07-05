@@ -46,8 +46,6 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
 
   override def snippets = List(settingsForm, addressTemplate, addresses, orders, users) ++ super.snippets
 
-  def pageTitle(s: PageState[SettingsPageState]) = Loc.loc0(s.lang)("settings").text
-
   val settingsForm = reqSnip("settingsForm") {
     s =>
       {

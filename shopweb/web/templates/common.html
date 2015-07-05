@@ -8,7 +8,7 @@
 <link href='http://fonts.googleapis.com/css?family=Julee' rel='stylesheet' type='text/css' />
 <link href="/static/css/style.css" rel="stylesheet" type="text/css" />
 <link href="/static/css/sprite.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
 
 
 <script type="text/javascript" src="/static/js/jquery-2.0.3.min.js"></script>
@@ -42,10 +42,13 @@
   <div class="fb-root"></div>
   <div class="wrap">
     <div class="header">
-      <div id="product_title">
-        <div id="title_text">
-          <span data-snip="title"></span>
+      <div class="center">
+        <div id="logo">
+          <a href="/"> 
+            <div id="logo_img"></div>
+          </a>
         </div>
+        
         <div class="header_symbol">
           <ul>
             <li id="logout" data-permissions="read"><a href="#"><span class="sprite sprite-logout" /></a></li>
@@ -53,16 +56,12 @@
             <li id="user_symbol"><a href="#"><span class="sprite sprite-user" /></a></li>
             <li id="cart_symbol"><a href="#"><span class="sprite sprite-cart_black /static/images/cart_black.png" /></a></li>
             <li id="settings_symbol" data-permissions="read"><a href="/accountsettings"><span class="sprite sprite-settings" /></a></li>
-            <li id="search" class="top_items"><input id="search_text" class="sprite sprite-search" type="text" placeholder="loc:search" /></li>
-
+            <li id="search"><input id="search_text" class="sprite sprite-search" type="text" placeholder="loc:search" /></li>
           </ul>
         </div>
 
-        <div id="logo" class="top_items" title="LOGO TEMPORAR :)">
-          <a href="/"> <span>I </span> <span>d</span> <span>i</span> <span>d</span>
-          </a>
-        </div>
-        <div class="fb_area top_items"></div>
+
+        <div class="fb_area"></div>
       </div>
     </div>
     <div id="notice_e"></div>
@@ -71,7 +70,6 @@
     <div id="content_head"></div>
     <div id="content"></div>
   </div>
-
   <div class="footer">
     <div class="center">
       <div class="column">

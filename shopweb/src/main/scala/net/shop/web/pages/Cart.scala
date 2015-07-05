@@ -25,17 +25,11 @@ import net.shift.common.XmlImplicits._
 
 trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
 
-  def snippets = List(title, order, connectError, user)
+  def snippets = List( order, connectError, user)
 
   def reqSnip(name: String) = snip[T](name) _
 
   implicit def snipsSelector[T] = bySnippetAttr[T]
-
-  def pageTitle(state: PageState[T]): String
-  
-  val title = reqSnip("title") {
-    s => Success((s.state.initialState, Text(pageTitle(s.state))))
-  }
 
   val order = snip[T]("order") {
     s =>
