@@ -897,11 +897,10 @@ h1 {
 	border: 1px solid #8A2908;
 	color: #ffffff;
 	font-size: 20px;
-	height: 28px;
+	height: 36px;
 	padding-top: 5px;
 	position: fixed;
 	text-align: center;
-	top: 60px;
 	width: 100%;
 	display: none;
 	z-index: 9999;
@@ -912,11 +911,10 @@ h1 {
 	border: 1px solid #38610B;
 	color: #ffffff;
 	font-size: 20px;
-	height: 28px;
+	height: 36px;
 	padding-top: 5px;
 	position: fixed;
 	text-align: center;
-	top: 60px;
 	width: 100%;
 	display: none;
 	z-index: 9999;

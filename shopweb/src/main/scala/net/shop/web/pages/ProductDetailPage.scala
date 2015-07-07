@@ -69,17 +69,17 @@ object ProductDetailPage extends Cart[ProductPageState] {
   val productLink = reqSnip("productlink") {
     s =>
       val r = for {
-          prod <- s.state.initialState.product
-          el <- {
-            bind(s.node) {
-              case Xml("a", _, _) => 
-                <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.state.lang)("product.page").text }</a>
-            }
+        prod <- s.state.initialState.product
+        el <- {
+          bind(s.node) {
+            case Xml("a", _, _) =>
+              <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.state.lang)("product.page").text }</a>
           }
-        } yield {
-          el
         }
-      
+      } yield {
+        el
+      }
+
       (r map { (s.state.initialState, _) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
@@ -213,6 +213,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
             case HasId("edit_categories", attrs)     => handleCategories(attrs, s.state.lang, p.categories.toSet)
             case HasId("edit_keywords", attrs)       => Xml("input", attrs + ("value", p.keyWords.mkString(", ")))
             case HasId("edit_stock", attrs)          => Xml("input", attrs + ("value", p.stock.map(_ toString).getOrElse("")))
+            case HasId("edit_pos", attrs)            => Xml("input", attrs + ("value", p.position.map(_ toString).getOrElse("")))
             case HasId("edit_unique", attrs) =>
               val a = attrs + ("value", "true")
               Xml("input", if (!p.unique) a else a + ("checked", p.unique.toString))

@@ -156,6 +156,7 @@ object ProductService extends ShiftUtils
       inputDouble(fieldPrefix + "price")(validateDouble(fieldPrefix + "price", ?("price").text)) <*>
       inputOptional(fieldPrefix + "discount_price")(validateOptional(fieldPrefix + "discount_price", s => Option(s.toDouble))) <*>
       inputInt(fieldPrefix + "soldCount")(validateDefault(0)) <*>
+      inputOptional(fieldPrefix + "position")(validateOptional(fieldPrefix + "position", s => Option(s.toInt))) <*>
       inputCheck(fieldPrefix + "unique", "false")(validateBoolean(fieldPrefix + "unique", ?("unique.product").text)) <*>
       inputOptional(fieldPrefix + "stock")(validateOptional(fieldPrefix + "stock", stockFunc)) <*>
       inputSelect(fieldPrefix + "categories", Nil)(validateListField(fieldPrefix + "categories", ?("categories").text)) <*>
@@ -172,6 +173,7 @@ object ProductService extends ShiftUtils
           _,
           price,
           Some(discountPrice),
+          _,
           _,
           _,
           _,

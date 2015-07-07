@@ -19,6 +19,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
   db.command(MongoDBObject("setParameter" -> 1, "textSearchEnabled" -> 1))
 
   db("products").ensureIndex(MongoDBObject("title.ro" -> "text", "description.ro" -> "text", "keywords" -> "text"))
+  db("products").ensureIndex(MongoDBObject("position" -> 1))
   db("users").ensureIndex(MongoDBObject("firstName" -> "text", "lastName" -> "text", "phone" -> "text", "email" -> "text"))
   db("orders").ensureIndex(MongoDBObject("email" -> 1, "items.id" -> 1))
   db("servicestats").ensureIndex(MongoDBObject("year" -> 1, "month" -> 1, "service" -> 1))
@@ -47,7 +48,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
       case SortByName(false, _)  => db("products").find("categories" $in List(cat)).sort(MongoDBObject("title" -> -1))
       case SortByPrice(true, _)  => db("products").find("categories" $in List(cat)).sort(MongoDBObject("price" -> 1))
       case SortByPrice(false, _) => db("products").find("categories" $in List(cat)).sort(MongoDBObject("price" -> -1))
-      case _                     => db("products").find("categories" $in List(cat))
+      case _                     => db("products").find("categories" $in List(cat)).sort(MongoDBObject("position" -> 1))
     }
 
     Success(for { p <- query } yield {
