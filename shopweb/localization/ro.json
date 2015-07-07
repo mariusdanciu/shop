@@ -618,6 +618,16 @@
    "code" : "208",
    "name" : "no.permissions",
    "text" : "Operatiune neautorizata"
+ },
+ {
+   "code" : "208",
+   "name" : "about.us",
+   "text" : "Despre noi"
+ },
+ {
+   "code" : "208",
+   "name" : "main.page",
+   "text" : "Acasa"
  }
  
 ]

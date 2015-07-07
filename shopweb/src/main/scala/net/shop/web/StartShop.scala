@@ -33,6 +33,7 @@ import net.shop.web.pages.CookiesPage
 import net.shop.api.persistence.Persistence
 import net.shop.mongodb.MongoDBPersistence
 import net.shift.spray.SprayServer
+import net.shop.web.pages.AboutUsPage
 
 object StartShop extends App with DefaultLog with IODefaults {
 
@@ -69,6 +70,7 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page("dataprotection", Path("web/dataprotection.html"), DataProtectionPage) |
       page("returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
       page("cookies", Path("web/cookies.html"), CookiesPage) |
+      page("aboutus", Path("web/aboutus.html"), AboutUsPage) |
       settingsPage("accountsettings", Path("web/accountsettings.html"), AccountSettingsPage) |
       getCart() |
       OrderService.order |

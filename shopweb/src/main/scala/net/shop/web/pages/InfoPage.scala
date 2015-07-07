@@ -33,3 +33,7 @@ object ReturnPolicyPage extends Cart[Request] { self =>
 object CookiesPage extends Cart[Request] { self =>
 
 }
+
+object AboutUsPage extends Cart[Request] { self =>
+
+}
