@@ -8,9 +8,9 @@ import scala.xml.Elem
 import scala.xml.NodeSeq
 import scala.xml.NodeSeq.seqToNodeSeq
 
+import net.shift.common.Path
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
-import net.shift.common.Path
 import net.shift.engine.http.Request
 import net.shift.engine.page.Html5
 import net.shift.loc.Loc
@@ -18,6 +18,7 @@ import net.shift.template.Binds.bind
 import net.shift.template.HasClass
 import net.shift.template.HasId
 import net.shift.template.PageState
+import net.shift.template.SnipState
 import net.shop.api.ProductDetail
 import net.shop.api.ShopError
 import net.shop.api.persistence.NoSort
@@ -37,30 +38,37 @@ object ProductsPage extends Cart[Request] {
       Html5.runPageFromFile(s.state, Path(s"web/templates/productslist.html"), this).map { e => (e._1.state.initialState, e._2) }
   }
 
+  private def render(s: SnipState[Request], prod: ProductDetail): NodeSeq = {
+    bind(s.node) {
+      case Xml("li", HasClass("item", a), childs)           => <li>{ childs }</li>
+      case Xml("div", HasClass("item_box", a), childs)      => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
+      case Xml("div", HasClass("info_tag_text", a), childs) => <div>{ prod title_? (s.state.lang.name) }</div> % a
+      case Xml("div", HasClass("info_tag_cart", a), childs) => if (prod.options.isEmpty && prod.userText.isEmpty)
+        Xml("div", a) / childs
+      else
+        NodeSeq.Empty
+      case Xml("div", HasClass("info_tag_price", a), childs) => priceTag(prod) % a
+      case Xml("div", HasId("unique_ribbon", a), childs) => if (prod.unique)
+        <div class="unique_label" data-loc="unique"></div>
+      else
+        NodeSeq.Empty
+    } match {
+      case Success(n) => n
+      case Failure(f) => errorTag(f toString)
+    }
+  }
+
   val item = reqSnip("item") {
     s =>
       {
         val prods = ProductsQuery.fetch(s.state.initialState) match {
           case Success(list) =>
-            list flatMap { prod =>
-              bind(s.node) {
-                case Xml("li", HasClass("item", a), childs)           => <li>{ childs }</li>
-                case Xml("div", HasClass("item_box", a), childs)      => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
-                case Xml("div", HasClass("info_tag_text", a), childs) => <div>{ prod title_? (s.state.lang.name) }</div> % a
-                case Xml("div", HasClass("info_tag_cart", a), childs) => if (prod.options.isEmpty && prod.userText.isEmpty)
-                  Xml("div", a) / childs
-                else
-                  NodeSeq.Empty
-                case Xml("div", HasClass("info_tag_price", a), childs) => priceTag(prod) % a
-                case Xml("div", HasId("unique_ribbon", a), childs) => if (prod.unique)
-                  <div class="unique_label" data-loc="unique"></div>
-                else
-                  NodeSeq.Empty
-              } match {
-                case Success(n) => n
-                case Failure(f) => errorTag(f toString)
-              }
-            }
+
+            val (nopos, pos) = list.span(p => p.position.isEmpty)
+
+            (pos flatMap { (p: ProductDetail) => render(s, p) }) ++
+              (nopos flatMap { (p: ProductDetail) => render(s, p) })
+
           case Failure(t) => errorTag(Loc.loc0(s.state.lang)("no.category").text)
         }
         Success((s.state.initialState, prods.toSeq))
