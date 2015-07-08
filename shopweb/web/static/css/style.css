@@ -175,23 +175,26 @@ a:active {
 }
 
 .header {
-	height: 120px;
 	position: fixed;
 	width: 100%;
 	z-index: 80;
 	background-color: #ffffff;
 	border-bottom: 1px solid #dddddd;
-	height: 120px;
 }
 
 .header_small {
 	display: none;
-	height: 60px;
 	position: fixed;
 	width: 100%;
 	z-index: 80;
 	background-color: #ffffff;
 	border-bottom: 1px solid #dddddd;
+}
+
+.header_small_line {
+	clear: both;
+	width: 100%;
+	height: 65px;
 }
 
 .header_controls {
@@ -910,9 +913,12 @@ h1 {
 }
 
 #logo_img:hover {
-	background-image: url('/static/images/idid_color120.png');
+	background-image: url('/static/images/idid_color_120.png');
 }
 
+#logo_img_small:hover {
+	background-image: url('/static/images/idid_color_60.png');
+}
 .terms {
 	float: left;
 }
