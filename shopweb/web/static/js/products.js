@@ -7,7 +7,7 @@
 
         products.refreshList();
 
-        $('#sortSelect').on('change', function(evt, params) {
+        $('#sortSelect, #sortSelect:hidden').on('change', function(evt, params) {
             products.reloadProducts($(this).val());
         });
 
@@ -18,6 +18,7 @@
 
         products.reloadProducts($('#sortSelect').val());
 
+        
     });
 
 })();

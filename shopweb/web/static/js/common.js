@@ -17,13 +17,36 @@
                 }
             }
         }
+        
+        var search = $.url().param("search");
+        if (search !== undefined) {
+            $(".search_text").val(search);
+        }
+
+        $(document).scroll(function() {
+            var offset = $(this).scrollTop();
+            if (offset > 10) {
+                if (!$(".header_small").is(":visible")) {
+                    window.user.hideLogin();
+                    window.cart.hideCart();
+                    $(".header").hide();
+                    $(".header_small").show();
+                }
+            } else {
+                if (!$(".header").is(":visible")) {
+                    window.user.hideLogin();
+                    window.cart.hideCart();
+                    $(".header_small").hide();
+                    $(".header").show();
+                }
+            }
+        });
 
         $(document).ajaxError(function(event, request, settings, thrownError) {
 
             if (thrownError == "") {
                 common.showConnectionError();
             } else {
-                window.console.log(request.responseText);
                 var ct = request.getResponseHeader("content-type") || "";
                 if (ct.indexOf('text') > -1) {
                     common.showError(request.responseText);
@@ -33,12 +56,12 @@
 
         $("#menu").tabify();
 
-        $("#cart_symbol").click(function(event) {
+        $("#cart_symbol, #cart_symbol:hidden").click(function(event) {
             window.cart.showCart();
             return false;
         });
 
-        $("#user_symbol").click(function(event) {
+        $("#user_symbol, #user_symbol:hidden").click(function(event) {
             window.user.showLogin();
             return false;
         });
@@ -153,13 +176,13 @@
             return false;
         });
 
-        $("#search_text").keypress(function(e) {
+        $(".search_text").keypress(function(e) {
             if (e.which == 13) {
-                var text = $("#search_text").val();
+                var text = $(this).val();
                 window.location.href = '/products?search=' + text;
             }
         });
-
+        
         $("#transport_pf").change(function() {
             cart.updateSubmitText("pf");
         });
@@ -228,6 +251,11 @@ var user = {
     },
 
     showLogin : function() {
+        if ($(".header_small").is(":visible")) {
+            $('#user_popup').css({"top" : "60px"});
+        } else {
+            $('#user_popup').css({"top" : "100px"});
+        }
         $("#user_popup").show();
     },
 
@@ -424,7 +452,7 @@ var cart = {
                     found = a[i];
                 }
             }
-            
+
             if (!userOpts) {
                 userOpts = {};
             }
@@ -583,6 +611,12 @@ var cart = {
             $('#cart_notice').hide();
             $('#buy_step0').hide();
             $('#buy_step1').show();
+            if ($(".header_small").is(":visible")) {
+                $('#cart_popup').css({"top" : "60px"});
+            } else {
+                $('#cart_popup').css({"top" : "100px"});
+            }
+            
             $('#cart_popup').show();
         });
 

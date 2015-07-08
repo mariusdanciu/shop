@@ -39,6 +39,40 @@
 <body>
   <div class="fb-root"></div>
   <div class="wrap">
+    <div class="header_small">
+      <div class="row center">
+        <div id="logo">
+          <a href="/">
+            <div id="logo_img_small"></div>
+          </a>
+        </div>
+        <div class="header_nav">
+          <ul>
+            <li class="head_links links_small"><a href="/" data-loc="main.page"></a></li>
+            <li class="head_links links_small"><a href="/aboutus" data-loc="about.us"></a></li>
+          </ul>
+        </div>
+
+        <div class="header_symbol">
+          <ul>
+            <li id="search"><input class="search_text sprite sprite-search" type="text" placeholder="loc:search" /></li>
+            <li id="settings_symbol" data-permissions="read"><a href="/accountsettings"><span class="sprite sprite-settings" /></a></li>
+            <li id="cart_symbol"><a href="#"><span class="sprite sprite-cart_black /static/images/cart_black.png" /></a></li>
+            <li id="user_symbol"><a href="#"><span class="sprite sprite-user" /></a></li>
+          </ul>
+        </div>
+
+        <div class="header_user header_user_top_small">
+          <ul>
+            <li id="current_user"><span data-snip="user"></span></li>
+            <li id="logout" data-permissions="read"><a href="#"><span class="sprite sprite-logout" /></a></li>
+          </ul>
+        </div>
+      </div>
+      <div id="content_head"></div>
+
+    </div>
+
     <div class="header">
       <div class="row center">
         <div id="logo">
@@ -48,13 +82,13 @@
         </div>
         <div class="header_nav">
           <ul>
-            <li class="head_links"><a href="/" data-loc="main.page"></a></li>
-            <li class="head_links"><a href="/aboutus" data-loc="about.us"></a></li>
+            <li class="head_links links_large"><a href="/" data-loc="main.page"></a></li>
+            <li class="head_links links_large"><a href="/aboutus" data-loc="about.us"></a></li>
           </ul>
         </div>
 
         <div class="header_controls">
-          <div class="row header_user">
+          <div class="row header_user header_user_top">
             <ul>
               <li id="current_user"><span data-snip="user"></span></li>
               <li id="logout" data-permissions="read"><a href="#"><span class="sprite sprite-logout" /></a></li>
@@ -64,7 +98,7 @@
 
             <div class="header_symbol">
               <ul>
-                <li id="search"><input id="search_text" class="sprite sprite-search" type="text" placeholder="loc:search" /></li>
+                <li id="search"><input class="search_text sprite sprite-search" type="text" placeholder="loc:search" /></li>
                 <li id="settings_symbol" data-permissions="read"><a href="/accountsettings"><span class="sprite sprite-settings" /></a></li>
                 <li id="cart_symbol"><a href="#"><span class="sprite sprite-cart_black /static/images/cart_black.png" /></a></li>
                 <li id="user_symbol"><a href="#"><span class="sprite sprite-user" /></a></li>
@@ -73,12 +107,12 @@
           </div>
         </div>
       </div>
-      <div class="fb_area"></div>
+      <div id="content_head"></div>
     </div>
+    <div class="fb_area"></div>
     <div id="notice_e"></div>
     <div id="notice_connect_e" data-snip="connect_error"></div>
     <div id="notice_i"></div>
-    <div id="content_head"></div>
     <div id="content"></div>
   </div>
   <div class="footer">
