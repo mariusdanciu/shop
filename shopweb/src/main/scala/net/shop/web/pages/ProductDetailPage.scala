@@ -28,7 +28,8 @@ import net.shift.common.XmlImplicits._
 
 object ProductDetailPage extends Cart[ProductPageState] {
 
-  override def snippets = List(meta, catlink, productLink, images, detailPrice, stock, details, specs, customize, edit) ++ super.snippets
+  override def snippets = List(meta, catlink, productLink, images, detailPrice, stock,
+    details, specs, customize, edit, canShowSpecs, canShowCustom) ++ super.snippets
 
   val meta = reqSnip("fb_meta") {
     s =>
@@ -54,6 +55,26 @@ object ProductDetailPage extends Cart[ProductPageState] {
         }
       }
   }
+
+  private def ignoreNode(s: SnipState[ProductPageState], f: ProductDetail => Boolean) = {
+    val node = for { p <- s.state.initialState.product } yield {
+      if (f(p)) {
+        NodeSeq.Empty
+      } else {
+        s.node
+      }
+    }
+    (node map { l => (s.state.initialState, l) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
+  }
+
+  val canShowSpecs = reqSnip("can_show_specs") {
+    s => ignoreNode(s, _.properties.isEmpty)
+  }
+
+  val canShowCustom = reqSnip("can_show_custom") {
+    s => ignoreNode(s, p => p.options.isEmpty && p.userText.isEmpty)
+  }
+
   val catlink = reqSnip("catlink") {
     s =>
       ((s.state.initialState.product map { p =>

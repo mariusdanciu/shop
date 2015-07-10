@@ -47,15 +47,15 @@
         <div class="tab_select">
           <ul id="product_details_tab">
             <li class="active"><a href="#prod_desc" data-loc="description"></a></li>
-            <li><a href="#prod_specs" data-loc="specs"></a></li>
-            <li><a href="#prod_customize" data-loc="customize"></a></li>
+            <li data-snip="can_show_specs"><a href="#prod_specs" data-loc="specs" ></a></li>
+            <li data-snip="can_show_custom"><a href="#prod_customize" data-loc="customize"></a></li>
             <li id="edit_tab" data-permissions="write"><a href="#edit" data-loc="edit"></a></li>
           </ul>
         </div>
         <div id="prod_desc" class="prod_desc tab_content">
           <div data-snip="details"></div>
         </div>
-        <div id="prod_specs" class="prod_specs tab_content">
+        <div id="prod_specs" class="prod_specs tab_content" data-snip="can_show_specs">
           <div data-snip="specs">
             <div class="row_simple">
               <div class="column1">
@@ -68,7 +68,7 @@
           </div>
         </div>
 
-        <div id="prod_customize" class="prod_specs tab_content">
+        <div id="prod_customize" class="prod_specs tab_content" data-snip="can_show_custom">
           <div class="row top10" data-snip="customize">
             <span class="content"></span>
           </div>

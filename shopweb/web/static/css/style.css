@@ -278,8 +278,17 @@ a:active {
 .header_symbol {
 	position: relative;
 	float: right;
-	top: 20px;
+	padding-top: 28px;
 }
+
+.header_symbol_top {
+	padding-top: 28px;
+}
+
+.header_symbol_small_top {
+	padding-top: 22px;
+}
+
 
 .header_symbol ul li {
 	margin-left: 5px;
