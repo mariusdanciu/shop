@@ -23,77 +23,20 @@
 </head>
 
 <body>
-  <div id="content" class="center page">
-    <div class="product_content">
+  <div id="content_head" class="row controls">
+    <div class="center">
       <div class="navigation">
-        <a href="/"><span class="sprite sprite-back" /></a> <span>/</span> <span><div data-snip="catlink"></div></span>
+       <span>/</span>
+       <span> <span data-snip="catlink"></span></span>
+       <span>/</span>
+       <span><span data-snip="title"></span></span>
       </div>
-      <div id="pleft">
-        <div data-snip="images">
-          <div id="detail_box">
-            <b:img id="sel_img"></b:img>
-            <span id="gallery_left" class="left clickable"> <span class="sprite sprite-left" />
-            </span>
-            <div id="gallery">
-              <ul>
-                <li id="thumb"><a href="#"></a></li>
-              </ul>
-            </div>
-            <span id="gallery_right" class="left clickable"> <span class="sprite sprite-right" />
-            </span>
-          </div>
-        </div>
-      </div>
-      <div id="pright">
-        <div class="prod_details">
-          <div class="prod_header">
-            <div id="fb-share-button">
-              <a href="#"><img src="/static/images/facebook.png" /></a>
-            </div>
-            <div id="add_to_cart_box">
-              <a id="add_to_cart" href="#"><span class="sprite sprite-cart_black" /></a>
-            </div>
-            <div class="detailPrice">
-              <span data-snip="detailPrice"></span>
-            </div>
-            <div class="prod_price_line">
-              <span data-snip="stock"></span>
-            </div>
-          </div>
-          <div class="tab_select">
-            <ul id="product_details_tab">
-              <li class="active"><a href="#prod_desc" data-loc="description"></a></li>
-              <li><a href="#prod_specs" data-loc="specs"></a></li>
-              <li><a href="#prod_customize" data-loc="customize"></a></li>
-            </ul>
-          </div>
-          <div class="tab_continue"></div>
-          <div id="prod_desc" class="prod_desc">
-            <div data-snip="details"></div>
-          </div>
-          <div id="prod_specs" class="prod_specs">
-            <div data-snip="specs">
-              <div class="row_simple">
-                <div class="column1">
-                  <span class="prop_name"></span>
-                </div>
-                <div class="column2">
-                  <span class="prop_value"></span>
-                </div>
-              </div>
-            </div>
-          </div>
+    </div>
+  </div>
 
-          <div id="prod_customize" class="prod_specs tab_content">
-            <div data-snip="customize">
-              <div class="row_simple top10">
-                <span class="content"></span>
-              </div>
-            </div>
-          </div>
 
-        </div>
-      </div>
+  <div id="content" class="center products_page">
+    <div class="product_content" data-template="productdetailview">
     </div>
   </div>
 

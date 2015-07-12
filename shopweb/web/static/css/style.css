@@ -503,7 +503,7 @@ a:active {
 }
 
 #pright {
-	width: 870px;
+	width: 660px;
 	float: left;
 	margin-left: 20px;
 }
@@ -681,10 +681,11 @@ h1 {
 }
 
 .navigation {
-	float: left;
-	position: relative;
-	top: 20px;
-	left: 20px;
+    clear: both;
+    height: 35px;
+    padding-top: 20px;
+    position: relative;
+    width: 100%;
 }
 
 .navigation span {

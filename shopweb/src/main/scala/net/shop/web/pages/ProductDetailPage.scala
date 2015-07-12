@@ -28,36 +28,55 @@ import net.shift.common.XmlImplicits._
 
 object ProductDetailPage extends Cart[ProductPageState] {
 
-  override def snippets = List(meta, catlink, productLink, images, detailPrice, stock,
+  override def snippets = List(title, meta, catlink, productLink, images, detailPrice, stock,
     details, specs, customize, edit, canShowSpecs, canShowCustom) ++ super.snippets
 
+  def product(s: SnipState[ProductPageState]): Try[ProductDetail] = {
+    s.state.initialState.product match {
+      case Failure(t) =>
+        s.state.initialState.req.param("pid") match {
+          case Some(id :: _) =>
+            ShopApplication.persistence.productById(id) match {
+              case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
+              case Failure(t)                 => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
+              case s                          => s
+            }
+          case _ => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
+        }
+      case s => s
+    }
+  }
+
+  val title = reqSnip("title") {
+    s =>
+      product(s) match {
+        case Success(p) =>
+          Success((ProductPageState(s.state.initialState.req, Success(p), s.state.user), Text(p.title_?(s.state.lang.name))))
+        case Failure(f) => Failure(f)
+      }
+  }
   val meta = reqSnip("fb_meta") {
     s =>
       {
-        s.state.initialState.req.param("pid") match {
-          case Some(id :: _) => ShopApplication.persistence.productById(id) match {
-            case Success(prod) =>
-              val fb = bind(s.node) {
-                case Xml("meta", a, _) if (a.hasAttr(("property", "og:url")))               => Xml("meta", a + ("content", s"http://${Config.string("host")}/product?pid=${prod.stringId}"))
-                case Xml("meta", a, _) if (a.hasAttr(("property", "og:title")))             => Xml("meta", a + ("content", prod.title_?(s.state.lang.name)))
-                case Xml("meta", a, _) if (a.hasAttr(("property", "og:description")))       => Xml("meta", a + ("content", prod.title_?(s.state.lang.name)))
-                case Xml("meta", a, _) if (a.hasAttr(("property", "og:image")))             => Xml("meta", a + ("content", s"http://${Config.string("host")}${imagePath(prod.stringId, "normal", prod.images.head)}"))
-                case Xml("meta", a, _) if (a.hasAttr(("property", "product:price:amount"))) => Xml("meta", a + ("content", price(prod.price)))
-              }
-              for { n <- fb } yield {
-                (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), n)
-              }
-            case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
-            case Failure(t) =>
-              ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
-          }
-          case _ => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
+        product(s) match {
+          case Success(prod) =>
+            val fb = bind(s.node) {
+              case Xml("meta", a, _) if (a.hasAttr(("property", "og:url")))               => Xml("meta", a + ("content", s"http://${Config.string("host")}/product?pid=${prod.stringId}"))
+              case Xml("meta", a, _) if (a.hasAttr(("property", "og:title")))             => Xml("meta", a + ("content", prod.title_?(s.state.lang.name)))
+              case Xml("meta", a, _) if (a.hasAttr(("property", "og:description")))       => Xml("meta", a + ("content", prod.title_?(s.state.lang.name)))
+              case Xml("meta", a, _) if (a.hasAttr(("property", "og:image")))             => Xml("meta", a + ("content", s"http://${Config.string("host")}${imagePath(prod.stringId, "normal", prod.images.head)}"))
+              case Xml("meta", a, _) if (a.hasAttr(("property", "product:price:amount"))) => Xml("meta", a + ("content", price(prod.price)))
+            }
+            for { n <- fb } yield {
+              (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), n)
+            }
+          case Failure(f) => Failure(f)
         }
       }
   }
 
   private def ignoreNode(s: SnipState[ProductPageState], f: ProductDetail => Boolean) = {
-    val node = for { p <- s.state.initialState.product } yield {
+    val node = for { p <- product(s) } yield {
       if (f(p)) {
         NodeSeq.Empty
       } else {
@@ -77,7 +96,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
 
   val catlink = reqSnip("catlink") {
     s =>
-      ((s.state.initialState.product map { p =>
+      ((product(s) map { p =>
         (p.categories.flatMap(e => {
           ShopApplication.persistence.categoryById(e) match {
             case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.state.lang.name) }</a> ++ <span>, </span>)
@@ -90,7 +109,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
   val productLink = reqSnip("productlink") {
     s =>
       val r = for {
-        prod <- s.state.initialState.product
+        prod <- product(s)
         el <- {
           bind(s.node) {
             case Xml("a", _, _) =>
@@ -106,7 +125,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
 
   val images = reqSnip("images") {
     s =>
-      (s.state.initialState.product flatMap { prod =>
+      (product(s) flatMap { prod =>
         prod.images match {
           case Nil => Success(s.state.initialState, NodeSeq.Empty)
           case images =>
@@ -141,7 +160,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
   val detailPrice = reqSnip("detailPrice") {
     s =>
       (for {
-        p <- s.state.initialState.product
+        p <- product(s)
       } yield {
         (ProductPageState(s.state.initialState.req, Success(p), s.state.user), priceTag(p))
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
@@ -150,7 +169,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
   val stock = reqSnip("stock") {
     s =>
       (for {
-        p <- s.state.initialState.product
+        p <- product(s)
       } yield {
         (ProductPageState(s.state.initialState.req, Success(p), s.state.user), p.stock match {
           case None    => Text(Loc.loc0(s.state.lang)("stock.order").text)
@@ -163,7 +182,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
     s =>
       {
         (for {
-          p <- s.state.initialState.product
+          p <- product(s)
           desc <- p.description.get(s.state.lang.name)
         } yield {
           (ProductPageState(s.state.initialState.req, Success(p), s.state.user), Text(desc))
@@ -175,7 +194,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
     s =>
       {
         (for {
-          p <- s.state.initialState.product
+          p <- product(s)
         } yield {
           val n = (NodeSeq.Empty /: p.properties) {
             case (acc, (k, v)) =>
@@ -196,7 +215,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
     s =>
       {
         (for {
-          p <- s.state.initialState.product
+          p <- product(s)
         } yield {
           val n = (p.options flatMap {
             o =>
@@ -219,7 +238,7 @@ object ProductDetailPage extends Cart[ProductPageState] {
     s =>
       {
         (for {
-          p <- s.state.initialState.product
+          p <- product(s)
         } yield {
           val title = p.title.get(s.state.lang.name).getOrElse("")
           val desc = p.description.get(s.state.lang.name).getOrElse("")
