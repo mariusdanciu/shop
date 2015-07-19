@@ -535,7 +535,7 @@ h1 {
 	position: fixed;
 	z-index: 9999;
 	opacity: 0.95;
-	right: 300px;
+	right: 0px;
 }
 
 #user_popup {
@@ -546,7 +546,7 @@ h1 {
 	box-shadow: 0px 0px 27px #999;
 	position: fixed;
 	z-index: 9999;
-	right: 260px;
+	right: 0px;
 	opacity: 0.95;
 	padding: 20px;
 }
@@ -907,27 +907,27 @@ h1 {
 }
 
 #logo_img {
-	background-image: url('/static/images/idid_color2_120.png');
+	background-image: url('/static/images/idid_blue_l.png');
 	background-repeat: no-repeat;
-	width: 141px;
-	height: 120px;
+	width: 209px;
+	height: 126px;
 	background-repeat: no-repeat;
 }
 
 #logo_img_small {
-	background-image: url('/static/images/idid_color2_60.png');
+	background-image: url('/static/images/idid_blue_s.png');
 	background-repeat: no-repeat;
-	width: 71px;
-	height: 60px;
+	width: 105px;
+	height: 63px;
 	background-repeat: no-repeat;
 }
 
 #logo_img:hover {
-	background-image: url('/static/images/idid_color_120.png');
+	background-image: url('/static/images/idid_gray_l.png');
 }
 
 #logo_img_small:hover {
-	background-image: url('/static/images/idid_color_60.png');
+	background-image: url('/static/images/idid_gray_s.png');
 }
 .terms {
 	float: left;

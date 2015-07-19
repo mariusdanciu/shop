@@ -43,7 +43,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
     Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_company_${state.lang.name}.html"), this).map(in => in._2)
 
   val logo = reqSnip("logo") {
-    s => Success((s.state.initialState, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid_color2_120.png" }/>))
+    s => Success((s.state.initialState, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid_blue_l.png" }/>))
   }
 
   val info = reqSnip("info") {

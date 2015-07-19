@@ -251,10 +251,11 @@ var user = {
     },
 
     showLogin : function() {
+        window.cart.hideCart();
         if ($(".header_small").is(":visible")) {
             $('#user_popup').css({"top" : "60px"});
         } else {
-            $('#user_popup').css({"top" : "100px"});
+            $('#user_popup').css({"top" : "110px"});
         }
         $("#user_popup").show();
     },
@@ -606,6 +607,7 @@ var cart = {
     },
 
     showCart : function() {
+        window.user.hideLogin();
         window.cart.loadView(function() {
             $('#order').hide();
             $('#cart_notice').hide();
@@ -614,7 +616,7 @@ var cart = {
             if ($(".header_small").is(":visible")) {
                 $('#cart_popup').css({"top" : "60px"});
             } else {
-                $('#cart_popup').css({"top" : "100px"});
+                $('#cart_popup').css({"top" : "110px"});
             }
             
             $('#cart_popup').show();
