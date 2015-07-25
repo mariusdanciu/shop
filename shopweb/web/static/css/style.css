@@ -178,23 +178,13 @@ a:active {
 	position: fixed;
 	width: 100%;
 	z-index: 80;
-	background-color: #ffffff;
-	border-bottom: 1px solid #dddddd;
+	background-color: #333333;
+	color: #ffffff;
 }
 
-.header_small {
-	display: none;
-	position: fixed;
-	width: 100%;
-	z-index: 80;
-	background-color: #ffffff;
-	border-bottom: 1px solid #dddddd;
-}
-
-.header_small_line {
-	clear: both;
-	width: 100%;
-	height: 65px;
+.header_container {
+	overflow: auto;
+	height: 70px;
 }
 
 .header_controls {
@@ -206,19 +196,19 @@ a:active {
 	position: relative;
 }
 
-.header ul li, .header_small ul li {
+.header ul li {
 	float: left;
 	font-size: 18px;
 	position: relative;
 	margin-right: 5px;
 }
 
-.links_large {
-	margin-top: 80px;
-}
 
-.links_small {
-	margin-top: 30px;
+.head_links {
+	left: 220px;
+	top: 30px;
+	float: left;
+	position: relative;
 }
 
 .head_links * {
@@ -247,10 +237,6 @@ a:active {
 
 .header_user_top {
 	top: 10px;
-}
-
-.header_user_top_small {
-	top: 22px;
 }
 
 .header_user {
@@ -282,13 +268,8 @@ a:active {
 }
 
 .header_symbol_top {
-	padding-top: 28px;
+	padding-top: 20px;
 }
-
-.header_symbol_small_top {
-	padding-top: 22px;
-}
-
 
 .header_symbol ul li {
 	margin-left: 5px;
@@ -296,7 +277,7 @@ a:active {
 
 .products_page {
 	position: relative;
-	padding-top: 200px;
+	padding-top: 150px;
 	padding-bottom: 120px;
 }
 
@@ -309,7 +290,9 @@ a:active {
 .controls {
 	width: 100%;
 	height: 50px;
-	background-color: #f8f8f8;
+	background-color: #ffffff;
+	clear: both;
+	color: #000000;
 }
 
 .wrap {
@@ -536,6 +519,7 @@ h1 {
 	z-index: 9999;
 	opacity: 0.95;
 	right: 0px;
+	top: 70px;
 }
 
 #user_popup {
@@ -549,6 +533,7 @@ h1 {
 	right: 0px;
 	opacity: 0.95;
 	padding: 20px;
+	top: 70px;
 }
 
 #add_to_cart_box {
@@ -684,6 +669,7 @@ h1 {
     clear: both;
     height: 35px;
     padding-top: 20px;
+    padding-left: 220px;
     position: relative;
     width: 100%;
 }
@@ -912,23 +898,13 @@ h1 {
 	width: 209px;
 	height: 126px;
 	background-repeat: no-repeat;
-}
-
-#logo_img_small {
-	background-image: url('/static/images/idid_blue_s.png');
-	background-repeat: no-repeat;
-	width: 105px;
-	height: 63px;
-	background-repeat: no-repeat;
+	position: absolute;
 }
 
 #logo_img:hover {
 	background-image: url('/static/images/idid_gray_l.png');
 }
 
-#logo_img_small:hover {
-	background-image: url('/static/images/idid_gray_s.png');
-}
 .terms {
 	float: left;
 }
