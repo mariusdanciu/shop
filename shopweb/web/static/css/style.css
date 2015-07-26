@@ -182,6 +182,10 @@ a:active {
 	color: #ffffff;
 }
 
+.header_top {
+	background: #296872;
+}
+
 .header_container {
 	overflow: auto;
 	height: 70px;
@@ -202,7 +206,6 @@ a:active {
 	position: relative;
 	margin-right: 5px;
 }
-
 
 .head_links {
 	left: 220px;
@@ -312,7 +315,7 @@ a:active {
 	clear: both;
 	height: 100px;
 	border-top: 1px solid #dddddd;
-	background-color: #333333;
+	background-color: #402838;
 	position: relative;
 	top: 10px;
 }
@@ -666,12 +669,12 @@ h1 {
 }
 
 .navigation {
-    clear: both;
-    height: 35px;
-    padding-top: 20px;
-    padding-left: 220px;
-    position: relative;
-    width: 100%;
+	clear: both;
+	height: 35px;
+	padding-top: 20px;
+	padding-left: 220px;
+	position: relative;
+	width: 100%;
 }
 
 .navigation span {
