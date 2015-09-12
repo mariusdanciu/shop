@@ -286,7 +286,7 @@ a:active {
 
 .page {
 	position: relative;
-	padding-top: 130px;
+	padding-top: 140px;
 	padding-bottom: 120px;
 }
 
@@ -371,11 +371,11 @@ a:active {
 .cat_box {
 	border-radius: 10px;
 	box-shadow: inset 0px 0px 1px 1px #ddd;
-	height: 216px;
-	width: 156px;
+	height: 140px;
+	width: 200px;
 	position: relative;
 	z-index: 0;
-	margin: 0 25px 20px 25px;
+	margin: 0 5px 20px 5px;
 }
 
 .cat_box:hover {
@@ -425,8 +425,9 @@ a:active {
 
 .cat_info_tag {
 	border: none;
-	top: 138px;
+	top: 60px;
 	height: 37px;
+	border-top: 1px solid #eeeeee;
 }
 
 .edit_tag {
@@ -1037,8 +1038,8 @@ h1 {
 
 .cat_add_item div {
 	position: relative;
-	top: 74px;
-	left: 46px;
+	top: 38px;
+	left: 68px;
 }
 
 .create_product_tab, #product_details_tab {
