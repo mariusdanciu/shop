@@ -103,7 +103,7 @@ input[type="checkbox"]:checked+label {
 	background-repeat: no-repeat;
 	width: 150px;
 	height: 26px;
-	background-position: -5px -881px;
+	background-position:-5px -823px;
 	padding: 2px 0px 0px 40px;
 }
 
@@ -112,7 +112,7 @@ input[type="checkbox"]:checked+label {
 	background-repeat: no-repeat;
 	width: 150px;
 	height: 26px;
-	background-position: -5px -359px;
+	background-position: -5px -259px;
 	padding: 2px 0px 0px 40px;
 }
 
