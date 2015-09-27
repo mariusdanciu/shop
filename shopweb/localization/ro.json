@@ -485,6 +485,11 @@
    "text" : "Pozitia in lista"
  },
  {
+   "code" : "201",
+   "name" : "presentation.list.pos",
+   "text" : "Pozitia in prezentare"
+ },
+ {
    "code" : "202",
    "name" : "category.create.fail",
    "text" : "Categoria nu poate fi creata"

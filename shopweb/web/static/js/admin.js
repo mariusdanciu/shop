@@ -50,12 +50,11 @@
             admin.pendingOrders("#pending_orders_result");
             return false;
         });
-        
+
         $("#search_users").click(function(event) {
             admin.users("#users_result");
             return false;
         });
-        
 
         admin.addProp("#add_prop", "#prop_fields", "pkey", "pval");
 
@@ -82,7 +81,6 @@
 
 var admin = {
 
-        
     deleteUser : function(email, okFunc) {
         $.ajax({
             url : "delete/user/" + email,
@@ -101,16 +99,16 @@ var admin = {
                     }
                 }
             }
-        });        
+        });
     },
-    
+
     users : function(selector) {
         $(selector).load("/usersview", function(response, status, xhr) {
             if (status === "error") {
                 common.showError(xhr.statusText);
             } else {
                 settings.refreshAccordion();
-                
+
                 $(".delusr").click(function(e) {
                     var email = $(this).attr("data-email");
                     window.admin.deleteUser(email, function() {
@@ -227,6 +225,10 @@ var admin = {
         $(formId).each(function() {
             var frm = this;
             var formData = new FormData(frm);
+
+            if (formData.has("edit_categories")) {
+                formData.set("edit_categories", $("#edit_categories").val());
+            }
 
             $(formId + ' label').css("color", "#555555").removeAttr("title");
             $.ajax({

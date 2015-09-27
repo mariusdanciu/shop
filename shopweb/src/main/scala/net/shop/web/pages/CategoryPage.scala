@@ -20,10 +20,9 @@ import net.shop.api.ShopError
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 
-
 object CategoryPage extends Cart[Request] { self =>
 
-  override def snippets = List(item) ++ super.snippets
+  override def snippets = List(item, presentation) ++ super.snippets
 
   val item = reqSnip("item") {
     s =>
@@ -48,5 +47,23 @@ object CategoryPage extends Cart[Request] { self =>
       }
   }
 
+  val presentation = reqSnip("presentation") {
+    s =>
+      {
+        val prods = ShopApplication.persistence.presentationProducts match {
+          case Success(list) =>
+            <ul>{
+              list flatMap { p =>
+                <li>{
+                  Xml("div") addAttr ("style", s"background: url('${imagePath("normal", p)}') no-repeat")
+                }</li>
+              }
+            }</ul>
+          case Failure(t) => <div class="error">{ Loc.loc0(s.state.lang)("no.categories").text }</div>
+        }
+
+        Success(s.state.initialState, prods.toSeq)
+      }
+  }
 }
 

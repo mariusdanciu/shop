@@ -103,7 +103,7 @@ input[type="checkbox"]:checked+label {
 	background-repeat: no-repeat;
 	width: 150px;
 	height: 26px;
-	background-position:-5px -823px;
+	background-position: -5px -823px;
 	padding: 2px 0px 0px 40px;
 }
 
@@ -286,7 +286,7 @@ a:active {
 
 .page {
 	position: relative;
-	padding-top: 140px;
+	padding-top: 110px;
 	padding-bottom: 120px;
 }
 
@@ -357,13 +357,14 @@ a:active {
 	display: none;
 }
 
-#item_list ul { #
+#item_list ul {
 	overflow: hidden;
 }
 
 #item_list ul li {
 	float: left;
-	margin: 4px 4px 0 0; #
+	margin: 4px 4px 0 0;
+	padding-top: 30px;
 	overflow: hidden;
 	position: relative;
 }
@@ -473,6 +474,7 @@ a:active {
 	top: 10px;
 	font-size: 20px;
 	text-align: center;
+	font-weight: bold;
 }
 
 .cat_text {
@@ -852,6 +854,28 @@ h1 {
 
 #gallery ul li {
 	float: left;
+}
+
+#presentation {
+	height: 360px;
+	overflow: hidden;
+	width: 1070px;
+	float: left;
+	position: relative;
+}
+
+#presentation ul {
+	width: 2000px;
+}
+
+#presentation ul li {
+	float: left;
+	margin: 0 20px 20px;
+}
+
+#presentation ul li div {
+	width: 312px;
+	height: 356px;
 }
 
 .active img {

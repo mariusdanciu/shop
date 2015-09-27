@@ -1,7 +1,30 @@
 (function() {
     $(function() {
+
         $.blockUI.defaults.baseZ = 90;
         categories.reloadCategories();
+
+        var total = $("#presentation ul li").length;
+
+        var buf = $("#presentation ul li").clone();
+
+        var presentationFunc = function() {
+            $("#presentation ul").animate({
+                "marginLeft" : "-=352px"
+            }, 400, "linear", function() {
+                console.log("done");
+                first = buf[0];
+                buf.splice(0, 1);
+                buf.push(first);
+                console.log(buf);
+                $("#presentation ul").replaceWith($("<ul></ul>").append(buf));
+                buf = buf.clone();
+                window.setTimeout(presentationFunc, 3000);
+            });
+
+        }
+
+        window.setTimeout(presentationFunc, 3000);
     });
 })();
 
