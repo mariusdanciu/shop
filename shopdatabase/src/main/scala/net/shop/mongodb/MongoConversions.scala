@@ -133,6 +133,7 @@ trait MongoConversions {
     db += "soldCount" -> obj.soldCount
     db += "stock" -> obj.stock
     db += "position" -> obj.position
+    db += "presentationPosition" -> obj.presentationPosition
     db += "unique" -> obj.unique
     db += "categories" -> obj.categories
     db += "images" -> obj.images
@@ -198,6 +199,7 @@ trait MongoConversions {
       soldCount = obj.getAs[Int]("soldCount") getOrElse 0,
       stock = obj.getAs[Int]("stock"),
       position = obj.getAs[Int]("position"),
+      presentationPosition = obj.getAs[Int]("presentationPosition"),
       unique = obj.getAsOrElse[Boolean]("unique", false),
       categories = obj.getAsOrElse[List[String]]("categories", Nil),
       images = obj.getAsOrElse[List[String]]("images", Nil),

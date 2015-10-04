@@ -16,6 +16,7 @@ trait Persistence {
   def createProducts(prod: ProductDetail*): Try[Seq[String]]
   def updateProducts(prod: ProductDetail*): Try[Seq[String]]
   def deleteProducts(prod: String*): Try[Int]
+  def presentationProducts: Try[Seq[ProductDetail]]
 
   def createCategories(prod: Category*): Try[Seq[String]]
   def updateCategories(prod: Category*): Try[Seq[String]]

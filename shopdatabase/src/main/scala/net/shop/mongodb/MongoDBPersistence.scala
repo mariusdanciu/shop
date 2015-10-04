@@ -68,6 +68,17 @@ object MongoDBPersistence extends Persistence with MongoConversions {
   } catch {
     case e: Exception => fail("internal.error", e)
   }
+  
+  def presentationProducts: Try[Seq[ProductDetail]] = try {
+    Success(
+      (for {
+        p <- db("products").find("presentationPosition" $exists true).sort(MongoDBObject("presentationPosition" -> 1))
+      } yield {
+         mongoToProduct(p)
+      }) toSeq)
+  } catch {
+    case e: Exception => fail("internal.error", e)
+  }
 
   def categoryById(id: String): Try[Category] = try {
     db("categories").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {

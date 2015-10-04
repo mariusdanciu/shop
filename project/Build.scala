@@ -49,14 +49,14 @@ object ShopBuild extends Build {
   val distShopApiSetting = distShopApi <<= (target, managedClasspath in Runtime, publishLocal, packageBin in Compile) map {
     (target, cp, _, pack) => {
         println("dist > shopapi")
-	pack
+	      pack
     }
   }
   
   val distShopDBSetting = distShopDB <<= (target, managedClasspath in Runtime, publishLocal, packageBin in Compile) map {
     (target, cp, _, pack) => {
         println("dist > shopdatabase")
-	pack
+        pack
     }
   }
   
