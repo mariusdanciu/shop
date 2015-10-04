@@ -403,6 +403,21 @@ a:active {
 	position: relative;
 }
 
+.pres_item_box {
+	border-radius: 5px;
+	z-index: 0;
+	position: relative;
+	box-shadow: inset 0px 0px 1px 1px #ddd;
+	overflow: hidden;
+}
+
+.pres_item_box:hover {
+	box-shadow: 0px 0px 10px 1px #999;
+	z-index: 1;
+	cursor: pointer;
+	position: relative;
+}
+
 .item_box:hover>.edit_tag .edit_tag_close, .item_box:hover>.edit_tag .edit_tag_update
 	{
 	display: block;
@@ -857,7 +872,7 @@ h1 {
 }
 
 #presentation {
-	height: 360px;
+	height: 375px;
 	overflow: hidden;
 	width: 1070px;
 	float: left;
@@ -870,7 +885,7 @@ h1 {
 
 #presentation ul li {
 	float: left;
-	margin: 0 20px 20px;
+	margin: 10px 20px 20px;
 }
 
 #presentation ul li div {

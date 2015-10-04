@@ -11,7 +11,7 @@
         var presentationFunc = function() {
             $("#presentation ul").animate({
                 "marginLeft" : "-=352px"
-            }, 400, "linear", function() {
+            }, 1000, "linear", function() {
                 console.log("done");
                 first = buf[0];
                 buf.splice(0, 1);
@@ -19,12 +19,12 @@
                 console.log(buf);
                 $("#presentation ul").replaceWith($("<ul></ul>").append(buf));
                 buf = buf.clone();
-                window.setTimeout(presentationFunc, 3000);
+                window.setTimeout(presentationFunc, 2000);
             });
 
         }
 
-        window.setTimeout(presentationFunc, 3000);
+        window.setTimeout(presentationFunc, 2000);
     });
 })();
 
