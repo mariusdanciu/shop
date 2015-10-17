@@ -7,7 +7,7 @@ html, body {
 	line-height: 1.5em;
 	background-color: white;
 	height: 100%;
-	min-width: 1070px;
+	min-width: 800px;
 }
 
 * {
@@ -286,7 +286,7 @@ a:active {
 
 .page {
 	position: relative;
-	padding-top: 110px;
+	padding-top: 150px;
 	padding-bottom: 120px;
 }
 
@@ -306,7 +306,7 @@ a:active {
 }
 
 .center {
-	max-width: 1070px;
+	max-width: 90%;
 	margin: auto;
 	position: relative;
 }
@@ -363,8 +363,6 @@ a:active {
 
 #item_list ul li {
 	float: left;
-	margin: 4px 4px 0 0;
-	padding-top: 30px;
 	overflow: hidden;
 	position: relative;
 }
@@ -376,12 +374,13 @@ a:active {
 	width: 200px;
 	position: relative;
 	z-index: 0;
+	top: 10px;
 	margin: 0 5px 20px 5px;
 }
 
 .cat_box:hover {
 	cursor: pointer;
-	box-shadow: 0px 0px 20px 1px #999;
+	box-shadow: 0px 0px 10px 1px #999;
 	z-index: 1;
 }
 
@@ -393,11 +392,11 @@ a:active {
 	position: relative;
 	box-shadow: inset 0px 0px 1px 1px #ddd;
 	overflow: hidden;
-	margin: 0 20px 20px 20px;
+	margin: 20px 20px 20px 20px;
 }
 
 .item_box:hover {
-	box-shadow: 0px 0px 40px 1px #999;
+	box-shadow: 0px 0px 10px 1px #999;
 	z-index: 1;
 	cursor: pointer;
 	position: relative;
@@ -409,6 +408,8 @@ a:active {
 	position: relative;
 	box-shadow: inset 0px 0px 1px 1px #ddd;
 	overflow: hidden;
+	width: 156px;
+	height: 178px;
 }
 
 .pres_item_box:hover {
@@ -872,11 +873,11 @@ h1 {
 }
 
 #presentation {
-	height: 375px;
+	height: 200px;
 	overflow: hidden;
-	width: 1070px;
+	width: 95%;
 	float: left;
-	position: relative;
+	bottom: 0px;
 }
 
 #presentation ul {
@@ -885,12 +886,7 @@ h1 {
 
 #presentation ul li {
 	float: left;
-	margin: 10px 20px 20px;
-}
-
-#presentation ul li div {
-	width: 312px;
-	height: 356px;
+	margin: 10px 15px 15px;
 }
 
 .active img {

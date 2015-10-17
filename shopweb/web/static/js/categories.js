@@ -10,7 +10,7 @@
 
         var presentationFunc = function() {
             $("#presentation ul").animate({
-                "marginLeft" : "-=352px"
+                "marginLeft" : "-=180px"
             }, 1000, "linear", function() {
                 console.log("done");
                 first = buf[0];

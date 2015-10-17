@@ -56,7 +56,7 @@ object CategoryPage extends Cart[Request] { self =>
               list flatMap { p =>
                 <li>{
                   (Xml("a") addAttr ("href", s"product?pid=${p.stringId}")) /
-                    Xml("div").addAttr("style", s"background: url('${imagePath("normal", p)}') no-repeat").
+                    Xml("div").addAttr("style", s"background: url('${imagePath("normal", p)}') no-repeat center center; background-size: cover;").
                     addAttr("class", "pres_item_box")
 
                 }</li>
