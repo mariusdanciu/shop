@@ -52,16 +52,17 @@ object CategoryPage extends Cart[Request] { self =>
       {
         val prods = ShopApplication.persistence.presentationProducts match {
           case Success(list) =>
-            <ul>{
-              list flatMap { p =>
-                <li>{
-                  (Xml("a") addAttr ("href", s"product?pid=${p.stringId}")) /
-                    Xml("div").addAttr("style", s"background: url('${imagePath("normal", p)}') no-repeat center center; background-size: cover;").
-                    addAttr("class", "pres_item_box")
-
-                }</li>
+            list flatMap { p =>
+              (bind(s.node) {
+                case Xml("a", _, childs)   => Xml("a").addAttr("href", s"product?pid=${p.stringId}") / childs
+                case Xml("div", a, childs) => Xml("div").addAttr("style", s"background-image: url('${imagePath("normal", p)}')") % a
+              }) match {
+                case Success(n)                 => n
+                case Failure(ShopError(msg, _)) => errorTag(Loc.loc0(s.state.lang)(msg).text)
+                case Failure(f)                 => errorTag(f toString)
               }
-            }</ul>
+
+            }
           case Failure(t) => <div class="error">{ Loc.loc0(s.state.lang)("no.categories").text }</div>
         }
 

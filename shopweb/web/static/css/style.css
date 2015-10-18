@@ -375,7 +375,7 @@ a:active {
 	position: relative;
 	z-index: 0;
 	top: 10px;
-	margin: 0 5px 20px 5px;
+	margin: 0 5px 20px 10px;
 }
 
 .cat_box:hover {
@@ -407,9 +407,10 @@ a:active {
 	z-index: 0;
 	position: relative;
 	box-shadow: inset 0px 0px 1px 1px #ddd;
-	overflow: hidden;
-	width: 156px;
-	height: 178px;
+	width: 200px;
+	height: 140px;
+	background: no-repeat center center; 
+	background-size: contain;
 }
 
 .pres_item_box:hover {
@@ -877,7 +878,6 @@ h1 {
 	overflow: hidden;
 	width: 95%;
 	float: left;
-	bottom: 0px;
 }
 
 #presentation ul {
@@ -886,7 +886,7 @@ h1 {
 
 #presentation ul li {
 	float: left;
-	margin: 10px 15px 15px;
+	margin: 10px 5px 20px 10px;
 }
 
 .active img {

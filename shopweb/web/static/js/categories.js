@@ -10,8 +10,8 @@
 
         var presentationFunc = function() {
             $("#presentation ul").animate({
-                "marginLeft" : "-=180px"
-            }, 1000, "linear", function() {
+                "marginLeft" : "-=214px"
+            }, 4000, "linear", function() {
                 console.log("done");
                 first = buf[0];
                 buf.splice(0, 1);
@@ -19,12 +19,12 @@
                 console.log(buf);
                 $("#presentation ul").replaceWith($("<ul></ul>").append(buf));
                 buf = buf.clone();
-                window.setTimeout(presentationFunc, 2000);
+                window.setTimeout(presentationFunc, 0);
             });
 
         }
 
-        window.setTimeout(presentationFunc, 2000);
+        window.setTimeout(presentationFunc, 0);
     });
 })();
 
