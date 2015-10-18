@@ -72,7 +72,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
   def presentationProducts: Try[Seq[ProductDetail]] = try {
     Success(
       (for {
-        p <- db("products").find("presentationPosition" $exists true).sort(MongoDBObject("presentationPosition" -> 1))
+        p <- db("products").find("presentationPosition" $gte 0).sort(MongoDBObject("presentationPosition" -> 1))
       } yield {
          mongoToProduct(p)
       }) toSeq)
