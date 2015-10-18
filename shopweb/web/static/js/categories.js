@@ -12,11 +12,9 @@
             $("#presentation ul").animate({
                 "marginLeft" : "-=214px"
             }, 4000, "linear", function() {
-                console.log("done");
                 first = buf[0];
                 buf.splice(0, 1);
                 buf.push(first);
-                console.log(buf);
                 $("#presentation ul").replaceWith($("<ul></ul>").append(buf));
                 buf = buf.clone();
                 window.setTimeout(presentationFunc, 0);
