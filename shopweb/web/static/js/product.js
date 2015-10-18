@@ -25,8 +25,10 @@
         }
 
         $('#product_details_tab').tabify();
-        window.admin.attachToProduct(function() {});
-
+        if (window.admin) {
+            window.admin.attachToProduct(function() {
+            });
+        }
         $(".close_item_order_dialog").click(function(event) {
             common.closeDialog();
             return false;
