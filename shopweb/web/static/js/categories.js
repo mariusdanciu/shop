@@ -77,10 +77,8 @@ var categories = {
                 $("#item_list").html(data);
 
                 categories.refreshList();
-                $("#item_list").waitForImages(function() {
-                    $("#item_list").fadeIn({
-                        duration : 1000
-                    });
+                $("#item_list").fadeIn({
+                    duration : 1000
                 });
 
                 return false;

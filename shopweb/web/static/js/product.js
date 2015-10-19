@@ -24,9 +24,8 @@
             });
         }
 
-        $('#product_details_tab').tabify();
         if (window.admin) {
-            window.admin.attachToProduct(function() {
+            window.admin.attachToProduct($("body"), function() {
             });
         }
         $(".close_item_order_dialog").click(function(event) {

@@ -5,7 +5,7 @@ html, body {
 	left: 0px;
 	font-size: 90%;
 	line-height: 1.5em;
-	background-color: white;
+	background-color: #f6f6f6;
 	height: 100%;
 	min-width: 800px;
 }
@@ -409,7 +409,7 @@ a:active {
 	box-shadow: inset 0px 0px 1px 1px #ddd;
 	width: 200px;
 	height: 140px;
-	background: no-repeat center center; 
+	background: no-repeat center center;
 	background-size: contain;
 }
 
@@ -504,18 +504,12 @@ a:active {
 }
 
 #pleft {
-	width: 390px;
 	float: left;
+	width: 380px;
 }
 
 #pright {
-	width: 660px;
-	float: left;
-	margin-left: 20px;
-}
-
-.quickview #pright {
-	width: 670px;
+	margin-left: 400px;
 }
 
 h1 {
@@ -608,11 +602,9 @@ h1 {
 
 .prod_details {
 	float: left;
-	width: 100%;
 }
 
 .prod_header {
-	width: 100%;
 	height: 40px;
 	float: left;
 	margin-bottom: 10px;
@@ -912,8 +904,20 @@ h1 {
 }
 
 .product_content {
-	width: 100%;
 	height: 100%;
+	display: inline-block;
+	position: relative;
+	box-shadow: 0px 0px 10px 1px #999;
+	border-radius: 10px;
+	padding: 10px;
+	width: 100%;
+	background-color: #ffffff;
+}
+
+.product_detail_border {
+	display: inline-block;
+	min-width: 100%;
+	padding: 10px;
 }
 
 .sort {
@@ -1011,8 +1015,8 @@ h1 {
 	padding: 20px;
 }
 
-#product_dialog, #product_create_dialog, #category_create_dialog,
-	#item_order_dialog, #category_update_dialog, #newuser_popup {
+#product_create_dialog, #category_create_dialog, #item_order_dialog,
+	#category_update_dialog, #newuser_popup {
 	display: none;
 	padding: 10px;
 }
@@ -1109,14 +1113,14 @@ h1 {
 	height: 100px;
 	position: relative;
 	margin-top: 10px;
-	width: 100#;
+	width: 100%;
 }
 
 #edit {
 	float: left;
 	clear: both;
 	position: relative;
-	width: 100#;
+	width: 100%;
 }
 
 .column {
@@ -1145,6 +1149,7 @@ h1 {
 
 .tab_select {
 	float: left;
+	clear: both;
 }
 
 .tab_content {

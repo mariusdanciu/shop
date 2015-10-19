@@ -5,20 +5,24 @@
 
         window.galleryOffset = 0;
 
+        window.opened = {
+            small : null,
+            large : null
+        };
+
         products.refreshList();
 
         $('#sortSelect, #sortSelect:hidden').on('change', function(evt, params) {
             products.reloadProducts($(this).val());
         });
 
-        $(".close_product_dialog, .close_item_order_dialog").click(function(event) {
+        $(".close_item_order_dialog").click(function(event) {
             products.closeProductDialog();
             return false;
         });
 
         products.reloadProducts($('#sortSelect').val());
 
-        
     });
 
 })();
@@ -49,10 +53,8 @@ var products = {
             success : function(data) {
                 $("#item_list").html(data);
                 products.refreshList();
-                $("#item_list").waitForImages(function() {
-                    $("#item_list").fadeIn({
-                        duration : 1000
-                    });
+                $("#item_list").fadeIn({
+                    duration : 1000
                 });
                 return false;
             }
@@ -62,10 +64,6 @@ var products = {
 
     closeProductDialog : function() {
         window.common.closeDialog();
-        setTimeout(function() {
-            $("#product_dialog").empty();
-            $(".zoomContainer").remove();
-        }, 400);
     },
 
     refreshList : function() {
@@ -100,30 +98,46 @@ var products = {
                             common.showError(xhr.statusText);
                         },
                         success : function(data) {
-                            $("#product_dialog").html(data);
-                            $("#fb-share-button").click(function(e) {
-                                FB.ui({
-                                    method : 'share',
-                                    href : 'http://idid.ro/product?pid=' + pid,
-                                }, function(response) {
-                                    if (response && !response.error_code) {
-                                    } else {
+
+                            if (window.opened.small)
+                                window.opened.small.show();
+                            if (window.opened.large)
+                                window.opened.large.remove();
+
+                            var detail = $(data);
+                            var div = $("<div class='product_detail_border'></div>").append(detail);
+                            var li = $("<li style='width: 100%'></li>").append(div);
+
+                            me.parent().hide();
+                            me.parent().after(li);
+
+                            window.opened.small = me.parent();
+                            window.opened.large = li;
+
+                            var total = detail.find("#gallery ul li").length;
+                            if (total > 3) {
+                                detail.find('#gallery_right').click(function() {
+                                    if (window.galleryOffset * -4 < total * 100) {
+                                        window.galleryOffset -= 100;
                                     }
+                                    detail.find("#gallery ul").css({
+                                        "transform" : "translate(" + window.galleryOffset + "px, 0px)"
+                                    });
+                                    return false;
                                 });
-                                return false;
-                            });
 
-                            $("#sel_img").elevateZoom({
-                                gallery : 'detail_box',
-                                cursor : 'pointer',
-                                galleryActiveClass : 'active',
-                                imageCrossfade : true,
-                                loadingIcon : '/images/ajax-loader.gif',
-                                scrollZoom : true,
-                                borderSize : 1
-                            });
+                                detail.find('#gallery_left').click(function() {
+                                    if (window.galleryOffset * 4 < 0) {
+                                        window.galleryOffset += 100;
+                                    }
+                                    detail.find("#gallery ul").css({
+                                        "transform" : "translate(" + window.galleryOffset + "px, 0px)"
+                                    });
+                                    return false;
+                                });
+                            }
 
-                            $('#add_to_cart').click(function(event) {
+                            detail.find('#add_to_cart').click(function(event) {
 
                                 var userOptions = {};
                                 $(".custom_option").each(function(i) {
@@ -142,62 +156,51 @@ var products = {
                                 return false;
                             });
 
-                            var total = $("#gallery ul li").length;
-                            if (total > 3) {
-                                $('#gallery_right').click(function() {
-                                    if (window.galleryOffset * -4 < total * 100) {
-                                        window.galleryOffset -= 100;
+                            detail.find("#sel_img").elevateZoom({
+                                gallery : 'detail_box',
+                                cursor : 'pointer',
+                                galleryActiveClass : 'active',
+                                imageCrossfade : true,
+                                loadingIcon : '/images/ajax-loader.gif',
+                                scrollZoom : true,
+                                borderSize : 1
+                            });
+
+                            detail.find("#fb-share-button").click(function(e) {
+                                FB.ui({
+                                    method : 'share',
+                                    href : 'http://idid.ro/product?pid=' + pid,
+                                }, function(response) {
+                                    if (response && !response.error_code) {
+                                    } else {
                                     }
-                                    $("#gallery ul").css({
-                                        "transform" : "translate(" + window.galleryOffset + "px, 0px)"
-                                    });
-                                    return false;
                                 });
+                                return false;
+                            });
 
-                                $('#gallery_left').click(function() {
-                                    if (window.galleryOffset * 4 < 0) {
-                                        window.galleryOffset += 100;
-                                    }
-                                    $("#gallery ul").css({
-                                        "transform" : "translate(" + window.galleryOffset + "px, 0px)"
-                                    });
-                                    return false;
-                                });
-                            }
+                            detail.find(".close_product_dialog").click(function(event) {
 
-                            $('#product_details_tab').tabify();
+                                window.opened.small = null;
+                                window.opened.large = null;
 
-                            var content = $("#prod_desc").text();
-                            $("#prod_desc").html(textile.convert(content));
+                                me.parent().show();
+                                li.remove();
+                                return false;
+                            });
+
+                            detail.find('#product_details_tab').tabify();
+
+                            var content = detail.find("#prod_desc").text();
+                            detail.find("#prod_desc").html(textile.convert(content));
 
                             if (window.admin !== undefined) {
-                                window.admin.attachToProduct(function() {
-                                    products.closeProductDialog();
+                                window.admin.attachToProduct(detail, function() {
+                                    me.parent().show();
+                                    li.remove();
                                     products.reloadProducts();
                                 });
                             }
 
-                            $(".close_product_dialog").click(function(event) {
-                                products.closeProductDialog();
-                                return false;
-                            });
-
-                            $("#product_dialog").waitForImages(function() {
-                                $.blockUI({
-                                    message : $("#product_dialog"),
-                                    css : {
-                                        top : '100px',
-                                        left : ($(window).width() - 1100) / 2 + 'px',
-                                        width : '1100px',
-                                        border : 'none',
-                                        cursor : null
-                                    },
-                                    overlayCSS : {
-                                        cursor : null,
-                                        backgroundColor : '#dddddd'
-                                    }
-                                });
-                            });
                             return false;
                         }
                     });

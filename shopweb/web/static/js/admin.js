@@ -272,13 +272,13 @@ var admin = {
 
     },
 
-    attachToProduct : function(successFunc) {
-        $("#save_product").click(function(event) {
+    attachToProduct : function(parent, successFunc) {
+        parent.find("#save_product").click(function(event) {
             admin.save("#edit_form", successFunc);
             return false;
         });
-        $('#edit_product_tab').tabify();
-        $("#edit_specs .row span, #prop_edit_custom_fields .row span").click(function(e) {
+        parent.find('#edit_product_tab').tabify();
+        parent.find("#edit_specs .row span, #prop_edit_custom_fields .row span").click(function(e) {
             var row = $(this).parent();
             row.remove();
             return false;
