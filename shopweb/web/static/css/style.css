@@ -467,11 +467,11 @@ a:active {
 	position: relative;
 	text-align: right;
 	top: 20px;
-	font-size: 22px;
+	font-size: 26px;
 	float: right;
 	right: 10px;
 	font-weight: 400;
-	color: #0b0;
+	color: #000;
 }
 
 .info_tag_price * {
@@ -510,6 +510,7 @@ a:active {
 
 #pright {
 	margin-left: 400px;
+	PADDING-RIGHT: 20px;
 }
 
 h1 {
@@ -764,7 +765,6 @@ h1 {
 }
 
 .prod_specs .column1 {
-	width: 200px;
 	border-right: 1px solid #cccccc;
 	float: left;
 	margin-right: 10px;
@@ -772,7 +772,6 @@ h1 {
 }
 
 .prod_specs .column2 {
-	width: 430px;
 	float: left;
 	position: relative;
 }
@@ -910,13 +909,11 @@ h1 {
 	box-shadow: 0px 0px 10px 1px #999;
 	border-radius: 10px;
 	padding: 10px;
-	width: 100%;
 	background-color: #ffffff;
 }
 
 .product_detail_border {
 	display: inline-block;
-	min-width: 100%;
 	padding: 10px;
 }
 
