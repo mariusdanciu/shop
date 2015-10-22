@@ -107,9 +107,11 @@ var products = {
 
                             if (window.opened.small)
                                 window.opened.small.show();
-                            if (window.opened.large)
+                            if (window.opened.large){
+                                $.removeData(window.opened.large.find("#sel_img"), 'elevateZoom');
+                                $('.zoomContainer').remove();
                                 window.opened.large.remove();
-
+                            }
                             var detail = $(data);
                             var div = $("<div class='product_detail_border'></div>").append(detail);
                             var li = $("<li></li>").append(div);
@@ -191,6 +193,9 @@ var products = {
 
                                 me.parent().show();
                                 li.remove();
+                                
+                                $.removeData(detail.find("#sel_img"), 'elevateZoom');
+                                $('.zoomContainer').remove();
                                 return false;
                             });
 

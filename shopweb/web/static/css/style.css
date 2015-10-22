@@ -764,16 +764,16 @@ h1 {
 	top: 5px;
 }
 
-.prod_specs .column1 {
-	border-right: 1px solid #cccccc;
-	float: left;
-	margin-right: 10px;
-	position: relative;
+.prod_specs table tr:nth-child(odd) {
+	background: #EEE;
 }
 
-.prod_specs .column2 {
-	float: left;
-	position: relative;
+.prod_specs table tr:nth-child(even) {
+	background: #FFF;
+}
+
+.prod_specs table tr {
+	height: 30px;
 }
 
 .upload_form_fields .fields .select_row {
