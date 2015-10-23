@@ -20,6 +20,12 @@
             products.closeProductDialog();
             return false;
         });
+        
+        $("#product_create_dialog .close_product_dialog").click(function(event) {
+            console.log("close");
+            products.closeProductDialog();
+            return false;
+        });
 
         products.reloadProducts($('#sortSelect').val());
 

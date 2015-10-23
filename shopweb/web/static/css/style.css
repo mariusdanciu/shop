@@ -5,7 +5,6 @@ html, body {
 	left: 0px;
 	font-size: 90%;
 	line-height: 1.5em;
-	background-color: #f6f6f6;
 	height: 100%;
 	min-width: 800px;
 }
@@ -911,6 +910,15 @@ h1 {
 	padding: 10px;
 	background-color: #ffffff;
 }
+
+.product_content_simple {
+	height: 100%;
+	display: inline-block;
+	position: relative;
+	padding: 10px;
+	background-color: #ffffff;
+}
+
 
 .product_detail_border {
 	display: inline-block;
