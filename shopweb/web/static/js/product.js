@@ -76,6 +76,7 @@
         var content = $("#prod_desc").text();
         $("#prod_desc").html(textile.convert(content));
 
+        $('#product_details_tab').tabify();
     });
 
 })();
