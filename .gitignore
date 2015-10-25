@@ -4,5 +4,7 @@
 **/.cache
 **/.classpath
 **/.project
-
-
+/data/
+/dist/
+/target/
+/project/
