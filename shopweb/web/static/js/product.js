@@ -26,6 +26,7 @@
 
         if (window.admin) {
             window.admin.attachToProduct($("body"), function() {
+                window.location.reload();
             });
         }
         $(".close_item_order_dialog").click(function(event) {
