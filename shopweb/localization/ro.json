@@ -632,7 +632,17 @@
  {
    "code" : "208",
    "name" : "main.page",
-   "text" : "Acasa"
+   "text" : "Magazin"
+ },
+ {
+   "code" : "208",
+   "name" : "transport",
+   "text" : "Transport"
+ },
+ {
+   "code" : "208",
+   "name" : "onsale",
+   "text" : "Promotii"
  }
  
 ]
