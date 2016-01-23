@@ -77,6 +77,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     }
     r
   }
+  
   def ajaxLogin = for {
     _ <- ajax
     r <- path("auth")
