@@ -59,22 +59,35 @@ object MongoDBPersistence extends Persistence with MongoConversions {
   }
 
   def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = try {
+    val query = text match {
+      case ":onsale" => db("products").find(MongoDBObject("discountPrice" -> MongoDBObject("$ne" -> None)))
+      case t         => db("products").find(MongoDBObject("$text" -> MongoDBObject("$search" -> t)))
+    }
+    
+    val sorted = spec match {
+      case SortByName(true, _)   => query.sort(MongoDBObject("title" -> 1))
+      case SortByName(false, _)  => query.sort(MongoDBObject("title" -> -1))
+      case SortByPrice(true, _)  => query.sort(MongoDBObject("price" -> 1))
+      case SortByPrice(false, _) => query.sort(MongoDBObject("price" -> -1))
+      case _                     => query.sort(MongoDBObject("position" -> 1))
+    }
+    
     Success(
       for {
-        p <- db("products").find(MongoDBObject("$text" -> MongoDBObject("$search" -> text)))
+        p <- sorted
       } yield {
         mongoToProduct(p)
       })
   } catch {
     case e: Exception => fail("internal.error", e)
   }
-  
+
   def presentationProducts: Try[Seq[ProductDetail]] = try {
     Success(
       (for {
         p <- db("products").find("presentationPosition" $gte 0).sort(MongoDBObject("presentationPosition" -> 1))
       } yield {
-         mongoToProduct(p)
+        mongoToProduct(p)
       }) toSeq)
   } catch {
     case e: Exception => fail("internal.error", e)

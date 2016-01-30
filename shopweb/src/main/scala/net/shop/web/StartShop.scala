@@ -34,7 +34,6 @@ import net.shop.api.persistence.Persistence
 import net.shop.mongodb.MongoDBPersistence
 import net.shift.spray.SprayServer
 import net.shop.web.pages.AboutUsPage
-import net.shop.web.pages.OnSalePage
 
 object StartShop extends App with DefaultLog with IODefaults {
 
@@ -72,7 +71,6 @@ object ShopApplication extends ShiftApplication with ShopServices {
       page("returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
       page("cookies", Path("web/cookies.html"), CookiesPage) |
       page("aboutus", Path("web/aboutus.html"), AboutUsPage) |
-      page("onsale", Path("web/onsale.html"), OnSalePage) |
       settingsPage("accountsettings", Path("web/accountsettings.html"), AccountSettingsPage) |
       getCart() |
       OrderService.order |
