@@ -35,8 +35,6 @@ trait Persistence {
   def ordersByProduct(productId: String): Try[Iterator[OrderLog]]
   def updateOrderStatus(orderId: String, status: OrderStatus): Try[Boolean]
 
-  def storeServiceHit(h: ServiceHit): Try[String]
-  def allServiceStats(): Try[Iterator[ServiceStat]]
 }
 
 object SortSpec {

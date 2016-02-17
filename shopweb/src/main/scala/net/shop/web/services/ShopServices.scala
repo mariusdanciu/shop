@@ -24,7 +24,6 @@ import net.shift.template.DynamicContent
 import net.shift.template.Selectors
 import net.shop.api.Cart
 import net.shop.api.ShopError
-import net.shop.messaging.HitStat
 import net.shop.messaging.Messaging
 import net.shop.tryApplicative
 import net.shop.web.ShopApplication
@@ -57,27 +56,6 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
   implicit val cartItemsSelector = bySnippetAttr[CartState]
   implicit val settingsSelector = bySnippetAttr[SettingsPageState]
 
-  def traceStats = for {
-    r <- req
-  } yield {
-    val path = r.path.toString()
-    if (!path.endsWith(".css") &&
-      !path.endsWith(".js") &&
-      !path.endsWith(".png") &&
-      !path.endsWith(".ico") &&
-      !path.endsWith(".jpg")) {
-      val uri = r.uri
-      (uri split ("\\?_=")).toList match {
-        case left :: right :: Nil =>
-          Messaging.send(HitStat(new Date(System.currentTimeMillis()), left))
-        case _ =>
-          Messaging.send(HitStat(new Date(System.currentTimeMillis()), uri))
-      }
-
-    }
-    r
-  }
-  
   def ajaxLogin = for {
     _ <- ajax
     r <- path("auth")

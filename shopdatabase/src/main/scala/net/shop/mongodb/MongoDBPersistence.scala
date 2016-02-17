@@ -3,26 +3,33 @@ package mongodb
 
 import scala.util.Success
 import scala.util.Try
+
 import com.mongodb.casbah.Imports._
-import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
+
 import net.shift.common.Config
 import net.shop.api._
+import net.shop.api.ShopError._
 import net.shop.api.persistence._
-import ShopError._
-import net.shop.api.ServiceHit
 
 object MongoDBPersistence extends Persistence with MongoConversions {
 
-  lazy val db = MongoClient(Config.string("db.host", "localhost"))("idid")
+  val server = new ServerAddress(Config.string("db.host", "localhost"), 27017)
+  val credentials = MongoCredential.createScramSha1Credential(
+    Config.string("db.user", "idid"),
+    "idid",
+    Config.string("db.pwd", "pass").toCharArray())
+  val mongoClient = MongoClient(server, List(credentials))
+
+  lazy val db = mongoClient("idid")
 
   db.command(MongoDBObject("setParameter" -> 1, "textSearchEnabled" -> 1))
 
-  db("products").ensureIndex(MongoDBObject("title.ro" -> "text", "description.ro" -> "text", "keywords" -> "text"))
-  db("products").ensureIndex(MongoDBObject("position" -> 1))
-  db("users").ensureIndex(MongoDBObject("firstName" -> "text", "lastName" -> "text", "phone" -> "text", "email" -> "text"))
-  db("orders").ensureIndex(MongoDBObject("email" -> 1, "items.id" -> 1))
-  db("servicestats").ensureIndex(MongoDBObject("year" -> 1, "month" -> 1, "service" -> 1))
+  db("products").createIndex(MongoDBObject("title.ro" -> "text", "description.ro" -> "text", "keywords" -> "text"))
+  db("products").createIndex(MongoDBObject("position" -> 1))
+  db("users").createIndex(MongoDBObject("firstName" -> "text", "lastName" -> "text", "phone" -> "text", "email" -> "text"))
+  db("orders").createIndex(MongoDBObject("email" -> 1, "items.id" -> 1))
+  db("servicestats").createIndex(MongoDBObject("year" -> 1, "month" -> 1, "service" -> 1))
 
   def productById(id: String): Try[ProductDetail] = try {
     db("products").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
@@ -63,7 +70,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
       case ":onsale" => db("products").find(MongoDBObject("discountPrice" -> MongoDBObject("$ne" -> None)))
       case t         => db("products").find(MongoDBObject("$text" -> MongoDBObject("$search" -> t)))
     }
-    
+
     val sorted = spec match {
       case SortByName(true, _)   => query.sort(MongoDBObject("title" -> 1))
       case SortByName(false, _)  => query.sort(MongoDBObject("title" -> -1))
@@ -71,7 +78,7 @@ object MongoDBPersistence extends Persistence with MongoConversions {
       case SortByPrice(false, _) => query.sort(MongoDBObject("price" -> -1))
       case _                     => query.sort(MongoDBObject("position" -> 1))
     }
-    
+
     Success(
       for {
         p <- sorted
@@ -280,23 +287,13 @@ object MongoDBPersistence extends Persistence with MongoConversions {
     case e: Exception => fail("internal.error", e)
   }
 
-  def storeServiceHit(h: ServiceHit): Try[String] = try {
-    val mongo = serviceHitToMongo(h)
-    val update = $inc("count" -> 1)
-    val result = db("servicestats").update(mongo, update, upsert = true)
-
-    Success(mongo.get("_id").getOrElse("?").toString())
-  } catch {
-    case e: Exception => fail("internal.error", e)
-  }
-
-  def allServiceStats(): Try[Iterator[ServiceStat]] = try {
-    Success(for { p <- db("servicestats").find() } yield {
-      mongoToServiceStat(p)
-    })
-  } catch {
-    case e: Exception => fail("internal.error", e)
-  }
-
 }
-
+/*
+db.createUser(
+  {
+    user: "idid",
+    pwd: "idid.1",
+    roles: [ { role: "dbOwner", db: "idid" } ]
+  }
+)
+*/

@@ -10,7 +10,7 @@ resolvers += "mvnrepository" at "http://mvnrepository.com/artifact/"
 
 resolvers += "akka" at "http://repo.akka.io/snapshots"
 
-libraryDependencies += "org.mongodb" % "casbah-core_2.11" % "2.7.3"
+libraryDependencies += "org.mongodb" % "casbah-core_2.11" % "3.1.0"
 
 libraryDependencies += "org.slf4j" % "slf4j-simple" % "1.6.0"
 

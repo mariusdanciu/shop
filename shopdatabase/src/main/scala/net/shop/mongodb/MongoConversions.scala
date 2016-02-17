@@ -17,8 +17,6 @@ import net.shop.api.Company
 import net.shop.api.OrderLog
 import net.shop.api.ProductLog
 import java.util.Date
-import net.shop.api.ServiceHit
-import net.shop.api.ServiceStat
 import net.shop.api.OrderStatus
 import net.shop.api.Transport
 
@@ -244,22 +242,5 @@ trait MongoConversions {
       address = obj.getAsOrElse[String]("address", ""),
       zipCode = obj.getAsOrElse[String]("zipCode", ""))
 
-  def serviceHitToMongo(obj: ServiceHit): MongoDBObject = {
-    val db = MongoDBObject.newBuilder
-    db += "year" -> (obj.year + 1900)
-    db += "month" -> obj.month
-    db += "day" -> obj.day
-    db += "service" -> obj.service
-    db.result
-  }
-
-  def mongoToServiceStat(obj: DBObject): ServiceStat =
-    ServiceStat(
-      hit = ServiceHit(
-        year = obj.getAsOrElse[Int]("year", 1900),
-        month = obj.getAsOrElse[Int]("month", 0),
-        day = obj.getAsOrElse[Int]("day", 0),
-        service = obj.getAsOrElse[String]("service", "")),
-      count = obj.getAsOrElse[Int]("count", 0))
 
 }
