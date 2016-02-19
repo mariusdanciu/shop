@@ -30,12 +30,15 @@ import scala.util.Success
 import scala.util.Failure
 import net.shift.security.Permission
 import net.shop.api.ShopError
+import net.shift.common.Config
+import net.shift.io.Configs
 
-object SettingsService extends Selectors
+class SettingsService(implicit val cfg: Config) extends Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
-  with SecuredService {
+  with SecuredService
+  with Configs {
 
   def updateOrderStatus = for {
     r <- POST

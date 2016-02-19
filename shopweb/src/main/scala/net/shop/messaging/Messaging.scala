@@ -32,21 +32,21 @@ case class Mail(
 object Messaging extends IODefaults {
   val orderActor = ActorSystem("idid").actorOf(Props[OrderActor], "orderActor")
 
-  def send(m: Message) {
+  def send(m: Message)(implicit cfg : Config) {
     m match {
 
       case od @ OrderDocument(l, o, doc) =>
         orderActor ! StoreOrderStats(od)
         orderActor ! Mail(
-          from = Config.string("smtp.from"),
+          from = cfg.string("smtp.from"),
           to = List(o.email),
-          bcc = Config.list("smtp.bcc"),
+          bcc = cfg.list("smtp.bcc"),
           subject = Loc.loc0(l)("subject").text,
           message = doc)
 
       case ForgotPassword(l, email, doc) =>
         orderActor ! Mail(
-          from = Config.string("smtp.from"),
+          from = cfg.string("smtp.from"),
           to = List(email),
           subject = Loc.loc0(l)("recover.password").text,
           message = doc)
@@ -56,7 +56,7 @@ object Messaging extends IODefaults {
   }
 }
 
-class OrderActor extends Actor with DefaultLog {
+class OrderActor(implicit cfg: Config) extends Actor with DefaultLog {
 
   def receive = {
     case StoreOrderStats(content) => writeStat(content.o)("ro")
@@ -66,7 +66,7 @@ class OrderActor extends Actor with DefaultLog {
   def writeStat(o: Order)(implicit lang: String) =
     ShopApplication.persistence.createOrder(o.toOrderLog)
 
-  def sendMail(mail: Mail) {
+  def sendMail(mail: Mail)(implicit cfg : Config) {
     import org.apache.commons.mail._
 
     val commonsMail: Email = new HtmlEmail().setHtmlMsg(mail.message)
@@ -74,9 +74,9 @@ class OrderActor extends Actor with DefaultLog {
     mail.cc foreach (commonsMail.addCc(_))
     mail.bcc foreach (commonsMail.addBcc(_))
 
-    commonsMail.setHostName(Config.string("smtp.server"))
-    commonsMail.setSmtpPort(Config.int("smtp.port"))
-    commonsMail.setAuthenticator(new DefaultAuthenticator(Config.string("smtp.user"), Config.string("smtp.password")))
+    commonsMail.setHostName(cfg.string("smtp.server"))
+    commonsMail.setSmtpPort(cfg.int("smtp.port"))
+    commonsMail.setAuthenticator(new DefaultAuthenticator(cfg.string("smtp.user"), cfg.string("smtp.password")))
     commonsMail.setSSLOnConnect(true);
     commonsMail.setFrom(mail.from).
       setSubject(mail.subject).

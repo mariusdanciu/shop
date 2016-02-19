@@ -28,7 +28,7 @@ import net.shop.api.ShopError
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 
-object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaults {
+class OrderPage(implicit cfg: Config) extends DynamicContent[OrderState] with Selectors with IODefaults {
 
   override def snippets = List(logo, info, content, total, transport)
 
@@ -43,7 +43,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
     Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_company_${state.lang.name}.html"), this).map(in => in._2)
 
   val logo = reqSnip("logo") {
-    s => Success((s.state.initialState, <img src={ s"http://${Config.string("host")}:${Config.string("port")}/static/images/idid_blue_l.png" }/>))
+    s => Success((s.state.initialState, <img src={ s"http://${cfg.string("host")}:${cfg.string("port")}/static/images/idid_blue_l.png" }/>))
   }
 
   val info = reqSnip("info") {
@@ -96,7 +96,7 @@ object OrderPage extends DynamicContent[OrderState] with Selectors with IODefaul
               case Success(p) =>
                 (bind(s.node) {
                   case Xml("img", a, _ ) =>
-                    <img/> % (a + ("src", s"http://${Config.string("host")}:${Config.string("port")}${imagePath(prod.id, "normal", p.images.head)}"))
+                    <img/> % (a + ("src", s"http://${cfg.string("host")}:${cfg.string("port")}${imagePath(prod.id, "normal", p.images.head)}"))
                   case Xml("td", HasClass("c1", a), _ ) => <td>{ p.title_?(s.state.lang.name) }</td> % a
                   case Xml("td", HasClass("c2", a), _ ) => <td>{ prod.quantity }</td> % a
                   case Xml("td", HasClass("c3", a), _ ) => <td>{ p.actualPrice }</td> % a

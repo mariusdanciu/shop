@@ -39,8 +39,10 @@ import net.shop.web.pages.SettingsPageState
 import utils.ShopUtils._
 import net.shift.template.PageState
 import net.shift.engine.page.Html5
+import net.shift.common.Config
+import net.shift.io.Configs
 
-trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults {
+trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults with Configs {
 
   def notFoundService = for {
     r <- req
@@ -74,7 +76,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
 
   def ajaxProductDetail = for {
     r <- ajax
-    p <- page(ProductPageState.build _, "productquickview", Path("web/templates/productquickview.html"), ProductDetailPage)
+    p <- page(ProductPageState.build _, "productquickview", Path("web/templates/productquickview.html"), new ProductDetailPage())
   } yield p
 
   def ajaxUsersView = for {
@@ -188,23 +190,17 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     parse(java.net.URLDecoder.decode(json, "UTF-8")).extract[Cart]
   }
 
-  def createProduct = ProductService.createProduct
+  def createProduct = new ProductService().createProduct
 
-  def updateProduct = ProductService.updateProduct
+  def updateProduct = new ProductService().updateProduct
 
-  def deleteProduct = ProductService.deleteProduct
+  def deleteProduct = new ProductService().deleteProduct
 
-  def createCategory = CategoryService.createCategory
+  def createCategory = new CategoryService().createCategory
 
-  def deleteCategory = CategoryService.deleteCategory
+  def deleteCategory = new CategoryService().deleteCategory
 
-  def updateCategory = CategoryService.updateCategory
-
-  def createUser = UserService.createUser
-
-  def forgotPassword = UserService.forgotPassword
-
-  def updateSettings = SettingsService.updateSettings
+  def updateCategory = new CategoryService().updateCategory
 
 }
 

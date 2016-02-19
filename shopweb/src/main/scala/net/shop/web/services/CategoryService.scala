@@ -1,50 +1,49 @@
 package net.shop
 package web.services
 
+import net.shift.common.Config
 import net.shift.common.DefaultLog
 import net.shift.common.Path
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
+import net.shift.engine.http.DELETE
+import net.shift.engine.http.GET
+import net.shift.engine.http.JsonResponse
 import net.shift.engine.http.MultiPartBody
+import net.shift.engine.http.POST
 import net.shift.engine.http.Resp
-import net.shift.engine.utils.ShiftUtils
+import net.shift.engine.http.Response.augmentResponse
 import net.shift.html.Formlet
 import net.shift.html.Formlet.formToApp
-import net.shift.html.Formlet.inputFile
 import net.shift.html.Formlet.inputText
-import net.shift.html.Formlet.listSemigroup
+import net.shift.html.Invalid
+import net.shift.html.Valid
 import net.shift.html.Validation
+import net.shift.io.Configs
+import net.shift.io.FileOps
+import net.shift.io.FileSystem
+import net.shift.io.IO
+import net.shift.io.IODefaults
 import net.shift.loc.Language
 import net.shift.loc.Loc
 import net.shift.template.Selectors
 import net.shop.api.Category
-import net.shop.web.ShopApplication
-import net.shift.engine.http.{ DELETE, GET, POST }
-import net.shift.security.BasicCredentials
-import net.shift.security.User
-import net.shift.security.Permission
-import net.shift.security.Credentials
-import net.shop.model.ValidationFail
-import net.shop.web.services.FormImplicits._
-import net.shift.html.Invalid
-import net.shift.html.Valid
-import net.shift.engine.http.JsonResponse
 import net.shop.api.Formatter
-import net.shop.model.Formatters._
-import net.shift.io.IODefaults
-import net.shift.io.IO
-import net.shift.io.FileSystem
-import net.shift.io.FileOps
-import net.shop.utils.ShopUtils._
 import net.shop.api.ShopError
+import net.shop.model.Formatters.CategoryWriter
+import net.shop.model.ValidationFail
+import net.shop.utils.ShopUtils.dataPath
+import net.shop.web.ShopApplication
+import net.shop.web.services.FormImplicits.failSemigroup
 
-object CategoryService extends Selectors
+class CategoryService(implicit val cfg: Config) extends Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
   with SecuredService
-  with IODefaults {
+  with IODefaults
+  with Configs {
 
   def getCategory(implicit fs: FileSystem) = for {
     r <- GET
@@ -96,7 +95,7 @@ object CategoryService extends Selectors
             service(_(Resp.serverError.asText.withBody("category.create.fail")))
         }
 
-      case (_, Invalid(msgs)) => 
+      case (_, Invalid(msgs)) =>
         implicit val l = r.language
         validationFail(msgs)
 
@@ -126,7 +125,7 @@ object CategoryService extends Selectors
             service(_(Resp.serverError))
         }
 
-      case (_, Invalid(msgs)) => 
+      case (_, Invalid(msgs)) =>
         implicit val l = r.language
         validationFail(msgs)
     }

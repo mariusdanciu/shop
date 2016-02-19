@@ -6,7 +6,6 @@ import scala.concurrent.Future
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
-
 import org.json4s.JsonAST.JArray
 import org.json4s.JsonAST.JField
 import org.json4s.JsonAST.JInt
@@ -16,7 +15,6 @@ import org.json4s.JsonAST.JValue
 import org.json4s.jvalue2monadic
 import org.json4s.native.JsonMethods.parse
 import org.json4s.string2JsonInput
-
 import OrderForm.FormField
 import OrderForm.OrderItems
 import net.shift.common.Path
@@ -47,8 +45,10 @@ import net.shop.model.Formatters.JsonOrdersWriter
 import net.shop.web.ShopApplication
 import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
+import net.shift.common.Config
+import net.shift.io.Configs
 
-object OrderService extends HttpPredicates with FormValidation with TraversingSpec {
+class OrderService(implicit val cfg: Config) extends HttpPredicates with FormValidation with TraversingSpec with Configs {
 
   private def extractOrder(json: String) = {
     def extractItems(items: List[JValue]): (String, OrderForm.EnvValue) = listTraverse.sequence(for {
@@ -118,9 +118,9 @@ object OrderService extends HttpPredicates with FormValidation with TraversingSp
               Future {
                 (o.submitter match {
                   case c: Company =>
-                    OrderPage.orderCompanyTemplate(OrderState(o.toOrderLog, r.language))
+                    new OrderPage().orderCompanyTemplate(OrderState(o.toOrderLog, r.language))
                   case c: Person =>
-                    OrderPage.orderTemplate(OrderState(o.toOrderLog, r.language))
+                    new OrderPage().orderTemplate(OrderState(o.toOrderLog, r.language))
                 }) map { n =>
                   Messaging.send(OrderDocument(r.language, o, n toString))
                 }

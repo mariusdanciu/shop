@@ -3,8 +3,10 @@ package web.services
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import net.shift.common.Config
 import net.shift.common.DefaultLog
 import net.shift.common.Path
+import net.shift.common.TimeUtils.duration
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
@@ -12,6 +14,7 @@ import net.shift.engine.http.DELETE
 import net.shift.engine.http.MultiPartBody
 import net.shift.engine.http.POST
 import net.shift.engine.http.Resp
+import net.shift.engine.http.Response.augmentResponse
 import net.shift.engine.utils.ShiftUtils
 import net.shift.html.Formlet
 import net.shift.html.Formlet.formToApp
@@ -25,27 +28,28 @@ import net.shift.html.Formlet.inputText
 import net.shift.html.Invalid
 import net.shift.html.Valid
 import net.shift.html.Validation
+import net.shift.io.FileOps
+import net.shift.io.FileSystem
+import net.shift.io.IO
 import net.shift.loc.Language
 import net.shift.loc.Loc
 import net.shift.template.Selectors
 import net.shop.api.ProductDetail
+import net.shop.api.ShopError
 import net.shop.model.FieldError
 import net.shop.model.ValidationFail
 import net.shop.web.ShopApplication
 import net.shop.web.services.FormImplicits.failSemigroup
-import net.shift.common.TimeUtils._
-import net.shift.io.FileSystem
-import net.shift.io.FileOps
-import net.shift.io.IO
-import utils.ShopUtils._
-import net.shop.api.ShopError
+import utils.ShopUtils.dataPath
+import net.shift.io.Configs
 
-object ProductService extends ShiftUtils
+class ProductService(implicit val cfg: Config) extends ShiftUtils
   with Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
-  with SecuredService {
+  with SecuredService 
+  with Configs{
 
   def deleteProduct(implicit fs: FileSystem) = for {
     r <- DELETE

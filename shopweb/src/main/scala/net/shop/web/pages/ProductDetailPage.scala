@@ -26,7 +26,7 @@ import net.shift.common.XmlAttr
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 
-object ProductDetailPage extends Cart[ProductPageState] {
+class ProductDetailPage(implicit cfg: Config) extends Cart[ProductPageState] {
 
   override def snippets = List(title, meta, catlink, productLink, images, detailPrice, stock,
     details, specs, customize, edit, canShowSpecs, canShowCustom) ++ super.snippets
@@ -61,10 +61,10 @@ object ProductDetailPage extends Cart[ProductPageState] {
         product(s) match {
           case Success(prod) =>
             val fb = bind(s.node) {
-              case Xml("meta", a, _) if (a.hasAttr(("property", "og:url")))               => Xml("meta", a + ("content", s"http://${Config.string("host")}/product?pid=${prod.stringId}"))
+              case Xml("meta", a, _) if (a.hasAttr(("property", "og:url")))               => Xml("meta", a + ("content", s"http://${cfg.string("host")}/product?pid=${prod.stringId}"))
               case Xml("meta", a, _) if (a.hasAttr(("property", "og:title")))             => Xml("meta", a + ("content", prod.title_?(s.state.lang.name)))
               case Xml("meta", a, _) if (a.hasAttr(("property", "og:description")))       => Xml("meta", a + ("content", prod.title_?(s.state.lang.name)))
-              case Xml("meta", a, _) if (a.hasAttr(("property", "og:image")))             => Xml("meta", a + ("content", s"http://${Config.string("host")}${imagePath(prod.stringId, "normal", prod.images.head)}"))
+              case Xml("meta", a, _) if (a.hasAttr(("property", "og:image")))             => Xml("meta", a + ("content", s"http://${cfg.string("host")}${imagePath(prod.stringId, "normal", prod.images.head)}"))
               case Xml("meta", a, _) if (a.hasAttr(("property", "product:price:amount"))) => Xml("meta", a + ("content", price(prod.price)))
             }
             for { n <- fb } yield {

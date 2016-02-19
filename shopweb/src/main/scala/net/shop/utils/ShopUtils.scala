@@ -9,7 +9,7 @@ import net.shift.common.Config
 object ShopUtils {
   val random = new Random(System.currentTimeMillis())
 
-  def dataPath = Config.string("data.folder", "../data")
+  def dataPath(implicit cfg: Config) = cfg.string("data.folder", "../data")
   
   def categoryImagePath(cat: Category): String = s"/data/categories/${cat.stringId}.png"
 

@@ -40,13 +40,15 @@ import net.shift.io.IODefaults
 import net.shift.security.User
 import net.shift.security.Permission
 import net.shift.common.PathObj
+import net.shift.io.Configs
 
-object UserService extends Selectors
+class UserService(implicit val cfg: Config) extends Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
   with SecuredService
-  with IODefaults {
+  with IODefaults 
+  with Configs{
 
   implicit val reqSelector = bySnippetAttr[UserDetail]
 
@@ -132,7 +134,7 @@ object UserService extends Selectors
           cnp = u.cnp,
           phone = u.phone)
 
-        val perms = List("read") ++ (if (Config.string("admin.user") == u.email) List("write") else Nil)
+        val perms = List("read") ++ (if (cfg.string("admin.user") == u.email) List("write") else Nil)
 
         val usr = UserDetail(id = None,
           userInfo = ui,
