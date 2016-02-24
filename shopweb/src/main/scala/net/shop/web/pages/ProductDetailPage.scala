@@ -25,8 +25,9 @@ import net.shop.api.ShopError
 import net.shift.common.XmlAttr
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
+import net.shop.web.services.ServiceDependencies
 
-class ProductDetailPage(implicit cfg: Config) extends Cart[ProductPageState] {
+trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies {
 
   override def snippets = List(title, meta, catlink, productLink, images, detailPrice, stock,
     details, specs, customize, edit, canShowSpecs, canShowCustom) ++ super.snippets
@@ -36,7 +37,7 @@ class ProductDetailPage(implicit cfg: Config) extends Cart[ProductPageState] {
       case Failure(t) =>
         s.state.initialState.req.param("pid") match {
           case Some(id :: _) =>
-            ShopApplication.persistence.productById(id) match {
+            store.productById(id) match {
               case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
               case Failure(t)                 => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
               case s                          => s
@@ -98,7 +99,7 @@ class ProductDetailPage(implicit cfg: Config) extends Cart[ProductPageState] {
     s =>
       ((product(s) map { p =>
         (p.categories.flatMap(e => {
-          ShopApplication.persistence.categoryById(e) match {
+          store.categoryById(e) match {
             case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.state.lang.name) }</a> ++ <span>, </span>)
             case _            => NodeSeq.Empty
           }
@@ -270,7 +271,7 @@ class ProductDetailPage(implicit cfg: Config) extends Cart[ProductPageState] {
   }
 
   private def handleCategories(attrs: XmlAttr, l: Language, categs: Set[String]) = Xml("select", attrs) / {
-    ShopApplication.persistence.allCategories match {
+    store.allCategories match {
       case Success(cats) => NodeSeq.fromSeq((for { c <- cats } yield {
         val opt = Xml("option", XmlAttr("value", c.stringId)) / Text(c.title_?(l.name))
         if (categs.contains(c.stringId)) {

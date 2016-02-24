@@ -27,8 +27,9 @@ import net.shift.loc.Loc
 import net.shop.api.ShopError
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
+import net.shop.web.services.ServiceDependencies
 
-class OrderPage(implicit cfg: Config) extends DynamicContent[OrderState] with Selectors with IODefaults {
+trait OrderPage extends DynamicContent[OrderState] with Selectors with IODefaults with ServiceDependencies {
 
   override def snippets = List(logo, info, content, total, transport)
 
@@ -92,7 +93,7 @@ class OrderPage(implicit cfg: Config) extends DynamicContent[OrderState] with Se
       {
         val items = (NodeSeq.Empty /: s.state.initialState.o.items) {
           case (acc, prod) =>
-            ShopApplication.persistence.productById(prod.id) match {
+            store.productById(prod.id) match {
               case Success(p) =>
                 (bind(s.node) {
                   case Xml("img", a, _ ) =>

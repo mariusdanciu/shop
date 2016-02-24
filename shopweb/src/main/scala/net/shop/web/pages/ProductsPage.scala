@@ -7,7 +7,6 @@ import scala.util.Try
 import scala.xml.Elem
 import scala.xml.NodeSeq
 import scala.xml.NodeSeq.seqToNodeSeq
-
 import net.shift.common.Path
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
@@ -26,8 +25,10 @@ import net.shop.api.persistence.SortSpec
 import net.shop.utils.ShopUtils.errorTag
 import net.shop.utils.ShopUtils.imagePath
 import net.shop.web.ShopApplication
+import net.shop.web.services.ServiceDependencies
+import net.shop.api.persistence.Persistence
 
-object ProductsPage extends Cart[Request] {
+trait ProductsPage extends Cart[Request] with ServiceDependencies {
 
   override def snippets = List(item, catList, prodListTemplate) ++ cartSnips
 
@@ -61,7 +62,7 @@ object ProductsPage extends Cart[Request] {
   val item = reqSnip("item") {
     s =>
       {
-        val prods = ProductsQuery.fetch(s.state.initialState) match {
+        val prods = ProductsQuery.fetch(s.state.initialState, store) match {
           case Success(list) =>
 
             val (nopos, pos) = list.span(p => p.position.isEmpty)
@@ -77,7 +78,7 @@ object ProductsPage extends Cart[Request] {
 
   val catList = reqSnip("catlist") {
     s =>
-      ShopApplication.persistence.allCategories match {
+      store.allCategories match {
         case Success(list) =>
           s.node match {
             case e: Elem =>
@@ -93,11 +94,11 @@ object ProductsPage extends Cart[Request] {
 }
 
 object ProductsQuery {
-  def fetch(r: Request): Try[Iterator[ProductDetail]] = {
+  def fetch(r: Request, store: Persistence): Try[Iterator[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
     (r.param("cat"), r.param("search")) match {
-      case (Some(cat :: _), None)    => ShopApplication.persistence.categoryProducts(cat, spec)
-      case (None, Some(search :: _)) => ShopApplication.persistence.searchProducts(search, spec)
+      case (Some(cat :: _), None)    => store.categoryProducts(cat, spec)
+      case (None, Some(search :: _)) => store.searchProducts(search, spec)
       case _                         => Success(Iterator.empty)
     }
   }

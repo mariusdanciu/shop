@@ -190,7 +190,9 @@ trait MongoConversions {
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
       description = obj.getAsOrElse[Map[String, String]]("description", Map.empty),
       properties = obj.getAsOrElse[Map[String, String]]("properties", Map.empty),
-      options = obj.getAsOrElse[Map[String, java.util.List[String]]]("options", Map.empty).map(p => (p._1, p._2.toList)),
+      options = obj.getAs[Map[String, com.mongodb.BasicDBList]]("options").map { p =>
+        p.map { case (k, v) => k -> v.toList.map { _.toString } }
+      }.getOrElse(Map.empty),
       userText = obj.getAsOrElse[List[String]]("userText", Nil),
       price = obj.getAsOrElse[Double]("price", 0.0),
       discountPrice = obj.getAs[Double]("discountPrice"),
@@ -241,6 +243,5 @@ trait MongoConversions {
       city = obj.getAsOrElse[String]("city", ""),
       address = obj.getAsOrElse[String]("address", ""),
       zipCode = obj.getAsOrElse[String]("zipCode", ""))
-
 
 }

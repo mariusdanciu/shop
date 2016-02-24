@@ -20,7 +20,6 @@ import net.shift.html.Formlet.inputText
 import net.shift.html.Invalid
 import net.shift.html.Valid
 import net.shift.html.Validation
-import net.shift.io.Configs
 import net.shift.io.FileOps
 import net.shift.io.FileSystem
 import net.shift.io.IO
@@ -37,20 +36,20 @@ import net.shop.utils.ShopUtils.dataPath
 import net.shop.web.ShopApplication
 import net.shop.web.services.FormImplicits.failSemigroup
 
-class CategoryService(implicit val cfg: Config) extends Selectors
+trait CategoryService extends Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
   with SecuredService
   with IODefaults
-  with Configs {
+  with ServiceDependencies {
 
   def getCategory(implicit fs: FileSystem) = for {
     r <- GET
     Path(_, "category" :: id :: Nil) <- path
     user <- auth
   } yield {
-    ShopApplication.persistence.categoryById(id) match {
+    store.categoryById(id) match {
       case scala.util.Success(cat) =>
         fs.deletePath(Path(s"${dataPath}/categories/$id"))
         implicit val l = r.language
@@ -65,7 +64,7 @@ class CategoryService(implicit val cfg: Config) extends Selectors
     Path(_, "category" :: "delete" :: id :: Nil) <- path
     user <- auth
   } yield {
-    ShopApplication.persistence.deleteCategories(id) match {
+    store.deleteCategories(id) match {
       case scala.util.Success(num) =>
         fs.deletePath(Path(s"${dataPath}/categories/$id"));
         service(_(Resp.ok))
@@ -83,7 +82,7 @@ class CategoryService(implicit val cfg: Config) extends Selectors
     extract(r.language, None, mp) match {
       case (file, Valid(o)) =>
         val cpy = o.copy(id = Some(id))
-        ShopApplication.persistence.updateCategories(cpy) match {
+        store.updateCategories(cpy) match {
           case scala.util.Success(p) =>
             file.map { f =>
               IO.arrayProducer(f._2)(FileOps.writer(Path(s"${dataPath}/categories/${cpy.id.getOrElse("")}.png")))
@@ -112,7 +111,7 @@ class CategoryService(implicit val cfg: Config) extends Selectors
     extract(r.language, None, mp) match {
       case (file, Valid(o)) =>
 
-        ShopApplication.persistence.createCategories(o) match {
+        store.createCategories(o) match {
           case scala.util.Success(p) =>
             file.map { f =>
               IO.arrayProducer(f._2)(FileOps.writer(Path(s"${dataPath}/categories/${p.head}.png")))

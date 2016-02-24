@@ -14,6 +14,7 @@ import net.shift.loc.Loc
 import net.shop.web.ShopApplication
 import net.shift.io.IODefaults
 import java.util.Date
+import net.shop.web.services.ServiceDependencies
 
 sealed trait Message
 case class OrderDocument(l: Language, o: Order, doc: String) extends Message
@@ -56,7 +57,7 @@ object Messaging extends IODefaults {
   }
 }
 
-class OrderActor(implicit cfg: Config) extends Actor with DefaultLog {
+trait OrderActor extends Actor with DefaultLog with ServiceDependencies {
 
   def receive = {
     case StoreOrderStats(content) => writeStat(content.o)("ro")
@@ -64,9 +65,9 @@ class OrderActor(implicit cfg: Config) extends Actor with DefaultLog {
   }
 
   def writeStat(o: Order)(implicit lang: String) =
-    ShopApplication.persistence.createOrder(o.toOrderLog)
+    store.createOrder(o.toOrderLog)
 
-  def sendMail(mail: Mail)(implicit cfg : Config) {
+  def sendMail(mail: Mail) {
     import org.apache.commons.mail._
 
     val commonsMail: Email = new HtmlEmail().setHtmlMsg(mail.message)

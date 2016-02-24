@@ -32,7 +32,7 @@ object FormImplicits extends IODefaults {
   }
 }
 
-trait FormValidation extends IODefaults {
+trait FormValidation extends IODefaults with ServiceDependencies {
 
   type ValidationMap = Map[String, String]
   type ValidationList = List[String]
@@ -118,7 +118,7 @@ trait FormValidation extends IODefaults {
     optional(name, title, "", Valid(_))
 
   def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationFail, String] =
-    required(name, title, s => ShopApplication.persistence.userByEmail(s) match {
+    required(name, title, s => store.userByEmail(s) match {
       case scala.util.Success(Some(email)) => Invalid(ValidationFail(FieldError(name, Loc.loc0(lang)("user.already.exists").text)))
       case _                               => Valid(s)
     })

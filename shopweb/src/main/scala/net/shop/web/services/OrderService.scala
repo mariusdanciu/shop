@@ -46,9 +46,8 @@ import net.shop.web.ShopApplication
 import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
 import net.shift.common.Config
-import net.shift.io.Configs
 
-class OrderService(implicit val cfg: Config) extends HttpPredicates with FormValidation with TraversingSpec with Configs {
+trait OrderService extends HttpPredicates with FormValidation with TraversingSpec with ServiceDependencies {self =>
 
   private def extractOrder(json: String) = {
     def extractItems(items: List[JValue]): (String, OrderForm.EnvValue) = listTraverse.sequence(for {
@@ -56,7 +55,7 @@ class OrderService(implicit val cfg: Config) extends HttpPredicates with FormVal
     } yield {
       o match {
         case ("name", JString(id)) :: ("userOptions", l) :: ("value", JInt(count)) :: Nil =>
-          ShopApplication.persistence.productById(id) map { prod =>
+          store.productById(id) map { prod =>
             val opts = for {
               JObject(lo) <- l;
               (k, JString(v)) <- lo
@@ -75,7 +74,7 @@ class OrderService(implicit val cfg: Config) extends HttpPredicates with FormVal
       value match {
         case JString(str)  => (k, OrderForm.FormField(str))
         case JArray(items) => extractItems(items)
-        case JInt(v)  => (k, OrderForm.FormField(v toString))
+        case JInt(v)       => (k, OrderForm.FormField(v toString))
       }
     }
 
@@ -116,11 +115,16 @@ class OrderService(implicit val cfg: Config) extends HttpPredicates with FormVal
                   }.wrap.apply.toJsString))
               }
               Future {
+                val order = new OrderPage {
+                  val cfg = self.cfg
+                  val store = self.store
+                }
                 (o.submitter match {
+
                   case c: Company =>
-                    new OrderPage().orderCompanyTemplate(OrderState(o.toOrderLog, r.language))
+                    order.orderCompanyTemplate(OrderState(o.toOrderLog, r.language))
                   case c: Person =>
-                    new OrderPage().orderTemplate(OrderState(o.toOrderLog, r.language))
+                    order.orderTemplate(OrderState(o.toOrderLog, r.language))
                 }) map { n =>
                   Messaging.send(OrderDocument(r.language, o, n toString))
                 }
@@ -154,7 +158,7 @@ class OrderService(implicit val cfg: Config) extends HttpPredicates with FormVal
     import model.Formatters._
 
     implicit val l = r.language
-    ShopApplication.persistence.ordersByEmail(email) match {
+    store.ordersByEmail(email) match {
       case Success(orders) =>
         resp(JsonResponse(Formatter.format(orders.toList)))
       case Failure(t) =>
@@ -170,7 +174,7 @@ class OrderService(implicit val cfg: Config) extends HttpPredicates with FormVal
   } yield service(resp => {
     import model.Formatters._
     implicit val l = r.language
-    ShopApplication.persistence.ordersByProduct(id) match {
+    store.ordersByProduct(id) match {
       case Success(orders) =>
         resp(JsonResponse(Formatter.format(orders.toList)))
       case Failure(t: ShopError) =>

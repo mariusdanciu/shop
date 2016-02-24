@@ -39,28 +39,70 @@ object StartShop extends App with DefaultLog with IODefaults {
 
   PropertyConfigurator.configure("config/log4j.properties");
 
-  for { cfg <- Config.load().map { _ append (Map()) } } yield {
+  for { cfg <- Config.load() } yield {
 
     val port = cfg.int("port")
-    SprayServer.start(port, ShopApplication(cfg))
+    val dbPass = args.apply(0)
+    
+    implicit val c = cfg append Map("db.pwd" -> dbPass)
+    
+    SprayServer.start(port, ShopApplication())
 
     println("Server started on port " + port)
   }
+  
 }
 
 object ShopApplication {
-  lazy val persistence: Persistence = MongoDBPersistence
-  def apply( implicit cfg: Config) = new ShopApplication()
+  def apply()(implicit cfg: Config) = new ShopApplication(cfg)
 }
 
-class ShopApplication( implicit val cfg: Config ) extends ShiftApplication with ShopServices {
+class ShopApplication(c: Config) extends ShiftApplication with ShopServices { self =>
 
-  val orderService = new OrderService
-  val productService = new ProductService
-  val categoryService = new CategoryService
-  val userService = new UserService
-  val settingsService = new SettingsService
-  
+  implicit val cfg = c
+  implicit val store: Persistence = new MongoDBPersistence
+
+  val orderService = new OrderService {
+    val cfg = self.cfg
+    val store = self.store
+  }
+  val productService = new ProductService {
+    val cfg = self.cfg
+    val store = self.store
+  }
+  val categoryService = new CategoryService {
+    val cfg = self.cfg
+    val store = self.store
+  }
+  val userService = new UserService {
+    val cfg = self.cfg
+    val store = self.store
+  }
+  val settingsService = new SettingsService {
+    val cfg = self.cfg
+    val store = self.store
+  }
+
+  val catPage = new CategoryPage {
+    val cfg = self.cfg
+    val store = self.store
+  }
+
+  val prodDetailPage = new ProductDetailPage {
+    val cfg = self.cfg
+    val store = self.store
+  }
+
+  val productsPage = new ProductsPage {
+    val cfg = self.cfg
+    val store = self.store
+  }
+
+  val accPage = new AccountSettingsPage {
+    val cfg = self.cfg
+    val store = self.store
+  }
+
   def servingRule = for {
     r <- withLanguage(Language("ro"))
     c <- staticFiles(Path("web/static")) |
@@ -72,15 +114,15 @@ class ShopApplication( implicit val cfg: Config ) extends ShiftApplication with 
       ajaxUsersView |
       productsVariantImages |
       categoriesImages |
-      page("", Path("web/categories.html"), CategoryPage) |
-      page(ProductPageState.build _, "product", Path("web/product.html"), new ProductDetailPage()) |
-      page("products", Path("web/products.html"), ProductsPage) |
+      page("", Path("web/categories.html"), catPage) |
+      page(ProductPageState.build _, "product", Path("web/product.html"), prodDetailPage) |
+      page("products", Path("web/products.html"), productsPage) |
       page("terms", Path("web/terms.html"), TermsPage) |
       page("dataprotection", Path("web/dataprotection.html"), DataProtectionPage) |
       page("returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
       page("cookies", Path("web/cookies.html"), CookiesPage) |
       page("aboutus", Path("web/aboutus.html"), AboutUsPage) |
-      settingsPage("accountsettings", Path("web/accountsettings.html"), AccountSettingsPage) |
+      settingsPage("accountsettings", Path("web/accountsettings.html"), accPage) |
       getCart() |
       orderService.order |
       productService.createProduct |
@@ -97,8 +139,8 @@ class ShopApplication( implicit val cfg: Config ) extends ShiftApplication with 
       userService.forgotPassword |
       settingsService.updateSettings |
       settingsService.updateOrderStatus |
-      new OrderService().orderByEmail |
-      new OrderService().orderByProduct |
+      orderService.orderByEmail |
+      orderService.orderByProduct |
       staticTextFiles("google339a4b5281321c21.html") |
       staticTextFiles("sitemap.xml") |
       notFoundService

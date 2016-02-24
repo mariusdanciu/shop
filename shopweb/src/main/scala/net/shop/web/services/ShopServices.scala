@@ -40,9 +40,20 @@ import utils.ShopUtils._
 import net.shift.template.PageState
 import net.shift.engine.page.Html5
 import net.shift.common.Config
-import net.shift.io.Configs
+import net.shop.web.pages.AccountSettingsPage
+import net.shop.web.pages.CategoryPage
+import net.shop.web.pages.AccountSettingsPage
+import net.shop.web.pages.CategoryPage
+import net.shop.web.pages.AccountSettingsPage
+import net.shop.web.pages.AccountSettingsPage
 
-trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with DefaultLog with SecuredService with IODefaults with Configs {
+trait ShopServices extends ShiftUtils
+  with Selectors
+  with TraversingSpec
+  with DefaultLog
+  with SecuredService
+  with IODefaults
+  with ServiceDependencies { self =>
 
   def notFoundService = for {
     r <- req
@@ -66,27 +77,42 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
 
   def ajaxProductsList = for {
     r <- ajax
-    p <- page("products", Path("web/templates/productslist.html"), ProductsPage)
+    p <- page("products", Path("web/templates/productslist.html"), new ProductsPage() {
+      val cfg = self.cfg
+      val store = self.store
+    })
   } yield p
 
   def ajaxCategoriesList = for {
     r <- ajax
-    p <- page("", Path("web/templates/categorieslist.html"), CategoryPage)
+    p <- page("", Path("web/templates/categorieslist.html"), new CategoryPage() {
+      val cfg = self.cfg
+      val store = self.store
+    })
   } yield p
 
   def ajaxProductDetail = for {
     r <- ajax
-    p <- page(ProductPageState.build _, "productquickview", Path("web/templates/productquickview.html"), new ProductDetailPage())
+    p <- page(ProductPageState.build _, "productquickview", Path("web/templates/productquickview.html"), new ProductDetailPage() {
+      val cfg = self.cfg
+      val store = self.store
+    })
   } yield p
 
   def ajaxUsersView = for {
     r <- ajax
-    p <- usersPage("usersview", Path("web/templates/users.html"), AccountSettingsPage)
+    p <- usersPage("usersview", Path("web/templates/users.html"), new AccountSettingsPage() {
+      val cfg = self.cfg
+      val store = self.store
+    })
   } yield p
 
   def ajaxOrdersView = for {
     r <- ajax
-    p <- settingsPage("ordersview", Path("web/templates/ordersview.html"), AccountSettingsPage)
+    p <- settingsPage("ordersview", Path("web/templates/ordersview.html"), new AccountSettingsPage() {
+      val cfg = self.cfg
+      val store = self.store
+    })
   } yield p
 
   def tryLogout(r: Request, attempt: Attempt) = State.put[Request, Attempt] {
@@ -170,7 +196,7 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
 
         listTraverse.sequence(for {
           (item, index) <- readCart(c.value).items.zipWithIndex
-          prod <- ShopApplication.persistence.productById(item.id).toOption
+          prod <- store.productById(item.id).toOption
         } yield {
           Html5.runPageFromFile(PageState(CartState(index, item, prod), r.language), Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
         }) match {
@@ -190,17 +216,35 @@ trait ShopServices extends ShiftUtils with Selectors with TraversingSpec with De
     parse(java.net.URLDecoder.decode(json, "UTF-8")).extract[Cart]
   }
 
-  def createProduct = new ProductService().createProduct
+  def createProduct = new ProductService() {
+    val cfg = self.cfg
+    val store = self.store
+  }.createProduct
 
-  def updateProduct = new ProductService().updateProduct
+  def updateProduct = new ProductService() {
+    val cfg = self.cfg
+    val store = self.store
+  }.updateProduct
 
-  def deleteProduct = new ProductService().deleteProduct
+  def deleteProduct = new ProductService() {
+    val cfg = self.cfg
+    val store = self.store
+  }.deleteProduct
 
-  def createCategory = new CategoryService().createCategory
+  def createCategory = new CategoryService() {
+    val cfg = self.cfg
+    val store = self.store
+  }.createCategory
 
-  def deleteCategory = new CategoryService().deleteCategory
+  def deleteCategory = new CategoryService() {
+    val cfg = self.cfg
+    val store = self.store
+  }.deleteCategory
 
-  def updateCategory = new CategoryService().updateCategory
+  def updateCategory = new CategoryService() {
+    val cfg = self.cfg
+    val store = self.store
+  }.updateCategory
 
 }
 

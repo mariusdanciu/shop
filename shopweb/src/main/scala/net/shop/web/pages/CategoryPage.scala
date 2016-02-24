@@ -19,15 +19,16 @@ import net.shop.web.ShopApplication
 import net.shop.api.ShopError
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
+import net.shop.web.services.ServiceDependencies
 
-object CategoryPage extends Cart[Request] { self =>
+trait CategoryPage extends Cart[Request] with ServiceDependencies { self =>
 
   override def snippets = List(item, presentation) ++ super.snippets
 
   val item = reqSnip("item") {
     s =>
       {
-        val prods = ShopApplication.persistence.allCategories match {
+        val prods = store.allCategories match {
           case Success(list) =>
             list flatMap { cat =>
               (bind(s.node) {
@@ -50,7 +51,7 @@ object CategoryPage extends Cart[Request] { self =>
   val presentation = reqSnip("presentation") {
     s =>
       {
-        val prods = ShopApplication.persistence.presentationProducts match {
+        val prods = store.presentationProducts match {
           case Success(list) =>
             list flatMap { p =>
               (bind(s.node) {

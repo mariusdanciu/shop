@@ -31,21 +31,20 @@ import scala.util.Failure
 import net.shift.security.Permission
 import net.shop.api.ShopError
 import net.shift.common.Config
-import net.shift.io.Configs
 
-class SettingsService(implicit val cfg: Config) extends Selectors
+trait SettingsService extends Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
   with SecuredService
-  with Configs {
+  with ServiceDependencies {
 
   def updateOrderStatus = for {
     r <- POST
     Path(_, "order" :: "updatestatus" :: orderId :: status :: Nil) <- path
     u <- permissions(Loc.loc0(r.language)("user.not.found").text, Permission("write"))
   } yield {
-    ShopApplication.persistence.updateOrderStatus(orderId, OrderStatus.fromIndex(status.toInt)) match {
+    store.updateOrderStatus(orderId, OrderStatus.fromIndex(status.toInt)) match {
       case Success(_)                            => service(_(Resp.ok))
       case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
       case Failure(msg)                          => service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("order.not.found", List(orderId)).text)))
@@ -62,13 +61,13 @@ class SettingsService(implicit val cfg: Config) extends Selectors
         implicit val loc = r.language
         extract(r, usr) match {
           case Valid(u) =>
-            ShopApplication.persistence.userByEmail(usr.name) match {
+            store.userByEmail(usr.name) match {
               case scala.util.Success(Some(ud)) =>
                 val merged = ud.copy(userInfo = u.user.userInfo,
                   companyInfo = u.user.companyInfo,
                   addresses = u.addresses,
                   password = if (u.user.pass.isEmpty) ud.password else u.user.pass)
-                ShopApplication.persistence.updateUsers(merged)
+                store.updateUsers(merged)
 
               case _ => service(_(Resp.serverError.asText.withBody(Loc.loc0(r.language)("login.fail").text)))
             }

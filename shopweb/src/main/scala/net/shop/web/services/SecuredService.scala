@@ -13,12 +13,12 @@ import scala.util.Success
 import net.shift.common.Config
 import net.shift.io.IODefaults
 
-trait SecuredService extends ShiftUtils with IODefaults {
+trait SecuredService extends ShiftUtils with IODefaults with ServiceDependencies {
   implicit def login(creds: Credentials): Option[User] = {
     creds match {
       case BasicCredentials(email, password) =>
 
-        ShopApplication.persistence.userByEmail(email) match {
+        store.userByEmail(email) match {
           case Success(Some(ud)) if (ud.password == password) =>
             Some(User(ud.email, None, ud.permissions.map(Permission(_)).toSet))
           case _ =>

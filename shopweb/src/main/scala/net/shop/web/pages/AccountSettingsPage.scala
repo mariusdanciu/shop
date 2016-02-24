@@ -39,8 +39,9 @@ import net.shop.api.Company
 import net.shift.common.Xml
 import net.shift.common.XmlAttr
 import net.shift.common.XmlImplicits._
+import net.shop.web.services.ServiceDependencies
 
-object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { self =>
+trait AccountSettingsPage extends Cart[SettingsPageState] with IODefaults with ServiceDependencies { self =>
 
   val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy - hh:mm")
 
@@ -51,7 +52,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
       {
         s.state.user match {
           case Some(user) =>
-            val r = ShopApplication.persistence.userByEmail(user.name) match {
+            val r = store.userByEmail(user.name) match {
               case scala.util.Success(Some(ud)) =>
                 (Some(ud), bind(s.node) {
                   case HasName("update_firstName", a)    => Xml("input", a + ("value", ud.userInfo.firstName))
@@ -119,17 +120,17 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
             case Some(u) => Success(Some(u))
             case _ =>
               if (!email.isEmpty())
-                ShopApplication.persistence.userByEmail(email)
+                store.userByEmail(email)
               else
-                ShopApplication.persistence.userByEmail(s.state.user.map { _ name } getOrElse "")
+                store.userByEmail(s.state.user.map { _ name } getOrElse "")
           }
         }
 
         def query(u: UserDetail) =
           s.state.initialState.req.path match {
-            case Path(_, _ :: "received" :: Nil) => ShopApplication.persistence.ordersByStatus(OrderReceived)
-            case Path(_, _ :: "pending" :: Nil)  => ShopApplication.persistence.ordersByStatus(OrderPending)
-            case _                               => ShopApplication.persistence.ordersByEmail(u.email)
+            case Path(_, _ :: "received" :: Nil) => store.ordersByStatus(OrderReceived)
+            case Path(_, _ :: "pending" :: Nil)  => store.ordersByStatus(OrderPending)
+            case _                               => store.ordersByEmail(u.email)
           }
 
         val loggedinUser = s.state.user
@@ -184,7 +185,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
 
                     o.items flatMap { item =>
                       <tr> {
-                        val prod = ShopApplication.persistence.productById(item.id)
+                        val prod = store.productById(item.id)
                         val title = prod.map { _.title_?(s.state.lang.name) } getOrElse ""
                         def img(a: XmlAttr): NodeSeq = prod.map { p => Xml("img", a + ("src", imagePath(item.id, "thumb", p.images.head))) } getOrElse NodeSeq.Empty
 
@@ -250,7 +251,7 @@ object AccountSettingsPage extends Cart[SettingsPageState] with IODefaults { sel
   val users = reqSnip("users") {
     s =>
       {
-        ShopApplication.persistence.allUsers match {
+        store.allUsers match {
           case Success(users) =>
             val n = users.flatMap { user =>
               bind(s.node.head.child) {

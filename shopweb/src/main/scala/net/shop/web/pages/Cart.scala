@@ -22,8 +22,9 @@ import net.shop.utils.ShopUtils._
 import net.shift.common.Xml
 import net.shift.common.XmlAttr
 import net.shift.common.XmlImplicits._
+import net.shop.web.services.ServiceDependencies
 
-trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
+trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults  {
 
   def snippets = List( order, connectError, user)
 

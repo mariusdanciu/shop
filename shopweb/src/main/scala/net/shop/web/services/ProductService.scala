@@ -41,22 +41,22 @@ import net.shop.model.ValidationFail
 import net.shop.web.ShopApplication
 import net.shop.web.services.FormImplicits.failSemigroup
 import utils.ShopUtils.dataPath
-import net.shift.io.Configs
 
-class ProductService(implicit val cfg: Config) extends ShiftUtils
+trait ProductService extends ShiftUtils
   with Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
   with SecuredService 
-  with Configs{
+  with ServiceDependencies {
 
+  
   def deleteProduct(implicit fs: FileSystem) = for {
     r <- DELETE
     Path(_, "product" :: "delete" :: id :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
-    ShopApplication.persistence.deleteProducts(id) match {
+    store.deleteProducts(id) match {
       case scala.util.Success(num) =>
         fs.deletePath(Path(s"${dataPath}/products/$id"))
         service(_(Resp.ok))
@@ -76,8 +76,8 @@ class ProductService(implicit val cfg: Config) extends ShiftUtils
         val cpy = o.copy(images = Set(files.map(f => f._2): _*).toList)
 
         (for {
-          p <- ShopApplication.persistence.productById(pid)
-          u <- ShopApplication.persistence.updateProducts(cpy.copy(images = p.images ++ cpy.images))
+          p <- store.productById(pid)
+          u <- store.updateProducts(cpy.copy(images = p.images ++ cpy.images))
         } yield {
           files.map { f =>
             IO.arrayProducer(f._3)(FileOps.writer(Path(s"${dataPath}/products/${u.head}/${f._1}")))
@@ -108,7 +108,7 @@ class ProductService(implicit val cfg: Config) extends ShiftUtils
     extracted match {
       case (files, Valid(o)) =>
         val cpy = o.copy(images = Set(files.map(f => f._2): _*).toList)
-        val create = duration(ShopApplication.persistence.createProducts(cpy)) { d =>
+        val create = duration(store.createProducts(cpy)) { d =>
           log.debug("Persist : " + d)
         }
 

@@ -40,15 +40,14 @@ import net.shift.io.IODefaults
 import net.shift.security.User
 import net.shift.security.Permission
 import net.shift.common.PathObj
-import net.shift.io.Configs
 
-class UserService(implicit val cfg: Config) extends Selectors
+trait UserService extends Selectors
   with TraversingSpec
   with DefaultLog
   with FormValidation
   with SecuredService
   with IODefaults 
-  with Configs{
+  with ServiceDependencies {
 
   implicit val reqSelector = bySnippetAttr[UserDetail]
 
@@ -59,7 +58,7 @@ class UserService(implicit val cfg: Config) extends Selectors
   } yield {
     implicit val lang = r.language
     if (user.hasAllPermissions(Permission("write"))) {
-      ShopApplication.persistence.deleteUserByEmail(email) match {
+      store.deleteUserByEmail(email) match {
         case Success(1) =>
           service(_(Resp.ok))
         case scala.util.Failure(err: ShopError) =>
@@ -77,7 +76,7 @@ class UserService(implicit val cfg: Config) extends Selectors
     _ <- path("delete/user")
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
-    ShopApplication.persistence.deleteUserByEmail(user.name) match {
+    store.deleteUserByEmail(user.name) match {
       case Success(1) =>
         service(_(Resp.ok))
       case scala.util.Failure(err: ShopError) =>
@@ -93,7 +92,7 @@ class UserService(implicit val cfg: Config) extends Selectors
     Path(_, "userinfo" :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
-    ShopApplication.persistence.userByEmail(user.name) match {
+    store.userByEmail(user.name) match {
       case Success(Some(ud)) =>
         implicit val l = r.language
         service(_(JsonResponse(Formatter.format(ud))))
@@ -109,7 +108,7 @@ class UserService(implicit val cfg: Config) extends Selectors
   } yield {
     val email = Base64.decodeString(b64)
     (for {
-      Some(ud) <- ShopApplication.persistence.userByEmail(email)
+      Some(ud) <- store.userByEmail(email)
       (_, n) <- Html5.runPageFromFile(PageState(ud, r.language), Path(s"web/templates/forgotpassword_${r.language.name}.html"), ForgotPasswordPage)
     } yield {
       Messaging.send(ForgotPassword(r.language, email, n.toString))
@@ -144,7 +143,7 @@ class UserService(implicit val cfg: Config) extends Selectors
           password = u.password,
           permissions = perms)
 
-        ShopApplication.persistence.createUsers(usr) match {
+        store.createUsers(usr) match {
           case scala.util.Success(ids) =>
             service(_(Resp.created.securityCookies(User(usr.email, None, usr.permissions.map { Permission(_) }.toSet))))
           case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
