@@ -12,7 +12,7 @@ html, body {
 * {
 	outline: medium none;
 	margin: 0;
-	font-family: 'Dosis', sans-serif;
+	font-family: sans-serif;
 	font-weight: 300;
 }
 
@@ -187,7 +187,7 @@ a:active {
 
 .header_container {
 	overflow: auto;
-	height: 70px;
+	height: 45px;
 }
 
 .header_controls {
@@ -207,18 +207,23 @@ a:active {
 }
 
 .head_links {
-	left: 220px;
-	top: 30px;
+	left: 200px;
 	float: left;
 	position: relative;
-	background-color: #fff;
-	height: 40px;
-	padding: 10px 0 10px 20px;
-	border-radius: 15px 15px 0px 0px;
+	height: 45px;
 }
 
 .head_links ul li {
-	margin-right: 20px;
+	height: 45px;
+}
+
+.head_links ul li a div {
+	height: 45px;
+	padding: 12px 20px 0px 20px;
+}
+
+.head_links ul li a div:hover {
+	background-color: #44adb7;
 }
 
 .head_links * {
@@ -226,22 +231,22 @@ a:active {
 }
 
 .head_links a:link {
-	color: #44adb7;
+	color: #fff;
 	text-decoration: none;
 }
 
 .head_links a:visited {
-	color: #44adb7;
+	color: #fff;
 	text-decoration: none;
 }
 
 .head_links a:hover {
-	color: #d687ba;
+	color: #fff;
 	text-decoration: none;
 }
 
 .head_links a:active {
-	color: #44adb7;
+	color: #000;
 	text-decoration: none;
 }
 
@@ -274,11 +279,11 @@ a:active {
 .header_symbol {
 	position: relative;
 	float: right;
-	padding-top: 28px;
+	padding-top: 7px;
 }
 
 .header_symbol_top {
-	padding-top: 20px;
+	padding-top: 7px;
 }
 
 .header_symbol ul li {
@@ -544,7 +549,7 @@ h1 {
 	z-index: 9999;
 	opacity: 0.95;
 	right: 0px;
-	top: 70px;
+	top: 45px;
 }
 
 #user_popup {
@@ -558,7 +563,7 @@ h1 {
 	right: 0px;
 	opacity: 0.95;
 	padding: 20px;
-	top: 70px;
+	top: 45px;
 }
 
 #add_to_cart_box {
@@ -898,6 +903,8 @@ h1 {
 	color: #000000;
 	font-size: 20px;
 	text-indent: 32px;
+	box-shadow: none;
+    border-radius: 10px;
 }
 
 .search_text:hover {

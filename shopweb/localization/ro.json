@@ -2,17 +2,17 @@
  {
    "code" : "100",
    "name" : "internal.error",
-   "text" : "Eroare interna"
+   "text" : "Eroare internă"
  },
  {
    "code" : "100",
    "name" : "no.categories",
-   "text" : "Categoriile nu pot fi obtinute"
+   "text" : "Categoriile nu pot fi obținute"
  },
  {
    "code" : "101",
    "name" : "no.category",
-   "text" : "Categorie inexistenta"
+   "text" : "Categorie inexistentă"
  },
  {
    "code" : "102",
@@ -27,7 +27,7 @@
  {
    "code" : "105",
    "name" : "price",
-   "text" : "Pret"
+   "text" : "Preț"
  },
  {
    "code" : "106",
@@ -42,27 +42,27 @@
  {
    "code" : "108",
    "name" : "buy",
-   "text" : "Cumpar"
+   "text" : "Cumpăr"
  },
  {
    "code" : "109",
    "name" : "buy_step1",
-   "text" : "Inainte >"
+   "text" : "Înainte >"
  },
  {
    "code" : "109",
    "name" : "buy_step0",
-   "text" : "< Inapoi"
+   "text" : "< Înapoi"
  },
  {
    "code" : "110",
    "name" : "buy_final",
-   "text" : "Finalizeaza comanda"
+   "text" : "Finalizează comanda"
  },
  {
    "code" : "111",
    "name" : "buy_cancel",
-   "text" : "Renunta"
+   "text" : "Renunță"
  },
  {
    "code" : "112",
@@ -77,7 +77,7 @@
  {
    "code" : "113",
    "name" : "region",
-   "text" : "Judet/Sector"
+   "text" : "Județ/Sector"
  },
  {
    "code" : "114",
@@ -107,7 +107,7 @@
  {
    "code" : "119",
    "name" : "invalid.email",
-   "text" : "Adresa de email nu este corecta"
+   "text" : "Adresa de email nu este corectă"
  },
  {
    "code" : "120",
@@ -117,12 +117,12 @@
  {
    "code" : "121",
    "name" : "field.required",
-   "text" : "Campul '%s' este obligatoriu"
+   "text" : "Câmpul '%s' este obligatoriu"
  },
  {
    "code" : "121",
    "name" : "field.incorrect",
-   "text" : "Campul '%s' este incorect"
+   "text" : "Câmpul '%s' este incorect"
  },
  {
    "code" : "122",
@@ -137,7 +137,7 @@
  {
    "code" : "124",
    "name" : "order.done",
-   "text" : "Multumim pentru comanda facuta. In scurt timp veti primi confirmarea prin email."
+   "text" : "Mulțumim pentru comanda facută. In scurt timp veti primi confirmarea prin email."
  },
  {
    "code" : "125",
@@ -152,7 +152,7 @@
  {
    "code" : "127",
    "name" : "thank.you",
-   "text" : "Multumim pentru comanda facuta !"
+   "text" : "Mulțumim pentru comanda facută !"
  },
  {
    "code" : "128",
@@ -162,17 +162,17 @@
  {
    "code" : "129",
    "name" : "sort",
-   "text" : "Ordoneaza dupa"
+   "text" : "Ordonează după"
  },
  {
    "code" : "130",
    "name" : "sort.by.price.asc",
-   "text" : "Pret ascendent"
+   "text" : "Preț ascendent"
  },
  {
    "code" : "131",
    "name" : "sort.by.price.desc",
-   "text" : "Pret descendent"
+   "text" : "Preț descendent"
  },
  {
    "code" : "132",
@@ -187,17 +187,17 @@
  {
    "code" : "134",
    "name" : "terms.and.conds",
-   "text" : "Am citit si sunt de acord cu termenii si conditiile iDid"
+   "text" : "Am citit si sunt de acord cu termenii și condițiile iDid"
  },
  {
    "code" : "135",
    "name" : "terms.and.conds.err",
-   "text" : "Termenii si conditiile nu au fost acceptate"
+   "text" : "Termenii și condițiile nu au fost acceptate"
  },
  {
    "code" : "136",
    "name" : "terms.link",
-   "text" : "Termeni si conditii"
+   "text" : "Termeni și condiții"
  },
  {
    "code" : "137",
@@ -207,12 +207,12 @@
  {
    "code" : "138",
    "name" : "connect.fail",
-   "text" : "Serverul nu poate fi contactat momentan. Verificati conexiunea la internet."
+   "text" : "Serverul nu poate fi contactat momentan. Verificați conexiunea la internet."
  },
  {
    "code" : "139",
    "name" : "company.name",
-   "text" : "Nume firma"
+   "text" : "Nume firmă"
  },
  {
    "code" : "141",
@@ -237,7 +237,7 @@
  {
    "code" : "145",
    "name" : "order.id",
-   "text" : "Identificator comanda"
+   "text" : "Identificator comandă"
  },
  {
    "code" : "146",
@@ -272,7 +272,7 @@
  {
    "code" : "153",
    "name" : "price",
-   "text" : "Pret"
+   "text" : "Preț"
  },
  {
    "code" : "155",
@@ -287,7 +287,7 @@
  {
    "code" : "157",
    "name" : "create.product",
-   "text" : "Creaza produsul"
+   "text" : "Crează produsul"
  },
  {
    "code" : "158",
@@ -297,22 +297,22 @@
  {
    "code" : "159",
    "name" : "properties",
-   "text" : "Proprietati"
+   "text" : "Proprietați"
  },
  {
    "code" : "160",
    "name" : "specs",
-   "text" : "Specificatii"
+   "text" : "Specificații"
  },
  {
    "code" : "161",
    "name" : "product.info",
-   "text" : "Informatii despre produs"
+   "text" : "Informații despre produs"
  },
  {
    "code" : "162",
    "name" : "files",
-   "text" : "Fisiere"
+   "text" : "Fișiere"
  },
  {
    "code" : "163",
@@ -322,42 +322,42 @@
  {
    "code" : "164",
    "name" : "add.specs",
-   "text" : "Adauga specificatii"
+   "text" : "Adaugă specificații"
  },
  {
    "code" : "165",
    "name" : "discount.price",
-   "text" : "Pret redus"
+   "text" : "Preț redus"
  },
  {
    "code" : "166",
    "name" : "save",
-   "text" : "Salveaza"
+   "text" : "Salvează"
  },
  {
    "code" : "167",
    "name" : "view",
-   "text" : "Vizualizeaza"
+   "text" : "Vizualizează"
  },
  {
    "code" : "168",
    "name" : "field.discount.smaller",
-   "text" : "Pretul redus trebuie sa fie mai mic decat pretul curent"
+   "text" : "Prețul redus trebuie sa fie mai mic decat prețul curent"
  },
  {
    "code" : "169",
    "name" : "new.category",
-   "text" : "Categorie noua"
+   "text" : "Categorie nouă"
  },
  {
    "code" : "170",
    "name" : "create.category",
-   "text" : "Creaza categoria"
+   "text" : "Crează categoria"
  },
  {
    "code" : "171",
    "name" : "edit.category",
-   "text" : "Editeaza categoria"
+   "text" : "Editează categoria"
  },
  {
    "code" : "172",
@@ -377,27 +377,27 @@
  {
    "code" : "174",
    "name" : "authenticate",
-   "text" : "Autentifica"
+   "text" : "Autentifică"
  },
  {
    "code" : "175",
    "name" : "login.fail",
-   "text" : "Autentificare esuata."
+   "text" : "Autentificare eșuata."
  },
  {
    "code" : "177",
    "name" : "person",
-   "text" : "Persoana fizica"
+   "text" : "Persoana fizică"
  },
  {
    "code" : "178",
    "name" : "company",
-   "text" : "Persoana juridica"
+   "text" : "Persoană juridică"
  },
  {
    "code" : "179",
    "name" : "zip",
-   "text" : "Cod postal"
+   "text" : "Cod poștal"
  },
  {
    "code" : "180",
@@ -427,37 +427,37 @@
  {
    "code" : "185",
    "name" : "recover.password",
-   "text" : "Recuperare parola"
+   "text" : "Recuperare parolă"
  },
  {
    "code" : "186",
    "name" : "user.not.found",
-   "text" : "Utilizatorul '%s' nu a fost gasit"
+   "text" : "Utilizatorul '%s' nu a fost găsit"
  },
  {
    "code" : "187",
    "name" : "user.already.exists",
-   "text" : "Utilizatorul exista deja"
+   "text" : "Utilizatorul există deja"
  },
  {
    "code" : "188",
    "name" : "country",
-   "text" : "Tara"
+   "text" : "Țara"
  },
  {
    "code" : "189",
    "name" : "settings",
-   "text" : "Set\u0103ri"
+   "text" : "Setări"
  },
  {
    "code" : "189",
    "name" : "settings.saved",
-   "text" : "Set\u0103rile au fost salvate cu succes."
+   "text" : "Setările au fost salvate cu succes."
  },
  {
    "code" : "190",
    "name" : "forgotpass.mail.sent",
-   "text" : "Un email cu parola dumneavoastra a fost trimis la adresa '%s'"
+   "text" : "Un email cu parola dumneavoastră a fost trimis la adresa '%s'"
  },
  {
    "code" : "199",
@@ -472,7 +472,7 @@
  {
    "code" : "199",
    "name" : "stock.order",
-   "text" : "La comanda"
+   "text" : "La comandă"
  },
  {
    "code" : "200",
@@ -482,22 +482,22 @@
  {
    "code" : "201",
    "name" : "list.pos",
-   "text" : "Pozitia in lista"
+   "text" : "Poziția în listă"
  },
  {
    "code" : "201",
    "name" : "presentation.list.pos",
-   "text" : "Pozitia in prezentare"
+   "text" : "Poziția în prezentare"
  },
  {
    "code" : "202",
    "name" : "category.create.fail",
-   "text" : "Categoria nu poate fi creata"
+   "text" : "Categoria nu poate fi creată"
  },
  {
    "code" : "202",
    "name" : "data.protection.link",
-   "text" : "Protectia datelor"
+   "text" : "Protecția datelor"
  },
  {
    "code" : "203",
@@ -507,12 +507,12 @@
  {
    "code" : "204",
    "name" : "orders.not.found.for.email",
-   "text" : "Nu a fost gasita nici o comanda pentru: %s"
+   "text" : "Nu a fost gasită nici o comandă pentru: %s"
  },
  {
    "code" : "204",
    "name" : "order.not.found",
-   "text" : "Comanda %s nu a fost gasita"
+   "text" : "Comanda %s nu a fost gasită"
  }
  {
    "code" : "205",
@@ -547,22 +547,22 @@
  {
    "code" : "208",
    "name" : "received",
-   "text" : "Primita"
+   "text" : "Primită"
  },
  {
    "code" : "208",
    "name" : "pending",
-   "text" : "In lucru"
+   "text" : "În lucru"
  },
  {
    "code" : "208",
    "name" : "finalized",
-   "text" : "Finalizata"
+   "text" : "Finalizată"
  },
  {
    "code" : "208",
    "name" : "canceled",
-   "text" : "Anulata"
+   "text" : "Anulată"
  },
  {
    "code" : "208",
@@ -572,7 +572,7 @@
  {
    "code" : "208",
    "name" : "pending.orders",
-   "text" : "Comenzi in asteptare"
+   "text" : "Comenzi in așteptare"
  },
  {
    "code" : "208",
@@ -582,7 +582,7 @@
  {
    "code" : "208",
    "name" : "search",
-   "text" : "Cauta"
+   "text" : "Caută"
  },
  {
    "code" : "208",
@@ -597,12 +597,12 @@
  {
    "code" : "208",
    "name" : "add.options",
-   "text" : "Adauga optiuni"
+   "text" : "Adaugă opțiuni"
  },
  {
    "code" : "208",
    "name" : "add.text",
-   "text" : "Adauga camp text"
+   "text" : "Adaugă câmp text"
  },
  {
    "code" : "208",
@@ -612,17 +612,17 @@
  {
    "code" : "208",
    "name" : "transport.2",
-   "text" : "Transport prin Posta Romana - 9.99 Lei"
+   "text" : "Transport prin Posta Romană - 9.99 Lei"
  },
  {
    "code" : "208",
    "name" : "delete.user",
-   "text" : "Sterge utilizatorul"
+   "text" : "Șterge utilizatorul"
  },
  {
    "code" : "208",
    "name" : "no.permissions",
-   "text" : "Operatiune neautorizata"
+   "text" : "Operatiune neautorizată"
  },
  {
    "code" : "208",
@@ -642,7 +642,7 @@
  {
    "code" : "208",
    "name" : "onsale",
-   "text" : "Promotii"
+   "text" : "Promoții"
  }
  
 ]
