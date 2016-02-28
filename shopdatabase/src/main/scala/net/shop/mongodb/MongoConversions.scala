@@ -185,14 +185,19 @@ trait MongoConversions {
 
   import scala.collection.JavaConversions._
 
-  def mongoToProduct(obj: DBObject): ProductDetail =
+  def mongoToProduct(obj: DBObject): ProductDetail = {
+
+    lazy val opts: Map[String, List[String]] = obj.getAs[DBObject]("options").map { db =>
+      db.toMap().map {
+        case (k: String, v: List[_]) => k -> v.map { _ toString }
+      } toMap
+    } getOrElse Map.empty
+
     ProductDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
       description = obj.getAsOrElse[Map[String, String]]("description", Map.empty),
       properties = obj.getAsOrElse[Map[String, String]]("properties", Map.empty),
-      options = obj.getAs[Map[String, com.mongodb.BasicDBList]]("options").map { p =>
-        p.map { case (k, v) => k -> v.toList.map { _.toString } }
-      }.getOrElse(Map.empty),
+      options = opts,
       userText = obj.getAsOrElse[List[String]]("userText", Nil),
       price = obj.getAsOrElse[Double]("price", 0.0),
       discountPrice = obj.getAs[Double]("discountPrice"),
@@ -204,7 +209,7 @@ trait MongoConversions {
       categories = obj.getAsOrElse[List[String]]("categories", Nil),
       images = obj.getAsOrElse[List[String]]("images", Nil),
       keyWords = obj.getAsOrElse[List[String]]("keywords", Nil))
-
+  }
   def mongoToCategory(obj: DBObject): Category =
     Category(id = obj.getAs[ObjectId]("_id").map(_.toString),
       position = obj.getAsOrElse[Int]("position", 0),
