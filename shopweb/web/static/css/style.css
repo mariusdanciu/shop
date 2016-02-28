@@ -404,7 +404,7 @@ a:active {
 	position: relative;
 	box-shadow: inset 0px 0px 1px 1px #ddd;
 	overflow: hidden;
-	margin: 10px 5px 10px 5px;
+	margin: 20px 20px 20px 20px;
 }
 
 .item_box:hover {
