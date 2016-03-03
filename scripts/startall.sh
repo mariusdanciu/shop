@@ -1,5 +1,6 @@
+mkdir -p ./logs
 
-mongod --fork --logpath ./db.log --dbpath ../mongodb
+mongod --auth --fork --logpath ./logs/db.log --dbpath ../mongodb
 
-./start.sh
+./start.sh $1
 

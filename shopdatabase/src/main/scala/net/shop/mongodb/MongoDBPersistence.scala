@@ -14,11 +14,14 @@ import net.shop.api.persistence._
 
 class MongoDBPersistence(implicit val cfg: Config) extends Persistence with MongoConversions {
 
-  val server = new ServerAddress(cfg.string("db.host", "localhost"), 27017)
+  val server = new ServerAddress(cfg.string("db.host", "localhost"), cfg.int("db.port", 27017))
+  val user = cfg.string("db.user", "idid")
+  val pwd = cfg.string("db.pwd", "idid.admin")
+  
   val credentials = MongoCredential.createScramSha1Credential(
-    cfg.string("db.user", "idid"),
+    user,
     "idid",
-    cfg.string("db.pwd", "pass").toCharArray())
+    pwd.toCharArray())
   val mongoClient = MongoClient(server, List(credentials))
 
   lazy val db = mongoClient("idid")
