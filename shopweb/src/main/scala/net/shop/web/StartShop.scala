@@ -43,14 +43,14 @@ object StartShop extends App with DefaultLog with IODefaults {
 
     val port = cfg.int("port")
     val dbPass = args.apply(0)
-    
+
     implicit val c = cfg append Map("db.pwd" -> dbPass)
-    
+
     SprayServer.start(port, ShopApplication())
 
     println("Server started on port " + port)
   }
-  
+
 }
 
 object ShopApplication {
@@ -61,6 +61,8 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
 
   implicit val cfg = c
   implicit val store: Persistence = new MongoDBPersistence
+
+  val mobile = Mobile(cfg, store)
 
   val orderService = new OrderService {
     val cfg = self.cfg
@@ -106,6 +108,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
   def servingRule = for {
     r <- withLanguage(Language("ro"))
     c <- staticFiles(Path("web/static")) |
+      mobile.mobilePages |
       ajaxLogin |
       ajaxProductsList |
       ajaxCategoriesList |

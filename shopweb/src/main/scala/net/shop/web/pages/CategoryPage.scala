@@ -8,7 +8,6 @@ import scala.xml._
 import net.shift._
 import net.shift._
 import net.shift.engine.http._
-import net.shift.engine.http._
 import net.shift.loc._
 import net.shift.template._
 import net.shift.template._
