@@ -184,6 +184,13 @@ trait ShopServices extends ShiftUtils
   } yield service(resp =>
     resp(new ImageResponse(input, "image/png").withHeaders(Header("cache-control", "max-age=86400"))))
 
+  def categoriesMobileImages = for {
+    Path(_, "data" :: "categories" :: "mobile" :: file :: Nil) <- path
+    input <- fileOf(Path(s"${dataPath}/categories/mobile/$file"))
+  } yield service(resp =>
+    resp(new ImageResponse(input, "image/png").withHeaders(Header("cache-control", "max-age=86400"))))
+  
+  
   def getCart() = for {
     r <- req
     lang <- language

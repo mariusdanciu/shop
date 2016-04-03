@@ -1,23 +1,29 @@
 <html data-template="mobile/common">
 <head>
-<script type="text/javascript" src="/static/js/blockui.js"></script>
-<script type="text/javascript" src="/static/js/admin.js"
-	data-permissions="write"></script>
-<script type="text/javascript" src="/static/js/categories.js"></script>
-
 <title>idid.ro</title>
 <meta name="description" content="Categorii produse" />
+
+<script type="javascript">
+document.addEventListener("touchstart", function(){}, true);
+</script>
 </head>
 
 <body>
 	<div id="content">
+		<div class="search">
+			<div class="box">
+				<div class="pic"></div>
+				<input id="text" type="text" />
+			</div>
+		</div>
 		<div class="categories">
 			<ul>
-				<li data-snip="categories">
-					<div>
-					  <span id="title"></span>
-					</div>
-				</li>
+				<li data-snip="categories"><a href="#">
+						<div class="cat_card">
+							<div id="pic"></div>
+							<div id="title"></div>
+						</div>
+				</a></li>
 			</ul>
 		</div>
 	</div>

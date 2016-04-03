@@ -5,7 +5,6 @@ html, body {
 	left: 0px;
 	line-height: 1.5em;
 	height: 100%;
-	min-width: 800px;
 }
 
 * {
@@ -13,13 +12,28 @@ html, body {
 	margin: 0;
 	font-family: sans-serif;
 	font-weight: 300;
-	font-size: 32pt;
+	font-size: 24pt;
 }
 
 *, *:before, *:after {
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
+}
+
+a {
+	text-decoration: none;
+	 -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+a:link {
+	color: #000000;
+	text-decoration: none;
+}
+
+a:visited {
+	color: #000000;
+	text-decoration: none;
 }
 
 ul {
@@ -37,23 +51,23 @@ li {
 	position: relative;
 	width: 100%;
 	z-index: 80;
-	background-color: #333333;
 	color: #ffffff;
-	height: 350px;
+	height: 150px;
 	background: #296872;
 }
 
 #logo {
 	top: 10px;
 	margin: auto;
-	width: 700px;
+	width: 209px;
+	position: relative;
 }
 
 #logo_img {
-	background-image: url('/static/mobile/images/idid.png');
+	background-image: url('/static/images/idid_blue_l.png');
 	background-repeat: no-repeat;
-	width: 697px;
-	height: 419px;
+	width: 209px;
+	height: 126px;
 }
 
 #content, .categories {
@@ -61,24 +75,80 @@ li {
 	position: relative;
 }
 
+#content {
+	height: 100%;
+}
+
+.categories {
+	top: 20px;
+}
+
 .categories ul {
 	width: 100%;
 }
 
+.cat_card:hover {
+	background-color: #eee;
+}
+
 .categories ul li {
+	width: 50%;
+	position: relative;
+	text-align: center;
+}
+
+.cat_card #pic {
+	margin: auto;
+	display: block;
+	position: relative;
+	top: 25px;
+	overflow: hidden;
+	position: relative;
+}
+
+.cat_card #title {
+	clean: both;
+	margin: auto;
+	display: block;
+	position: relative;
+	margin-top: 10px;
+}
+
+.cat_card {
+	border-radius: 20px;
+	border: 1px solid #333;
+	display: block;
+	margin: 10px;
+}
+
+.search {
 	width: 100%;
-	position: relative;
+	margin-top: 20px;
 }
 
-.categories ul li div {
-	border: 1px solid #ccc;
-	height: 250px;
-	text-align: middle;
+.search .box {
+	margin: 10px 10px 10px 10px;
+	height: 100%;
+	border-radius: 20px;
+	border: 1px solid #333;
+	height: 90px;
+	padding: 10px;
+	background: #ddd;
 }
 
-.categories ul li div span {
-	margin-left: 300px;
-	top: 90px;
-	position: relative;
-	font-size: 70px;
+.search .box .pic {
+	background-image: url("/static/images/search.png");
+	background-repeat: no-repeat;
+	height: 64px;
+	width: 64px;
+	float: left;
+}
+
+.search .box #text {
+	height: 100%;
+	border: none;
+	width: 70%;
+	margin-left: 10px;
+	background: #ddd;
+	width: 70%;
 }

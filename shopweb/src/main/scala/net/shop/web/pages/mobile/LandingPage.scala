@@ -15,6 +15,7 @@ import net.shift.template._
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shop.utils.ShopUtils._
+import scala.xml.Text
 
 trait LandingPage extends Cart[Request] with ServiceDependencies { self =>
 
@@ -27,7 +28,8 @@ trait LandingPage extends Cart[Request] with ServiceDependencies { self =>
           case Success(list) =>
             list flatMap { cat =>
               (bind(s.node) {
-                case Xml("span", HasId("title", attrs), childs) => <span>{ cat.title_?(s.state.lang.name) }</span>
+                case Xml(name, HasId("pic", attrs), childs)   => Xml(name, attrs, <img src={ mobileCategoryImagePath(cat) }></img>)
+                case Xml(name, HasId("title", attrs), childs) => Xml(name, attrs, Text(cat.title_?(s.state.lang.name)))
               }) match {
                 case Success(n)                 => n
                 case Failure(ShopError(msg, _)) => errorTag(Loc.loc0(s.state.lang)(msg).text)

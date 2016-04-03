@@ -117,6 +117,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       ajaxUsersView |
       productsVariantImages |
       categoriesImages |
+      categoriesMobileImages |
       page("", Path("web/categories.html"), catPage) |
       page(ProductPageState.build _, "product", Path("web/product.html"), prodDetailPage) |
       page("products", Path("web/products.html"), productsPage) |

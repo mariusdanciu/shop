@@ -12,6 +12,8 @@ object ShopUtils {
   def dataPath(implicit cfg: Config) = cfg.string("data.folder", "../data")
   
   def categoryImagePath(cat: Category): String = s"/data/categories/${cat.stringId}.png"
+  
+  def mobileCategoryImagePath(cat: Category): String = s"/data/categories/mobile/${cat.stringId}.png"
 
   def imagePath(id: String, variant: String, prod: String): String = s"/data/products/$id/$variant/$prod"
 
