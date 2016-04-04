@@ -16,6 +16,7 @@ import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shop.utils.ShopUtils._
 import scala.xml.Text
+import net.shift.common.XmlImplicits._
 
 trait LandingPage extends Cart[Request] with ServiceDependencies { self =>
 
@@ -28,6 +29,7 @@ trait LandingPage extends Cart[Request] with ServiceDependencies { self =>
           case Success(list) =>
             list flatMap { cat =>
               (bind(s.node) {
+                case Xml("a", attrs, childs)   => Xml("a", attrs).addAttr("href", s"mobile/products?cat=${cat.stringId}") / childs
                 case Xml(name, HasId("pic", attrs), childs)   => Xml(name, attrs, <img src={ mobileCategoryImagePath(cat) }></img>)
                 case Xml(name, HasId("title", attrs), childs) => Xml(name, attrs, Text(cat.title_?(s.state.lang.name)))
               }) match {
