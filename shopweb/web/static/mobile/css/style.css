@@ -5,7 +5,6 @@ html, body {
 	left: 0px;
 	line-height: 1.5em;
 	height: 100%;
-	white-space: nowrap;
 	overflow-x: hidden;
 }
 
@@ -76,6 +75,24 @@ li {
 	height: 126px;
 }
 
+.btn {
+	padding: 3px 10px 3px 10px;
+	border: 1px solid #999999;
+	text-decoration: none;
+	position: relative;
+	display: inline-block;
+	font-size: 12pt;
+	text-align: center;
+	float: left;
+}
+
+.btn:hover {
+	border: 1px solid #000000;
+	background: #efefef;
+	text-decoration: none;
+	cursor: pointer;
+}
+
 #content, .categories, .products {
 	width: 100%;
 	position: relative;
@@ -130,17 +147,13 @@ li {
 
 .search {
 	width: 100%;
-	margin-top: 20px;
 }
 
 .search .box {
-	margin: 10px 10px 10px 10px;
 	height: 100%;
-	border-radius: 20px;
-	border: 1px solid #333;
 	height: 100%;
 	padding: 10px;
-	background: #ddd;
+	background: #5998A2;
 }
 
 .search .box .pic {
@@ -155,10 +168,15 @@ li {
 .search .box #text {
 	height: 40px;
 	border: none;
-	width: 70%;
+	width: 80%;
 	margin-left: 10px;
-	background: #ddd;
-	width: 70%;
+	background: #5998A2;
+	width: 80%;
+	color: #fff;
+}
+
+.products {
+	white-space: nowrap;
 }
 
 .products ul li {
@@ -167,26 +185,72 @@ li {
 	border-bottom: 1px solid #ddd;
 }
 
-#prod_pic {
+.products ul li a {
+	width: 100%;
+	display: inline-block;
+}
+
+.products .prod_pic {
 	width: 100px;
 	height: 114px;
 	margin-top: 5px;
-	display: inline-block;
+	margin-right: 10px;
+	float: left;
 }
 
 .prod_content {
-	display: inline-block;
 	position: relative;
-	bottom: 35px;
+	vertical-align: top;
+	margin-left: 10px;
+	margin-top: 5px;
 }
 
-#prod_price {
-	margin-left: 10px;
+.prod_price {
+	font-size: 16pt;
+	float: right;
+	margin-top: 40px;
+	margin-right: 10px;
+	color: #ff0000;
+}
+
+.prod_title {
+	font-size: 14pt;
+	overflow: hidden;
+	margin-top: 20px;
+}
+
+.product .prod_pic {
+	margin: auto;
+	width: 312px;
+	height: 356px;
+	position: relative;
+}
+
+.product .prod_header {
+	width: 100%;
+	position: relative;
+	height: 60px;
+	padding: 10px;
+}
+
+.product .prod_header .prod_price {
+	float: right;
+	margin-top: 10px;
 	font-size: 16pt;
 }
 
-#prod_title {
-	font-size: 14pt;
-	margin-left: 10px;
-	overflow: hidden;
+.product .prod_controls {
+	position: relative;
+	padding: 20px;
+	clear: both;
+}
+
+.product .prod_controls .btn {
+	width: 100%;
+}
+
+.product .prod_desc {
+	width: 100%;
+	padding: 10px;
+	clear: both;
 }

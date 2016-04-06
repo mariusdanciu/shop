@@ -52,6 +52,8 @@ case class ProductDetail(id: Option[String] = None,
   def actualPrice = discountPrice getOrElse price
 
   def title_?(l: String) = title.getOrElse(l, "???")
+  
+  def description_?(l: String) = description.getOrElse(l, "???")
 
   def toProductLog(userOptions: Map[String, String], quantity: Int) = ProductLog(stringId, actualPrice, quantity, userOptions)
 }

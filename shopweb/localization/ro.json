@@ -643,6 +643,11 @@
    "code" : "208",
    "name" : "onsale",
    "text" : "Promoții"
+ },
+ {
+   "code" : "208",
+   "name" : "add.to.basket",
+   "text" : "Adaugă in coș"
  }
  
 ]

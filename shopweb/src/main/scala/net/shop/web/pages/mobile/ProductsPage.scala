@@ -40,11 +40,13 @@ trait ProductsPage extends Cart[Request] with ServiceDependencies { self =>
 
   private def render(s: SnipState[Request], prod: ProductDetail): NodeSeq = {
     bind(s.node) {
-      case Xml(name, HasId("prod_pic", a), childs) =>
+      case Xml("a", HasClass("prod_link", a), childs) =>
+        <a href={ s"/mobile/product?pid=${prod.stringId}" }>{ childs }</a>
+      case Xml(name, HasClass("prod_pic", a), childs) =>
         <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("thumb", prod) + "') no-repeat" }>{ childs }</div> % a
-      case Xml(name, HasId("prod_title", a), childs) =>
+      case Xml(name, HasClass("prod_title", a), childs) =>
         <div>{ prod title_? (s.state.lang.name) }</div> % a
-      case Xml(name, HasId("prod_price", a), childs) =>
+      case Xml(name, HasClass("prod_price", a), childs) =>
         <div>{ price(prod.price) } Lei</div> % a
     } match {
       case Success(n) => n
