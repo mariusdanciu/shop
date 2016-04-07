@@ -22,7 +22,7 @@ import net.shop.web.services.ServiceDependencies
 
 trait CategoryPage extends Cart[Request] with ServiceDependencies { self =>
 
-  override def snippets = List(item, presentation) ++ super.snippets
+  override def snippets = List(item) ++ super.snippets
 
   val item = reqSnip("item") {
     s =>
@@ -47,27 +47,5 @@ trait CategoryPage extends Cart[Request] with ServiceDependencies { self =>
       }
   }
 
-  val presentation = reqSnip("presentation") {
-    s =>
-      {
-        val prods = store.presentationProducts match {
-          case Success(list) =>
-            list flatMap { p =>
-              (bind(s.node) {
-                case Xml("a", _, childs)   => Xml("a").addAttr("href", s"product?pid=${p.stringId}") / childs
-                case Xml("div", a, childs) => Xml("div").addAttr("style", s"background-image: url('${imagePath("normal", p)}')") % a
-              }) match {
-                case Success(n)                 => n
-                case Failure(ShopError(msg, _)) => errorTag(Loc.loc0(s.state.lang)(msg).text)
-                case Failure(f)                 => errorTag(f toString)
-              }
-
-            }
-          case Failure(t) => <div class="error">{ Loc.loc0(s.state.lang)("no.categories").text }</div>
-        }
-
-        Success(s.state.initialState, prods.toSeq)
-      }
-  }
 }
 

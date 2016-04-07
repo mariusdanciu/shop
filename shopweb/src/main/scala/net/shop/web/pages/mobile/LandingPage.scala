@@ -18,7 +18,7 @@ import net.shop.utils.ShopUtils._
 import scala.xml.Text
 import net.shift.common.XmlImplicits._
 
-trait LandingPage extends Cart[Request] with ServiceDependencies { self =>
+trait LandingPage extends MobilePage with ServiceDependencies { self =>
 
   override def snippets = List(cat) ++ super.snippets
 

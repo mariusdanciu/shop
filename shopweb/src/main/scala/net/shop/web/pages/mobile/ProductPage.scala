@@ -24,7 +24,7 @@ import net.shop.api.ShopError
 import net.shift.template.HasClass
 import net.shift.common.XmlAttr
 
-trait ProductPage extends Cart[Request] with ServiceDependencies { self =>
+trait ProductPage extends MobilePage with ServiceDependencies { self =>
 
   override def snippets = List(item) ++ super.snippets
 

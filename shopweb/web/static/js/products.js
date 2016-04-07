@@ -5,11 +5,6 @@
 
         window.galleryOffset = 0;
 
-        window.opened = {
-            small : null,
-            large : null
-        };
-
         products.refreshList();
 
         $('#sortSelect, #sortSelect:hidden').on('change', function(evt, params) {
@@ -71,12 +66,6 @@ var products = {
         window.common.closeDialog();
     },
 
-    scrollToProd : function() {
-        $("body, html").animate({
-            scrollTop : $('.product_detail_border').offset().top - 150
-        }, 400);
-    },
-
     refreshList : function() {
         $(".item_box").each(function(index) {
             var me = $(this);
@@ -110,22 +99,23 @@ var products = {
                         },
                         success : function(data) {
 
-                            if (window.opened.small)
-                                window.opened.small.show();
-                            if (window.opened.large){
-                                $.removeData(window.opened.large.find("#sel_img"), 'elevateZoom');
-                                $('.zoomContainer').remove();
-                                window.opened.large.remove();
-                            }
                             var detail = $(data);
                             var div = $("<div class='product_detail_border'></div>").append(detail);
-                            var li = $("<li></li>").append(div);
-
-                            me.parent().hide();
-                            me.parent().after(li);
-
-                            window.opened.small = me.parent();
-                            window.opened.large = li;
+                            
+                            $.blockUI({
+                                message : div,
+                                css : {
+                                    top : '180px',
+                                    left : ($(window).width() - 1000) / 2 + 'px',
+                                    width : '1000px',
+                                    border : 'none',
+                                    cursor : null
+                                },
+                                overlayCSS : {
+                                    cursor : null,
+                                    backgroundColor : '#dddddd'
+                                }
+                            });
 
                             var total = detail.find("#gallery ul li").length;
                             if (total > 3) {
@@ -192,13 +182,7 @@ var products = {
                             });
 
                             detail.find(".close_product_dialog").click(function(event) {
-
-                                window.opened.small = null;
-                                window.opened.large = null;
-
-                                me.parent().show();
-                                li.remove();
-                                
+                            	window.common.closeDialog();
                                 $.removeData(detail.find("#sel_img"), 'elevateZoom');
                                 $('.zoomContainer').remove();
                                 return false;
@@ -206,12 +190,6 @@ var products = {
 
                             var tab = detail.find('#product_details_tab');
                             tab.tabify();
-
-                            detail.find('#product_details_tab li').click(function(e, data) {
-                                window.setTimeout(function() {
-                                    products.scrollToProd();
-                                }, 100);
-                            });
 
                             var content = detail.find("#prod_desc").text();
                             detail.find("#prod_desc").html(textile.convert(content));
@@ -224,7 +202,6 @@ var products = {
                                 });
                             }
 
-                            products.scrollToProd();
                             return false;
                         }
                     });

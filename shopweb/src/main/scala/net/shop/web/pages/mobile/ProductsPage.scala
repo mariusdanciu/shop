@@ -17,7 +17,7 @@ import net.shift.template.Binds.bind
 import net.shift.template.HasId
 import net.shift.common.XmlImplicits._
 
-trait ProductsPage extends Cart[Request] with ServiceDependencies { self =>
+trait ProductsPage extends MobilePage with ServiceDependencies { self =>
 
   override def snippets = List(products) ++ super.snippets
 

@@ -4,25 +4,6 @@
         $.blockUI.defaults.baseZ = 90;
         categories.reloadCategories();
 
-        var total = $("#presentation ul li").length;
-
-        var buf = $("#presentation ul li").clone();
-
-        var presentationFunc = function() {
-            $("#presentation ul").animate({
-                "marginLeft" : "-=214px"
-            }, 4000, "linear", function() {
-                first = buf[0];
-                buf.splice(0, 1);
-                buf.push(first);
-                $("#presentation ul").replaceWith($("<ul></ul>").append(buf));
-                buf = buf.clone();
-                window.setTimeout(presentationFunc, 0);
-            });
-
-        }
-
-        window.setTimeout(presentationFunc, 0);
     });
 })();
 

@@ -48,6 +48,14 @@ li {
 	float: left;
 }
 
+.back {
+	position: relative;
+	float: left;
+	margin-right: 10px;
+	top: 3px;
+	cursor: pointer;
+}
+
 .left {
 	float: left;
 }
@@ -157,12 +165,11 @@ li {
 }
 
 .search .box .pic {
-	background-image: url("/static/images/search.png");
-	background-repeat: no-repeat;
 	height: 32px;
 	width: 32px;
 	float: left;
 	margin-top: 5px;
+	cursor: pointer;
 }
 
 .search .box #text {
@@ -171,7 +178,7 @@ li {
 	width: 80%;
 	margin-left: 10px;
 	background: #5998A2;
-	width: 80%;
+	width: 60%;
 	color: #fff;
 }
 

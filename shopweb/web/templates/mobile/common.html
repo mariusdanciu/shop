@@ -32,6 +32,18 @@
 
 	ga('create', 'UA-63050669-1', 'auto');
 	ga('send', 'pageview');
+
+	(function() {
+		$(function() {
+			$('.back').click(function() {
+				window.history.back();
+			});
+			
+			$('.search .box .pic').click(function() {
+				$('.search .box #text').focus();
+			});
+		})
+	})();
 </script>
 
 </head>
@@ -48,7 +60,12 @@
 	<div class="fb_area"></div>
 	<div class="search">
 		<div class="box">
-			<div class="pic"></div>
+			<div class="back" data-snip="back">
+				<img src="/static/mobile/images/arrows.png" />
+			</div>
+			<div class="pic">
+				<img src="/static/images/search.png" />
+			</div>
 			<input id="text" type="text" />
 		</div>
 	</div>
