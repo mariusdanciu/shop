@@ -10,9 +10,9 @@ object ShopUtils {
   val random = new Random(System.currentTimeMillis())
 
   def dataPath(implicit cfg: Config) = cfg.string("data.folder", "../data")
-  
+
   def categoryImagePath(cat: Category): String = s"/data/categories/${cat.stringId}.png"
-  
+
   def mobileCategoryImagePath(cat: Category): String = s"/data/categories/mobile/${cat.stringId}.png"
 
   def imagePath(id: String, variant: String, prod: String): String = s"/data/products/$id/$variant/$prod"
@@ -21,6 +21,11 @@ object ShopUtils {
     prod.images match {
       case h :: _ => s"/data/products/${prod.stringId}/$variant/${h}"
       case Nil    => ""
+    }
+
+  def productImages(variant: String, prod: ProductDetail): Seq[String] =
+    prod.images map {
+      p => s"/data/products/${prod.stringId}/$variant/${p}"
     }
 
   def errorTag(text: String) = <div class="error"><div><span class="sprite sprite-exclamation"/></div><span>{ text }</span></div>

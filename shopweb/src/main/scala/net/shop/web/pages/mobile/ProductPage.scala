@@ -53,7 +53,9 @@ trait ProductPage extends MobilePage with ServiceDependencies { self =>
               case Xml(name, HasClass("prod_desc", a), childs) =>
                 <div>{ p.description_?(s.state.lang.name) }</div> % a
               case Xml(name, HasClass("prod_pic", a), childs) =>
-                Xml(name) % XmlAttr(a + ("style", "background: url('" + imagePath("normal", p) + "') no-repeat"))
+                productImages("normal", p) map { s =>
+                  <li><img src={ s }/></li>
+                }
             } map { xml =>
               (s.state.initialState, xml)
             }

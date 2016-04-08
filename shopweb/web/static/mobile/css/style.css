@@ -226,7 +226,7 @@ li {
 	margin-top: 20px;
 }
 
-.product .prod_pic {
+.product #prod_view {
 	margin: auto;
 	width: 312px;
 	height: 356px;
@@ -261,3 +261,4 @@ li {
 	padding: 10px;
 	clear: both;
 }
+
