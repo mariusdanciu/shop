@@ -140,7 +140,7 @@ var products = {
                                 });
                             }
 
-                            detail.find('#add_to_cart').click(function(event) {
+                            detail.find('#add_to_cart_box').click(function(event) {
 
                                 var userOptions = {};
                                 $(".custom_option").each(function(i) {

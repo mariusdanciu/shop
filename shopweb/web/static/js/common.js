@@ -164,14 +164,6 @@
             }
         });
         
-        $("#transport_pf").change(function() {
-            cart.updateSubmitText("pf");
-        });
-
-        $("#transport_pj").change(function() {
-            cart.updateSubmitText("pj");
-        });
-
         window.cart.loadView();
 
         FB.init({
@@ -561,12 +553,7 @@ var cart = {
     },
 
     updateSubmitText : function(suffix) {
-        var tr = $("#transport_" + suffix).val();
-        var transport = 19.99;
-        if (tr == "2") {
-            transport = 9.99;
-        }
-        var pret = cart.computeTotal(transport);
+        var pret = cart.computeTotal(0);
         var text = window.submitText + " <b> " + pret + " Lei </b>";
         $(".submit_" + suffix).html(text);
     },

@@ -34,7 +34,7 @@
             return false;
         });
 
-        $("#add_to_cart").click(function(event) {
+        $("#add_to_cart_box").click(function(event) {
             var pid = $.url().param("pid");
             var userOptions = {};
             $(".custom_option").each(function(i) {

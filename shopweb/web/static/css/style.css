@@ -318,7 +318,7 @@ a:active {
 }
 
 .center {
-	max-width: 90%;
+	max-width: 80%;
 	margin: auto;
 	position: relative;
 }
@@ -398,7 +398,7 @@ a:active {
 
 .item_box {
 	width: 312px;
-	height: 424px;
+	height: 460px;
 	border-radius: 10px;
 	z-index: 0;
 	position: relative;
@@ -446,11 +446,15 @@ a:active {
 	background: #ffffff;
 	color: #000000;
 	border-radius: 0 0 10px 10px;
-	height: 67px;
+	height: 90px;
 	margin: 0;
 	position: relative;
 	top: 316px;
 	margin: 0 1px;
+}
+
+.info_tag .info_tag_cart {
+	margin-left: 10px;
 }
 
 .cat_info_tag {
@@ -492,18 +496,25 @@ a:active {
 
 .info_tag_cart {
 	position: relative;
-	top: 10px;
-	left: 10px;
 	text-align: left;
 	float: left;
 }
 
+.info_tag_cart * {
+	float: left;
+}
+
+.info_tag_cart .btn span:nth-child(2) {
+	margin-left: 5px;
+	margin-top: 7px;
+}
+
 .info_tag_text {
-	position: relative;
-	top: 10px;
+	margin-top: 10px;
 	font-size: 16px;
 	text-align: center;
 	font-weight: bold;
+	height: 30px;
 }
 
 .cat_text {
@@ -537,6 +548,7 @@ h1 {
 	float: left;
 	overflow-y: auto;
 	overflow-x: hidden;
+	width: 100%;
 }
 
 #cart_popup {
@@ -567,8 +579,7 @@ h1 {
 }
 
 #add_to_cart_box {
-	float: left;
-	margin-top: 2px;
+	float: right;
 }
 
 #cart_footer {
@@ -615,10 +626,12 @@ h1 {
 
 .prod_details {
 	float: left;
+	width: 100%;
 }
 
 .prod_header {
-	height: 40px;
+	height: 50px;
+	width: 100%;
 	float: left;
 	margin-bottom: 10px;
 }
@@ -639,7 +652,7 @@ h1 {
 	box-shadow: 0px 0px 10px #999;
 	border-radius: 10px;
 	display: inline-block;
-	width: 400px;
+	width: 440px;
 }
 
 .cart_item_box a {
@@ -651,7 +664,6 @@ h1 {
 	margin-left: 25px;
 	margin-top: 10px;
 	overflow: hidden;
-	width: 230px;
 }
 
 .cart_item ul li {
@@ -715,7 +727,7 @@ h1 {
 
 .detailPrice {
 	float: left;
-	margin-top: 10px;
+	margin-top: 15px;
 	margin-left: 10px;
 }
 
@@ -1314,7 +1326,8 @@ h1 {
 	border-left: 1px solid #666666;
 	float: left;
 	margin-left: 20px;
-	margin-top: 10px;
+	margin-right: 20px;
+	margin-top: 15px;
 	padding-left: 20px;
 	font-size: 20px;
 }
@@ -1330,18 +1343,19 @@ h1 {
 
 .cart_item_content {
 	float: left;
-	width: 290px;
+	width: 340px;
 }
 
 .del_cart_item {
 	margin-top: 5px;
-	float: left;
+	margin-right: 5px;
+	float: right;
 	position: relative;
 }
 
 #fb-share-button {
 	float: left;
-	margin-top: 5px;
+	margin-top: 10px;
 	margin-right: 10px;
 }
 
@@ -1402,13 +1416,6 @@ h1 {
 #create_customize ul li, #edit_customize ul li {
 	float: left;
 	margin-right: 30px;
-}
-
-.transport {
-	width: 375px;
-	height: 35px;
-	cursor: pointer;
-	background: #fff;
 }
 
 #sel_img {

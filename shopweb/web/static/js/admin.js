@@ -226,7 +226,7 @@ var admin = {
             var frm = this;
             var formData = new FormData(frm);
 
-            if (formData.has("edit_categories")) {
+            if (formData.has && formData.has("edit_categories")) {
                 formData.set("edit_categories", $("#edit_categories").val());
             }
 
@@ -297,8 +297,8 @@ var admin = {
                 message : $("#product_create_dialog"),
                 css : {
                     top : '70px',
-                    left : ($(window).width() - 580) / 2 + 'px',
-                    width : '600px',
+                    left : ($(window).width() - 700) / 2 + 'px',
+                    width : '700px',
                     border : 'none',
                     cursor : null
                 },
