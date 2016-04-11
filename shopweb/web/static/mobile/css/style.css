@@ -13,7 +13,7 @@ html, body {
 	margin: 0;
 	font-family: sans-serif;
 	font-weight: 300;
-	font-size: 16pt;
+	font-size: 14pt;
 }
 
 *, *:before, *:after {
@@ -47,6 +47,34 @@ ul {
 li {
 	float: left;
 }
+
+.menu {
+	padding: 0;
+	clear: both;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+.menu li {
+	display: inline;
+	float: left;
+}
+
+.menu li a {
+	float: left;
+	padding: 10px;
+	text-decoration: none;
+	border-style: solid;
+	border-width: 0px 0px 1px 0px;
+}
+
+.menu li.active a {
+	float: left;
+	border-style: solid;
+	border-width: 1px 1px 0px 1px;
+	border-radius: 10px 10px 0px 0px;
+}
+
 
 .back {
 	position: relative;
@@ -262,3 +290,53 @@ li {
 	clear: both;
 }
 
+.cart_form .row {
+	margin-top: 10px;
+	width: 100%;
+	text-align: left;
+	clear: both;
+	width: 100%;
+}
+
+.column {
+	position: relative;
+	float: left;
+}
+
+.cart_form label {
+	margin-left: 10px;
+}
+
+.cart_form label[for=terms], .cart_form label[for=cterms] {
+	font-size: 10pt;
+	float: right;
+	margin-right: 10px;
+}
+
+.cart_form input[type=text] {
+	float: right;
+	margin-right: 10px;
+	width: 60%;
+}
+
+.cart_form input[type=checkbox] {
+	margin-left: 10px;
+}
+
+.right_arrow {
+	float: right;
+	margin-right: 10px;
+}
+
+.left_arrow {
+	float: left;
+	margin-left: 10px;
+}
+
+.cart_form {
+	width: 100%;
+}
+
+.height40 {
+	height: 40px;
+}

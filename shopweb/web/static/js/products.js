@@ -106,8 +106,8 @@ var products = {
                                 message : div,
                                 css : {
                                     top : '180px',
-                                    left : ($(window).width() - 1000) / 2 + 'px',
-                                    width : '1000px',
+                                    left : ($(window).width() - 1150) / 2 + 'px',
+                                    width : '1150px',
                                     border : 'none',
                                     cursor : null
                                 },
@@ -196,8 +196,7 @@ var products = {
 
                             if (window.admin !== undefined) {
                                 window.admin.attachToProduct(detail, function() {
-                                    me.parent().show();
-                                    li.remove();
+                                	window.common.closeDialog();
                                     products.reloadProducts();
                                 });
                             }

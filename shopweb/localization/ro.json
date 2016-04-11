@@ -606,23 +606,13 @@
  },
  {
    "code" : "208",
-   "name" : "transport.1",
-   "text" : "Transport prin curier rapid - 19.99 Lei"
- },
- {
-   "code" : "208",
-   "name" : "transport.2",
-   "text" : "Transport prin Poșta Romană - 9.99 Lei"
- },
- {
-   "code" : "208",
    "name" : "delete.user",
    "text" : "Șterge utilizatorul"
  },
  {
    "code" : "208",
    "name" : "no.permissions",
-   "text" : "Operatiune neautorizată"
+   "text" : "Operațiune neautorizată"
  },
  {
    "code" : "208",
@@ -647,7 +637,7 @@
  {
    "code" : "208",
    "name" : "add.to.cart",
-   "text" : "Adaugă in coș"
+   "text" : "Adaugă în coș"
  }
  
 ]

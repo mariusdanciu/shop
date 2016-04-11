@@ -14,6 +14,7 @@ html, body {
 	margin: 0;
 	font-family: sans-serif;
 	font-weight: 300;
+	font-size: 16px;
 }
 
 *, *:before, *:after {
@@ -26,7 +27,6 @@ select {
 	border: 1px solid #111;
 	background: transparent;
 	width: 100px;
-	font-size: 16px;
 	border: 1px solid #ccc;
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -44,14 +44,6 @@ table {
 
 table tr th {
 	border-bottom: 1px solid #dddddd;
-}
-
-div, span, input, textarea, select {
-	font-size: 16px;
-}
-
-a {
-	font-size: 16px;
 }
 
 b, strong {
@@ -133,11 +125,6 @@ ul {
 	float: left;
 }
 
-li a {
-	font-size: 18px;
-	text-decoration: none;
-}
-
 a:link {
 	color: #000000;
 	text-decoration: none;
@@ -201,7 +188,6 @@ a:active {
 
 .header ul li {
 	float: left;
-	font-size: 18px;
 	position: relative;
 	margin-right: 5px;
 }
@@ -348,19 +334,11 @@ a:active {
 .footer * a {
 	color: #ffffff;
 	text-decoration: none;
-	font-size: 16px;
 }
 
 .footer a:hover {
 	color: #999999;
 	text-decoration: none;
-}
-
-#site_name {
-	color: #FFC911;
-	font-size: 32px;
-	position: relative;
-	top: 15px;
 }
 
 #item_list {
@@ -483,7 +461,6 @@ a:active {
 	position: relative;
 	text-align: right;
 	top: 20px;
-	font-size: 26px;
 	float: right;
 	right: 10px;
 	font-weight: 400;
@@ -511,7 +488,6 @@ a:active {
 
 .info_tag_text {
 	margin-top: 10px;
-	font-size: 16px;
 	text-align: center;
 	font-weight: bold;
 	height: 30px;
@@ -1179,10 +1155,6 @@ h1 {
 	margin-left: 10px;
 }
 
-#save_product {
-	font-size: 18px;
-}
-
 .hidden {
 	display: none;
 }
@@ -1380,7 +1352,6 @@ h1 {
 	padding-top: 13px;
 	right: 10px;
 	left: auto;
-	font-size: 16px;
 	border-radius: 40px;
 }
 
@@ -1438,4 +1409,8 @@ h1 {
 .left_sep {
 	padding-left: 30px;
 	border-left: 1px solid #ccc;
+}
+
+#save_product {
+	float: right;
 }

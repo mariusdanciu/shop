@@ -15,6 +15,7 @@ import net.shop.web.pages.mobile.ProductsPage
 import net.shop.api.persistence.Persistence
 import net.shop.mongodb.MongoDBPersistence
 import net.shift.common.Config
+import net.shop.web.pages.mobile.CartPage
 
 case class Mobile(cfg: Config, store: Persistence) extends ShopServices { self =>
 
@@ -33,10 +34,16 @@ case class Mobile(cfg: Config, store: Persistence) extends ShopServices { self =
     val store = self.store
   }
 
+  val cartPage = new CartPage {
+    val cfg = self.cfg
+    val store = self.store
+  }
+
   def mobilePages = for {
     p <- page("mobile", Path("web/mobile/landing.html"), landingPage) |
       page("mobile/products", Path("web/mobile/products.html"), productsPage) |
-      page("mobile/product", Path("web/mobile/product.html"), productPage)
+      page("mobile/product", Path("web/mobile/product.html"), productPage) |
+      page("mobile/cart", Path("web/mobile/cart.html"), cartPage)
   } yield {
     p
   }

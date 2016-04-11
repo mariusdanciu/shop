@@ -1,0 +1,136 @@
+<html data-template="mobile/common">
+<head>
+<title>idid.ro</title>
+<meta name="description" content="Cosul tau" />
+<script type="text/javascript" src="/static/js/jquery.tabify.js"></script>
+
+<script>
+
+(function() {
+	$(function() {
+		$('#menu').tabify();
+	})
+})();
+
+</script>
+</head>
+
+<body>
+	<div id="content">
+		<div id="cart_view">
+			<ul id="menu" class="menu">
+				<li class="active"><a href="#pf" data-loc="person"></a></li>
+				<li><a href="#pj" data-loc="company"></a></li>
+			</ul>
+			<div id="pf">
+				<form id="order_form" class="cart_form">
+					<div class="row">
+						<label for="fname" data-loc="first.name"></label><input id="fname"
+							name="fname" type="text" />
+					</div>
+					<div class="row">
+						<label for="lname" data-loc="last.name"></label><input id="lname"
+							name="lname" type="text" />
+					</div>
+					<div class="row">
+						<label for="email" data-loc="email"></label> <input id="email"
+							name="email" type="text" />
+					</div>
+					<div class="row">
+						<label for="phone" data-loc="phone"></label><input id="phone"
+							name="phone" type="text" />
+					</div>
+					<div class="row">
+						<label for="cnp" data-loc="cnp"></label><input id="cnp" name="cnp"
+							type="text" />
+					</div>
+					<div class="row height40">
+						<span class="btn left_arrow">&#x2190;</span> <span
+							class="address_name"></span> <span class="btn right_arrow">&#x2192;</span>
+					</div>
+					<div class="row">
+						<label for="region" data-loc="region"></label><input id="region"
+							name="region" type="text" />
+					</div>
+					<div class="row">
+						<label for="city" data-loc="city"></label><input id="city"
+							name="city" type="text" />
+					</div>
+					<div class="row">
+						<label for="address" data-loc="address"></label><input
+							id="address" name="address" type="text" />
+					</div>
+					<div class="row">
+						<label for="zip" data-loc="zip"></label><input id="zip" name="zip"
+							type="text" />
+					</div>
+
+					<div class="row">
+						<input id="terms" name="terms" type="checkbox" /> <label
+							for="terms" data-loc="terms.and.conds"></label>
+					</div>
+
+				</form>
+			</div>
+		</div>
+		<div id="pj">
+			<form id="order_form_company" class="cart_form">
+				<div class="row">
+					<label for="cname" data-loc="company.name"></label><input
+						id="cname" name="cname" type="text" />
+				</div>
+				<div class="row">
+					<label for="cif" data-loc="company.cif"></label><input id="cif"
+						name="cif" type="text" />
+				</div>
+				<div class="row">
+					<label for="cregcom" data-loc="company.reg.com"></label><input
+						id="cregcom" name="cregcom" type="text" />
+				</div>
+				<div class="row">
+					<label for="cbank" data-loc="company.bank"></label><input
+						id="cbank" name="cbank" type="text" />
+				</div>
+				<div class="row">
+					<label for="cbankaccount" data-loc="company.bank.account"></label><input
+						id="cbankaccount" name="cbankaccount" type="text" />
+				</div>
+				<div class="row">
+					<label for="cemail" data-loc="email"></label><input id="cemail"
+						name="cemail" type="text" />
+				</div>
+				<div class="row">
+					<label for="cphone" data-loc="phone"></label><input id="cphone"
+						name="cphone" type="text" />
+				</div>
+				<div class="row height40">
+					<span class="btn left_arrow">&#x2190;</span> <span
+						class="address_name"></span> <span class="btn right_arrow">&#x2192;</span>
+				</div>
+				<div class="row">
+					<label for="cregion" data-loc="region"></label><input id="cregion"
+						name="cregion" type="text" />
+				</div>
+				<div class="row">
+					<label for="ccity" data-loc="city"></label><input id="ccity"
+						name="ccity" type="text" />
+				</div>
+				<div class="row">
+					<label for="caddress" data-loc="address"></label><input
+						id="caddress" name="caddress" type="text" />
+				</div>
+				<div class="row">
+					<label for="czip" data-loc="zip"></label><input id="czip"
+						name="czip" type="text" />
+				</div>
+				<div class="row">
+					<div id="terms_wrapper">
+						<input id="cterms" name="terms" type="checkbox" /> <label
+							for="cterms" data-loc="terms.and.conds"></label>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>
