@@ -40,11 +40,7 @@ import utils.ShopUtils._
 import net.shift.template.PageState
 import net.shift.engine.page.Html5
 import net.shift.common.Config
-import net.shop.web.pages.AccountSettingsPage
 import net.shop.web.pages.CategoryPage
-import net.shop.web.pages.AccountSettingsPage
-import net.shop.web.pages.CategoryPage
-import net.shop.web.pages.AccountSettingsPage
 import net.shop.web.pages.AccountSettingsPage
 
 trait ShopServices extends ShiftUtils

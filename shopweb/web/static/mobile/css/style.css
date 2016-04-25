@@ -75,15 +75,6 @@ li {
 	border-radius: 10px 10px 0px 0px;
 }
 
-
-.back {
-	position: relative;
-	float: left;
-	margin-right: 10px;
-	top: 3px;
-	cursor: pointer;
-}
-
 .left {
 	float: left;
 }
@@ -139,7 +130,8 @@ li {
 }
 
 .categories, .products {
-	top: 20px;
+	display: inline-block;
+	margin-bottom: 20px;
 }
 
 .categories ul, .products ul {
@@ -183,31 +175,37 @@ li {
 
 .search {
 	width: 100%;
+	display: none;
+	clear: both;
 }
 
-.search .box {
-	height: 100%;
-	height: 100%;
+
+.tools {
+	width: 100%;
+}
+
+.tools .box {
 	padding: 10px;
 	background: #5998A2;
+	overflow: hidden;
 }
 
-.search .box .pic {
+.tools .box .icon {
 	height: 32px;
 	width: 32px;
 	float: left;
 	margin-top: 5px;
 	cursor: pointer;
+	margin-right: 15px;
 }
 
-.search .box #text {
+.search #text {
 	height: 40px;
-	border: none;
-	width: 80%;
-	margin-left: 10px;
-	background: #5998A2;
-	width: 60%;
+	border: 1px solid #ddd;
+	width: 100%;
 	color: #fff;
+	background: #333;
+	font-size: 24px;
 }
 
 .products {
@@ -243,7 +241,6 @@ li {
 .prod_price {
 	font-size: 16pt;
 	float: right;
-	margin-top: 40px;
 	margin-right: 10px;
 	color: #ff0000;
 }
@@ -252,6 +249,7 @@ li {
 	font-size: 14pt;
 	overflow: hidden;
 	margin-top: 20px;
+	margin-bottom: 10px;
 }
 
 .product #prod_view {
@@ -339,4 +337,13 @@ li {
 
 .height40 {
 	height: 40px;
+}
+
+.cart_view {
+	clear: both;
+	width: 100%;
+}
+
+.prod_number input {
+	width: 50px;
 }

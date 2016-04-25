@@ -16,6 +16,9 @@ import net.shift.common.Xml
 import net.shift.template.Binds.bind
 import net.shift.template.HasId
 import net.shift.common.XmlImplicits._
+import net.shift.common.XmlImplicits
+import net.shift.template.HasClasses
+
 
 trait ProductsPage extends MobilePage with ServiceDependencies { self =>
 
@@ -40,6 +43,8 @@ trait ProductsPage extends MobilePage with ServiceDependencies { self =>
 
   private def render(s: SnipState[Request], prod: ProductDetail): NodeSeq = {
     bind(s.node) {
+      case e @ Xml(_, HasClasses(_ :: "add_to_cart" :: Nil, _), _) =>
+        e.addAttr("id", prod.stringId)
       case Xml("a", HasClass("prod_link", a), childs) =>
         <a href={ s"/mobile/product?pid=${prod.stringId}" }>{ childs }</a>
       case Xml(name, HasClass("prod_pic", a), childs) =>

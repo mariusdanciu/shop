@@ -17,6 +17,8 @@
 <script type="text/javascript"
 	src="http://connect.facebook.net/ro_RO/all.js"></script>
 
+<script type="text/javascript" src="/static/mobile/js/cart.js"></script>
+
 <script>
 	(function(i, s, o, g, r, a, m) {
 		i['GoogleAnalyticsObject'] = r;
@@ -38,10 +40,14 @@
 			$('.back').click(function() {
 				window.history.back();
 			});
-			
-			$('.search .box .pic').click(function() {
+
+			$('#search').click(function() {
+				$('.search').toggle();
 				$('.search .box #text').focus();
 			});
+
+			
+			
 		})
 	})();
 </script>
@@ -58,17 +64,23 @@
 		</div>
 	</div>
 	<div class="fb_area"></div>
-	<div class="search">
+	<div class="tools">
 		<div class="box">
-			<div class="back" data-snip="back">
+			<div class="icon" data-snip="back">
 				<img src="/static/mobile/images/arrows.png" />
 			</div>
-			<div class="pic">
+			<div class="icon" id="search">
 				<img src="/static/images/search.png" />
 			</div>
-			<input id="text" type="text" />
+			<div class="icon">
+				<a href="/mobile/cart"><img src="/static/images/commerce.png" /></a>
+			</div>
 		</div>
 	</div>
+	<div class="search">
+		<input id="text" type="text" />
+	</div>
+
 	<div id="content"></div>
 </body>
 </html>

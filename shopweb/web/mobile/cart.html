@@ -5,19 +5,33 @@
 <script type="text/javascript" src="/static/js/jquery.tabify.js"></script>
 
 <script>
-
-(function() {
-	$(function() {
-		$('#menu').tabify();
-	})
-})();
-
+	(function() {
+		$(function() {
+			$('#menu').tabify();
+		})
+	})();
 </script>
 </head>
 
 <body>
 	<div id="content">
-		<div id="cart_view">
+
+		<div class="products">
+			<ul>
+				<li data-snip="products"><a href="#" class="prod_link">
+						<div class="prod_pic"></div>
+						<div class="prod_content">
+							<div class="prod_title"></div>
+							<div class="prod_number">
+								<label id="" data-loc="quantity"></label> <input type="text" />
+							</div>
+							<div class="prod_price"></div>
+						</div>
+				</a></li>
+			</ul>
+
+		</div>
+		<div class="cart_view">
 			<ul id="menu" class="menu">
 				<li class="active"><a href="#pf" data-loc="person"></a></li>
 				<li><a href="#pj" data-loc="company"></a></li>

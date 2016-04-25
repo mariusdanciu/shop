@@ -3,6 +3,25 @@
 <title>idid.ro</title>
 <meta name="description" content="Produse" />
 
+
+<script>
+	(function() {
+		$(function() {
+			$('.add_to_cart').each(function(idx) {
+				$(this).click(function(e) {
+					var me = $(this);
+					var pid = me.attr('id');
+					window.cart.addItem(pid, {});
+					e.stopPropagation();
+					return false;
+				});
+			});
+
+		})
+	})();
+</script>
+
+
 </head>
 
 <body>
@@ -13,7 +32,7 @@
 						<div class="prod_pic"></div>
 						<div class="prod_content">
 							<div class="prod_title"></div>
-							<div class="btn" data-loc="add.to.cart"></div>
+							<div class="btn add_to_cart" data-loc="add.to.cart"></div>
 							<div class="prod_price"></div>
 						</div>
 				</a></li>
