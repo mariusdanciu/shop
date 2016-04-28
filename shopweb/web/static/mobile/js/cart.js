@@ -83,22 +83,6 @@ var cart = {
 		$.cookie("cart", JSON.stringify({
 			items : []
 		}));
-		window.cart.loadView();
-	},
-
-	computeTotal : function(add) {
-		var total = 0;
-
-		$(".cart_item").each(function() {
-			var num = $(this).find("input").val();
-			var price = $(this).find(".cart_price").text();
-			total += num * price;
-		});
-		if (add) {
-			total += add;
-		}
-
-		return parseFloat(total).toFixed(2);
 	},
 
 	items : function() {
@@ -163,7 +147,6 @@ var cart = {
 				}
 			}
 			$.cookie("cart", JSON.stringify(cart));
-			window.cart.showTotal();
 			$(this).focus();
 		}
 	},
@@ -181,7 +164,6 @@ var cart = {
 			}
 			cart.items = na;
 			$.cookie("cart", JSON.stringify(cart));
-			window.cart.loadView();
 		}
 	},
 }

@@ -31,10 +31,14 @@ import net.shift.common.XmlImplicits._
 import net.shift.common.XmlImplicits
 import net.shift.template.HasClasses
 import net.shop.utils.ShopUtils._
+import net.shop.api.CartItem
+import net.shift.common.XmlAttr
+import net.shift.engine.http.RequestShell
+import scala.xml.Text
 
 trait CartPage extends MobilePage with ServiceDependencies { self =>
 
-  override def snippets = List(products) ++ super.snippets
+  override def snippets = List(products, total) ++ super.snippets
 
   val products = reqSnip("products") {
     s =>
@@ -44,32 +48,52 @@ trait CartPage extends MobilePage with ServiceDependencies { self =>
             implicit val formats = DefaultFormats
             implicit def snipsSelector[T] = bySnippetAttr[T]
 
-            for {
+            val content = for {
               (item, index) <- readCart(c.value).items.zipWithIndex
               prod <- store.productById(item.id).toOption
             } yield {
-              render(s, prod)
+              (render(s, item, prod, index), prod.price * item.count)
             }
+
+            (content.map { _._1 }, content.map { _._2 }.sum)
           }
-          case _ => NodeSeq.Empty
+          case _ => (NodeSeq.Empty, 0.0)
         }
 
-        Success((s.state.initialState, res.flatten))
+        Success((RequestAndTotal(s.state.initialState, res._2), res._1.flatten))
       }
   }
+  val total = reqSnip("total") {
+    s =>
+      {
+        val total = s.state.initialState match {
+          case RequestAndTotal(r, total) => price(total)
+          case _                         => "..."
+        }
 
-  private def render(s: SnipState[Request], prod: ProductDetail): NodeSeq = {
+        val content = bind(s.node) {
+          case Xml(name, a, childs) => Xml(name, a, Text(total))
+        }
+
+        content.map { c => (s.state.initialState, c) }
+      }
+  }
+  private def render(s: SnipState[Request], cart: CartItem, prod: ProductDetail, pos: Int): NodeSeq = {
     bind(s.node) {
+      case Xml("li", a, childs) =>
+        Xml("li", XmlAttr(a.attrs + ("id" -> s"del_$pos")), childs)
       case e @ Xml(_, HasClasses(_ :: "add_to_cart" :: Nil, _), _) =>
         e.addAttr("id", prod.stringId)
       case Xml("a", HasClass("prod_link", a), childs) =>
         <a href={ s"/mobile/product?pid=${prod.stringId}" }>{ childs }</a>
       case Xml(name, HasClass("prod_pic", a), childs) =>
-        <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("thumb", prod) + "') no-repeat" }>{ childs }</div> % a
+        <div title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("thumb", prod) + "') no-repeat" }>{ childs }</div> % a
       case Xml(name, HasClass("prod_title", a), childs) =>
         <div>{ prod title_? (s.state.lang.name) }</div> % a
       case Xml(name, HasClass("prod_price", a), childs) =>
         <div>{ price(prod.price) } Lei</div> % a
+      case Xml("input", a, _) =>
+        <input type="text" value={ cart.count.toString }></input> % a
     } match {
       case Success(n) => n
       case Failure(f) => errorTag(f toString)
@@ -82,3 +106,5 @@ trait CartPage extends MobilePage with ServiceDependencies { self =>
   }
 
 }
+
+case class RequestAndTotal(r: Request, total: Double) extends RequestShell(r)

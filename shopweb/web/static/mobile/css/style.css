@@ -242,14 +242,13 @@ li {
 	font-size: 16pt;
 	float: right;
 	margin-right: 10px;
+	margin-top: 15px;
 	color: #ff0000;
 }
 
 .prod_title {
 	font-size: 14pt;
 	overflow: hidden;
-	margin-top: 20px;
-	margin-bottom: 10px;
 }
 
 .product #prod_view {
@@ -344,6 +343,16 @@ li {
 	width: 100%;
 }
 
+.prod_number {
+	margin-top: 10px;
+}
 .prod_number input {
 	width: 50px;
+}
+
+.prod_remove {
+	margin-top: 10px;
+}
+.left10 {
+	margin-left: 10px;
 }
