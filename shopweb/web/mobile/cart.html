@@ -9,23 +9,47 @@
 		$(function() {
 			$('#menu').tabify();
 
-			$('.prod_remove').click(function(e) {
-				var id = $(this).parent().parent().attr('id');
-				window.cart.removeItem(id.substring(4));
-				window.location.href = '/mobile/cart';
-				e.preventDefault();
-				false;
-			});
-
-			$('.products ul li input').each(function(index) {
-
-				$(this).on('change', function(e) {
-					window.cart.setItemCount(index, $(this).val());
-					window.location.href = '/mobile/cart';
-					e.preventDefault();
-					return false;
+			var load = function() {
+				$.ajax({
+					url : '/mobile/cartview',
+					cache : false,
+					dataType : 'html',
+					error : function(xhr) {
+						common.showError(xhr.statusText);
+					},
+					success : function(data) {
+						$('#cart_items').html(data);
+						change();
+						remove();
+					}
 				});
-			});
+
+			};
+
+			var change = function() {
+				$('.products ul li input').each(function(index) {
+
+					$(this).on('change', function(e) {
+						window.cart.setItemCount(index, $(this).val());
+						load();
+						e.preventDefault();
+						return false;
+					});
+				});
+			};
+
+			var remove = function() {
+				$('.prod_remove').click(function(e) {
+					var id = $(this).parent().parent().attr('id');
+					window.cart.removeItem(id.substring(4));
+					load();
+					e.preventDefault();
+					false;
+				});
+			}
+
+			change();
+			remove();
 
 		})
 	})();
@@ -35,26 +59,8 @@
 <body>
 	<div id="content">
 
-		<div class="products">
-			<ul>
-				<li data-snip="products">
-					<div class="prod_pic"></div>
-					<div class="prod_content">
-						<div class="prod_title"></div>
-						<div class="prod_number">
-							<label id="" data-loc="quantity"></label> <input type="text" />
-						</div>
-						<div class="prod_remove btn" data-loc="delete"></div>
-						<div class="prod_price"></div>
-					</div>
-				</li>
-			</ul>
+		<div data-snip="cartItems"></div>
 
-		</div>
-		<div>
-			<span data-loc="total"></span> <span class="left10" data-snip="total"></span><span
-				class="left10">Lei</span>
-		</div>
 		<div class="cart_view">
 			<ul id="menu" class="menu">
 				<li class="active"><a href="#pf" data-loc="person"></a></li>

@@ -34,6 +34,7 @@ import net.shop.api.persistence.Persistence
 import net.shop.mongodb.MongoDBPersistence
 import net.shift.spray.SprayServer
 import net.shop.web.pages.AboutUsPage
+import net.shop.web.services.mobile.MobileServices
 
 object StartShop extends App with DefaultLog with IODefaults {
 
@@ -105,10 +106,16 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
     val store = self.store
   }
 
+  val mobileServices = new MobileServices {
+    val cfg = self.cfg
+    val store = self.store
+  }
+
   def servingRule = for {
     r <- withLanguage(Language("ro"))
     c <- staticFiles(Path("web/static")) |
       mobile.mobilePages |
+      mobileServices.cartView |
       ajaxLogin |
       ajaxProductsList |
       ajaxCategoriesList |
