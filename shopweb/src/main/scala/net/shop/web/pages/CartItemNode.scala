@@ -27,9 +27,8 @@ object CartItemNode extends DynamicContent[CartState] {
     s =>
       bind(s.node) {
         case HasClass("thumb", a) =>
-          val title = ("" /: s.state.initialState.item.userOptions) { (a, e) => a + e._1 + " : " + e._2 + "\n" }
           <a href={ s"/product?pid=${s.state.initialState.prod.stringId}" }>{
-            Xml("img", ((a - "class") + ("src", imagePath("thumb", s.state.initialState.prod)) + ("title", title)))
+            Xml("img", ((a - "class") + ("src", imagePath("thumb", s.state.initialState.prod))))
           }</a>
         case HasClass("cart_title", a) => <span>{ s.state.initialState.prod.title_?(s.state.lang.name) }</span> % a
         case Xml("input", a, _)        => (<input/> % (a + ("value", s.state.initialState.item.count toString)))

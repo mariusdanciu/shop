@@ -47,29 +47,21 @@ import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
 import net.shift.common.Config
 
-trait OrderService extends HttpPredicates with FormValidation with TraversingSpec with ServiceDependencies {self =>
+trait OrderService extends HttpPredicates with FormValidation with TraversingSpec with ServiceDependencies { self =>
 
   private def extractOrder(json: String) = {
     def extractItems(items: List[JValue]): (String, OrderForm.EnvValue) = listTraverse.sequence(for {
       JObject(o) <- items
     } yield {
       o match {
-        case ("name", JString(id)) :: ("userOptions", l) :: ("value", JInt(count)) :: Nil =>
-          store.productById(id) map { prod =>
-            val opts = for {
-              JObject(lo) <- l;
-              (k, JString(v)) <- lo
-            } yield {
-              (k, v)
-            }
-            (prod, opts.toMap, count toInt)
-          }
+        case ("name", JString(id)) :: ("value", JInt(count)) :: Nil =>
+          store.productById(id) map { prod => (prod, count toInt) }
       }
     }).map(m => ("items", OrderForm.OrderItems(m))) getOrElse (("items", OrderForm.NotFound))
 
     val list = for {
       JObject(child) <- parse(json)
-      JField(k, value) <- child if (k != "name" && k != "userOptions" && k != "value")
+      JField(k, value) <- child if (k != "name" && k != "value")
     } yield {
       value match {
         case JString(str)  => (k, OrderForm.FormField(str))

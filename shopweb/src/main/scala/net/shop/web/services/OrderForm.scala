@@ -29,7 +29,7 @@ object OrderForm {
 
   sealed trait EnvValue
   case class FormField(value: String) extends EnvValue
-  case class OrderItems(l: List[(ProductDetail, Map[String, String], Int)]) extends EnvValue
+  case class OrderItems(l: List[(ProductDetail, Int)]) extends EnvValue
   case object NotFound extends EnvValue
 
   def reqStr[T](name: String, title: String, f: String => Validation[ValidationFail, T])(implicit lang: Language): ValidationFunc[T] =
@@ -68,7 +68,7 @@ object OrderForm {
     }
   }
 
-  def validItems(implicit lang: Language): ValidationFunc[List[(ProductDetail, Map[String, String], Int)]] =
+  def validItems(implicit lang: Language): ValidationFunc[List[(ProductDetail, Int)]] =
     env => env.get("items") match {
       case Some(OrderItems(l)) => Valid(l)
       case _                   => Invalid(ValidationFail(FieldError("items", Loc.loc0(lang)("order.items.required").text)))
@@ -87,8 +87,8 @@ object OrderForm {
       case _                    => Invalid(ValidationFail(FieldError(id, "error")))
     }
 
-  def inputItems(name: String)(f: ValidationInput => Validation[ValidationFail, List[(ProductDetail, Map[String, String], Int)]]) =
-    new Formlet[List[(ProductDetail, Map[String, String], Int)], Map[String, EnvValue], ValidationFail] {
+  def inputItems(name: String)(f: ValidationInput => Validation[ValidationFail, List[(ProductDetail, Int)]]) =
+    new Formlet[List[(ProductDetail, Int)], Map[String, EnvValue], ValidationFail] {
       val validate = f
       override def html = NodeSeq.Empty;
     }

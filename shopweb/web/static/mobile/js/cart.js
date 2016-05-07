@@ -1,11 +1,17 @@
 (function() {
 	$(function() {
-		
+
 		$('input')
 	})
 })();
 
 var cart = {
+	showFormErrors : function(errors) {
+		$.each(errors, function() {
+			$("label[for='" + this.id + "']").css("color", "#ff0000").attr(
+					"title", this.error);
+		});
+	},
 
 	fetchUserInfo : function() {
 		$.ajax({
@@ -93,7 +99,7 @@ var cart = {
 		return [];
 	},
 
-	addItem : function(id, userOpts) {
+	addItem : function(id) {
 		var c = $.cookie("cart");
 		if (c) {
 			var cart = $.parseJSON(c);
@@ -105,16 +111,9 @@ var cart = {
 				}
 			}
 
-			if (!userOpts) {
-				userOpts = {};
-			}
-
-			if (!found
-					|| JSON.stringify(found.userOptions) !== JSON
-							.stringify(userOpts)) {
+			if (!found) {
 				cart.items.push({
 					id : id,
-					userOptions : userOpts,
 					count : 1
 				});
 			} else {
@@ -125,7 +124,6 @@ var cart = {
 			$.cookie("cart", JSON.stringify({
 				items : [ {
 					id : id,
-					userOptions : {},
 					count : 1
 				} ]
 			}));

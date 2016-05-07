@@ -15,56 +15,60 @@ import net.shop.web.ShopApplication
 import net.shift.io.IODefaults
 import java.util.Date
 import net.shop.web.services.ServiceDependencies
+import net.shop.api.persistence.Persistence
 
 sealed trait Message
 case class OrderDocument(l: Language, o: Order, doc: String) extends Message
 case class ForgotPassword(l: Language, email: String, doc: String) extends Message
 
 sealed trait ActorMessage
-case class StoreOrderStats(content: OrderDocument) extends ActorMessage
+case class StoreOrderStats(content: OrderDocument, store: Persistence) extends ActorMessage
 case class Mail(
   from: String,
   to: Seq[String],
   cc: Seq[String] = Seq.empty,
   bcc: Seq[String] = Seq.empty,
   subject: String,
-  message: String) extends ActorMessage
+  message: String,
+  cfg: Config) extends ActorMessage
 
 object Messaging extends IODefaults {
   val orderActor = ActorSystem("idid").actorOf(Props[OrderActor], "orderActor")
 
-  def send(m: Message)(implicit cfg : Config) {
+  def send(m: Message)(implicit conf: Config, store: Persistence) {
     m match {
 
       case od @ OrderDocument(l, o, doc) =>
-        orderActor ! StoreOrderStats(od)
+        orderActor ! StoreOrderStats(od, store)
         orderActor ! Mail(
-          from = cfg.string("smtp.from"),
+          from = conf.string("smtp.from"),
           to = List(o.email),
-          bcc = cfg.list("smtp.bcc"),
+          bcc = conf.list("smtp.bcc"),
           subject = Loc.loc0(l)("subject").text,
-          message = doc)
+          message = doc,
+          cfg = conf)
 
       case ForgotPassword(l, email, doc) =>
         orderActor ! Mail(
-          from = cfg.string("smtp.from"),
+          from = conf.string("smtp.from"),
           to = List(email),
           subject = Loc.loc0(l)("recover.password").text,
-          message = doc)
+          message = doc,
+          cfg = conf)
 
       case _ =>
     }
   }
 }
 
-trait OrderActor extends Actor with DefaultLog with ServiceDependencies {
+class OrderActor extends Actor with DefaultLog {
 
   def receive = {
-    case StoreOrderStats(content) => writeStat(content.o)("ro")
-    case mail: Mail               => sendMail(mail)
+    case StoreOrderStats(content, store) => writeStat(content.o, store)("ro")
+    case mail: Mail                      => sendMail(mail)
   }
 
-  def writeStat(o: Order)(implicit lang: String) =
+  def writeStat(o: Order, store: Persistence)(implicit lang: String) =
     store.createOrder(o.toOrderLog)
 
   def sendMail(mail: Mail) {
@@ -75,9 +79,9 @@ trait OrderActor extends Actor with DefaultLog with ServiceDependencies {
     mail.cc foreach (commonsMail.addCc(_))
     mail.bcc foreach (commonsMail.addBcc(_))
 
-    commonsMail.setHostName(cfg.string("smtp.server"))
-    commonsMail.setSmtpPort(cfg.int("smtp.port"))
-    commonsMail.setAuthenticator(new DefaultAuthenticator(cfg.string("smtp.user"), cfg.string("smtp.password")))
+    commonsMail.setHostName(mail.cfg.string("smtp.server"))
+    commonsMail.setSmtpPort(mail.cfg.int("smtp.port"))
+    commonsMail.setAuthenticator(new DefaultAuthenticator(mail.cfg.string("smtp.user"), mail.cfg.string("smtp.password")))
     commonsMail.setSSLOnConnect(true);
     commonsMail.setFrom(mail.from).
       setSubject(mail.subject).

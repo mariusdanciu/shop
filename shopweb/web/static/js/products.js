@@ -142,15 +142,7 @@ var products = {
 
                             detail.find('#add_to_cart_box').click(function(event) {
 
-                                var userOptions = {};
-                                $(".custom_option").each(function(i) {
-                                    userOptions[$(this).attr("name")] = $(this).val();
-                                });
-                                $(".custom_text").each(function(i) {
-                                    userOptions[$(this).attr("name")] = $(this).val();
-                                });
-
-                                cart.addItem(pid, userOptions);
+                                cart.addItem(pid);
                                 cart.showCart();
 
                                 products.closeProductDialog();

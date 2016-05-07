@@ -101,7 +101,6 @@ trait OrderPage extends DynamicContent[OrderState] with Selectors with IODefault
                   case Xml("td", HasClass("c1", a), _ ) => <td>{ p.title_?(s.state.lang.name) }</td> % a
                   case Xml("td", HasClass("c2", a), _ ) => <td>{ prod.quantity }</td> % a
                   case Xml("td", HasClass("c3", a), _ ) => <td>{ p.actualPrice }</td> % a
-                  case Xml("td", HasClass("c4", a), _ ) => <td><ul class="userOptions">{ prod.userOptions.flatMap { o => <li>{ o._1 + " : " + o._2 }</li> } }</ul></td> % a
                 }) match {
                   case Success(n) => acc ++ n
                   case Failure(ShopError(msg, _)) => acc ++ errorTag(Loc.loc0(s.state.lang)(msg).text)

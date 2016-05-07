@@ -30,7 +30,7 @@ import net.shop.web.services.ServiceDependencies
 trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies {
 
   override def snippets = List(title, meta, catlink, productLink, images, detailPrice, stock,
-    details, specs, customize, edit, canShowSpecs, canShowCustom) ++ super.snippets
+    details, specs, edit, canShowSpecs) ++ super.snippets
 
   def product(s: SnipState[ProductPageState]): Try[ProductDetail] = {
     s.state.initialState.product match {
@@ -89,10 +89,6 @@ trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies 
 
   val canShowSpecs = reqSnip("can_show_specs") {
     s => ignoreNode(s, _.properties.isEmpty)
-  }
-
-  val canShowCustom = reqSnip("can_show_custom") {
-    s => ignoreNode(s, p => p.options.isEmpty && p.userText.isEmpty)
   }
 
   val catlink = reqSnip("catlink") {
@@ -212,29 +208,6 @@ trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies 
       }
   }
 
-  val customize = reqSnip("customize") {
-    s =>
-      {
-        (for {
-          p <- product(s)
-        } yield {
-          val n = (p.options flatMap {
-            o =>
-              (bind(s.node) {
-                case HasClass("content", a) => <span>{ o._1 }</span><select class="item_option custom_option" name={ o._1 }>{
-                  o._2.map { i => <option value={ i }>{ i }</option> }
-                }</select>
-              }).getOrElse(NodeSeq.Empty)
-          }) ++ (p.userText flatMap { o =>
-            (bind(s.node) {
-              case HasClass("content", a) => <span>{ o }</span><input type="text" name={ s"$o" } class="item_option custom_text"/>
-            }).getOrElse(NodeSeq.Empty)
-          })
-          (ProductPageState(s.state.initialState.req, Success(p), s.state.user), NodeSeq.fromSeq(n.toSeq))
-        }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
-      }
-  }
-
   val edit = reqSnip("edit") {
     s =>
       {
@@ -260,8 +233,6 @@ trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies 
               val a = attrs + ("value", "true")
               Xml("input", if (!p.unique) a else a + ("checked", p.unique.toString))
             case HasId("edit_description", attrs)                     => Xml("textarea", attrs) / Text(desc)
-            case Xml(_, HasClass("edit_props_sample", attrs), childs) => handleProperties(childs, p)
-            case Xml(_, HasClass("edit_user_options", attrs), childs) => handleUserOptions(childs, p)
           }) match {
             case Success(n) => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), n)
             case _          => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node)
@@ -284,40 +255,6 @@ trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies 
     }
   }
 
-  private def handleProperties(childs: NodeSeq, p: ProductDetail) = NodeSeq.fromSeq((p.properties flatMap {
-    case (k, v) =>
-      bind(Xml("div", XmlAttr("class", "row")) / childs) {
-        case HasName("pkey", attrs) =>
-          Xml("input", attrs + ("value", k))
-        case HasName("pval", attrs) =>
-          Xml("input", attrs + ("value", v))
-      } match {
-        case Success(n) => n
-        case _          => NodeSeq.Empty
-      }
-  }).toSeq)
-
-  private def handleUserOptions(n: NodeSeq, p: ProductDetail) = {
-    bind(n) {
-      case Xml(_, HasClass("edit_custom_options_sample", attrs), childs) =>
-        NodeSeq.fromSeq(p.options.flatMap {
-          case (k, v) =>
-            bind(childs) {
-              case HasName("customkey", attrs) =>
-                Xml("input", attrs + ("value", k))
-              case HasName("customval", attrs) =>
-                Xml("input", attrs + ("value", v.mkString(", ")))
-            } getOrElse NodeSeq.Empty
-        } toList)
-      case Xml(_, HasClass("edit_custom_text_sample", attrs), childs) =>
-        p.userText.flatMap { t =>
-          bind(childs) {
-            case HasName("customtext", attrs) =>
-              Xml("input", attrs + ("value", t))
-          } getOrElse NodeSeq.Empty
-        }
-    } getOrElse NodeSeq.Empty
-  }
 }
 
 object ProductPageState {

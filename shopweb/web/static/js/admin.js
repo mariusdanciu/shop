@@ -58,8 +58,6 @@
 
         admin.addProp("#add_prop", "#prop_fields", "pkey", "pval");
 
-        admin.addText("#add_custom_text", "#prop_custom_fields", "customtext");
-        admin.addProp("#add_custom_prop", "#prop_custom_fields", "customkey", "customval");
 
         admin.toggleDescription("create");
 
@@ -278,15 +276,11 @@ var admin = {
             return false;
         });
         parent.find('#edit_product_tab').tabify();
-        parent.find("#edit_specs .row span, #prop_edit_custom_fields .row span").click(function(e) {
+        parent.find("#edit_specs .row span").click(function(e) {
             var row = $(this).parent();
             row.remove();
             return false;
         });
-
-        admin.addProp("#edit_add_prop", "#edit_prop_fields", "pkey", "pval");
-        admin.addText("#add_edit_custom_text", "#prop_edit_custom_fields", "customtext");
-        admin.addProp("#add_edit_custom_prop", "#prop_edit_custom_fields", "customkey", "customval");
 
         admin.toggleDescription("edit");
     },

@@ -53,7 +53,6 @@ trait MongoConversions {
       item += "id" -> prod.id
       item += "price" -> prod.price
       item += "quantity" -> prod.quantity
-      item += "userOptions" -> prod.userOptions
 
       item.result
     }
@@ -92,8 +91,7 @@ trait MongoConversions {
       ProductLog(
         id = dbItem.getAsOrElse[String]("id", ""),
         price = dbItem.getAsOrElse[Double]("price", 0.0),
-        quantity = dbItem.getAsOrElse[Int]("quantity", 0),
-        userOptions = dbItem.getAsOrElse[Map[String, String]]("userOptions", Map.empty))
+        quantity = dbItem.getAsOrElse[Int]("quantity", 0))
     }
 
     OrderLog(id = obj.getAsOrElse[String]("id", ""),
@@ -124,8 +122,6 @@ trait MongoConversions {
     db += "title" -> MongoDBObject(obj.title.toList)
     db += "description" -> MongoDBObject(obj.description.toList)
     db += "properties" -> MongoDBObject(obj.properties.toList)
-    db += "options" -> MongoDBObject(obj.options.toList)
-    db += "userText" -> obj.userText
     db += "price" -> obj.price
     db += "discountPrice" -> obj.discountPrice
     db += "soldCount" -> obj.soldCount
@@ -187,20 +183,11 @@ trait MongoConversions {
 
   def mongoToProduct(obj: DBObject): ProductDetail = {
 
-    lazy val opts: Map[String, List[String]] = obj.getAs[DBObject]("options").map { db =>
-      db.toMap().map {
-        case (k: String, v: BasicDBList) =>
-          k -> v.toArray().toList.map{_ toString}
-      } toMap
-    } getOrElse Map.empty
-
     try {
       ProductDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
         title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
         description = obj.getAsOrElse[Map[String, String]]("description", Map.empty),
         properties = obj.getAsOrElse[Map[String, String]]("properties", Map.empty),
-        options = opts,
-        userText = obj.getAsOrElse[List[String]]("userText", Nil),
         price = obj.getAsOrElse[Double]("price", 0.0),
         discountPrice = obj.getAs[Double]("discountPrice"),
         soldCount = obj.getAs[Int]("soldCount") getOrElse 0,

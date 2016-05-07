@@ -67,22 +67,6 @@ trait FormValidation extends IODefaults with ServiceDependencies {
       }
     }
 
-  def validateOptions(implicit lang: Language): ValidationFunc[Map[String, List[String]]] =
-    env => {
-      (env.get("customkey"), env.get("customval")) match {
-        case (Some(k), Some(v)) => Valid(k.zip(v).map(pair => (pair._1, pair._2.split("\\s*,\\s*").toList)).toMap)
-        case _                  => Valid(Map.empty)
-      }
-    }
-
-  def validateUserText(implicit lang: Language): ValidationFunc[List[String]] =
-    env => {
-      (env.get("customtext")) match {
-        case Some(k) => Valid(k)
-        case _       => Valid(Nil)
-      }
-    }
-
   def validateMapField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
     required(name, title, s => Valid(Map(lang.name -> s)))
 

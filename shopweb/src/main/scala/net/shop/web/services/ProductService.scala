@@ -43,14 +43,13 @@ import net.shop.web.services.FormImplicits.failSemigroup
 import utils.ShopUtils.dataPath
 
 trait ProductService extends ShiftUtils
-  with Selectors
-  with TraversingSpec
-  with DefaultLog
-  with FormValidation
-  with SecuredService 
-  with ServiceDependencies {
+    with Selectors
+    with TraversingSpec
+    with DefaultLog
+    with FormValidation
+    with SecuredService
+    with ServiceDependencies {
 
-  
   def deleteProduct(implicit fs: FileSystem) = for {
     r <- DELETE
     Path(_, "product" :: "delete" :: id :: Nil) <- path
@@ -155,8 +154,6 @@ trait ProductService extends ShiftUtils
       inputText(fieldPrefix + "title")(validateMapField(fieldPrefix + "title", ?("title").text)) <*>
       inputText(fieldPrefix + "description")(validateMapField(fieldPrefix + "description", ?("description").text)) <*>
       inputText(fieldPrefix + "properties")(validateProps) <*>
-      inputText(fieldPrefix + "options")(validateOptions) <*>
-      inputText(fieldPrefix + "userText")(validateUserText) <*>
       inputDouble(fieldPrefix + "price")(validateDouble(fieldPrefix + "price", ?("price").text)) <*>
       inputOptional(fieldPrefix + "discount_price")(validateOptional(fieldPrefix + "discount_price", s => Option(s.toDouble))) <*>
       inputInt(fieldPrefix + "soldCount")(validateDefault(0)) <*>
@@ -171,8 +168,6 @@ trait ProductService extends ShiftUtils
     try {
       (files, productFormlet validate params flatMap {
         case p @ ProductDetail(_,
-          _,
-          _,
           _,
           _,
           _,

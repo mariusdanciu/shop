@@ -45,8 +45,6 @@
 					<li class="active"><a href="#prod_desc" data-loc="description"></a></li>
 					<li data-snip="can_show_specs"><a href="#prod_specs"
 						data-loc="specs"></a></li>
-					<li data-snip="can_show_custom"><a href="#prod_customize"
-						data-loc="customize"></a></li>
 					<li id="edit_tab" data-permissions="write"><a href="#edit"
 						data-loc="edit"></a></li>
 				</ul>
@@ -64,13 +62,6 @@
 				</table>
 			</div>
 
-			<div id="prod_customize" class="prod_specs tab_content"
-				data-snip="can_show_custom">
-				<div class="row top10" data-snip="customize">
-					<span class="content"></span>
-				</div>
-			</div>
-
 			<div id="edit" class="tab_content" data-permissions="write">
 
 				<form id="edit_form" method="POST" data-snip="edit">
@@ -83,7 +74,6 @@
 									data-loc="product.info"></a></li>
 								<li><a href="#edit_specs" data-loc="specs"></a></li>
 								<li><a href="#edit_textzone" data-loc="description"></a></li>
-								<li><a href="#edit_customize" data-loc="customize"></a></li>
 								<li><a href="#edit_files" data-loc="files"></a></li>
 							</ul>
 						</div>
@@ -164,38 +154,6 @@
 							<textarea class="edit_toggle" id="edit_description"
 								name="edit_description"></textarea>
 							<div class="edit_toggle preview" id="edit_description_view"></div>
-						</div>
-
-						<div id="edit_customize" class="form_specs tab_content">
-							<ul>
-								<li>
-									<div id="add_edit_custom_prop"
-										class="clickable sprite sprite-plus left"></div>
-									<div class="specs_title left10" data-loc="add.options"></div>
-								</li>
-								<li>
-									<div id="add_edit_custom_text"
-										class="clickable sprite sprite-plus left"></div>
-									<div class="specs_title left10" data-loc="add.text"></div>
-								</li>
-							</ul>
-							<div id="prop_edit_custom_fields" class="row">
-								<div class="edit_user_options">
-									<div class="edit_custom_options_sample">
-										<div class='row'>
-											<input type='text' name='customkey' /> <input type='text'
-												name='customval' /> <span
-												class='clickable sprite sprite-minus top5 left left10'></span>
-										</div>
-									</div>
-									<div class="edit_custom_text_sample">
-										<div class='row'>
-											<input type='text' name='customtext' /> <span
-												class='clickable sprite sprite-minus top5 left left10'></span>
-										</div>
-									</div>
-								</div>
-							</div>
 						</div>
 
 						<div id="edit_files" class="tab_content">

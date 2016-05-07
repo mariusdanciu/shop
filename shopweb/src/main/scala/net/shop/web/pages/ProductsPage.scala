@@ -44,10 +44,6 @@ trait ProductsPage extends Cart[Request] with ServiceDependencies {
       case Xml("li", HasClass("item", a), childs)           => <li>{ childs }</li>
       case Xml("div", HasClass("item_box", a), childs)      => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
       case Xml("div", HasClass("info_tag_text", a), childs) => <div>{ prod title_? (s.state.lang.name) }</div> % a
-      case Xml("div", HasClass("info_tag_cart", a), childs) => if (prod.options.isEmpty && prod.userText.isEmpty)
-        Xml("div", a) / childs
-      else
-        NodeSeq.Empty
       case Xml("div", HasClass("info_tag_price", a), childs) => priceTag(prod) % a
       case Xml("div", HasId("unique_ribbon", a), childs) => if (prod.unique)
         <div class="unique_label" data-loc="unique"></div>

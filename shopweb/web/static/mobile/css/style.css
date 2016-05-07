@@ -88,6 +88,10 @@ li {
 	background: #296872;
 }
 
+.width100 {
+	width: 100%;
+}
+
 #logo {
 	top: 10px;
 	margin: auto;
@@ -338,9 +342,10 @@ li {
 	height: 40px;
 }
 
-.cart_view {
+#order_info {
 	clear: both;
 	width: 100%;
+	display: none;
 }
 
 .prod_number {
@@ -355,4 +360,11 @@ li {
 }
 .left10 {
 	margin-left: 10px;
+}
+
+#step1, #step3 {
+	display: none;
+}
+.transport {
+	float: right;
 }

@@ -34,8 +34,6 @@ case class ProductDetail(id: Option[String] = None,
                          title: Map[String, String],
                          description: Map[String, String],
                          properties: Map[String, String],
-                         options: Map[String, List[String]],
-                         userText: List[String],
                          price: Double,
                          discountPrice: Option[Double],
                          soldCount: Int,
@@ -52,13 +50,13 @@ case class ProductDetail(id: Option[String] = None,
   def actualPrice = discountPrice getOrElse price
 
   def title_?(l: String) = title.getOrElse(l, "???")
-  
+
   def description_?(l: String) = description.getOrElse(l, "???")
 
-  def toProductLog(userOptions: Map[String, String], quantity: Int) = ProductLog(stringId, actualPrice, quantity, userOptions)
+  def toProductLog(quantity: Int) = ProductLog(stringId, actualPrice, quantity)
 }
 
-case class CartItem(id: String, count: Int, userOptions: Map[String, String] = Map.empty)
+case class CartItem(id: String, count: Int)
 
 case class Cart(items: List[CartItem])
 
@@ -79,9 +77,9 @@ case class Order(id: String,
                  phone: String,
                  terms: Boolean,
                  transport: Transport,
-                 items: List[(ProductDetail, Map[String, String], Int)]) {
+                 items: List[(ProductDetail, Int)]) {
 
-  def toOrderLog = OrderLog(id, new Date(), submitter, address, email, phone, transport, items map { i => i._1.toProductLog(i._2, i._3) })
+  def toOrderLog = OrderLog(id, new Date(), submitter, address, email, phone, transport, items map { i => i._1.toProductLog(i._2) })
 }
 
 object OrderStatus {
@@ -124,7 +122,7 @@ case class OrderLog(id: String,
   lazy val total = (0.0 /: items)((a, i) => a + i.price * i.quantity)
 }
 
-case class ProductLog(id: String, price: Double, quantity: Int, userOptions: Map[String, String])
+case class ProductLog(id: String, price: Double, quantity: Int)
 
 object Formatter {
   def format[T: Formatter](v: T)(implicit lang: Language, fs: FileSystem): String = {

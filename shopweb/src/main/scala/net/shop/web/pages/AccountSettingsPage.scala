@@ -194,7 +194,6 @@ trait AccountSettingsPage extends Cart[SettingsPageState] with IODefaults with S
                           case Xml("td", HasClass("c2", a), _) => <td>{ title }</td> % a
                           case Xml("td", HasClass("c3", a), _) => <td>{ item.quantity }</td> % a
                           case Xml("td", HasClass("c4", a), _) => <td>{ price(item.price) }</td> % a
-                          case Xml("td", HasClass("c5", a), _) => <td>{ optsToNode(item.userOptions) }</td> % a
                         } getOrElse NodeSeq.Empty
                       }</tr>
                     }
