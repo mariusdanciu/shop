@@ -94,17 +94,7 @@ trait OrderService extends HttpPredicates with FormValidation with TraversingSpe
           (v validate norm) match {
             case Valid(o) =>
               Future {
-                resp(JsResponse(
-                  func() {
-                    JsStatement(
-                      apply("cart.hideCart"),
-                      apply("window.cart.clear"),
-                      $(s"#notice_i") ~
-                        apply("text", Loc.loc0(r.language)("order.done").text) ~
-                        apply("show") ~
-                        apply("delay", "5000") ~
-                        apply("fadeOut", "slow"))
-                  }.wrap.apply.toJsString))
+                resp(JsonResponse(s"""{"msg" : "${Loc.loc0(r.language)("order.done").text}"}"""))
               }
               Future {
                 val order = new OrderPage {
@@ -127,16 +117,7 @@ trait OrderService extends HttpPredicates with FormValidation with TraversingSpe
           }
 
         case Failure(t) =>
-          resp(JsResponse(
-            func() {
-              JsStatement(
-                apply("cart.hideCart"),
-                $(s"#notice_e") ~
-                  apply("text", Loc.loc0(r.language)("order.fail").text) ~
-                  apply("show") ~
-                  apply("delay", "5000") ~
-                  apply("fadeOut", "slow"))
-            }.wrap.apply.toJsString))
+          resp(JsonResponse(s"""{"msg" : "${Loc.loc0(r.language)("order.fail").text}"}"""))
       }
     })
   }

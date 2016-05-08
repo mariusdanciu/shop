@@ -82,9 +82,9 @@ object OrderForm {
 
   def validTransport(id: String)(implicit lang: Language): ValidationFunc[Transport] =
     env => env.get("transport") match {
-      case Some(FormField("1")) => Valid(Transport(Loc.loc0(lang)("transport.1").text, 19.99f))
-      case Some(FormField("2")) => Valid(Transport(Loc.loc0(lang)("transport.2").text, 9.99f))
-      case _                    => Invalid(ValidationFail(FieldError(id, "error")))
+      case Some(FormField("19.99")) => Valid(Transport(Loc.loc0(lang)("transport.1").text, 19.99f))
+      case Some(FormField("9.99"))  => Valid(Transport(Loc.loc0(lang)("transport.2").text, 9.99f))
+      case _                        => Invalid(ValidationFail(FieldError(id, "error")))
     }
 
   def inputItems(name: String)(f: ValidationInput => Validation[ValidationFail, List[(ProductDetail, Int)]]) =

@@ -150,6 +150,16 @@
                         if (data.errors) {
                             common.showFormErrors(data.errors);
                         }
+                    },
+                    
+                    200: function(data) {
+                    	cart.hideCart();
+                        window.cart.clear();
+                        $("#notice_i")
+                          .text(data.msg)
+                          .show()
+                          .delay(5000)
+                          .fadeOut("slow")
                     }
                 }
             });
@@ -161,6 +171,14 @@
                 var text = $(this).val();
                 window.location.href = '/products?search=' + text;
             }
+        });
+        
+        $("#transport_pf").change(function(e) {
+        	window.cart.updateSubmitText("pf");
+        });
+        
+        $("#transport_pj").change(function(e) {
+        	window.cart.updateSubmitText("pj");
         });
         
         window.cart.loadView();
@@ -546,7 +564,11 @@ var cart = {
     },
 
     updateSubmitText : function(suffix) {
-        var pret = cart.computeTotal(0);
+    	var transp = $("#transport_pf").val();
+    	if (suffix === "pj")
+    	   transp = $("#transport_pj").val();
+    		 
+        var pret = cart.computeTotal(parseFloat(transp));
         var text = window.submitText + " <b> " + pret + " Lei </b>";
         $(".submit_" + suffix).html(text);
     },

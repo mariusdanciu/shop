@@ -232,7 +232,17 @@ trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies 
             case HasId("edit_unique", attrs) =>
               val a = attrs + ("value", "true")
               Xml("input", if (!p.unique) a else a + ("checked", p.unique.toString))
-            case HasId("edit_description", attrs)                     => Xml("textarea", attrs) / Text(desc)
+            case HasId("edit_description", attrs) => Xml("textarea", attrs) / Text(desc)
+            case n @ HasId("edit_prop_fields", attrs) =>
+              val res = for { (k, v) <- p.properties } yield {
+                (bind(n.child) {
+                  case e @ HasName("pkey", attrs) => Xml(e.label, XmlAttr(attrs.attrs + ("value" -> k)))
+                  case e @ HasName("pval", attrs) => Xml(e.label, XmlAttr(attrs.attrs + ("value" -> v)))
+                }).getOrElse(NodeSeq.Empty).flatten
+              }
+
+              NodeSeq.fromSeq(res.flatten.toSeq)
+
           }) match {
             case Success(n) => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), n)
             case _          => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node)

@@ -58,7 +58,6 @@
 
         admin.addProp("#add_prop", "#prop_fields", "pkey", "pval");
 
-
         admin.toggleDescription("create");
 
         document.onkeydown = function(evt) {
@@ -73,6 +72,7 @@
                 }
             }
         };
+        
     });
 
 })();
@@ -158,6 +158,7 @@ var admin = {
 
     addProp : function(elem, holder, key, val) {
         $(elem).click(function(event) {
+        	
             var div = $("<div class='row'></div>");
             div.append("<input type='text' name='" + key + "'/><input type='text' name='" + val + "'/>");
 
@@ -276,11 +277,12 @@ var admin = {
             return false;
         });
         parent.find('#edit_product_tab').tabify();
-        parent.find("#edit_specs .row span").click(function(e) {
+        parent.find("#edit_specs .row div").click(function(e) {
             var row = $(this).parent();
             row.remove();
             return false;
         });
+        admin.addProp("#edit_add_prop", "#edit_specs", "pkey", "pval");
 
         admin.toggleDescription("edit");
     },

@@ -1,7 +1,5 @@
 (function() {
 	$(function() {
-
-		$('input')
 	})
 })();
 

@@ -1,11 +1,13 @@
 <html>
 <head>
 
-<meta name="keywords" content="handmade, manual, bijuterii, jucarii, tablouri, vase ceramice si sticla, ceasuri, genti, perne etc." />
+<meta name="keywords"
+	content="handmade, manual, bijuterii, jucarii, tablouri, vase ceramice si sticla, ceasuri, genti, perne etc." />
 
 <link href="/static/css/style.css" rel="stylesheet" type="text/css" />
 <link href="/static/css/sprite.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
 
 
 <script type="text/javascript" src="/static/js/jquery-2.0.3.min.js"></script>
@@ -15,278 +17,346 @@
 <script type="text/javascript" src="/static/js/jquery.tabify.js"></script>
 <script type="text/javascript" src="/static/js/jquery.base64.min.js"></script>
 <script type="text/javascript" src="/static/js/common.js"></script>
-<script type="text/javascript" src="http://connect.facebook.net/ro_RO/all.js"></script>
+<script type="text/javascript"
+	src="http://connect.facebook.net/ro_RO/all.js"></script>
 
 <script>
-    (function(i, s, o, g, r, a, m) {
-        i['GoogleAnalyticsObject'] = r;
-        i[r] = i[r] || function() {
-            (i[r].q = i[r].q || []).push(arguments)
-        }, i[r].l = 1 * new Date();
-        a = s.createElement(o), m = s.getElementsByTagName(o)[0];
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m)
-    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script', '//www.google-analytics.com/analytics.js',
+			'ga');
 
-    ga('create', 'UA-63050669-1', 'auto');
-    ga('send', 'pageview');
+	ga('create', 'UA-63050669-1', 'auto');
+	ga('send', 'pageview');
 </script>
 
 </head>
 
 <body>
-  <div class="fb-root"></div>
-  <div class="wrap">
+	<div class="fb-root"></div>
+	<div class="wrap">
 
-    <div class="header">
-      <div class="header_top">
-        <div class="center">
-          <div id="logo">
-            <a href="/">
-              <div id="logo_img"></div>
-            </a>
-          </div>
+		<div class="header">
+			<div class="header_top">
+				<div class="center">
+					<div id="logo">
+						<a href="/">
+							<div id="logo_img"></div>
+						</a>
+					</div>
 
-          <div class="header_container">
+					<div class="header_container">
 
-            <div class="head_links">
-              <ul>
-                <li><a href="/aboutus"><div data-loc="about.us"></div></a></li>
-                <li><a href="/"><div data-loc="main.page"></div></a></li>
-                <li><a href="/products?search=:onsale"><div data-loc="onsale"></div></a></li>
-                <li><a href="http://ididhandmade.blogspot.ro/"><div>Blog</div></a></li>
-              </ul>
-            </div>
+						<div class="head_links">
+							<ul>
+								<li><a href="/aboutus"><div data-loc="about.us"></div></a></li>
+								<li><a href="/"><div data-loc="main.page"></div></a></li>
+								<li><a href="/products?search=:onsale"><div
+											data-loc="onsale"></div></a></li>
+								<li><a href="http://ididhandmade.blogspot.ro/"><div>Blog</div></a></li>
+							</ul>
+						</div>
 
-            <div class="header_symbol header_symbol_top">
-              <ul>
-                <li id="search"><input class="search_text sprite sprite-search" type="text" placeholder="loc:search" /></li>
-                <li id="settings_symbol" data-permissions="read"><a href="/accountsettings"><span class="sprite sprite-settings" /></a></li>
-                <li id="cart_symbol"><a href="#"><span class="sprite sprite-cart_white" /></a></li>
-                <li id="user_symbol"><a href="#"><span class="sprite sprite-user" /></a></li>
-                <li id="current_user"><span data-snip="user"></span></li>
-                <li id="logout" data-permissions="read"><a href="#"><span class="sprite sprite-logout" /></a></li>
-              </ul>
-            </div>
+						<div class="header_symbol header_symbol_top">
+							<ul>
+								<li id="search"><input
+									class="search_text sprite sprite-search" type="text"
+									placeholder="loc:search" /></li>
+								<li id="settings_symbol" data-permissions="read"><a
+									href="/accountsettings"><span
+										class="sprite sprite-settings" /></a></li>
+								<li id="cart_symbol"><a href="#"><span
+										class="sprite sprite-cart_white" /></a></li>
+								<li id="user_symbol"><a href="#"><span
+										class="sprite sprite-user" /></a></li>
+								<li id="current_user"><span data-snip="user"></span></li>
+								<li id="logout" data-permissions="read"><a href="#"><span
+										class="sprite sprite-logout" /></a></li>
+							</ul>
+						</div>
 
-          </div>
-        </div>
+					</div>
+				</div>
 
-      </div>
-      <div class="controls">
-        <div id="content_head"></div>
-      </div>
-    </div>
-    <div class="fb_area"></div>
-    <div id="notice_e"></div>
-    <div id="notice_connect_e" data-snip="connect_error"></div>
-    <div id="notice_i"></div>
-    <div id="content"></div>
-  </div>
-  <div class="footer">
-    <div class="center">
-      <div class="column">
-        <ul>
-          <li><i class="fa fa-copyright"></i>&amp;nbsp; Copyright (c) 2014</li>
-          <li><i class="fa fa-envelope-o"></i>&amp;nbsp; E-mail: <a href="mailto:office@idid.ro">office@idid.ro</a></li>
-          <li><i class="fa fa-phone"></i>&amp;nbsp; Telefon: 0724-556226</li>
-        </ul>
-      </div>
-      <div class="column left30">
-        <ul>
-          <li><i class="fa fa-pencil"></i>&amp;nbsp;<a href="/terms" data-loc="terms.link"></a></li>
-          <li><i class="fa fa-database"></i>&amp;nbsp;<a href="/dataprotection" data-loc="data.protection.link"></a></li>
-          <li><i class="fa fa-reply"></i>&amp;nbsp;<a href="/returnpolicy" data-loc="return.policy.link"></a></li>
-        </ul>
-      </div>
-      <div class="column left30">
-        <ul>
-          <li><i class="fa fa-bars"></i>&amp;nbsp;<a href="/cookies" data-loc="data.cookies.link"></a></li>
-          <li><a href="http://www.anpc.gov.ro/">ANPC</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
+			</div>
+			<div class="controls">
+				<div id="content_head"></div>
+			</div>
+		</div>
+		<div class="fb_area"></div>
+		<div id="notice_e"></div>
+		<div id="notice_connect_e" data-snip="connect_error"></div>
+		<div id="notice_i"></div>
+		<div id="content"></div>
+	</div>
+	<div class="footer">
+		<div class="center">
+			<div class="column">
+				<ul>
+					<li><i class="fa fa-copyright"></i>&amp;nbsp; Copyright (c)
+						2014</li>
+					<li><i class="fa fa-envelope-o"></i>&amp;nbsp; E-mail: <a
+						href="mailto:office@idid.ro">office@idid.ro</a></li>
+					<li><i class="fa fa-phone"></i>&amp;nbsp; Telefon: 0724-556226</li>
+				</ul>
+			</div>
+			<div class="column left30">
+				<ul>
+					<li><i class="fa fa-pencil"></i>&amp;nbsp;<a href="/terms"
+						data-loc="terms.link"></a></li>
+					<li><i class="fa fa-database"></i>&amp;nbsp;<a
+						href="/dataprotection" data-loc="data.protection.link"></a></li>
+					<li><i class="fa fa-reply"></i>&amp;nbsp;<a
+						href="/returnpolicy" data-loc="return.policy.link"></a></li>
+				</ul>
+			</div>
+			<div class="column left30">
+				<ul>
+					<li><i class="fa fa-bars"></i>&amp;nbsp;<a href="/cookies"
+						data-loc="data.cookies.link"></a></li>
+					<li><a href="http://www.anpc.gov.ro/">ANPC</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
 
-  <div id="user_popup">
-    <form action="/auth" id="login_form" method="POST">
-      <div class="fields">
-        <div class="row">
-          <label for="username" data-loc="email"></label> <input id="username" type="text" name="username" />
-        </div>
-        <div class="row">
-          <label for="password" data-loc="password"></label><input id="password" type="password" name="password" />
-        </div>
-      </div>
-    </form>
-    <div class="row_simple auth bordertop top10">
-      <a id="authgo" href="#" data-loc="authenticate"></a> <a id="forgotpass" href="#" data-loc="forgot.password"></a> <a id="newuser" href="#"
-        data-loc="new.user"></a>
-    </div>
-  </div>
+	<div id="user_popup">
+		<form action="/auth" id="login_form" method="POST">
+			<div class="fields">
+				<div class="row">
+					<label for="username" data-loc="email"></label> <input
+						id="username" type="text" name="username" />
+				</div>
+				<div class="row">
+					<label for="password" data-loc="password"></label><input
+						id="password" type="password" name="password" />
+				</div>
+			</div>
+		</form>
+		<div class="row_simple auth bordertop top10">
+			<a id="authgo" href="#" data-loc="authenticate"></a> <a
+				id="forgotpass" href="#" data-loc="forgot.password"></a> <a
+				id="newuser" href="#" data-loc="new.user"></a>
+		</div>
+	</div>
 
-  <div id="newuser_popup">
-    <div class="title_dialog" data-loc="new.user"></div>
-    <div class="close_dialog">
-      <span class="sprite sprite-close" />
-    </div>
-    <div class="content_dialog">
-      <div class="column">
-        <span class="sprite sprite-useradd" />
-      </div>
-      <div class="column userinputs">
-        <form action="/create/user" id="newuser_form" method="POST">
-          <div class="fields">
-            <div class="row">
-              <label for="cu_firstName" data-loc="first.name"></label> <input id="cu_firstName" type="text" name="cu_firstName" />
-            </div>
-            <div class="row">
-              <label for="cu_lastName" data-loc="last.name"></label><input id="cu_lastName" type="text" name="cu_lastName" />
-            </div>
-            <div class="row">
-              <label for="cu_cnp" data-loc="cnp"></label><input id="cu_cnp" type="text" name="cu_cnp" />
-            </div>
-            <div class="row">
-              <label for="cu_phone" data-loc="phone"></label><input id="cu_phone" type="text" name="cu_phone" />
-            </div>
-            <div class="row">
-              <label for="cu_email" data-loc="email"></label><input id="cu_email" type="text" name="cu_email" />
-            </div>
-            <div class="row">
-              <label for="cu_password" data-loc="password"></label><input id="cu_password" type="password" name="cu_password" />
-            </div>
-            <div class="row">
-              <label for="cu_password2" data-loc="retype.password"></label><input id="cu_password2" type="password" name="cu_password2" />
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div class="dialog_footer">
-      <div id="save_user">
-        <a class="btn" href="#" data-loc="save"></a>
-      </div>
-    </div>
-  </div>
+	<div id="newuser_popup">
+		<div class="title_dialog" data-loc="new.user"></div>
+		<div class="close_dialog">
+			<span class="sprite sprite-close" />
+		</div>
+		<div class="content_dialog">
+			<div class="column">
+				<span class="sprite sprite-useradd" />
+			</div>
+			<div class="column userinputs">
+				<form action="/create/user" id="newuser_form" method="POST">
+					<div class="fields">
+						<div class="row">
+							<label for="cu_firstName" data-loc="first.name"></label> <input
+								id="cu_firstName" type="text" name="cu_firstName" />
+						</div>
+						<div class="row">
+							<label for="cu_lastName" data-loc="last.name"></label><input
+								id="cu_lastName" type="text" name="cu_lastName" />
+						</div>
+						<div class="row">
+							<label for="cu_cnp" data-loc="cnp"></label><input id="cu_cnp"
+								type="text" name="cu_cnp" />
+						</div>
+						<div class="row">
+							<label for="cu_phone" data-loc="phone"></label><input
+								id="cu_phone" type="text" name="cu_phone" />
+						</div>
+						<div class="row">
+							<label for="cu_email" data-loc="email"></label><input
+								id="cu_email" type="text" name="cu_email" />
+						</div>
+						<div class="row">
+							<label for="cu_password" data-loc="password"></label><input
+								id="cu_password" type="password" name="cu_password" />
+						</div>
+						<div class="row">
+							<label for="cu_password2" data-loc="retype.password"></label><input
+								id="cu_password2" type="password" name="cu_password2" />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="dialog_footer">
+			<div id="save_user">
+				<a class="btn" href="#" data-loc="save"></a>
+			</div>
+		</div>
+	</div>
 
 
-  <div id="cart_popup">
-    <div id="cart_empty" data-loc="cart.empty"></div>
-    <div id="cart_notice"></div>
-    <div id="cart_content"></div>
-    <div id="order">
-      <ul id="menu" class="menu">
-        <li class="active"><a href="#pf" data-loc="person"></a></li>
-        <li><a href="#pj" data-loc="company"></a></li>
-      </ul>
-      <div id="pf" class="content">
-        <form id="order_form">
-          <div class="column cart_form_column">
-            <div class="row">
-              <label for="fname" data-loc="first.name"></label><input id="fname" name="fname" type="text" />
-            </div>
-            <div class="row">
-              <label for="lname" data-loc="last.name"></label><input id="lname" name="lname" type="text" />
-            </div>
-            <div class="row">
-              <label for="email" data-loc="email"></label><input id="email" name="email" type="text" />
-            </div>
-            <div class="row">
-              <label for="phone" data-loc="phone"></label><input id="phone" name="phone" type="text" />
-            </div>
-            <div class="row">
-              <label for="cnp" data-loc="cnp"></label><input id="cnp" name="cnp" type="text" />
-            </div>
-          </div>
-          <div class="column cart_form_column left10">
-            <div class="row address_nav">
-              <span class="btn left_arrow">&#x2190;</span> <span class="address_name"></span> <span class="btn right_arrow">&#x2192;</span>
-            </div>
-            <div class="row">
-              <label for="region" data-loc="region"></label><input id="region" name="region" type="text" />
-            </div>
-            <div class="row">
-              <label for="city" data-loc="city"></label><input id="city" name="city" type="text" />
-            </div>
-            <div class="row">
-              <label for="address" data-loc="address"></label><input id="address" name="address" type="text" />
-            </div>
-            <div class="row">
-              <label for="zip" data-loc="zip"></label><input id="zip" name="zip" type="text" />
-            </div>
-          </div>
+	<div id="cart_popup">
+		<div id="cart_empty" data-loc="cart.empty"></div>
+		<div id="cart_notice"></div>
+		<div id="cart_content"></div>
+		<div id="order">
+			<ul id="menu" class="menu">
+				<li class="active"><a href="#pf" data-loc="person"></a></li>
+				<li><a href="#pj" data-loc="company"></a></li>
+			</ul>
+			<div id="pf" class="content">
+				<form id="order_form">
+					<div class="column cart_form_column">
+						<div class="row">
+							<label for="fname" data-loc="first.name"></label><input
+								id="fname" name="fname" type="text" />
+						</div>
+						<div class="row">
+							<label for="lname" data-loc="last.name"></label><input id="lname"
+								name="lname" type="text" />
+						</div>
+						<div class="row">
+							<label for="email" data-loc="email"></label><input id="email"
+								name="email" type="text" />
+						</div>
+						<div class="row">
+							<label for="phone" data-loc="phone"></label><input id="phone"
+								name="phone" type="text" />
+						</div>
+						<div class="row">
+							<label for="cnp" data-loc="cnp"></label><input id="cnp"
+								name="cnp" type="text" />
+						</div>
+					</div>
+					<div class="column cart_form_column left10">
+						<div class="row address_nav">
+							<span class="btn left_arrow">&#x2190;</span> <span
+								class="address_name"></span> <span class="btn right_arrow">&#x2192;</span>
+						</div>
+						<div class="row">
+							<label for="region" data-loc="region"></label><input id="region"
+								name="region" type="text" />
+						</div>
+						<div class="row">
+							<label for="city" data-loc="city"></label><input id="city"
+								name="city" type="text" />
+						</div>
+						<div class="row">
+							<label for="address" data-loc="address"></label><input
+								id="address" name="address" type="text" />
+						</div>
+						<div class="row">
+							<label for="zip" data-loc="zip"></label><input id="zip"
+								name="zip" type="text" />
+						</div>
+						<div class="row">
+							<select id="transport_pf" class="transport" name="transport">
+								<option value="19.99" data-loc="transport.1"></option>
+								<option value="9.99" data-loc="transport.2"></option>
+							</select>
+						</div>
 
-          <div class="row">
-            <div id="terms_wrapper">
-              <input id="terms" name="terms" type="checkbox" /> <label for="terms" data-loc="terms.and.conds"></label>
-            </div>
-            <div class="order_button">
-              <a id="buy_final" class="btn submit_pf" href="#" data-loc="buy_final"></a>
-            </div>
-          </div>
+					</div>
 
-        </form>
-      </div>
-      <div id="pj" class="content">
-        <form id="order_form_company">
-          <div class="column cart_form_column">
-            <div class="row">
-              <label for="cname" data-loc="company.name"></label><input id="cname" name="cname" type="text" />
-            </div>
-            <div class="row">
-              <label for="cif" data-loc="company.cif"></label><input id="cif" name="cif" type="text" />
-            </div>
-            <div class="row">
-              <label for="cregcom" data-loc="company.reg.com"></label><input id="cregcom" name="cregcom" type="text" />
-            </div>
-            <div class="row">
-              <label for="cbank" data-loc="company.bank"></label><input id="cbank" name="cbank" type="text" />
-            </div>
-            <div class="row">
-              <label for="cbankaccount" data-loc="company.bank.account"></label><input id="cbankaccount" name="cbankaccount" type="text" />
-            </div>
-            <div class="row">
-              <label for="cemail" data-loc="email"></label><input id="cemail" name="cemail" type="text" />
-            </div>
-            <div class="row">
-              <label for="cphone" data-loc="phone"></label><input id="cphone" name="cphone" type="text" />
-            </div>
-          </div>
-          <div class="column cart_form_column left10">
-            <div class="row address_nav">
-              <span class="btn left_arrow">&#x2190;</span> <span class="address_name"></span> <span class="btn right_arrow">&#x2192;</span>
-            </div>
-            <div class="row">
-              <label for="cregion" data-loc="region"></label><input id="cregion" name="cregion" type="text" />
-            </div>
-            <div class="row">
-              <label for="ccity" data-loc="city"></label><input id="ccity" name="ccity" type="text" />
-            </div>
-            <div class="row">
-              <label for="caddress" data-loc="address"></label><input id="caddress" name="caddress" type="text" />
-            </div>
-            <div class="row">
-              <label for="czip" data-loc="zip"></label><input id="czip" name="czip" type="text" />
-            </div>
-          </div>
-          <div class="row">
-            <div id="terms_wrapper">
-              <input id="cterms" name="terms" type="checkbox" /> <label for="cterms" data-loc="terms.and.conds"></label>
-            </div>
-            <div class="order_button">
-              <a id="c_buy_final_comp" class="btn submit_pj" href="#" data-loc="buy_final"> <span></span></a>
-            </div>
-          </div>
+					<div class="row top10">
+						<div id="terms_wrapper">
+							<input id="terms" name="terms" type="checkbox" /> <label
+								for="terms" data-loc="terms.and.conds"></label>
+						</div>
+						<div class="order_button">
+							<a id="buy_final" class="btn submit_pf" href="#"
+								data-loc="buy_final"></a>
+						</div>
+					</div>
 
-        </form>
-      </div>
-    </div>
-    <div id="cart_footer">
-      <span id="total">0 Lei</span> <a id="buy_step1" href="#" data-loc="buy_step1"></a> <a id="terms_link" href="/terms" target="_blank"
-        data-loc="terms.link"></a> <a id="buy_step0" href="#" data-loc="buy_step0"></a>
-    </div>
-  </div>
+				</form>
+			</div>
+			<div id="pj" class="content">
+				<form id="order_form_company">
+					<div class="column cart_form_column">
+						<div class="row">
+							<label for="cname" data-loc="company.name"></label><input
+								id="cname" name="cname" type="text" />
+						</div>
+						<div class="row">
+							<label for="cif" data-loc="company.cif"></label><input id="cif"
+								name="cif" type="text" />
+						</div>
+						<div class="row">
+							<label for="cregcom" data-loc="company.reg.com"></label><input
+								id="cregcom" name="cregcom" type="text" />
+						</div>
+						<div class="row">
+							<label for="cbank" data-loc="company.bank"></label><input
+								id="cbank" name="cbank" type="text" />
+						</div>
+						<div class="row">
+							<label for="cbankaccount" data-loc="company.bank.account"></label><input
+								id="cbankaccount" name="cbankaccount" type="text" />
+						</div>
+						<div class="row">
+							<label for="cemail" data-loc="email"></label><input id="cemail"
+								name="cemail" type="text" />
+						</div>
+						<div class="row">
+							<label for="cphone" data-loc="phone"></label><input id="cphone"
+								name="cphone" type="text" />
+						</div>
+					</div>
+					<div class="column cart_form_column left10">
+						<div class="row address_nav">
+							<span class="btn left_arrow">&#x2190;</span> <span
+								class="address_name"></span> <span class="btn right_arrow">&#x2192;</span>
+						</div>
+						<div class="row">
+							<label for="cregion" data-loc="region"></label><input
+								id="cregion" name="cregion" type="text" />
+						</div>
+						<div class="row">
+							<label for="ccity" data-loc="city"></label><input id="ccity"
+								name="ccity" type="text" />
+						</div>
+						<div class="row">
+							<label for="caddress" data-loc="address"></label><input
+								id="caddress" name="caddress" type="text" />
+						</div>
+						<div class="row">
+							<label for="czip" data-loc="zip"></label><input id="czip"
+								name="czip" type="text" />
+						</div>
+						<div class="row">
+							<select id="transport_pj" class="transport" name="transport">
+								<option value="19.99" data-loc="transport.1"></option>
+								<option value="9.99" data-loc="transport.2"></option>
+							</select>
+						</div>
+
+					</div>
+					<div class="row">
+						<div id="terms_wrapper">
+							<input id="cterms" name="terms" type="checkbox" /> <label
+								for="cterms" data-loc="terms.and.conds"></label>
+						</div>
+						<div class="order_button">
+							<a id="c_buy_final_comp" class="btn submit_pj" href="#"
+								data-loc="buy_final"> <span></span></a>
+						</div>
+					</div>
+
+				</form>
+			</div>
+		</div>
+		<div id="cart_footer">
+			<span id="total">0 Lei</span> <a id="buy_step1" href="#"
+				data-loc="buy_step1"></a> <a id="terms_link" href="/terms"
+				target="_blank" data-loc="terms.link"></a> <a id="buy_step0"
+				href="#" data-loc="buy_step0"></a>
+		</div>
+	</div>
 </body>
 </html>
 
