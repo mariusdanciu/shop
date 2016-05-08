@@ -48,6 +48,32 @@ li {
 	float: left;
 }
 
+#notice_e, #notice_connect_e {
+	background-color: #B43104;
+	border: 1px solid #8A2908;
+	color: #ffffff;
+	font-size: 20px;
+	padding-top: 5px;
+	position: relative;
+	text-align: center;
+	width: 100%;
+	display: none;
+	z-index: 9999;
+}
+
+#notice_i {
+	background-color: #4B8A08;
+	border: 1px solid #38610B;
+	color: #ffffff;
+	font-size: 20px;
+	padding-top: 5px;
+	position: relative;
+	text-align: center;
+	width: 100%;
+	display: none;
+	z-index: 9999;
+}
+
 .menu {
 	padding: 0;
 	clear: both;
@@ -182,7 +208,6 @@ li {
 	display: none;
 	clear: both;
 }
-
 
 .tools {
 	width: 100%;
@@ -351,6 +376,7 @@ li {
 .prod_number {
 	margin-top: 10px;
 }
+
 .prod_number input {
 	width: 50px;
 }
@@ -358,6 +384,7 @@ li {
 .prod_remove {
 	margin-top: 10px;
 }
+
 .left10 {
 	margin-left: 10px;
 }
@@ -365,6 +392,7 @@ li {
 #step1, #step3 {
 	display: none;
 }
+
 .transport {
 	float: right;
 }

@@ -103,7 +103,16 @@
 							if (data.errors) {
 								window.cart.showFormErrors(data.errors);
 							}
-						}
+						},
+						
+	                    200: function(data) {
+	                        window.cart.clear();
+	                        $('#notice_i')
+	                          .text(data.msg)
+	                          .show()
+	                          .delay(5000)
+	                          .fadeOut('slow');
+	                    }
 					}
 				});
 
@@ -173,8 +182,8 @@
 					</div>
 					<div class="row">
 						<select id="transport_pf" class="transport" name="transport">
-							<option value="1" data-loc="transport.1"></option>
-							<option value="2" data-loc="transport.2"></option>
+							<option value="19.99" data-loc="transport.1"></option>
+							<option value="9.99" data-loc="transport.2"></option>
 						</select>
 					</div>
 
@@ -237,8 +246,8 @@
 					</div>
 					<div class="row">
 						<select id="transport_pj" class="transport" name="transport">
-							<option value="1" data-loc="transport.1"></option>
-							<option value="2" data-loc="transport.2"></option>
+							<option value="19.99" data-loc="transport.1"></option>
+							<option value="9.99" data-loc="transport.2"></option>
 						</select>
 					</div>
 
