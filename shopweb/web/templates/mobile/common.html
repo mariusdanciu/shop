@@ -46,6 +46,10 @@
 				$('.search .box #text').focus();
 			});
 
+			$('#user').click(function() {
+				$('#login').toggle();
+			});
+
 		})
 	})();
 </script>
@@ -68,15 +72,31 @@
 				<img src="/static/mobile/images/arrows.png" />
 			</div>
 			<div class="icon" id="search">
-				<img src="/static/images/search.png" />
+				<img src="/static/mobile/images/search.png" />
 			</div>
 			<div class="icon">
-				<a href="/mobile/cart"><img src="/static/images/commerce.png" /></a>
+				<a href="/mobile/cart"><img
+					src="/static/mobile/images/commerce.png" /></a>
+			</div>
+			<div class="icon" id="user">
+				<img src="/static/mobile/images/user.png" />
 			</div>
 		</div>
 	</div>
 	<div class="search">
 		<input id="text" type="text" />
+	</div>
+	<div id="login">
+		<form action="/auth" id="login_form" method="POST">
+			<div class="row">
+				<label for="username" data-loc="email"></label><input id="username"
+					name="username" type="text" />
+			</div>
+			<div class="row">
+				<label for="password" data-loc="password"></label><input
+					id="password" name="password" type="password" />
+			</div>
+		</form>
 	</div>
 	<div id="notice_e"></div>
 	<div id="notice_connect_e" data-snip="connect_error"></div>

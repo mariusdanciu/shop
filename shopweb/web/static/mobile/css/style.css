@@ -230,7 +230,7 @@ li {
 
 .search #text {
 	height: 40px;
-	border: 1px solid #ddd;
+	border: none;
 	width: 100%;
 	color: #fff;
 	background: #333;
@@ -316,8 +316,9 @@ li {
 	clear: both;
 }
 
-.cart_form .row {
-	margin-top: 10px;
+.row {
+	padding-top: 5px;
+	padding-bottom: 5px;
 	width: 100%;
 	text-align: left;
 	clear: both;
@@ -395,4 +396,33 @@ li {
 
 .transport {
 	float: right;
+}
+
+#login {
+	padding-left: 20px;
+	background-color: #ccc;
+	clear: both;
+	width: 100%;
+	display: none;
+}
+
+#login label {
+	float: left;
+	margin-top: 10px;
+}
+
+#login input {
+	disaply: inline-block;
+	width: calc(100% - 100px);
+	background-color: #999;
+	border: none;
+	margin-left: 20px;
+	float: right;
+	height: 48px;
+	margin-right: 20px;
+	font-size: 24px;
+}
+
+#login .row {
+	height: 60px;
 }
