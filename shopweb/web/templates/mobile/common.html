@@ -49,7 +49,10 @@
 			$('#user').click(function() {
 				$('#login').toggle();
 			});
-
+			$('#auth').click(function(e) {
+				e.preventDefault();
+				false;
+			});
 		})
 	})();
 </script>
@@ -58,16 +61,12 @@
 
 <body>
 	<div class="fb-root"></div>
-	<div class="header">
-		<div id="logo">
-			<a href="/mobile">
-				<div id="logo_img"></div>
-			</a>
-		</div>
-	</div>
 	<div class="fb_area"></div>
 	<div class="tools">
 		<div class="box">
+			<div class="logo" id="logo">
+				<a href="/mobile"><img src="/static/mobile/images/idid.png" /></a>
+			</div>
 			<div class="icon back" data-snip="back">
 				<img src="/static/mobile/images/arrows.png" />
 			</div>
@@ -84,7 +83,7 @@
 		</div>
 	</div>
 	<div class="search">
-		<input id="text" type="text" />
+		<input id="text" type="text" placeholder="loc:search" />
 	</div>
 	<div id="login">
 		<form action="/auth" id="login_form" method="POST">
@@ -97,6 +96,9 @@
 					id="password" name="password" type="password" />
 			</div>
 		</form>
+		<div class="row">
+			<div id="auth" class="btn" data-loc="authenticate"></div>
+		</div>
 	</div>
 	<div id="notice_e"></div>
 	<div id="notice_connect_e" data-snip="connect_error"></div>

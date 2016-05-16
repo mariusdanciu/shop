@@ -105,31 +105,17 @@ li {
 	float: left;
 }
 
-.header {
-	position: relative;
-	width: 100%;
-	z-index: 80;
-	color: #ffffff;
-	height: 150px;
-	background: #296872;
-}
-
 .width100 {
 	width: 100%;
 }
 
 #logo {
-	top: 10px;
-	margin: auto;
-	width: 209px;
+	width: 100px;
 	position: relative;
-}
-
-#logo_img {
-	background-image: url('/static/images/idid_blue_l.png');
-	background-repeat: no-repeat;
-	width: 209px;
-	height: 126px;
+	height: 48px;
+	float: left;
+	cursor: pointer;
+	margin-right: 15px;
 }
 
 .btn {
@@ -214,22 +200,25 @@ li {
 }
 
 .tools .box {
-	padding: 10px;
-	background: #5998A2;
+	padding: 10px; #
+	background: #5998A2; #
+	background: #296872;
+	background: #fff;
 	overflow: hidden;
+	box-shadow: 0px 0px 5px 1px #aaa;
 }
 
 .tools .box .icon {
-	height: 32px;
+	height: 48px;
 	width: 32px;
 	float: left;
-	margin-top: 5px;
+	padding-top: 10px;
 	cursor: pointer;
 	margin-right: 15px;
 }
 
 .search #text {
-	height: 40px;
+	height: 48px;
 	border: none;
 	width: 100%;
 	color: #fff;
@@ -400,10 +389,11 @@ li {
 
 #login {
 	padding-left: 20px;
-	background-color: #ccc;
+	background-color: #fff;
 	clear: both;
 	width: 100%;
 	display: none;
+	box-shadow: 1px 1px 5px 1px #aaa;
 }
 
 #login label {
@@ -414,8 +404,6 @@ li {
 #login input {
 	disaply: inline-block;
 	width: calc(100% - 100px);
-	background-color: #999;
-	border: none;
 	margin-left: 20px;
 	float: right;
 	height: 48px;
