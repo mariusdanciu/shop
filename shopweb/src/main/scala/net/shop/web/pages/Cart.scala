@@ -24,31 +24,13 @@ import net.shift.common.XmlAttr
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
 
-trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults  {
+trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
 
-  def snippets = List( order, connectError, user, back)
+  def snippets = List(connectError, user)
 
   def reqSnip(name: String) = snip[T](name) _
 
   implicit def snipsSelector[T] = bySnippetAttr[T]
-
-  
-  val back = snip[T]("back") {
-    s =>
-      val k = s.state
-      
-      bind(s.node) {
-        case Xml("form", _, _) => <form id="order_form">{ OrderForm.form(s.state.lang).html }</form>
-      } map ((s.state.initialState, _))
-  }
-  
-  val order = snip[T]("order") {
-    s =>
-      bind(s.node) {
-        case Xml("form", _, _) => <form id="order_form">{ OrderForm.form(s.state.lang).html }</form>
-      } map ((s.state.initialState, _))
-  }
-
 
   def priceTag(p: ProductDetail): Elem = {
     p.discountPrice match {

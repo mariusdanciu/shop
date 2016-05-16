@@ -11,8 +11,6 @@ import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http._
 import net.shift.engine.page.Html5
 import net.shift.engine.utils.ShiftUtils
-import net.shift.html.Formlet._
-import net.shift.html.Validation
 import net.shift.loc.Language
 import net.shift.loc.Loc
 import net.shift.template.PageState
@@ -29,10 +27,7 @@ import net.shop.model.ValidationFail
 import net.shop.web.ShopApplication
 import net.shop.web.pages.ForgotPasswordPage
 import net.shop.web.services.FormImplicits._
-import net.shift.html.Formlet
 import net.shop.model.FieldError
-import net.shift.html.Valid
-import net.shift.html.Invalid
 import net.shift.common.Config
 import net.shop.api.ShopError
 import net.shop.model.Formatters
@@ -40,14 +35,18 @@ import net.shift.io.IODefaults
 import net.shift.security.User
 import net.shift.security.Permission
 import net.shift.common.PathObj
+import net.shift.common.Valid
+import net.shift.common.Validation
+import net.shift.common.Invalid
+import net.shift.common.Validator
 
 trait UserService extends Selectors
-  with TraversingSpec
-  with DefaultLog
-  with FormValidation
-  with SecuredService
-  with IODefaults 
-  with ServiceDependencies {
+    with TraversingSpec
+    with DefaultLog
+    with FormValidation
+    with SecuredService
+    with IODefaults
+    with ServiceDependencies {
 
   implicit val reqSelector = bySnippetAttr[UserDetail]
 
@@ -157,18 +156,18 @@ trait UserService extends Selectors
     }
   }
 
-  private def extract(r: Request)(implicit loc: Language): Validation[ValidationFail, CreateUser] = {
+  private def extract(r: Request)(implicit loc: Language): Validation[CreateUser, FieldError] = {
     val user = (CreateUser.apply _).curried
     val ? = Loc.loc0(loc) _
 
-    val userFormlet = Formlet(user) <*>
-      inputText("cu_firstName")(required("cu_firstName", ?("first.name").text, Valid(_))) <*>
-      inputText("cu_lastName")(required("cu_lastName", ?("last.name").text, Valid(_))) <*>
-      inputText("cu_cnp")(required("cu_cnp", ?("cnp").text, Valid(_))) <*>
-      inputText("cu_phone")(required("cu_phone", ?("phone").text, Valid(_))) <*>
-      inputText("cu_email")(validateCreateUser("cu_email", ?("email").text)) <*>
-      inputPassword("cu_password")(required("cu_password", ?("password").text, Valid(_))) <*>
-      inputPassword("cu_password2")(required("cu_password2", ?("retype.password").text, Valid(_)))
+    val userFormlet = Validator(user) <*>
+      Validator(required("cu_firstName", ?("first.name").text, Valid(_))) <*>
+      Validator(required("cu_lastName", ?("last.name").text, Valid(_))) <*>
+      Validator(required("cu_cnp", ?("cnp").text, Valid(_))) <*>
+      Validator(required("cu_phone", ?("phone").text, Valid(_))) <*>
+      Validator(validateCreateUser("cu_email", ?("email").text)) <*>
+      Validator(required("cu_password", ?("password").text, Valid(_))) <*>
+      Validator(required("cu_password2", ?("retype.password").text, Valid(_)))
 
     (userFormlet validate r.params flatMap {
       case p @ CreateUser(_,
@@ -178,7 +177,7 @@ trait UserService extends Selectors
         _,
         pass,
         pass2) if (pass != pass2) =>
-        Invalid(ValidationFail(FieldError("cu_password2", Loc.loc0(loc)("password.not.match").text)))
+        Invalid(List(FieldError("cu_password2", Loc.loc0(loc)("password.not.match").text)))
       case p =>
         Valid(p)
     })

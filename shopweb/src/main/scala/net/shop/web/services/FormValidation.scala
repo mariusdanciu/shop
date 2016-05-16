@@ -9,27 +9,24 @@ import net.shift.engine.http.JsonResponse
 import net.shift.engine.http.MultiPart
 import net.shift.engine.http.Response.augmentResponse
 import net.shift.engine.http.TextPart
-import net.shift.html.Invalid
-import net.shift.html.Valid
-import net.shift.html.Validation
 import net.shift.io.IODefaults
 import net.shift.loc.Language
 import net.shift.loc.Loc
 import net.shop.api.Formatter
 import net.shop.model.FieldError
 import net.shop.model.Formatters.ValidationErrorWriter
-import net.shop.model.ValidationFail
 import net.shop.web.ShopApplication
 import net.shift.io.FileSystem
+import net.shop.model.ValidationFail
+import net.shift.common.Valid
+import net.shift.common.Validation
+import net.shift.common.Invalid
 
 object FormImplicits extends IODefaults {
   implicit val o = new Ordering[Double] {
     def compare(l: Double, r: Double): Int = (l - r).toInt
   }
 
-  implicit def failSemigroup[A]: Semigroup[ValidationFail] = new Semigroup[ValidationFail] {
-    def append(a: ValidationFail, b: ValidationFail): ValidationFail = ValidationFail(a.errors ::: b.errors)
-  }
 }
 
 trait FormValidation extends IODefaults with ServiceDependencies {
@@ -37,11 +34,11 @@ trait FormValidation extends IODefaults with ServiceDependencies {
   type ValidationMap = Map[String, String]
   type ValidationList = List[String]
   type ValidationInput = Map[String, List[String]]
-  type ValidationFunc[T] = ValidationInput => Validation[ValidationFail, T]
+  type ValidationFunc[T] = ValidationInput => Validation[T, FieldError]
 
-  def required[T](name: String, title: String, f: String => Validation[ValidationFail, T])(implicit lang: Language): ValidationFunc[T] =
+  def required[T](name: String, title: String, f: String => Validation[T, FieldError])(implicit lang: Language): ValidationFunc[T] =
     env => {
-      val failed = Invalid(ValidationFail(FieldError(name, Loc.loc(lang)("field.required", Seq(title)).text)))
+      val failed = Invalid(List(FieldError(name, Loc.loc(lang)("field.required", Seq(title)).text)))
 
       env.get(name) match {
         case Some(n :: _) if !n.isEmpty => f(n)
@@ -50,7 +47,7 @@ trait FormValidation extends IODefaults with ServiceDependencies {
       }
     }
 
-  def optional[T](name: String, title: String, default: => T, f: String => Validation[ValidationFail, T])(implicit lang: Language): ValidationFunc[T] =
+  def optional[T](name: String, title: String, default: => T, f: String => Validation[T, FieldError])(implicit lang: Language): ValidationFunc[T] =
     env => {
       env.get(name) match {
         case Some(n :: _) if !n.isEmpty => f(n)
@@ -81,7 +78,7 @@ trait FormValidation extends IODefaults with ServiceDependencies {
       try {
         Valid(s.toInt)
       } catch {
-        case e: Exception => Invalid(ValidationFail(FieldError(name, Loc.loc(lang)("field.incorrect", Seq(title)).text)))
+        case e: Exception => Invalid(List(FieldError(name, Loc.loc(lang)("field.incorrect", Seq(title)).text)))
       })
 
   def validateBoolean(name: String, title: String)(implicit lang: Language): ValidationFunc[Boolean] =
@@ -95,26 +92,26 @@ trait FormValidation extends IODefaults with ServiceDependencies {
         val d = s.toDouble
         Valid(d)
       } catch {
-        case e: Exception => Invalid(ValidationFail(FieldError(name, Loc.loc(lang)("field.incorrect", Seq(title)).text)))
+        case e: Exception => Invalid(List(FieldError(name, Loc.loc(lang)("field.incorrect", Seq(title)).text)))
       })
 
-  def validateText(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationFail, String] =
+  def validateText(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[String, FieldError] =
     optional(name, title, "", Valid(_))
 
-  def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[ValidationFail, String] =
+  def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[String, FieldError] =
     required(name, title, s => store.userByEmail(s) match {
-      case scala.util.Success(Some(email)) => Invalid(ValidationFail(FieldError(name, Loc.loc0(lang)("user.already.exists").text)))
+      case scala.util.Success(Some(email)) => Invalid(List(FieldError(name, Loc.loc0(lang)("user.already.exists").text)))
       case _                               => Valid(s)
     })
 
-  def validateOptional[T](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[ValidationFail, Option[T]] = env => {
+  def validateOptional[T](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[Option[T], FieldError] = env => {
     env.get(name) match {
       case Some(n :: _) if !n.isEmpty => Valid(f(n))
       case _                          => Valid(None)
     }
   }
 
-  def validateDefault[S](v: S)(implicit lang: Language): ValidationInput => Validation[ValidationFail, S] =
+  def validateDefault[S](v: S)(implicit lang: Language): ValidationInput => Validation[S, FieldError] =
     env => Valid(v)
 
   def extractParams(text: List[MultiPart]) = ((Map.empty: Map[String, List[String]]) /: text) {
@@ -156,12 +153,12 @@ trait FormValidation extends IODefaults with ServiceDependencies {
     case _ => None
   }
 
-  def validationFail(msgs: ValidationFail)(implicit lang: Language, fs: FileSystem) =
+  def validationFail(msgs: List[FieldError])(implicit lang: Language, fs: FileSystem) =
     service(r => {
       r(JsonResponse(Formatter.format(msgs)).code(403))
     })
 
-  def respValidationFail(resp: net.shift.engine.http.AsyncResponse, msgs: ValidationFail)(implicit lang: Language, fs: FileSystem) =
+  def respValidationFail(resp: net.shift.engine.http.AsyncResponse, msgs: List[FieldError])(implicit lang: Language, fs: FileSystem) =
     resp(JsonResponse(Formatter.format(msgs)).code(403))
 
 }

@@ -16,18 +16,6 @@ import net.shift.engine.http.POST
 import net.shift.engine.http.Resp
 import net.shift.engine.http.Response.augmentResponse
 import net.shift.engine.utils.ShiftUtils
-import net.shift.html.Formlet
-import net.shift.html.Formlet.formToApp
-import net.shift.html.Formlet.inputCheck
-import net.shift.html.Formlet.inputDouble
-import net.shift.html.Formlet.inputFile
-import net.shift.html.Formlet.inputInt
-import net.shift.html.Formlet.inputOptional
-import net.shift.html.Formlet.inputSelect
-import net.shift.html.Formlet.inputText
-import net.shift.html.Invalid
-import net.shift.html.Valid
-import net.shift.html.Validation
 import net.shift.io.FileOps
 import net.shift.io.FileSystem
 import net.shift.io.IO
@@ -39,8 +27,11 @@ import net.shop.api.ShopError
 import net.shop.model.FieldError
 import net.shop.model.ValidationFail
 import net.shop.web.ShopApplication
-import net.shop.web.services.FormImplicits.failSemigroup
 import utils.ShopUtils.dataPath
+import net.shift.common.Valid
+import net.shift.common.Validation
+import net.shift.common.Invalid
+import net.shift.common.Validator
 
 trait ProductService extends ShiftUtils
     with Selectors
@@ -135,7 +126,7 @@ trait ProductService extends ShiftUtils
 
   }
 
-  private def extract(implicit loc: Language, id: Option[String], fieldPrefix: String, multipart: MultiPartBody): (List[(String, String, Array[Byte])], Validation[ValidationFail, ProductDetail]) = {
+  private def extract(implicit loc: Language, id: Option[String], fieldPrefix: String, multipart: MultiPartBody): (List[(String, String, Array[Byte])], Validation[ProductDetail, FieldError]) = {
 
     val (bins, text) = multipart.parts partition {
       case BinaryPart(h, content) => true
@@ -150,20 +141,20 @@ trait ProductService extends ShiftUtils
     val product = ((ProductDetail.apply _).curried)(id)
     val ? = Loc.loc0(loc) _
 
-    val productFormlet = Formlet(product) <*>
-      inputText(fieldPrefix + "title")(validateMapField(fieldPrefix + "title", ?("title").text)) <*>
-      inputText(fieldPrefix + "description")(validateMapField(fieldPrefix + "description", ?("description").text)) <*>
-      inputText(fieldPrefix + "properties")(validateProps) <*>
-      inputDouble(fieldPrefix + "price")(validateDouble(fieldPrefix + "price", ?("price").text)) <*>
-      inputOptional(fieldPrefix + "discount_price")(validateOptional(fieldPrefix + "discount_price", s => Option(s.toDouble))) <*>
-      inputInt(fieldPrefix + "soldCount")(validateDefault(0)) <*>
-      inputOptional(fieldPrefix + "position")(validateOptional(fieldPrefix + "position", s => Option(s.toInt))) <*>
-      inputOptional(fieldPrefix + "presentation_position")(validateOptional(fieldPrefix + "presentation_position", s => Option(s.toInt))) <*>
-      inputCheck(fieldPrefix + "unique", "false")(validateBoolean(fieldPrefix + "unique", ?("unique.product").text)) <*>
-      inputOptional(fieldPrefix + "stock")(validateOptional(fieldPrefix + "stock", stockFunc)) <*>
-      inputSelect(fieldPrefix + "categories", Nil)(validateListField(fieldPrefix + "categories", ?("categories").text)) <*>
-      inputFile("files")(validateDefault(Nil)) <*>
-      inputText(fieldPrefix + "keywords")(optionalListField(fieldPrefix + "keywords", ?("keywords").text))
+    val productFormlet = Validator(product) <*>
+      Validator(validateMapField(fieldPrefix + "title", ?("title").text)) <*>
+      Validator(validateMapField(fieldPrefix + "description", ?("description").text)) <*>
+      Validator(validateProps) <*>
+      Validator(validateDouble(fieldPrefix + "price", ?("price").text)) <*>
+      Validator(validateOptional(fieldPrefix + "discount_price", s => Option(s.toDouble))) <*>
+      Validator(validateDefault(0)) <*>
+      Validator(validateOptional(fieldPrefix + "position", s => Option(s.toInt))) <*>
+      Validator(validateOptional(fieldPrefix + "presentation_position", s => Option(s.toInt))) <*>
+      Validator(validateBoolean(fieldPrefix + "unique", ?("unique.product").text)) <*>
+      Validator(validateOptional(fieldPrefix + "stock", stockFunc)) <*>
+      Validator(validateListField(fieldPrefix + "categories", ?("categories").text)) <*>
+      Validator(validateDefault(Nil)) <*>
+      Validator(optionalListField(fieldPrefix + "keywords", ?("keywords").text))
 
     try {
       (files, productFormlet validate params flatMap {
@@ -180,13 +171,13 @@ trait ProductService extends ShiftUtils
           _,
           _,
           _,
-          _) if (discountPrice >= price) => Invalid(ValidationFail(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text)))
+          _) if (discountPrice >= price) => Invalid(List(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text)))
         case p => Valid(p)
       })
     } catch {
       case e: Exception =>
         e.printStackTrace()
-        (Nil, Invalid(ValidationFail(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text))))
+        (Nil, Invalid(List(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text))))
     }
   }
 

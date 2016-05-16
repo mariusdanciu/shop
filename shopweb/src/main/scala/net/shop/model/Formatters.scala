@@ -57,7 +57,7 @@ object Formatters {
     case class UserSummary(userInfo: UserInfo, companyInfo: CompanyInfo, email: String, addresses: List[Address])
   }
 
-  implicit object ValidationErrorWriter extends Formatter[ValidationFail] {
+  implicit object ValidationErrorWriter extends Formatter[List[FieldError]] {
     import org.json4s._
     import org.json4s.native.Serialization
 
@@ -65,9 +65,9 @@ object Formatters {
       override def dateFormatter = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss'Z'")
     }
 
-    def write(err: ValidationFail)(implicit lang: Language, fs: FileSystem): String = {
+    def write(err: List[FieldError])(implicit lang: Language, fs: FileSystem): String = {
       import org.json4s.native.Serialization.writePretty
-      writePretty(err)
+      writePretty(ValidationFail(err))
     }
   }
 

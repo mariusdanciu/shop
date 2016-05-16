@@ -19,7 +19,7 @@ import net.shift.common.XmlImplicits._
 
 trait MobilePage extends DynamicContent[Request] with Selectors with IODefaults {
 
-  def snippets = List(order, connectError, user, back)
+  def snippets = List(connectError, user, back)
 
   def reqSnip(name: String) = snip[Request](name) _
 
@@ -28,19 +28,12 @@ trait MobilePage extends DynamicContent[Request] with Selectors with IODefaults 
   val back = reqSnip("back") {
     s =>
       val req = s.state.initialState
-      
+
       if (req.path.parts == List("mobile")) {
         Success((s.state.initialState, NodeSeq.Empty))
       } else {
         Success((s.state.initialState, s.node))
       }
-  }
-
-  val order = reqSnip("order") {
-    s =>
-      bind(s.node) {
-        case Xml("form", _, _) => <form id="order_form">{ OrderForm.form(s.state.lang).html }</form>
-      } map ((s.state.initialState, _))
   }
 
   def priceTag(p: ProductDetail): Elem = {

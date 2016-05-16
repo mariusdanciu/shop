@@ -27,8 +27,6 @@ import net.shift.engine.http.JsResponse
 import net.shift.engine.http.JsonResponse
 import net.shift.engine.http.POST
 import net.shift.engine.http.Response.augmentResponse
-import net.shift.html.Invalid
-import net.shift.html.Valid
 import net.shift.io.IO
 import net.shift.js.JsDsl
 import net.shift.js.JsStatement
@@ -46,6 +44,8 @@ import net.shop.web.ShopApplication
 import net.shop.web.pages.OrderPage
 import net.shop.web.pages.OrderState
 import net.shift.common.Config
+import net.shift.common.Valid
+import net.shift.common.Invalid
 
 trait OrderService extends HttpPredicates with FormValidation with TraversingSpec with ServiceDependencies { self =>
 

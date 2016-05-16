@@ -14,12 +14,6 @@ import net.shift.engine.http.MultiPartBody
 import net.shift.engine.http.POST
 import net.shift.engine.http.Resp
 import net.shift.engine.http.Response.augmentResponse
-import net.shift.html.Formlet
-import net.shift.html.Formlet.formToApp
-import net.shift.html.Formlet.inputText
-import net.shift.html.Invalid
-import net.shift.html.Valid
-import net.shift.html.Validation
 import net.shift.io.FileOps
 import net.shift.io.FileSystem
 import net.shift.io.IO
@@ -31,18 +25,21 @@ import net.shop.api.Category
 import net.shop.api.Formatter
 import net.shop.api.ShopError
 import net.shop.model.Formatters.CategoryWriter
-import net.shop.model.ValidationFail
 import net.shop.utils.ShopUtils.dataPath
 import net.shop.web.ShopApplication
-import net.shop.web.services.FormImplicits.failSemigroup
+import net.shift.common.Validator
+import net.shift.common.Validation
+import net.shift.common.Valid
+import net.shift.common.Invalid
+import net.shop.model.FieldError
 
 trait CategoryService extends Selectors
-  with TraversingSpec
-  with DefaultLog
-  with FormValidation
-  with SecuredService
-  with IODefaults
-  with ServiceDependencies {
+    with TraversingSpec
+    with DefaultLog
+    with FormValidation
+    with SecuredService
+    with IODefaults
+    with ServiceDependencies {
 
   def getCategory(implicit fs: FileSystem) = for {
     r <- GET
@@ -131,7 +128,7 @@ trait CategoryService extends Selectors
 
   }
 
-  private def extract(implicit loc: Language, id: Option[String], multipart: MultiPartBody): (Option[(String, Array[Byte])], Validation[ValidationFail, Category]) = {
+  private def extract(implicit loc: Language, id: Option[String], multipart: MultiPartBody): (Option[(String, Array[Byte])], Validation[Category, FieldError]) = {
 
     val (bins, text) = multipart.parts partition {
       case BinaryPart(h, content) => true
@@ -144,11 +141,12 @@ trait CategoryService extends Selectors
     val category = ((net.shop.api.Category.apply _).curried)(id)
     val ? = Loc.loc0(loc) _
 
-    val categoryFormlet = Formlet(category) <*>
-      inputText("pos")(validateInt("pos", ?("list.pos").text)) <*>
-      inputText("title")(validateMapField("title", ?("title").text))
+    val categoryFormlet = Validator(category) <*>
+      Validator(validateInt("pos", ?("list.pos").text)) <*>
+      Validator(validateMapField("title", ?("title").text))
 
-    (file, categoryFormlet validate params)
+    val v = categoryFormlet validate params
+    (file, v)
 
   }
 

@@ -10,10 +10,7 @@ import net.shift.engine.http.POST
 import net.shift.common.Path
 import net.shift.loc.Loc
 import net.shift.loc.Language
-import net.shift.html.Formlet
-import net.shift.html.Formlet._
 import net.shift.engine.http.Request
-import net.shift.html.Validation
 import net.shop.web.ShopApplication
 import net.shift.security.User
 import net.shop.api.UserInfo
@@ -23,21 +20,23 @@ import net.shift.engine.http.Resp
 import net.shop.model.ValidationFail
 import net.shop.model.FieldError
 import net.shop.web.services.FormImplicits._
-import net.shift.html.Valid
-import net.shift.html.Invalid
 import net.shop.api.OrderStatus
 import scala.util.Success
 import scala.util.Failure
 import net.shift.security.Permission
 import net.shop.api.ShopError
 import net.shift.common.Config
+import net.shift.common.Valid
+import net.shift.common.Validation
+import net.shift.common.Invalid
+import net.shift.common.Validator
 
 trait SettingsService extends Selectors
-  with TraversingSpec
-  with DefaultLog
-  with FormValidation
-  with SecuredService
-  with ServiceDependencies {
+    with TraversingSpec
+    with DefaultLog
+    with FormValidation
+    with SecuredService
+    with ServiceDependencies {
 
   def updateOrderStatus = for {
     r <- POST
@@ -79,7 +78,7 @@ trait SettingsService extends Selectors
     }
   }
 
-  private def extractAddresses(params: Map[String, List[String]])(implicit loc: Language): Validation[ValidationFail, List[Address]] = {
+  private def extractAddresses(params: Map[String, List[String]])(implicit loc: Language): Validation[List[Address], FieldError] = {
 
     def toPair(s: String): Option[(String, String)] = s.split(":").toList match {
       case name :: value :: Nil => Some((name, value))
@@ -94,14 +93,14 @@ trait SettingsService extends Selectors
 
     val addresses = validateAddresses(normalize)
 
-    val errors = (((ValidationFail()), Nil: List[Address]) /: addresses)((acc, e) => e match {
-      case Invalid(e)  => (acc._1 append e, acc._2)
+    val errors = (((List[FieldError]()), Nil: List[Address]) /: addresses)((acc, e) => e match {
+      case Invalid(e)  => (acc._1 ::: e, acc._2)
       case Valid(addr) => (acc._1, acc._2 ::: List(addr))
     })
 
     errors match {
-      case (ValidationFail(Nil), list) => Valid(list)
-      case (errors, _)                 => Invalid(errors)
+      case (Nil, list) => Valid(list)
+      case (errors, _) => Invalid(errors)
     }
 
   }
@@ -112,52 +111,52 @@ trait SettingsService extends Selectors
     for {
       (k, par) <- res
     } yield {
-      val addrFormlet = Formlet(address(k)("Romania")) <*>
-        inputText(s"addr_region:$k")(required(s"addr_region:$k", ?("region").text, Valid(_))) <*>
-        inputText(s"addr_city:$k")(required(s"addr_city:$k", ?("city").text, Valid(_))) <*>
-        inputText(s"addr_addr:$k")(required(s"addr_addr:$k", ?("address").text, Valid(_))) <*>
-        inputText(s"addr_zip:$k")(required(s"addr_zip:$k", ?("zip").text, Valid(_)))
+      val addrFormlet = Validator(address(k)("Romania")) <*>
+        Validator(required(s"addr_region:$k", ?("region").text, Valid(_))) <*>
+        Validator(required(s"addr_city:$k", ?("city").text, Valid(_))) <*>
+        Validator(required(s"addr_addr:$k", ?("address").text, Valid(_))) <*>
+        Validator(required(s"addr_zip:$k", ?("zip").text, Valid(_)))
       addrFormlet validate par
     }
   }
 
-  private def extract(r: Request, u: User)(implicit loc: Language): Validation[ValidationFail, UserForm] = {
+  private def extract(r: Request, u: User)(implicit loc: Language): Validation[UserForm, FieldError] = {
     val ? = Loc.loc0(loc) _
 
     val ui = (UserInfo.apply _).curried
     val ci = (CompanyInfo.apply _).curried
     val uu = (UpdateUser.apply _).curried
 
-    val uiFormlet = Formlet(ui) <*>
-      inputText("update_firstName")(validateText("update_firstName", ?("first.name").text)) <*>
-      inputText("update_lastName")(validateText("update_lastName", ?("last.name").text)) <*>
-      inputText("update_cnp")(validateText("update_cnp", ?("cnp").text)) <*>
-      inputText("update_phone")(validateText("update_phone", ?("phone").text))
+    val uiFormlet = Validator(ui) <*>
+      Validator(validateText("update_firstName", ?("first.name").text)) <*>
+      Validator(validateText("update_lastName", ?("last.name").text)) <*>
+      Validator(validateText("update_cnp", ?("cnp").text)) <*>
+      Validator(validateText("update_phone", ?("phone").text))
 
-    val ciFormlet = Formlet(ci) <*>
-      inputText("update_cname")(validateText("update_cname", ?("company.name").text)) <*>
-      inputText("update_cif")(validateText("update_cif", ?("compnay.cif").text)) <*>
-      inputText("update_cregcom")(validateText("update_cregcom", ?("company.reg.com").text)) <*>
-      inputText("update_cbank")(validateText("update_cbank", ?("company.bank").text)) <*>
-      inputText("update_cbankaccount")(validateText("update_cbankaccount", ?("company.bank.account").text)) <*>
-      inputText("update_cphone")(validateText("update_cphone", ?("phone").text))
+    val ciFormlet = Validator(ci) <*>
+      Validator(validateText("update_cname", ?("company.name").text)) <*>
+      Validator(validateText("update_cif", ?("compnay.cif").text)) <*>
+      Validator(validateText("update_cregcom", ?("company.reg.com").text)) <*>
+      Validator(validateText("update_cbank", ?("company.bank").text)) <*>
+      Validator(validateText("update_cbankaccount", ?("company.bank.account").text)) <*>
+      Validator(validateText("update_cphone", ?("phone").text))
 
-    val updateFormlet = Formlet(uu) <*> uiFormlet <*> ciFormlet <*>
-      inputText("update_password")(validateText("update_password", ?("password").text)) <*>
-      inputText("update_password2")(validateText("update_password2", ?("retype.password").text))
+    val updateFormlet = Validator(uu) <*> uiFormlet <*> ciFormlet <*>
+      Validator(validateText("update_password", ?("password").text)) <*>
+      Validator(validateText("update_password2", ?("retype.password").text))
 
     val valid = (updateFormlet validate r.params flatMap {
       case p @ UpdateUser(_,
         _,
         pass,
         pass2) if (pass != pass2) =>
-        Invalid(ValidationFail(FieldError("update_password2", Loc.loc0(loc)("password.not.match").text)))
+        Invalid(List(FieldError("update_password2", Loc.loc0(loc)("password.not.match").text)))
       case p =>
         Valid(p)
     })
 
     (valid, extractAddresses(r.params)) match {
-      case (Invalid(l), Invalid(r)) => Invalid(l append r)
+      case (Invalid(l), Invalid(r)) => Invalid(l ++ r)
       case (Invalid(l), _)          => Invalid(l)
       case (_, Invalid(r))          => Invalid(r)
       case (Valid(l), Valid(r))     => Valid(UserForm(l, r))
