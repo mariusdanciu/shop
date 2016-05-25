@@ -22,7 +22,11 @@ var categories = {
 
             if (window.admin !== undefined) {
                 me.find('.edit_tag_close').click(function(event) {
-                    window.admin.deleteCategory(pid);
+                	
+                	window.common.showConfirm("#can_delete_category", function(){
+                		window.admin.deleteCategory(pid);
+                	});
+                	
                     return false;
                 });
 

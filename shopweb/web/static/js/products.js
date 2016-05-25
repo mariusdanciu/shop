@@ -73,7 +73,9 @@ var products = {
 
             if (window.admin !== undefined) {
                 me.find('.edit_tag_close').click(function(event) {
-                    window.admin.deleteProduct(pid);
+                	window.common.showConfirm("#can_delete_product", function(){
+                		window.admin.deleteProduct(pid);
+                	});
                     return false;
                 });
             }
@@ -105,7 +107,7 @@ var products = {
                             $.blockUI({
                                 message : div,
                                 css : {
-                                    top : '180px',
+                                    top : '70px',
                                     left : ($(window).width() - 1150) / 2 + 'px',
                                     width : '1150px',
                                     border : 'none',

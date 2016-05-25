@@ -653,6 +653,31 @@
    "code" : "208",
    "name" : "transport.2",
    "text" : "Transport prin Poșta Romană - 9.99 Lei"
+ },
+ {
+   "code" : "208",
+   "name" : "confirmation",
+   "text" : "Confirmare"
+ },
+ {
+   "code" : "208",
+   "name" : "ok",
+   "text" : "Da"
+ },
+ {
+   "code" : "208",
+   "name" : "cancel",
+   "text" : "Nu"
+ },
+ {
+   "code" : "208",
+   "name" : "can_delete_product",
+   "text" : "Dorești sa ștergi acest produs ?"
+ },
+ {
+   "code" : "208",
+   "name" : "can_delete_category",
+   "text" : "Dorești sa ștergi această categorie ?"
  }
  
 ]

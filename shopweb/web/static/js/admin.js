@@ -312,9 +312,9 @@ var admin = {
             $.blockUI({
                 message : $("#category_create_dialog"),
                 css : {
-                    top : '200px',
-                    left : ($(window).width() - 320) / 2 + 'px',
-                    width : '320px',
+                    top : '70px',
+                    left : ($(window).width() - 330) / 2 + 'px',
+                    width : '330px',
                     border : 'none',
                     cursor : null
                 },
@@ -336,9 +336,9 @@ var admin = {
             $.blockUI({
                 message : $("#category_update_dialog"),
                 css : {
-                    top : '200px',
-                    left : ($(window).width() - 320) / 2 + 'px',
-                    width : '320px',
+                    top : '70px',
+                    left : ($(window).width() - 330) / 2 + 'px',
+                    width : '330px',
                     border : 'none',
                     cursor : null
                 },

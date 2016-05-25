@@ -218,6 +218,38 @@ var common = {
         $.each(errors, function() {
             $("label[for='" + this.id + "']").css("color", "#ff0000").attr("title", this.error);
         });
+    },
+    
+    showConfirm: function(message, okAction) {
+    	$("#confirm #text").html($(message).html());
+    	
+    	$("#confirm #ok").click(function(e){
+    		okAction();
+            $.unblockUI();
+    		e.preventDefault();
+    		return false;
+    	});
+
+    	$("#confirm #cancel").click(function(e){
+            $.unblockUI();
+    		e.preventDefault();
+    		return false;
+    	});
+
+        $.blockUI({
+            message : $("#confirm"),
+            css : {
+                top : '170px',
+                left : ($(window).width() - 400) / 2 + 'px',
+                width : '400px',
+                border : 'none',
+                cursor : null
+            },
+            overlayCSS : {
+                cursor : null,
+                backgroundColor : '#dddddd'
+            }
+        });
     }
 
 }
@@ -227,7 +259,7 @@ var user = {
         $.blockUI({
             message : $("#newuser_popup"),
             css : {
-                top : '150px',
+                top : '70px',
                 left : ($(window).width() - 630) / 2 + 'px',
                 width : '630px',
                 border : 'none',

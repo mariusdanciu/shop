@@ -1420,3 +1420,16 @@ h1 {
 	width: 100%;
 	height: 100%;
 }
+
+#confirm {
+	display: none;
+	padding: 20px 10px 20px 10px;
+}
+#confirm #text {
+	text-align: center;
+	font-size: 18px;
+}
+
+#can_delete_product, #can_delete_category {
+	display: none;
+}
