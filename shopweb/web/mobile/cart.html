@@ -107,11 +107,7 @@
 						
 	                    200: function(data) {
 	                        window.cart.clear();
-	                        $('#notice_i')
-	                          .text(data.msg)
-	                          .show()
-	                          .delay(5000)
-	                          .fadeOut('slow');
+	                        window.common.showNotice('#notice_i');
 	                    }
 					}
 				});

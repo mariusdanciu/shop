@@ -678,6 +678,11 @@
    "code" : "208",
    "name" : "can_delete_category",
    "text" : "Dorești sa ștergi această categorie ?"
+ },
+ {
+   "code" : "208",
+   "name" : "logout",
+   "text" : "Ieșire"
  }
  
 ]

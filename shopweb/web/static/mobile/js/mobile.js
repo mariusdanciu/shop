@@ -163,3 +163,61 @@ var cart = {
 		}
 	},
 }
+
+var common = {
+	showNotice : function(text) {
+		$("#notice_i").html(text);
+		$("#notice_i").show().delay(5000).fadeOut("slow");
+	},
+
+	showError : function(text) {
+		$("#notice_e").html(text);
+		$("#notice_e").show().delay(5000).fadeOut("slow");
+	},
+
+	forgotPass : function(frmId) {
+		var email = $.base64.encode($(frmId + " #username").val());
+		$.ajax({
+			url : "/forgotpassword/" + email,
+			type : "POST",
+			timeout : 3000,
+			cache : false,
+			statusCode : {
+				404 : function(m) {
+					common.closeDialog();
+					common.showError(m.responseText);
+				}
+			}
+		}).success(function(m) {
+			common.showNotice(m);
+		});
+	},
+
+	login : function(frmId) {
+		var creds = $.base64.encode($(frmId + " #username").val() + ":"
+				+ $(frmId + " #password").val());
+
+		$.ajax({
+			url : $(frmId).attr('action'),
+			type : "GET",
+			cache : false,
+			timeout : 3000,
+			headers : {
+				'Authorization' : "Basic " + creds
+			},
+			statusCode : {
+				200 : function() {
+					window.location.href = "/mobile";
+				},
+				406 : function(m) {
+					window.common.showError(m.responseText);
+				}
+			}
+		});
+	},
+	
+    logout : function() {
+        window.location.href = "/mobile?logout=true";
+    },
+
+}

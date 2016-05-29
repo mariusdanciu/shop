@@ -16,6 +16,7 @@ import net.shift.template.Binds._
 import scala.xml.NodeSeq
 import scala.xml.Text
 import net.shift.common.XmlImplicits._
+import net.shift.template.HasClass
 
 trait MobilePage extends DynamicContent[Request] with Selectors with IODefaults {
 
@@ -48,9 +49,15 @@ trait MobilePage extends DynamicContent[Request] with Selectors with IODefaults 
 
   val user = reqSnip("user") {
     s =>
-      bind(s.node) {
-        case Xml(name, attrs, _) =>
-          Xml(name, attrs) / (s.state.user.map(u => Text(u.name)).getOrElse(NodeSeq.Empty))
-      } map ((s.state.initialState, _))
+      val content = s.state.user match {
+        case Some(usr) =>
+          bind(s.node) {
+            case Xml(name, HasClass("user_name", attrs), _) =>
+              Xml(name, attrs) / Text(usr.name)
+          }
+        case _ => Success(NodeSeq.Empty)
+      }
+
+      content map { ((s.state.initialState, _)) }
   }
 }
