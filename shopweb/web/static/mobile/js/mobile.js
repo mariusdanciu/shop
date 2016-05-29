@@ -3,6 +3,9 @@
 	})
 })();
 
+var addresses = undefined;
+var currentAddress = 0;
+
 var cart = {
 	showFormErrors : function(errors) {
 		$.each(errors, function() {

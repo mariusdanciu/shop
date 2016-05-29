@@ -52,6 +52,7 @@
 			remove();
 
 			$('#step2').click(function(e) {
+				window.cart.fetchUserInfo();
 				$('#step2').hide();
 				$('#cart_items').hide();
 				$('#step1').show();
@@ -107,7 +108,7 @@
 						
 	                    200: function(data) {
 	                        window.cart.clear();
-	                        window.common.showNotice('#notice_i');
+	                        window.common.showNotice(data.msg);
 	                    }
 					}
 				});

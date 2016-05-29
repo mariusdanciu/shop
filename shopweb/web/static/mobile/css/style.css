@@ -421,12 +421,18 @@ li {
 	margin-top: 5px;
 	color: green;
 }
+
 .logout {
 	float: right;
 }
 
 .logged_in {
 	width: 100%;
-	display: inline-block;	
+	display: inline-block;
 	padding: 5px;
+}
+
+.address_name {
+	padding-left: 10px;
+	padding-right: 10px;
 }
