@@ -113,7 +113,8 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
 
   def servingRule = for {
     r <- withLanguage(Language("ro"))
-    c <- staticFiles(Path("web/static")) |
+    c <- toMobileIfNeeded |
+      staticFiles(Path("web/static")) |
       mobile.mobilePages |
       mobileServices.cartView |
       ajaxLogin |

@@ -21,6 +21,7 @@ import net.shop.model.ValidationFail
 import net.shift.common.Valid
 import net.shift.common.Validation
 import net.shift.common.Invalid
+import net.shift.engine.http.ContentDisposition
 
 object FormImplicits extends IODefaults {
   implicit val o = new Ordering[Double] {
@@ -117,7 +118,7 @@ trait FormValidation extends IODefaults with ServiceDependencies {
   def extractParams(text: List[MultiPart]) = ((Map.empty: Map[String, List[String]]) /: text) {
     case (acc, TextPart(h, content)) =>
       (for {
-        Header(_, _, par) <- h.get("Content-Disposition")
+        ContentDisposition(v, par) <- h.get("Content-Disposition")
         name <- par.get("name")
       } yield {
         acc.get(name).map(v => acc + (name -> (v ++ List(content)))) getOrElse (acc + (name -> List(content)))
@@ -128,8 +129,8 @@ trait FormValidation extends IODefaults with ServiceDependencies {
   def extractProductBins(bins: List[MultiPart]) = ((Nil: List[(String, String, Array[Byte])]) /: bins) {
     case (acc, BinaryPart(h, content)) =>
       (for {
-        cd <- h.get("Content-Disposition")
-        FileSplit(n, ext) <- cd.params.get("filename")
+        ContentDisposition(v, params) <- h.get("Content-Disposition")
+        FileSplit(n, ext) <- params.get("filename")
         FileSplit(name, _) <- Some(n)
       } yield {
         acc ++ List(if (n.endsWith(".thumb"))
@@ -145,8 +146,8 @@ trait FormValidation extends IODefaults with ServiceDependencies {
   def extractCategoryBin(bins: MultiPart): Option[(String, Array[Byte])] = bins match {
     case BinaryPart(h, content) =>
       (for {
-        cd <- h.get("Content-Disposition")
-        FileSplit(n, ext) <- cd.params.get("filename")
+        ContentDisposition(v, params) <- h.get("Content-Disposition")
+        FileSplit(n, ext) <- params.get("filename")
       } yield {
         (s"$n.$ext", content)
       })

@@ -47,6 +47,13 @@
 				$('.search .box #text').focus();
 			});
 
+			$('#search_text').keypress(function(e) {
+	            if (e.which == 13) {
+	                var text = $(this).val();
+	                window.location.href = '/mobile/products?search=' + text;
+	            }
+	        });
+			
 			$('#user').click(function() {
 				$('#login').toggle();
 			});
@@ -60,6 +67,11 @@
 				e.preventDefault();
 				false;
 			});
+			
+			var search = $.url().param('search');
+	        if (search !== undefined) {
+	            $('#search_text').val(search);
+	        }
 		})
 	})();
 </script>
@@ -94,7 +106,7 @@
 	  <div id="logout" class="btn logout" data-loc="logout"></div>
 	</div>
 	<div class="search">
-		<input id="text" type="text" placeholder="loc:search" />
+		<input id="search_text" type="text" placeholder="loc:search" />
 	</div>
 	<div id="login">
 		<form action="/auth" id="login_form" method="POST">

@@ -40,11 +40,12 @@ case class Mobile(cfg: Config, store: Persistence) extends ShopServices { self =
   }
 
   def mobilePages = for {
-    p <- page("mobile", Path("web/mobile/landing.html"), landingPage) |
-      page("mobile/products", Path("web/mobile/products.html"), productsPage) |
-      page("mobile/product", Path("web/mobile/product.html"), productPage) |
-      page("mobile/cart", Path("web/mobile/cart.html"), cartPage)
+    p <- mobilePage("mobile", Path("web/mobile/landing.html"), landingPage) |
+      mobilePage("mobile/products", Path("web/mobile/products.html"), productsPage) |
+      mobilePage("mobile/product", Path("web/mobile/product.html"), productPage) |
+      mobilePage("mobile/cart", Path("web/mobile/cart.html"), cartPage)
   } yield {
     p
   }
+
 }

@@ -1,7 +1,6 @@
 package net.shop
 package web.services
 
-import java.util.Date
 import scala.Option.option2Iterable
 import scala.util.Failure
 import scala.util.Success
@@ -10,52 +9,51 @@ import org.json4s.jvalue2extractable
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization.write
 import org.json4s.string2JsonInput
+import net.shift.common.Config
 import net.shift.common.DefaultLog
 import net.shift.common.Path
 import net.shift.common.State
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http._
+import net.shift.engine.page.Html5
 import net.shift.engine.utils.ShiftUtils
 import net.shift.io.IODefaults
 import net.shift.loc.Loc
 import net.shift.security.User
 import net.shift.template.DynamicContent
+import net.shift.template.PageState
 import net.shift.template.Selectors
 import net.shop.api.Cart
 import net.shop.api.ShopError
-import net.shop.messaging.Messaging
 import net.shop.tryApplicative
-import net.shop.web.ShopApplication
+import net.shop.web.pages.AccountSettingsPage
 import net.shop.web.pages.AccountSettingsPage
 import net.shop.web.pages.CartItemNode
 import net.shop.web.pages.CartState
 import net.shop.web.pages.CategoryPage
-import net.shop.web.pages.LoginPage
+import net.shop.web.pages.CategoryPage
 import net.shop.web.pages.ProductDetailPage
 import net.shop.web.pages.ProductPageState
 import net.shop.web.pages.ProductsPage
 import net.shop.web.pages.SettingsPageState
 import utils.ShopUtils._
-import net.shift.template.PageState
-import net.shift.engine.page.Html5
-import net.shift.common.Config
-import net.shop.web.pages.CategoryPage
-import net.shop.web.pages.AccountSettingsPage
+import net.shift.engine.http.RequestShell
+import net.shift.common.ShiftFailure
 
 trait ShopServices extends ShiftUtils
-  with Selectors
-  with TraversingSpec
-  with DefaultLog
-  with SecuredService
-  with IODefaults
-  with ServiceDependencies { self =>
+    with Selectors
+    with TraversingSpec
+    with DefaultLog
+    with SecuredService
+    with IODefaults
+    with ServiceDependencies { self =>
 
   def notFoundService = for {
     r <- req
   } yield {
     r.header("X-Requested-With") match {
-      case Some(Header(_, "XMLHttpRequest", _)) =>
+      case Some(HeaderKeyValue(_, "XMLHttpRequest")) =>
         service(_(Resp.ok))
       case _ => service(_(Resp.redirect("/")))
     }
@@ -64,6 +62,17 @@ trait ShopServices extends ShiftUtils
   implicit val reqSelector = bySnippetAttr[Request]
   implicit val cartItemsSelector = bySnippetAttr[CartState]
   implicit val settingsSelector = bySnippetAttr[SettingsPageState]
+
+  def mobileUA: State[Request, Request] =
+    for {
+      r <- req if {
+        val isMobile = r.header("User-Agent").map { h => h.value.contains("mobile") } getOrElse false
+        val mobileURI = r.uri.startsWith("/mobile")
+        isMobile && !mobileURI
+      }
+    } yield {
+      r
+    }
 
   def ajaxLogin = for {
     _ <- ajax
@@ -137,6 +146,14 @@ trait ShopServices extends ShiftUtils
     Html5.pageFromFile(PageState(r, r.language, if (logout) None else u), filePath, snipets)
   }
 
+  def mobilePage[T](uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
+    r <- path(uri) | mobileUA
+    u <- user
+  } yield {
+    val logout = !r.param("logout").isEmpty
+    Html5.pageFromFile(PageState(r, r.language, if (logout) None else u), filePath, snipets)
+  }
+
   def staticTextFiles[T](paths: String*) = for {
     p <- path
     input <- fileOf(Path(s"web/$p"))
@@ -185,8 +202,7 @@ trait ShopServices extends ShiftUtils
     input <- fileOf(Path(s"${dataPath}/categories/mobile/$file"))
   } yield service(resp =>
     resp(new ImageResponse(input, "image/png").withHeaders(Header("cache-control", "max-age=86400"))))
-  
-  
+
   def getCart() = for {
     r <- req
     lang <- language
@@ -249,6 +265,22 @@ trait ShopServices extends ShiftUtils
     val store = self.store
   }.updateCategory
 
+  private val mobileNames = Set("Android", "webOS", "iPhone", "iPad", "iPod", "BlackBerry", "Windows Phone")
+
+  def toMobileIfNeeded = State.state[Request, Attempt] {
+    r =>
+      val ua = r.header("User-Agent").map { _ value } getOrElse ""
+      val b = (for { n <- mobileNames } yield ua.contains(n)).find(x => x).getOrElse(false)
+      r.path.parts match {
+        case Nil if b =>
+          Success((r, service(_(Resp.redirect("/mobile")))))
+        case _ =>
+          ShiftFailure.toTry
+      }
+  }
+
 }
+
+
 
 
