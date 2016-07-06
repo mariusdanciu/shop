@@ -13,7 +13,7 @@ html, body {
 	margin: 0;
 	font-family: sans-serif;
 	font-weight: 300;
-	font-size: 14pt;
+	font-size: 100%;
 }
 
 *, *:before, *:after {
@@ -52,7 +52,7 @@ li {
 	background-color: #B43104;
 	border: 1px solid #8A2908;
 	color: #ffffff;
-	font-size: 20px;
+	font-size: 120%;
 	padding-top: 5px;
 	position: relative;
 	text-align: center;
@@ -65,7 +65,7 @@ li {
 	background-color: #4B8A08;
 	border: 1px solid #38610B;
 	color: #ffffff;
-	font-size: 20px;
+	font-size: 120%;
 	padding-top: 5px;
 	position: relative;
 	text-align: center;
@@ -124,7 +124,7 @@ li {
 	text-decoration: none;
 	position: relative;
 	display: inline-block;
-	font-size: 12pt;
+	font-size: 120%;
 	text-align: center;
 	float: left;
 }
@@ -155,7 +155,7 @@ li {
 }
 
 .cat_card:hover {
-	background-color: #eee;
+	text-decoration: underline;
 }
 
 .categories ul li {
@@ -179,12 +179,10 @@ li {
 	display: block;
 	position: relative;
 	margin-top: 20px;
-	font-size: 18pt;
+	font-size: 120%;
 }
 
 .cat_card {
-	border-radius: 20px;
-	border: 1px solid #333;
 	display: block;
 	margin: 10px;
 }
@@ -223,7 +221,7 @@ li {
 	width: 100%;
 	color: #fff;
 	background: #333;
-	font-size: 24px;
+	font-size: 150%;
 }
 
 .products {
@@ -253,11 +251,19 @@ li {
 	position: relative;
 	vertical-align: top;
 	margin-left: 10px;
+	margin-top: 25px;
+}
+
+.cart_prod_content {
+	position: relative;
+	vertical-align: top;
+	margin-left: 10px;
 	margin-top: 5px;
 }
 
+
 .prod_price {
-	font-size: 16pt;
+	font-size: 120%;
 	float: right;
 	margin-right: 10px;
 	margin-top: 15px;
@@ -265,7 +271,7 @@ li {
 }
 
 .prod_title {
-	font-size: 14pt;
+	font-size: 120%;
 	overflow: hidden;
 }
 
@@ -286,7 +292,7 @@ li {
 .product .prod_header .prod_price {
 	float: right;
 	margin-top: 10px;
-	font-size: 16pt;
+	font-size: 120%;
 }
 
 .product .prod_controls {
@@ -324,7 +330,7 @@ li {
 }
 
 .cart_form label[for=terms], .cart_form label[for=cterms] {
-	font-size: 10pt;
+	font-size: 100%;
 	float: right;
 	margin-right: 10px;
 }
@@ -408,7 +414,7 @@ li {
 	float: right;
 	height: 48px;
 	margin-right: 20px;
-	font-size: 24px;
+	font-size: 120%;
 }
 
 #login .row {
