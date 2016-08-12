@@ -29,17 +29,19 @@ trait CategoryPage extends Cart[Request] with ServiceDependencies { self =>
       {
         val prods = store.allCategories match {
           case Success(list) =>
-            list flatMap { cat =>
+            val items = list flatMap { cat =>
               (bind(s.node) {
-                case Xml("li", HasClass("item", a), childs)             => <li>{ childs }</li>
-                case Xml("div", HasClass("cat_box", a), childs)         => <div id={ cat stringId } style={ "background: url('" + categoryImagePath(cat) + "') no-repeat" }>{ childs }</div> % a
-                case Xml("div", HasClasses("info_tag_text" :: _, a), _) => <div>{ cat.title_?(s.state.lang.name) }</div> % a
+                case Xml("a", a, childs)                            => <a href={ s"products?cat=${cat.stringId}" }>{ childs }</a> % a
+                case Xml("div", HasClass("fh5co-cover", a), childs) => <div id={ cat stringId } style={ "background: url('" + categoryImagePath(cat) + "') no-repeat" }>{ childs }</div> % a
+                case Xml("h3", a, _)                                => <h3>{ cat.title_?(s.state.lang.name) }</h3> % a
               }) match {
                 case Success(n)                 => n
                 case Failure(ShopError(msg, _)) => errorTag(Loc.loc0(s.state.lang)(msg).text)
                 case Failure(f)                 => errorTag(f toString)
               }
-            }
+            } toList
+
+            items.grouped(3).map { l => <div class="row">{ NodeSeq.fromSeq(l) }</div> }
           case Failure(t) => <div class="error">{ Loc.loc0(s.state.lang)("no.categories").text }</div>
         }
 

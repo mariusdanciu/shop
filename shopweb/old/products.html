@@ -1,0 +1,125 @@
+<html data-template="common">
+<head>
+<script type="text/javascript" src="/static/js/jquery.elevateZoom-3.0.8.min.js"></script>
+<script type="text/javascript" src="/static/js/textile.js"></script>
+
+<script type="text/javascript" src="/static/js/admin.js" data-permissions="write"></script>
+<script type="text/javascript" src="/static/js/products.js"></script>
+
+<title>idid.ro</title>
+<meta name="description" content="Produse" />
+
+</head>
+
+<body>
+
+  <div id="content_head">
+    <div class="center">
+      <div class="navigation">
+        <span data-loc="sort"></span> <select id="sortSelect" data-placeholder="...">
+          <option value=""></option>
+          <option value="bynameasc" data-loc="sort.by.name.asc"></option>
+          <option value="bynamedesc" data-loc="sort.by.name.desc"></option>
+          <option value="bypriceasc" data-loc="sort.by.price.asc"></option>
+          <option value="bypricedesc" data-loc="sort.by.price.desc"></option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="content" class="center products_page">
+
+
+    <div id="product_create_dialog">
+      <div class="product_content_simple quickview">
+        <div class="title_dialog" data-loc="new.product"></div>
+        <div class="close_product_dialog">
+          <span class="sprite sprite-close" />
+        </div>
+        <div class="content_dialog">
+
+          <form action="/product/create" id="upload_form" method="POST">
+
+            <div class="upload_form_fields">
+
+              <div class="tab_select">
+                <ul id="create_product_tab" class="create_product_tab">
+                  <li class="active"><a href="#fields" data-loc="product.info"></a></li>
+                  <li><a href="#create_specs" data-loc="specs"></a></li>
+                  <li><a href="#create_textzone" data-loc="description"></a></li>
+                  <li><a href="#files" data-loc="files"></a></li>
+                </ul>
+              </div>
+
+              <div id="fields" class="fields tab_content">
+                <div class="column">
+                  <div class="row">
+                    <label for="create_title" data-loc="title"></label><input id="create_title" type="text" name="create_title" />
+                  </div>
+                  <div class="row">
+                    <label for="create_price" data-loc="price"></label><input id="create_price" type="text" name="create_price" />
+                  </div>
+                  <div class="select_row">
+                    <label for="create_categories" data-loc="categories"></label> <select id="create_categories" multiple="multiple"
+                      data-snip="catlist" name="create_categories"></select>
+                  </div>
+                  <div class="row">
+                    <label for="create_keywords" data-loc="keywords"></label> <input id="create_keywords" type="text" name="create_keywords" />
+                  </div>
+                  <div class="row">
+                    <label for="create_stock" data-loc="stock"></label> <input id="create_stock" type="text" name="create_stock" />
+                  </div>
+                  <div class="row">
+                    <label for="create_pos" data-loc="list.pos"></label> <input id="create_pos" type="text" name="create_position" />
+                  </div>
+                  <div class="row unique_prod">
+                    <input id="create_unique" type="checkbox" name="create_unique" /> <label for="create_unique" data-loc="unique.product"></label>
+                  </div>
+                </div>
+              </div>
+
+              <div id="create_specs" class="form_specs tab_content">
+                <div>
+                  <div id="add_prop" class="clickable sprite sprite-plus left"></div>
+                  <div class="specs_title left10" data-loc="add.specs"></div>
+                </div>
+                <div id="prop_fields"></div>
+              </div>
+
+              <div id="create_textzone" class="form_textzone tab_content">
+                <div class="row box">
+                  <label for="create_description" data-loc="description"></label>
+                  <div id="create_toggle_desc" class="clickable right">
+                    <div class="create_toggle_text" data-loc="view"></div>
+                    <div class="create_toggle_text hidden" data-loc="edit"></div>
+                  </div>
+                </div>
+                <textarea class="create_toggle box" id="create_description" name="create_description"></textarea>
+                <div class="create_toggle preview" id="create_description_view"></div>
+              </div>
+
+              <div id="files" class="tab_content">
+                <input type="file" id="fileselect" name="files" multiple="multiple" />
+              </div>
+
+            </div>
+          </form>
+        </div>
+        <div class="dialog_footer">
+          <div id="create_product">
+            <a href="#" class="btn" data-loc="create.product"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="item_list"></div>
+
+  </div>
+
+</body>
+</html>
+
+
+
+

@@ -27,32 +27,41 @@ import net.shop.utils.ShopUtils.imagePath
 import net.shop.web.ShopApplication
 import net.shop.web.services.ServiceDependencies
 import net.shop.api.persistence.Persistence
+import scala.xml.Text
 
 trait ProductsPage extends Cart[Request] with ServiceDependencies {
 
-  override def snippets = List(item, catList, prodListTemplate) ++ cartSnips
+  override def snippets = List(catName, item, catList) ++ cartSnips
 
   val cartSnips = super.snippets
 
-  val prodListTemplate = reqSnip("prod_list_template") {
-    s =>
-      Html5.runPageFromFile(s.state, Path(s"web/templates/productslist.html"), this).map { e => (e._1.state.initialState, e._2) }
-  }
-
   private def render(s: SnipState[Request], prod: ProductDetail): NodeSeq = {
     bind(s.node) {
-      case Xml("li", HasClass("item", a), childs)           => <li>{ childs }</li>
-      case Xml("div", HasClass("item_box", a), childs)      => <div id={ prod stringId } title={ prod title_? (s.state.lang.name) } style={ "background: url('" + imagePath("normal", prod) + "') no-repeat" }>{ childs }</div> % a
-      case Xml("div", HasClass("info_tag_text", a), childs) => <div>{ prod title_? (s.state.lang.name) }</div> % a
-      case Xml("div", HasClass("info_tag_price", a), childs) => priceTag(prod) % a
-      case Xml("div", HasId("unique_ribbon", a), childs) => if (prod.unique)
-        <div class="unique_label" data-loc="unique"></div>
+      case Xml("figure", a, childs) => <figure id={ prod stringId }>{ childs }</figure> % a
+      case Xml("img", a, _) =>
+        <img title={ prod title_? (s.state.lang.name) } src={ imagePath("normal", prod) }></img> % a
+      case Xml("h3", a, _) =>
+        <h3>{ prod title_? (s.state.lang.name) }</h3> % a
+      case Xml("p", a, childs) => <p>{ priceTag(prod) % a }</p>
+      case Xml("div", HasClass("unicat", a), childs) => if (prod.unique)
+        <div></div> % a
       else
         NodeSeq.Empty
     } match {
       case Success(n) => n
       case Failure(f) => errorTag(f toString)
     }
+  }
+
+  val catName = reqSnip("cat_name") {
+    s =>
+      store.categoryById(s.state.initialState.param("cat").map { _.head }.getOrElse("...")) match {
+        case Success(cat) =>
+          Success((s.state.initialState, Text(cat.title_?(s.state.lang.name))))
+        case Failure(f) =>
+          Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no.category").text)))
+      }
+
   }
 
   val item = reqSnip("item") {
@@ -63,9 +72,10 @@ trait ProductsPage extends Cart[Request] with ServiceDependencies {
 
             val (nopos, pos) = list.span(p => p.position.isEmpty)
 
-            (pos flatMap { (p: ProductDetail) => render(s, p) }) ++
+            val nodes = (pos flatMap { (p: ProductDetail) => render(s, p) }) ++
               (nopos flatMap { (p: ProductDetail) => render(s, p) })
 
+            nodes.grouped(4).map { l => <div class="row hover01">{ NodeSeq.fromSeq(l) }</div> }
           case Failure(t) => errorTag(Loc.loc0(s.state.lang)("no.category").text)
         }
         Success((s.state.initialState, prods.toSeq))

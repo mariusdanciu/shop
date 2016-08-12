@@ -1,7 +1,7 @@
 <html data-template="common">
 <head>
-<script type="text/javascript" src="/static/js/blockui.js"></script>
-<script type="text/javascript" src="/static/js/admin.js" data-permissions="write"></script>
+<script type="text/javascript" src="/static/js/admin.js"
+	data-permissions="write"></script>
 <script type="text/javascript" src="/static/js/categories.js"></script>
 
 <title>idid.ro</title>
@@ -9,72 +9,43 @@
 </head>
 
 <body>
-  <div id="content" class="center page">
-    <div id="item_list"></div>
 
-    <div id="category_create_dialog" data-permissions="write">
-      <div>
-        <div id="new_cat_title" class="title_dialog" data-loc="new.category"></div>
-        <div class="close_dialog">
-          <span class="sprite sprite-close" />
-        </div>
-        <div class="content_dialog left10">
-          <form action="/category/create" id="create_category_form" method="POST">
-            <div id="fields" class="fields tab_content">
-              <div class="column">
-                <div class="row">
-                  <label for="title" data-loc="title"></label><input id="title" type="text" name="title" />
-                </div>
-                <div class="row">
-                  <label for="pos" data-loc="list.pos"></label><input id="pos" type="text" name="pos" />
-                </div>
-                <div class="row">
-                  <input type="file" id="fileselect" name="files" />
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="dialog_footer paddingtop10">
-        <div id="create_category">
-          <a href="#" class="btn" data-loc="save"></a>
-        </div>
-      </div>
-    </div>
+	<div id="content">
+		<div class="intro" data-animate-effect="fadeIn">
+			<h2>Exclusiv produse create manual</h2>
+			<p>
+				Vei gasi aici bucăți de natură, multă culoare,<br />artă și talent,
+				detalii atent conturate.
+			</p>
+		</div>
 
-    <div id="category_update_dialog" data-permissions="write">
-      <div>
-        <div class="title_dialog" id="edit_cat_title" data-loc="edit.category"></div>
-        <div class="close_dialog">
-          <span class="sprite sprite-close" />
-        </div>
-        <div class="content_dialog left10">
-          <form id="update_category_form" method="POST">
-            <div id="fields" class="fields tab_content">
-              <div class="column">
-                <div class="row">
-                  <label for="title" data-loc="title"></label><input id="title" type="text" name="title" />
-                </div>
-                <div class="row">
-                  <label for="pos" data-loc="list.pos"></label><input id="pos" type="text" name="pos" />
-                </div>
-                <div class="row">
-                  <input type="file" id="fileselect" name="files" />
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="dialog_footer paddingtop10">
-        <div id="update_category">
-          <a href="#" class="btn" data-loc="save"></a>
-        </div>
-      </div>
-    </div>
+		<div id="fh5co-media-section">
+			<div class="container">
+				<div class="row animate-box">
+					<div class="col-md-8 col-md-offset-2 text-center heading-section">
+						<h3>Selecție atentă de produse</h3>
+						<p>Dorim să promovăm aceste produse, pentru că sunt unice, nu
+							există nicăieri în lume altele. Mai mult, creatorii lor și-au
+							lăsat o parte din suflet în fiecare piesă, iar noi respectăm
+							asta. Te invităm și pe tine sâ o faci!</p>
+					</div>
+				</div>
 
-  </div>
+
+				<div class="col-md-4 animate-box bg-cat" data-snip="item">
+					<a class="hover">
+						<div class="fh5co-cover">
+							<div class="desc">
+								<h3></h3>
+								<span>Vezi produse</span>
+							</div>
+						</div>
+					</a>
+				</div>
+
+			</div>
+		</div>
+	</div>
 </body>
 </html>
 
