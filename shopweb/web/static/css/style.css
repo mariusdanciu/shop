@@ -101,6 +101,7 @@ figure:hover+span {
 	font-size: 18px;
 	font-weight: bold;
 	position: relative;
+	padding-top: 20px;
 	color: #000;
 }
 
