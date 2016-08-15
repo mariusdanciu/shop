@@ -1,54 +1,95 @@
-<html data-template="common">
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
 <head>
 
-<script type="text/javascript" src="/static/js/admin.js" data-permissions="write"></script>
-<script type="text/javascript" src="/static/js/product.js"></script>
-<script type="text/javascript" src="/static/js/jquery.elevateZoom-3.0.8.min.js"></script>
-<script type="text/javascript" src="/static/js/textile.js"></script>
-	
+<!-- template:headers -->
 
 <title>idid.ro - Detalii despre produsul handmade selectat.</title>
 </head>
 
 <body>
-	<div id="content">
 
-		<div class="intro-cat" data-animate-effect="fadeIn">
-			<h2>
-				<span data-snip="title" />
-			</h2>
-		</div>
+	<div class="box-wrap-all">
+		<div class="box-wrap">
 
-		<div id="fh5co-media-section">
-			<div class="container">
-				<div class="row animate-box">
+			<!-- template:menu -->
 
-					<div data-snip="images">
-						<div id="detail_box">
-							<b:img id="sel_img"></b:img>
-							<div>
-								<span id="gallery_left" class="left clickable"> <span
-									class="sprite sprite-left" />
-								</span>
+			<div class="intro-cat" data-animate-effect="fadeIn">
+				<h2>
+					<!-- snip:title -->
+					<span></span>
+					<!-- end -->
+				</h2>
+			</div>
+
+			<div id="fh5co-media-section">
+				<div class="container">
+					<div class="row animate-box">
+
+						<div class="item_pics">
+							<!-- snip:images -->
+							<div id="detail_box">
+								<b:img id="sel_img"></b:img>
+
 								<div id="gallery">
 									<ul>
 										<li id="thumb"><a href="#"></a></li>
 									</ul>
 								</div>
-								<span id="gallery_right" class="left clickable"> <span
-									class="sprite sprite-right" />
-								</span>
 							</div>
+							<!-- end -->
+						</div>
+					</div>
+					<div class="row animate-box">
+						<div class="row">
+
+							<h2 class="purple">
+								<!-- snip:detailPrice -->
+								<span></span>
+								<!-- end -->
+							</h2>
+
+						</div>
+						<div class="row">
+							<!-- snip:details -->
+							<div></div>
+							<!-- end -->
+						</div>
+						<div class="row">
+							<h2 class="purple">Specificații</h2>
+						</div>
+						<div class="row">
+							<!-- snip:specs -->
+							<div class="prod_specs">
+								<table cellspacing="0">
+									<!-- snip:specs -->
+									<tr>
+										<td><span class="prop_name"></span></td>
+										<td><span class="prop_value"></span></td>
+									</tr>
+									<!-- end -->
+								</table>
+							</div>
+							<!-- end -->
 						</div>
 					</div>
 
-
 				</div>
 			</div>
+
+			<!-- template:footermenu -->
 		</div>
+		<!-- template:footer -->
 	</div>
-	
-	
+	<!-- template:endscripts -->
+	<script src="/static/js/product.js"></script>
+	<script src="/static/js/jquery.elevateZoom-3.0.8.min.js"></script>
 
 </body>
 </html>
