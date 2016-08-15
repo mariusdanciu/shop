@@ -23,7 +23,6 @@ import net.shift.loc.Loc
 import net.shift.security.User
 import net.shift.template.DynamicContent
 import net.shift.template.PageState
-import net.shift.template.Selectors
 import net.shop.api.Cart
 import net.shop.api.ShopError
 import net.shop.tryApplicative
@@ -42,7 +41,6 @@ import net.shift.engine.http.RequestShell
 import net.shift.common.ShiftFailure
 
 trait ShopServices extends ShiftUtils
-    with Selectors
     with TraversingSpec
     with DefaultLog
     with SecuredService
@@ -58,10 +56,6 @@ trait ShopServices extends ShiftUtils
       case _ => service(_(Resp.redirect("/")))
     }
   }
-
-  implicit val reqSelector = bySnippetAttr[Request]
-  implicit val cartItemsSelector = bySnippetAttr[CartState]
-  implicit val settingsSelector = bySnippetAttr[SettingsPageState]
 
   def mobileUA: State[Request, Request] =
     for {
@@ -182,7 +176,7 @@ trait ShopServices extends ShiftUtils
     u <- user
   } yield {
     val logout = !r.param("logout").isEmpty
-    Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)(bySnippetAttr[T], fs)
+    Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)
   }
 
   def productsVariantImages = for {
@@ -211,7 +205,6 @@ trait ShopServices extends ShiftUtils
     r.cookie("cart") match {
       case Some(c) => {
         implicit val formats = DefaultFormats
-        implicit def snipsSelector[T] = bySnippetAttr[T]
 
         listTraverse.sequence(for {
           (item, index) <- readCart(c.value).items.zipWithIndex

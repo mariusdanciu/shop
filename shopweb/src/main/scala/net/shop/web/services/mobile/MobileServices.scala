@@ -10,7 +10,6 @@ import net.shift.engine.http.GET
 import net.shift.engine.page.Html5
 import net.shift.io.FileSystem
 import net.shift.io.IODefaults
-import net.shift.template.Selectors
 import net.shop.web.pages.mobile.CartPage
 import net.shop.web.services.FormValidation
 import net.shop.web.services.SecuredService
@@ -22,15 +21,12 @@ import net.shift.engine.http.Html5Response
 import net.shift.loc.Loc
 import net.shift.engine.http.Request
 
-trait MobileServices extends Selectors
-    with TraversingSpec
+trait MobileServices extends TraversingSpec
     with DefaultLog
     with FormValidation
     with SecuredService
     with IODefaults
     with ServiceDependencies { self =>
-
-  implicit def snipsSelector[T] = bySnippetAttr[T]
 
   def cartView(implicit fs: FileSystem) = for {
     r <- GET

@@ -20,7 +20,6 @@ import net.shift.io.IO
 import net.shift.io.IODefaults
 import net.shift.loc.Language
 import net.shift.loc.Loc
-import net.shift.template.Selectors
 import net.shop.api.Category
 import net.shop.api.Formatter
 import net.shop.api.ShopError
@@ -33,8 +32,7 @@ import net.shift.common.Valid
 import net.shift.common.Invalid
 import net.shop.model.FieldError
 
-trait CategoryService extends Selectors
-    with TraversingSpec
+trait CategoryService extends TraversingSpec
     with DefaultLog
     with FormValidation
     with SecuredService

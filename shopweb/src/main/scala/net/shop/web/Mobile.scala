@@ -6,7 +6,6 @@ import net.shift.common.TraversingSpec
 import net.shift.engine.utils.ShiftUtils
 import net.shop.web.services.SecuredService
 import net.shift.common.DefaultLog
-import net.shift.template.Selectors
 import net.shift.io.IODefaults
 import net.shop.web.pages.mobile.LandingPage
 import net.shift.common.Path

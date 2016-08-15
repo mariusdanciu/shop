@@ -14,7 +14,6 @@ import net.shift.engine.utils.ShiftUtils
 import net.shift.loc.Language
 import net.shift.loc.Loc
 import net.shift.template.PageState
-import net.shift.template.Selectors
 import net.shift.template.SnipState
 import net.shop.api.CompanyInfo
 import net.shop.api.Formatter
@@ -40,15 +39,12 @@ import net.shift.common.Validation
 import net.shift.common.Invalid
 import net.shift.common.Validator
 
-trait UserService extends Selectors
-    with TraversingSpec
+trait UserService extends TraversingSpec
     with DefaultLog
     with FormValidation
     with SecuredService
     with IODefaults
     with ServiceDependencies {
-
-  implicit val reqSelector = bySnippetAttr[UserDetail]
 
   def deleteAnyUser = for {
     r <- DELETE

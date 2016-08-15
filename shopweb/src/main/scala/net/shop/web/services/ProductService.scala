@@ -21,7 +21,6 @@ import net.shift.io.FileSystem
 import net.shift.io.IO
 import net.shift.loc.Language
 import net.shift.loc.Loc
-import net.shift.template.Selectors
 import net.shop.api.ProductDetail
 import net.shop.api.ShopError
 import net.shop.model.FieldError
@@ -34,7 +33,6 @@ import net.shift.common.Invalid
 import net.shift.common.Validator
 
 trait ProductService extends ShiftUtils
-    with Selectors
     with TraversingSpec
     with DefaultLog
     with FormValidation

@@ -3,7 +3,6 @@ package net.shop.web.pages.mobile
 import net.shift.template.DynamicContent
 import net.shift.loc.Loc
 import scala.xml.Elem
-import net.shift.template.Selectors
 import net.shop.api.ProductDetail
 import net.shift.io.IODefaults
 import net.shop.web.services.OrderForm
@@ -18,13 +17,11 @@ import scala.xml.Text
 import net.shift.common.XmlImplicits._
 import net.shift.template.HasClass
 
-trait MobilePage extends DynamicContent[Request] with Selectors with IODefaults {
+trait MobilePage extends DynamicContent[Request]  with IODefaults {
 
   def snippets = List(connectError, user, back)
 
   def reqSnip(name: String) = snip[Request](name) _
-
-  implicit def snipsSelector[T] = bySnippetAttr[T]
 
   val back = reqSnip("back") {
     s =>

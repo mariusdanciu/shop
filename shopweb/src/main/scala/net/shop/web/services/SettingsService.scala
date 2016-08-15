@@ -5,7 +5,6 @@ import net.shift.engine.ShiftApplication.service
 import net.shift.common.TraversingSpec
 import net.shift.engine.utils.ShiftUtils
 import net.shift.common.DefaultLog
-import net.shift.template.Selectors
 import net.shift.engine.http.POST
 import net.shift.common.Path
 import net.shift.loc.Loc
@@ -31,8 +30,7 @@ import net.shift.common.Validation
 import net.shift.common.Invalid
 import net.shift.common.Validator
 
-trait SettingsService extends Selectors
-    with TraversingSpec
+trait SettingsService extends TraversingSpec
     with DefaultLog
     with FormValidation
     with SecuredService

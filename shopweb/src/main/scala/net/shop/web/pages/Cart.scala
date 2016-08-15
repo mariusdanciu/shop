@@ -24,13 +24,11 @@ import net.shift.common.XmlAttr
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
 
-trait Cart[T] extends DynamicContent[T] with Selectors with IODefaults {
+trait Cart[T] extends DynamicContent[T] with IODefaults {
 
   def snippets = List(connectError, user)
 
   def reqSnip(name: String) = snip[T](name) _
-
-  implicit def snipsSelector[T] = bySnippetAttr[T]
 
   def priceTag(p: ProductDetail): Elem = {
     p.discountPrice match {

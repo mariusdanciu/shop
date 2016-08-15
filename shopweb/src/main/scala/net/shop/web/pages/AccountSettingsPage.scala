@@ -21,7 +21,6 @@ import net.shift.template.HasId
 import net.shift.template.HasName
 import net.shift.template.HasValue
 import net.shift.template.PageState
-import net.shift.template.Selectors
 import net.shift.template.Snippet.snip
 import net.shop.api.Address
 import net.shop.api.OrderCanceled
@@ -190,7 +189,7 @@ trait AccountSettingsPage extends Cart[SettingsPageState] with IODefaults with S
                         def img(a: XmlAttr): NodeSeq = prod.map { p => Xml("img", a + ("src", imagePath(item.id, "thumb", p.images.head))) } getOrElse NodeSeq.Empty
 
                         bind(childs) {
-                          case HasClass("c1", a)                     => img(a)
+                          case HasClass("c1", a)               => img(a)
                           case Xml("td", HasClass("c2", a), _) => <td>{ title }</td> % a
                           case Xml("td", HasClass("c3", a), _) => <td>{ item.quantity }</td> % a
                           case Xml("td", HasClass("c4", a), _) => <td>{ price(item.price) }</td> % a
@@ -275,7 +274,7 @@ trait AccountSettingsPage extends Cart[SettingsPageState] with IODefaults with S
 
                 case Xml(n, HasClass("deleteuser", _), childs) =>
                   bind(childs) {
-                    case Xml(n, a,  _) => Xml(n, a + ("data-email", user.email))
+                    case Xml(n, a, _) => Xml(n, a + ("data-email", user.email))
                   } getOrElse NodeSeq.Empty
 
               } getOrElse NodeSeq.Empty
@@ -290,10 +289,10 @@ trait AccountSettingsPage extends Cart[SettingsPageState] with IODefaults with S
   private def makeSelect(o: OrderLog, childs: NodeSeq): NodeSeq = {
 
     bind(childs) {
-      case Xml("option", HasValue("0", a), _ ) if (o.status == OrderReceived)  => Xml("option", a + ("selected", "true"))
-      case Xml("option", HasValue("1", a), _ ) if (o.status == OrderPending)   => Xml("option", a + ("selected", "true"))
-      case Xml("option", HasValue("2", a), _ ) if (o.status == OrderFinalized) => Xml("option", a + ("selected", "true"))
-      case Xml("option", HasValue("-1", a), _ ) if (o.status == OrderCanceled) => Xml("option", a + ("selected", "true"))
+      case Xml("option", HasValue("0", a), _) if (o.status == OrderReceived)  => Xml("option", a + ("selected", "true"))
+      case Xml("option", HasValue("1", a), _) if (o.status == OrderPending)   => Xml("option", a + ("selected", "true"))
+      case Xml("option", HasValue("2", a), _) if (o.status == OrderFinalized) => Xml("option", a + ("selected", "true"))
+      case Xml("option", HasValue("-1", a), _) if (o.status == OrderCanceled) => Xml("option", a + ("selected", "true"))
     } match {
       case Success(n) => <select id={ o.id } class="order_edit_status">
                            { n }
@@ -307,7 +306,7 @@ trait AccountSettingsPage extends Cart[SettingsPageState] with IODefaults with S
 
 case class SettingsPageState(req: Request, user: Option[UserDetail])
 
-object AddressPage extends DynamicContent[Address] with Selectors { self =>
+object AddressPage extends DynamicContent[Address] { self =>
   override def snippets = List(addr)
 
   val addr = snip[Address]("addr") {
@@ -324,7 +323,7 @@ object AddressPage extends DynamicContent[Address] with Selectors { self =>
 
         val res = bind(s.node) {
           case HasClass("addr_title", a) => Xml("a", a) / Text(name)
-          case Xml("label", a, _)      => Xml("label", a + ("for", augmentAttr(a.attrs, "for", name)))
+          case Xml("label", a, _)        => Xml("label", a + ("for", augmentAttr(a.attrs, "for", name)))
           case HasName("addr_region", a) => augmentInput(a, s.state.initialState.region)
           case HasName("addr_city", a)   => augmentInput(a, s.state.initialState.city)
           case HasName("addr_addr", a)   => augmentInput(a, s.state.initialState.address)

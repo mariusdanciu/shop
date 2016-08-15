@@ -1,7 +1,15 @@
-<html data-template="common">
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
 <head>
-<script type="text/javascript" src="/static/js/admin.js"
-	data-permissions="write"></script>
+
+<!-- template:headers -->
+
 <script type="text/javascript" src="/static/js/products.js"></script>
 
 <title>idid.ro - Lista de produse handmade din categoria
@@ -9,50 +17,63 @@
 </head>
 
 <body>
-	<div id="content">
 
-		<div class="intro-cat" data-animate-effect="fadeIn">
-			<h2><span data-snip="cat_name"/></h2>
-		</div>
+	<div class="box-wrap-all">
+		<div class="box-wrap">
 
-		<div id="fh5co-media-section">
-			<div class="container">
-				<div class="row animate-box">
-					<div class="col-md-8 col-md-offset-2 text-center heading-section">
+			<!-- template:menu -->
 
-						<span>Ordonează după</span> <select data-placeholder="..."
-							id="sortSelect">
-							<option value=""></option>
-							<option value="bynameasc">Nume › ascendent</option>
-							<option value="bynamedesc">Nume › descendent</option>
-							<option value="bypriceasc">Preț › ascendent</option>
-							<option value="bypricedesc">Preț › descendent</option>
-						</select>
-
-
-					</div>
-				</div>
-
-
-				<div class="col-md-3 animate-box bg-cat" data-snip="item">
-					<figure>
-						<a href="#" class="hover">
-							<div class="fh5co-cover-produs">
-								<div class="desc">
-									<img alt="produs" />
-									<h3></h3>
-									<a href="#" class="cartt"><span class="icon-cart"></span>
-										Adaugă în coș</a>
-									<p></p>
-								</div>
-							</div>
-						</a>
-					</figure>
-				</div>
-
+			<div class="intro-cat" data-animate-effect="fadeIn">
+				<h2>
+					<!-- snip:cat_name -->
+					<span></span>
+					<!-- end -->
+				</h2>
 			</div>
+
+			<div id="fh5co-media-section">
+				<div class="container">
+					<div class="row animate-box">
+						<div class="col-md-8 col-md-offset-2 text-center heading-section">
+
+							<span>Ordonează după</span> <select data-placeholder="..."
+								id="sortSelect">
+								<option value=""></option>
+								<option value="bynameasc">Nume › ascendent</option>
+								<option value="bynamedesc">Nume › descendent</option>
+								<option value="bypriceasc">Preț › ascendent</option>
+								<option value="bypricedesc">Preț › descendent</option>
+							</select>
+
+
+						</div>
+					</div>
+
+					<!-- snip:item -->
+					<div class="col-md-3 animate-box bg-cat">
+						<figure>
+							<a class="hover">
+								<div class="fh5co-cover-produs">
+									<div class="desc">
+										<img alt="produs" />
+										<h3></h3>
+										<a href="#" class="cartt"><span class="icon-cart"></span>
+											Adaugă în coș</a>
+										<p></p>
+									</div>
+								</div>
+							</a>
+						</figure>
+					</div>
+					<!-- end -->
+				</div>
+			</div>
+
+			<!-- template:footermenu -->
 		</div>
+		<!-- template:footer -->
 	</div>
+	<!-- template:endscripts -->
 </body>
 </html>
 
