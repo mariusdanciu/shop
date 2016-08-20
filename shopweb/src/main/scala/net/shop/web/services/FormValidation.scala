@@ -23,14 +23,16 @@ import net.shift.common.Validation
 import net.shift.common.Invalid
 import net.shift.engine.http.ContentDisposition
 
-object FormImplicits extends IODefaults {
+import IODefaults._
+
+object FormImplicits  {
   implicit val o = new Ordering[Double] {
     def compare(l: Double, r: Double): Int = (l - r).toInt
   }
 
 }
 
-trait FormValidation extends IODefaults with ServiceDependencies {
+trait FormValidation extends ServiceDependencies {
 
   type ValidationMap = Map[String, String]
   type ValidationList = List[String]

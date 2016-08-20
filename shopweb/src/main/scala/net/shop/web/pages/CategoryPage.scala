@@ -19,6 +19,7 @@ import net.shop.api.ShopError
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
+import net.shift.io.LocalFileSystem
 
 trait CategoryPage extends Cart[Request] with ServiceDependencies { self =>
 

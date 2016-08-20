@@ -12,19 +12,25 @@ import net.shop.web.ShopApplication
 import scala.util.Success
 import net.shift.common.Config
 import net.shift.io.IODefaults
+import net.shift.engine.http.HttpPredicates._
+import net.shift.engine.utils.ShiftUtils
+import scala.util.Try
+import scala.util.Failure
+import net.shift.common.ShiftFailure
 
-trait SecuredService extends ShiftUtils with IODefaults with ServiceDependencies {
-  implicit def login(creds: Credentials): Option[User] = {
+trait SecuredService extends ServiceDependencies {
+
+  implicit def login(creds: Credentials): Try[User] = {
     creds match {
       case BasicCredentials(email, password) =>
 
         store.userByEmail(email) match {
           case Success(Some(ud)) if (ud.password == password) =>
-            Some(User(ud.email, None, ud.permissions.map(Permission(_)).toSet))
+            Success(User(ud.email, None, ud.permissions.map(Permission(_)).toSet))
           case _ =>
-            None
+            ShiftFailure("Invalid credentials").toTry
         }
-      case _ => None
+      case _ => ShiftFailure("Invalid authentication scheme").toTry
     }
   }
 

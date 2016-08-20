@@ -4,46 +4,42 @@ package web.services
 import scala.util.Failure
 import scala.util.Success
 import net.shift.common.Base64
-import net.shift.common.DefaultLog
-import net.shift.common.Path
-import net.shift.common.TraversingSpec
-import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http._
-import net.shift.engine.page.Html5
-import net.shift.engine.utils.ShiftUtils
-import net.shift.loc.Language
-import net.shift.loc.Loc
-import net.shift.template.PageState
-import net.shift.template.SnipState
-import net.shop.api.CompanyInfo
-import net.shop.api.Formatter
-import net.shop.api.UserDetail
-import net.shop.api.UserInfo
-import net.shop.messaging.ForgotPassword
-import net.shop.messaging.Messaging
-import net.shop.model.Formatters._
-import net.shop.model.ValidationFail
-import net.shop.web.ShopApplication
-import net.shop.web.pages.ForgotPasswordPage
-import net.shop.web.services.FormImplicits._
-import net.shop.model.FieldError
 import net.shift.common.Config
-import net.shop.api.ShopError
-import net.shop.model.Formatters
-import net.shift.io.IODefaults
-import net.shift.security.User
-import net.shift.security.Permission
+import net.shift.common.DefaultLog
+import net.shift.common.Invalid
+import net.shift.common.Path
 import net.shift.common.PathObj
+import net.shift.common.TraversingSpec
 import net.shift.common.Valid
 import net.shift.common.Validation
-import net.shift.common.Invalid
 import net.shift.common.Validator
+import net.shift.engine.ShiftApplication.service
+import net.shift.engine.http._
+import net.shift.engine.http.HttpPredicates._
+import net.shift.loc.Language
+import net.shift.loc.Loc
+import net.shift.security.Permission
+import net.shift.security.User
+import net.shop.api.CompanyInfo
+import net.shop.api.ShopError
+import net.shop.api.UserDetail
+import net.shop.api.UserInfo
+import net.shop.model.FieldError
+import net.shop.model.Formatters._
+import net.shop.web.services.FormImplicits._
+import net.shop.web.pages.ForgotPasswordPage
+import net.shop.messaging.ForgotPassword
+import net.shift.template.PageState
+import net.shop.messaging.Messaging
+import net.shift.engine.page.Html5
+import net.shop.api.Formatter
+
+import net.shift.template.Template._
 
 trait UserService extends TraversingSpec
     with DefaultLog
     with FormValidation
     with SecuredService
-    with IODefaults
     with ServiceDependencies {
 
   def deleteAnyUser = for {

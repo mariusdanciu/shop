@@ -616,11 +616,10 @@ h1, h2, h3, h4, h5, h6 {
 	color: #000 !important;
 }
 
-.fh5co-cover-produs .desc a.cartt {
+a.cartt {
 	font-family: "Open Sans", Arial, serif;
 	color: #a980cd;
 	position: relative;
-	width: 100%;
 	text-align: center;
 	font-weight: 400;
 	-webkit-transition: 0.5s;
@@ -1165,5 +1164,12 @@ input[type="text"] {
 	height: 30px;
 }
 
+.price {
+	font-size: 30px;
+	font-weight: 400;
+	margin-right: 30px;
+	color: #a980cd;
+	margin-bottom: 10px;
+}
 
 /*# sourceMappingURL=style.css.map */

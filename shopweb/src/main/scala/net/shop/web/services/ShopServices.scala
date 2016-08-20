@@ -40,11 +40,14 @@ import utils.ShopUtils._
 import net.shift.engine.http.RequestShell
 import net.shift.common.ShiftFailure
 
-trait ShopServices extends ShiftUtils
-    with TraversingSpec
+import net.shift.engine.http.HttpPredicates._
+import net.shift.engine.utils.ShiftUtils
+import net.shift.template.Template._
+
+
+trait ShopServices extends TraversingSpec
     with DefaultLog
     with SecuredService
-    with IODefaults
     with ServiceDependencies { self =>
 
   def notFoundService = for {

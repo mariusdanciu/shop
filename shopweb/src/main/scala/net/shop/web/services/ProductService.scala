@@ -16,7 +16,7 @@ import net.shift.engine.http.POST
 import net.shift.engine.http.Resp
 import net.shift.engine.http.Response.augmentResponse
 import net.shift.engine.utils.ShiftUtils
-import net.shift.io.FileOps
+import net.shift.io.LocalFileSystem
 import net.shift.io.FileSystem
 import net.shift.io.IO
 import net.shift.loc.Language
@@ -31,9 +31,10 @@ import net.shift.common.Valid
 import net.shift.common.Validation
 import net.shift.common.Invalid
 import net.shift.common.Validator
+import net.shift.engine.http.HttpPredicates._
+import net.shift.engine.utils.ShiftUtils
 
-trait ProductService extends ShiftUtils
-    with TraversingSpec
+trait ProductService extends TraversingSpec
     with DefaultLog
     with FormValidation
     with SecuredService
@@ -68,7 +69,7 @@ trait ProductService extends ShiftUtils
           u <- store.updateProducts(cpy.copy(images = p.images ++ cpy.images))
         } yield {
           files.map { f =>
-            IO.arrayProducer(f._3)(FileOps.writer(Path(s"${dataPath}/products/${u.head}/${f._1}")))
+            IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${u.head}/${f._1}")))
           }
           service(_(Resp.created))
         }) match {
@@ -105,7 +106,7 @@ trait ProductService extends ShiftUtils
             Future {
               duration(
                 files.map { f =>
-                  IO.arrayProducer(f._3)(FileOps.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
+                  IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
                 }) { d => log.debug("Write files: " + d) }
             }
             service(_(Resp.created))

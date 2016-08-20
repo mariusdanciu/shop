@@ -18,8 +18,10 @@ import net.shift.common.Validation
 import net.shift.common.Valid
 import net.shift.common.Invalid
 import net.shift.common.Validator
+import net.shift.io.IODefaults
+import net.shift.io.LocalFileSystem
 
-object OrderForm extends IODefaults {
+object OrderForm {
 
   type ValidationInput = Map[String, EnvValue]
   type ValidationFunc[T] = ValidationInput => Validation[T, FieldError]
@@ -28,6 +30,8 @@ object OrderForm extends IODefaults {
   case class FormField(value: String) extends EnvValue
   case class OrderItems(l: List[(ProductDetail, Int)]) extends EnvValue
   case object NotFound extends EnvValue
+
+  implicit val fs = LocalFileSystem
 
   def reqStr[T](name: String, title: String, f: String => Validation[T, FieldError])(implicit lang: Language): ValidationFunc[T] =
     env => {

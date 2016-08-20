@@ -16,8 +16,12 @@ import scala.xml.NodeSeq
 import scala.xml.Text
 import net.shift.common.XmlImplicits._
 import net.shift.template.HasClass
+import net.shift.io.FileSystem
+import net.shift.io.LocalFileSystem
+import net.shop.api.ProductDetail
+import net.shop.web.services.ServiceDependencies
 
-trait MobilePage extends DynamicContent[Request]  with IODefaults {
+trait MobilePage extends DynamicContent[Request] with ServiceDependencies {
 
   def snippets = List(connectError, user, back)
 

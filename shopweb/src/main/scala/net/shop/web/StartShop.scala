@@ -35,9 +35,19 @@ import net.shop.mongodb.MongoDBPersistence
 import net.shift.spray.SprayServer
 import net.shop.web.pages.AboutUsPage
 import net.shop.web.services.mobile.MobileServices
+import net.shift.engine.http.HttpPredicates._
+import net.shop.web.pages.CookiesPage
+import net.shop.web.pages.DataProtectionPage
+import net.shop.web.pages.TermsPage
+import net.shift.io.LocalFileSystem
+import net.shop.web.pages.ReturnPolicyPage
+import net.shop.web.pages.AboutUsPage
+import net.shift.engine.utils.ShiftUtils._
+import net.shop.web.pages.CartPage
 
-object StartShop extends App with DefaultLog with IODefaults {
+object StartShop extends App with DefaultLog {
 
+  implicit val fs = LocalFileSystem
   PropertyConfigurator.configure("config/log4j.properties");
 
   for { cfg <- Config.load() } yield {
@@ -111,6 +121,11 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
     val store = self.store
   }
 
+  val cartPage = new CartPage {
+    val cfg = self.cfg
+    val store = self.store
+  }
+
   def servingRule = for {
     r <- withLanguage(Language("ro"))
     c <- toMobileIfNeeded |
@@ -134,6 +149,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       page("returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
       page("cookies", Path("web/cookies.html"), CookiesPage) |
       page("aboutus", Path("web/aboutus.html"), AboutUsPage) |
+      page("cart", Path("web/cart.html"), cartPage) |
       settingsPage("accountsettings", Path("web/accountsettings.html"), accPage) |
       getCart() |
       orderService.order |

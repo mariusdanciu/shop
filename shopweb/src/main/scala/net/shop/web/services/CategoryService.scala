@@ -14,7 +14,7 @@ import net.shift.engine.http.MultiPartBody
 import net.shift.engine.http.POST
 import net.shift.engine.http.Resp
 import net.shift.engine.http.Response.augmentResponse
-import net.shift.io.FileOps
+import net.shift.io.LocalFileSystem
 import net.shift.io.FileSystem
 import net.shift.io.IO
 import net.shift.io.IODefaults
@@ -31,12 +31,12 @@ import net.shift.common.Validation
 import net.shift.common.Valid
 import net.shift.common.Invalid
 import net.shop.model.FieldError
+import net.shift.engine.http.HttpPredicates._
 
 trait CategoryService extends TraversingSpec
     with DefaultLog
     with FormValidation
     with SecuredService
-    with IODefaults
     with ServiceDependencies {
 
   def getCategory(implicit fs: FileSystem) = for {
@@ -80,7 +80,7 @@ trait CategoryService extends TraversingSpec
         store.updateCategories(cpy) match {
           case scala.util.Success(p) =>
             file.map { f =>
-              IO.arrayProducer(f._2)(FileOps.writer(Path(s"${dataPath}/categories/${cpy.id.getOrElse("")}.png")))
+              IO.arrayProducer(f._2)(LocalFileSystem.writer(Path(s"${dataPath}/categories/${cpy.id.getOrElse("")}.png")))
             }
             service(_(Resp.created))
 
@@ -109,7 +109,7 @@ trait CategoryService extends TraversingSpec
         store.createCategories(o) match {
           case scala.util.Success(p) =>
             file.map { f =>
-              IO.arrayProducer(f._2)(FileOps.writer(Path(s"${dataPath}/categories/${p.head}.png")))
+              IO.arrayProducer(f._2)(LocalFileSystem.writer(Path(s"${dataPath}/categories/${p.head}.png")))
             }
             service(_(Resp.created))
 

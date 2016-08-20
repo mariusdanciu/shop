@@ -40,7 +40,10 @@ import net.shift.common.XmlAttr
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
 
-trait AccountSettingsPage extends Cart[SettingsPageState] with IODefaults with ServiceDependencies { self =>
+import IODefaults._
+import net.shift.template.Template._
+
+trait AccountSettingsPage extends Cart[SettingsPageState] with ServiceDependencies { self =>
 
   val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy - hh:mm")
 

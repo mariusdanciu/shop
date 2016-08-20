@@ -5,12 +5,10 @@ import scala.util.Success
 import scala.xml.NodeSeq
 import scala.xml.NodeSeq.seqToNodeSeq
 import scala.xml.Text
-
 import org.json4s.DefaultFormats
 import org.json4s.jvalue2extractable
 import org.json4s.native.JsonMethods.parse
 import org.json4s.string2JsonInput
-
 import net.shift.common.Path
 import net.shift.common.Xml
 import net.shift.common.XmlAttr
@@ -30,6 +28,8 @@ import net.shop.utils.ShopUtils.errorTag
 import net.shop.utils.ShopUtils.imagePath
 import net.shop.utils.ShopUtils.price
 import net.shop.web.services.ServiceDependencies
+import net.shift.io.LocalFileSystem
+import net.shift.template.Template._
 
 trait CartPage extends MobilePage with ServiceDependencies { self =>
 

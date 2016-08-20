@@ -28,8 +28,11 @@ import net.shop.api.ShopError
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
+import net.shift.io.LocalFileSystem
 
-trait OrderPage extends DynamicContent[OrderState] with IODefaults with ServiceDependencies {
+import net.shift.template.Template._
+
+trait OrderPage extends DynamicContent[OrderState] with ServiceDependencies {
 
   override def snippets = List(logo, info, content, total, transport)
 

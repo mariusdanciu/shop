@@ -46,8 +46,11 @@ import net.shop.web.pages.OrderState
 import net.shift.common.Config
 import net.shift.common.Valid
 import net.shift.common.Invalid
+import net.shift.engine.http.HttpPredicates
+import net.shift.io.LocalFileSystem
+import net.shift.engine.http.HttpPredicates._
 
-trait OrderService extends HttpPredicates with FormValidation with TraversingSpec with ServiceDependencies { self =>
+trait OrderService extends FormValidation with TraversingSpec with ServiceDependencies { self =>
 
   private def extractOrder(json: String) = {
     def extractItems(items: List[JValue]): (String, OrderForm.EnvValue) = listTraverse.sequence(for {

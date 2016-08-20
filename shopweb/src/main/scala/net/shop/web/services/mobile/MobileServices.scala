@@ -21,11 +21,13 @@ import net.shift.engine.http.Html5Response
 import net.shift.loc.Loc
 import net.shift.engine.http.Request
 
+import net.shift.engine.http.HttpPredicates._
+import net.shift.template.Template._
+
 trait MobileServices extends TraversingSpec
     with DefaultLog
     with FormValidation
     with SecuredService
-    with IODefaults
     with ServiceDependencies { self =>
 
   def cartView(implicit fs: FileSystem) = for {

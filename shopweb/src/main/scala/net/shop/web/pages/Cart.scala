@@ -23,8 +23,10 @@ import net.shift.common.Xml
 import net.shift.common.XmlAttr
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
+import IODefaults._
+import net.shift.io.LocalFileSystem
 
-trait Cart[T] extends DynamicContent[T] with IODefaults {
+trait Cart[T] extends DynamicContent[T] {
 
   def snippets = List(connectError, user)
 

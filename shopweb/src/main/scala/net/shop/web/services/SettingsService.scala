@@ -30,6 +30,8 @@ import net.shift.common.Validation
 import net.shift.common.Invalid
 import net.shift.common.Validator
 
+import net.shift.engine.http.HttpPredicates._
+
 trait SettingsService extends TraversingSpec
     with DefaultLog
     with FormValidation

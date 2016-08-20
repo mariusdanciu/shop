@@ -16,6 +16,8 @@ import net.shift.io.IODefaults
 import java.util.Date
 import net.shop.web.services.ServiceDependencies
 import net.shop.api.persistence.Persistence
+import net.shift.io.IODefaults
+import net.shift.io.LocalFileSystem
 
 sealed trait Message
 case class OrderDocument(l: Language, o: Order, doc: String) extends Message
@@ -32,8 +34,10 @@ case class Mail(
   message: String,
   cfg: Config) extends ActorMessage
 
-object Messaging extends IODefaults {
+object Messaging {
   val orderActor = ActorSystem("idid").actorOf(Props[OrderActor], "orderActor")
+
+  implicit val fs = LocalFileSystem
 
   def send(m: Message)(implicit conf: Config, store: Persistence) {
     m match {
