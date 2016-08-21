@@ -24,10 +24,13 @@ import scala.util.Success
 import net.shift.engine.utils.ShiftUtils
 import net.shop.utils.ShopUtils
 import scala.xml.NodeSeq
+import net.shift.template.HasClass
+import net.shift.common.XmlImplicits._
+import scala.xml.Text
 
 trait CartPage extends Cart[Request] with ServiceDependencies { self =>
 
-  override def snippets = List(cartProds) ++ super.snippets
+  override def snippets = List(cartProds, cantities) ++ super.snippets
 
   val cartProds = reqSnip("cart_prods") {
     s =>
@@ -43,6 +46,12 @@ trait CartPage extends Cart[Request] with ServiceDependencies { self =>
             case Success(prod) =>
               bind(s.node) {
                 case Xml("img", a, _) => Xml("img", a + ("src", ShopUtils.imagePath(prod.stringId, "thumb", prod.images.head)))
+                case Xml(name, HasClass("prod_desc", a), childs) =>
+                  Xml(name, a) / Text(prod title_? (s.state.lang.name))
+                case Xml(name, HasClass("prod_price", a), childs) =>
+                  Xml(name, a) / priceTag(prod)
+                case Xml("input", a, childs) =>
+                  Xml("input", a + ("value", item.count.toString))
               }
           }) getOrElse NodeSeq.Empty
 
@@ -52,6 +61,14 @@ trait CartPage extends Cart[Request] with ServiceDependencies { self =>
       }
 
       Success((req, res getOrElse NodeSeq.Empty))
+  }
+
+  val cantities = reqSnip("cantities") {
+    s =>
+      val nodes = for { i <- 1 to 50 } yield {
+        <option value={ i.toString }>{ i }</option>
+      }
+      Success((s.state.initialState, nodes))
   }
 
 }

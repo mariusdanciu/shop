@@ -611,7 +611,7 @@ h1, h2, h3, h4, h5, h6 {
 	width: 100%;
 }
 
-.hover:hover, a.cartt:hover {
+.hover:hover, a.cartt:hover, a.cartt_small:hover {
 	text-decoration: none !important;
 	color: #000 !important;
 }
@@ -626,6 +626,22 @@ a.cartt {
 	-o-transition: 0.5s;
 	transition: 0.5s;
 	padding: 10px 20px;
+	border: 2px solid #a980cd;
+	border-radius: 5px;
+	background: transparent;
+}
+
+a.cartt_small {
+	font-family: "Open Sans", Arial, serif;
+	color: #a980cd;
+	position: relative;
+	text-align: center;
+	font-weight: 400;
+	-webkit-transition: 0.5s;
+	-o-transition: 0.5s;
+	transition: 0.5s;
+	padding: 4px 20px;
+	top: 2px;
 	border: 2px solid #a980cd;
 	border-radius: 5px;
 	background: transparent;
@@ -1170,6 +1186,90 @@ input[type="text"] {
 	margin-right: 30px;
 	color: #a980cd;
 	margin-bottom: 10px;
+}
+
+.cart_item {
+	margin-bottom: 20px;
+	border-radius: 10px;
+	padding: 10px;
+	box-shadow: 0px 0px 5px 1px #ddd;
+	
+}
+
+.cart_item img {
+   float: left;	
+}
+
+.cart_item .prod_price {
+	font-size: 20px;
+	font-weight: 400;
+}
+
+.cart_item .prod_desc {
+	color: #a980cd;
+	font-weight: 400;
+	font-size: 24px;
+}
+
+.cart_item .prod_cant {
+    border: 1px solid #ddd;
+}
+
+.cart_item .img_cont{
+	height: 114px;
+	float: left;
+}
+.cart_item .details {
+	float: left;
+	height: 100%;
+	margin-left: 10px;
+}
+
+.cart_item select {
+	border: 1px solid #a980cd;
+	border-radius: 5px;
+}
+
+
+.select_cont:after {
+  content: '<>';
+  font: 17px "Consolas", monospace;
+  color: #333;
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+  right: 3px;
+  top: 10px;
+  padding: 0 0 2px;
+  border-bottom: 1px solid #999;
+  position: absolute;
+  pointer-events: none;
+}
+ 
+.select_cont select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: 40px;
+  float: right;
+  padding: 0px 24px;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #333;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #cccccc;
+  -ms-word-break: normal;
+}
+
+.select_cont {
+  position: relative;
+  float: left;
+  margin-right: 5px;
 }
 
 /*# sourceMappingURL=style.css.map */
