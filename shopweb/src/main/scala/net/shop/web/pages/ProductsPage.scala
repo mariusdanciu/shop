@@ -28,6 +28,7 @@ import net.shop.web.ShopApplication
 import net.shop.web.services.ServiceDependencies
 import net.shop.api.persistence.Persistence
 import scala.xml.Text
+import net.shift.template.HasClasses
 
 trait ProductsPage extends Cart[Request] with ServiceDependencies {
 
@@ -37,7 +38,8 @@ trait ProductsPage extends Cart[Request] with ServiceDependencies {
 
   private def render(s: SnipState[Request], prod: ProductDetail): NodeSeq = {
     bind(s.node) {
-      case Xml("a", HasClass("hover", a), childs) => <a href={ s"/product?pid=${prod.stringId}" }>{ childs }</a> % a
+      case Xml("a", HasClass("hover", a), childs)           => <a href={ s"/product?pid=${prod.stringId}" }>{ childs }</a> % a
+      case Xml("a", HasClasses(_ :: "add_to_cart_box" :: _, a), childs) => <a id={ prod.stringId }>{ childs }</a> % a
       case Xml("img", a, _) =>
         <img title={ prod title_? (s.state.lang.name) } src={ imagePath("normal", prod) }></img> % a
       case Xml("h3", a, _) =>

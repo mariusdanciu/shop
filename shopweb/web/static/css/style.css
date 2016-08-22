@@ -986,6 +986,7 @@ ba
 
 input[type="text"] {
 	height: 50px;
+	border: 1px solid #ccc;
 }
 
 .form-group {
@@ -1225,8 +1226,12 @@ input[type="text"] {
 	margin-left: 10px;
 }
 
+.cart_item .details .row span{
+	margin-right: 10px;
+}
+
 .cart_item select {
-	border: 1px solid #a980cd;
+	border: 1px solid #aaa;
 	border-radius: 5px;
 }
 
@@ -1253,7 +1258,6 @@ input[type="text"] {
   appearance: none;
   display: block;
   width: 100%;
-  max-width: 320px;
   height: 40px;
   float: right;
   padding: 0px 24px;
@@ -1270,6 +1274,10 @@ input[type="text"] {
   position: relative;
   float: left;
   margin-right: 5px;
+}
+
+form .row {
+	margin-bottom: 10px;
 }
 
 /*# sourceMappingURL=style.css.map */

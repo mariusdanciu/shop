@@ -1,6 +1,19 @@
 (function() {
     $(function() {
     	$("#cart_num").text(cart.numItems());
+    	
+    	$('.cartt_small').each(function(i, obj) {
+    		$(obj).click(function(e){
+        		var id = $(this).attr("id");
+        		cart.removeItem(i);
+        		location.reload();
+        		e.stopPropagation();
+        		return false;
+        	});
+    	});
+    	
+    	
+    	
     });
 })();
 
