@@ -30,7 +30,23 @@ import scala.xml.Text
 
 trait CartPage extends Cart[Request] with ServiceDependencies { self =>
 
-  override def snippets = List(cartProds, cantities) ++ super.snippets
+  override def snippets = List(cartProds, cantities, empty) ++ super.snippets
+
+  val empty = reqSnip("empty") {
+    s =>
+      implicit val formats = DefaultFormats
+      val req = s.state.initialState
+      val cart = for { json <- req.cookie("cart") } yield {
+        parse(java.net.URLDecoder.decode(json.value, "UTF-8")).extract[net.shop.api.Cart]
+      }
+      val same = Success(s.state.initialState, s.node)
+      (cart map {
+        c =>
+          if (c.items.size == 0)
+            Success(s.state.initialState, Text(Loc.loc0(req.language)("cart.empty").text))
+          else same
+      }) getOrElse same
+  }
 
   val cartProds = reqSnip("cart_prods") {
     s =>
@@ -38,25 +54,26 @@ trait CartPage extends Cart[Request] with ServiceDependencies { self =>
       val req = s.state.initialState
       val res = for { json <- req.cookie("cart") } yield {
         val cart = parse(java.net.URLDecoder.decode(json.value, "UTF-8")).extract[net.shop.api.Cart]
-        val nodes = for { item <- cart.items } yield {
 
-          (store.productById(item.id) match {
-            case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
-            case Failure(t)                 => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
-            case Success(prod) =>
-              bind(s.node) {
-                case Xml("img", a, _) => Xml("img", a + ("src", ShopUtils.imagePath(prod.stringId, "thumb", prod.images.head)))
-                case Xml(name, HasClass("prod_desc", a), childs) =>
-                  Xml(name, a) / Text(prod title_? (s.state.lang.name))
-                case Xml(name, HasClass("prod_price", a), childs) =>
-                  Xml(name, a) / priceTag(prod)
-                case Xml("input", a, childs) =>
-                  Xml("input", a + ("value", item.count.toString))
-              }
-          }) getOrElse NodeSeq.Empty
+        val nodes =
+          for { item <- cart.items } yield {
 
-        }
+            (store.productById(item.id) match {
+              case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
+              case Failure(t)                 => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
+              case Success(prod) =>
+                bind(s.node) {
+                  case Xml("img", a, _) => Xml("img", a + ("src", ShopUtils.imagePath(prod.stringId, "thumb", prod.images.head)))
+                  case Xml(name, HasClass("prod_desc", a), childs) =>
+                    Xml(name, a) / Text(prod title_? (s.state.lang.name))
+                  case Xml(name, HasClass("prod_price", a), childs) =>
+                    Xml(name, a) / priceTag(prod)
+                  case Xml("input", a, childs) =>
+                    Xml("input", a + ("value", item.count.toString))
+                }
+            }) getOrElse NodeSeq.Empty
 
+          }
         NodeSeq.fromSeq(nodes.flatten)
       }
 

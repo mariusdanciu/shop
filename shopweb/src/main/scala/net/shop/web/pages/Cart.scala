@@ -28,6 +28,7 @@ import net.shift.io.LocalFileSystem
 
 trait Cart[T] extends DynamicContent[T] {
 
+  override def inlines = List(authClass, logout)
   def snippets = List(connectError, user)
 
   def reqSnip(name: String) = snip[T](name) _
@@ -49,4 +50,23 @@ trait Cart[T] extends DynamicContent[T] {
           Xml(name, attrs) / (s.state.user.map(u => Text(u.name)).getOrElse(NodeSeq.Empty))
       } map ((s.state.initialState, _))
   }
+
+  val authClass = inline[T]("auth_class") {
+    s =>
+      val icon = if (s.state.user.isEmpty)
+        "icon-login"
+      else
+        "icon-exit"
+      Success((s.state.initialState, icon))
+  }
+
+  val logout = inline[T]("logout") {
+    s =>
+      val icon = if (s.state.user.isEmpty)
+        "#"
+      else
+        "/?logout=true"
+      Success((s.state.initialState, icon))
+  }
+
 }

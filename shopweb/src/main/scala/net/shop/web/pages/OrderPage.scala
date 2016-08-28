@@ -9,7 +9,7 @@ import net.shift.engine.http.Request
 import net.shift.engine.page.Html5
 import net.shift.loc.Language
 import net.shift.template._
-import Snippet.snip
+import Snippet._
 import net.shop.model._
 import net.shop.web.ShopApplication
 import scala.util.Success
@@ -34,18 +34,20 @@ import net.shift.template.Template._
 
 trait OrderPage extends DynamicContent[OrderState] with ServiceDependencies {
 
-  override def snippets = List(logo, info, content, total, transport)
+  override def inlines = List(logoUrl, transport, total)
+  override def snippets = List(info, content)
 
   def reqSnip(name: String) = snip[OrderState](name) _
 
-  def orderTemplate(state: OrderState): Try[NodeSeq] =
+  def orderTemplate(state: OrderState): Try[NodeSeq] = {
     Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_${state.lang.name}.html"), this).map(in => in._2)
+  }
 
   def orderCompanyTemplate(state: OrderState): Try[NodeSeq] =
     Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_company_${state.lang.name}.html"), this).map(in => in._2)
 
-  val logo = reqSnip("logo") {
-    s => Success((s.state.initialState, <img src={ s"http://${cfg.string("host")}:${cfg.string("port")}/static/images/idid_blue_l.png" }/>))
+  val logoUrl = inline[OrderState]("logo_url") {
+    s => Success((s.state.initialState, s"http://${cfg.string("host")}:${cfg.string("port")}/static/images/logo.svg"))
   }
 
   val info = reqSnip("info") {
@@ -115,15 +117,14 @@ trait OrderPage extends DynamicContent[OrderState] with ServiceDependencies {
       }
   }
 
-  val total = reqSnip("total") {
+  val total = inline[OrderState]("total") {
     s =>
-      Success((s.state.initialState, Text(
-        price(s.state.initialState.o.total + s.state.initialState.o.transport.price))))
+      Success((s.state.initialState, price(s.state.initialState.o.total + s.state.initialState.o.transport.price)))
   }
 
-  val transport = reqSnip("transport") {
+  val transport = inline[OrderState]("transport") {
     s =>
-      Success((s.state.initialState, Text(s.state.initialState.o.transport.name)))
+      Success((s.state.initialState, s.state.initialState.o.transport.name))
   }
 }
 

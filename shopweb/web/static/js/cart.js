@@ -1,23 +1,90 @@
 (function() {
-    $(function() {
-    	$("#cart_num").text(cart.numItems());
-    	
-    	$('.cartt_small').each(function(i, obj) {
-    		$(obj).click(function(e){
-        		var id = $(this).attr("id");
-        		cart.removeItem(i);
-        		location.reload();
-        		e.stopPropagation();
-        		return false;
-        	});
-    	});
-    	
-    	
-    	
-    });
+	$(function() {
+		$("#cart_num").text(cart.numItems());
+
+		$('.cart_delete').each(function(i, obj) {
+			$(obj).click(function(e) {
+				var id = $(this).attr("id");
+				cart.removeItem(i);
+				location.reload();
+				e.stopPropagation();
+				return false;
+			});
+		});
+
+		
+		$("#buy").click(function(e) {
+			window.cart.buy(function(){
+				window.cart.clear();
+				location.reload();
+			});
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		});
+		
+	});
 })();
 
 var cart = {
+	cleanFormMessages : function() {
+		$('#order_form label, #order_form_company label').css("color",
+				"#555555").removeAttr("title");
+	},
+
+	showFormErrors : function(errors) {
+		$.each(errors, function() {
+			$("label[for='" + this.id + "']").css("color", "#ff0000").attr(
+					"title", this.error);
+		});
+	},
+
+	buy : function(okFunc) {
+
+		var form = "#order_form";
+
+		var formObj = {};
+		var obj = $(form).serializeArray();
+
+		$.each(obj, function() {
+			formObj[this.name] = this.value;
+		});
+
+		var items = cart.items();
+		formObj["items"] = [];
+		for (e in items) {
+			formObj["items"].push({
+				name : items[e].id,
+				value : items[e].count
+			})
+		}
+
+		cart.cleanFormMessages();
+
+		$.ajax({
+			url : "/order",
+			contentType : 'application/json; charset=UTF-8',
+			data : JSON.stringify(formObj),
+			cache : false,
+			timeout : 3000,
+			type : 'POST',
+			statusCode : {
+				403 : function(msg) {
+					var data = JSON.parse(msg.responseText);
+					if (data.errors) {
+						window.cart.showFormErrors(data.errors);
+					}
+				},
+
+				200 : function(data) {
+					okFunc();
+				}
+			}
+		});
+		return false;
+
+	},
+
 	fetchUserInfo : function() {
 		$.ajax({
 			url : "/userinfo",
@@ -34,7 +101,6 @@ var cart = {
 		$.cookie("cart", JSON.stringify({
 			items : []
 		}));
-		window.cart.loadView();
 	},
 
 	computeTotal : function(add) {
@@ -59,7 +125,7 @@ var cart = {
 		}
 		return [];
 	},
-	
+
 	numItems : function() {
 		var num = 0;
 		var it = this.items();
@@ -135,6 +201,5 @@ var cart = {
 			$("#cart_num").text(this.numItems());
 		}
 	}
-	
 
 }

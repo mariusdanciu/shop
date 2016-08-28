@@ -90,6 +90,8 @@ class OrderActor extends Actor with DefaultLog {
     commonsMail.setFrom(mail.from).
       setSubject(mail.subject).
       send()
+
+    log.info("Sent order to: " + mail.to)
   }
 }
 
