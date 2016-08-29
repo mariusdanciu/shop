@@ -44,7 +44,6 @@ import net.shift.engine.http.HttpPredicates._
 import net.shift.engine.utils.ShiftUtils
 import net.shift.template.Template._
 
-
 trait ShopServices extends TraversingSpec
     with DefaultLog
     with SecuredService
@@ -135,12 +134,20 @@ trait ShopServices extends TraversingSpec
     }
   }
 
-  def page[T](uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
+  def page(uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
     r <- path(uri)
     u <- user
   } yield {
     val logout = !r.param("logout").isEmpty
     Html5.pageFromFile(PageState(r, r.language, if (logout) None else u), filePath, snipets)
+  }
+
+  def page[T](uri: String, filePath: Path, snipets: DynamicContent[T], initialState: T) = for {
+    r <- path(uri)
+    u <- user
+  } yield {
+    val logout = !r.param("logout").isEmpty
+    Html5.pageFromFile(PageState(initialState, r.language, if (logout) None else u), filePath, snipets)
   }
 
   def mobilePage[T](uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {

@@ -44,6 +44,7 @@ import net.shop.web.pages.ReturnPolicyPage
 import net.shop.web.pages.AboutUsPage
 import net.shift.engine.utils.ShiftUtils._
 import net.shop.web.pages.CartPage
+import net.shop.web.pages.CartInfo
 
 object StartShop extends App with DefaultLog {
 
@@ -72,8 +73,6 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
 
   implicit val cfg = c
   implicit val store: Persistence = new MongoDBPersistence
-
-  val mobile = Mobile(cfg, store)
 
   val orderService = new OrderService {
     val cfg = self.cfg
@@ -130,8 +129,6 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
     r <- withLanguage(Language("ro"))
     c <- toMobileIfNeeded |
       staticFiles(Path("web/static")) |
-      mobile.mobilePages |
-      mobileServices.cartView |
       ajaxLogin |
       ajaxProductsList |
       ajaxCategoriesList |
@@ -149,7 +146,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       page("returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
       page("cookies", Path("web/cookies.html"), CookiesPage) |
       page("aboutus", Path("web/aboutus.html"), AboutUsPage) |
-      page("cart", Path("web/cart.html"), cartPage) |
+      page("cart", Path("web/cart.html"), cartPage, CartInfo(r, Nil)) |
       settingsPage("accountsettings", Path("web/accountsettings.html"), accPage) |
       getCart() |
       orderService.order |

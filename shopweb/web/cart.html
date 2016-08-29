@@ -26,6 +26,9 @@
 
 			<div id="fh5co-media-section">
 				<div class="container">
+					<div class="empty-cart">
+						<!-- inline:emptyMsg -->
+					</div>
 					<!-- snip:empty -->
 					<!-- snip:cart_prods -->
 					<div class="row animate-box cart_item">
@@ -37,7 +40,7 @@
 								<span class="prod_desc"></span>
 								<div class="row top20">
 									Preț unitar: <span class="prod_price"></span> <span> <select>
-											<!-- snip:cantities -->
+											<!-- snip:quantities -->
 											<option></option>
 											<!-- end -->
 									</select> buc
@@ -143,7 +146,10 @@
 								</div>
 							</div>
 							<div class="row plata">
-								<span><a id="buy" class="cartt_small" href="#">Cumpăr</a></span>
+								<span>Total <span id="total">
+										<!-- inline:total -->
+								</span> lei
+								</span> <span><a id="buy" class="cartt_small" href="#">Cumpăr</a></span>
 							</div>
 							<div class="row plata">
 								<span>Plata se va face ramburs.</span>
