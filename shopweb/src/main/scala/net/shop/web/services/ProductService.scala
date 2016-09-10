@@ -29,6 +29,7 @@ import net.shift.common.Validator
 import net.shift.engine.http.HttpPredicates._
 import net.shift.http.Responses._
 import net.shift.http.ContentType._
+import net.shift.security.Permission
 
 trait ProductService extends TraversingSpec
     with DefaultLog
@@ -83,7 +84,8 @@ trait ProductService extends TraversingSpec
   def createProduct(implicit fs: FileSystem) = for {
     r <- post
     Path(_, _ :: "product" :: "create" :: Nil) <- path
-    //user <- userRequired(Loc.loc0(r.language)("login.fail").text)
+    user <- userRequired(Loc.loc0(r.language)("login.fail").text)
+    _ <- permissions("Unauthorized", Permission("write"))
     mp <- multipartForm
   } yield {
     val extracted = duration(extract(r.language, None, "create_", mp)) { d =>

@@ -44,6 +44,8 @@ import net.shop.web.pages.CartPage
 import net.shop.web.pages.CartInfo
 import net.shift.http.HTTPServer
 import net.shop.web.pages.CreateProductPage
+import net.shift.loc.Loc
+import net.shift.security.Permission
 
 object StartShop extends App with DefaultLog {
 
@@ -140,28 +142,32 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       page("/aboutus", Path("web/aboutus.html"), AboutUsPage) |
       page("/cart", Path("web/cart.html"), cartPage, CartInfo(r, Nil)) |
       settingsPage("/accountsettings", Path("web/accountsettings.html"), accPage) |
-      page("/createproduct", Path("web/createproduct.html"), createProductPage) |
-      getCart() |
-      orderService.order |
-      productService.createProduct |
-      productService.deleteProduct |
-      productService.updateProduct |
-      categoryService.createCategory |
-      categoryService.deleteCategory |
-      categoryService.updateCategory |
-      categoryService.getCategory |
-      userService.createUser |
-      userService.userInfo |
-      userService.deleteThisUser |
-      userService.deleteAnyUser |
-      userService.forgotPassword |
-      settingsService.updateSettings |
-      settingsService.updateOrderStatus |
-      orderService.orderByEmail |
-      orderService.orderByProduct |
-      staticFile(Path("/google339a4b5281321c21.html")) |
-      staticFile(Path("/sitemap.xml")) |
-      notFoundService
+      pageWithRules("/createproduct", Path("web/createproduct.html"), createProductPage,
+        for {
+          _ <- userRequired(Loc.loc0(r.language)("login.fail").text)
+          r <- permissions("Unauthorized", Permission("write"))
+        } yield r) |
+        getCart() |
+        orderService.order |
+        productService.createProduct |
+        productService.deleteProduct |
+        productService.updateProduct |
+        categoryService.createCategory |
+        categoryService.deleteCategory |
+        categoryService.updateCategory |
+        categoryService.getCategory |
+        userService.createUser |
+        userService.userInfo |
+        userService.deleteThisUser |
+        userService.deleteAnyUser |
+        userService.forgotPassword |
+        settingsService.updateSettings |
+        settingsService.updateOrderStatus |
+        orderService.orderByEmail |
+        orderService.orderByProduct |
+        staticFile(Path("/google339a4b5281321c21.html")) |
+        staticFile(Path("/sitemap.xml")) |
+        notFoundService
     s <- refresh(c)
     t <- tryLogout(r, s)
   } yield t

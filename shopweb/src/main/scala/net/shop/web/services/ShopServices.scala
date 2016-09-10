@@ -90,6 +90,21 @@ trait ShopServices extends TraversingSpec
     }
   }
 
+  def pageWithRules[T](uri: String,
+                       filePath: Path,
+                       snipets: DynamicContent[HTTPRequest],
+                       rules: State[HTTPRequest, T]): State[HTTPRequest, Attempt] = {
+    for {
+      _ <- rules
+      r <- path(uri)
+      u <- user
+    } yield {
+      val logout = !r.uri.param("logout").isEmpty
+      Html5.pageFromFile(PageState(r, r.language, if (logout) None else u), filePath, snipets)
+    }
+
+  }
+
   def page(uri: String, filePath: Path, snipets: DynamicContent[HTTPRequest]) = for {
     r <- path(uri)
     u <- user

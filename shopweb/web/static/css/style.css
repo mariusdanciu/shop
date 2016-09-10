@@ -1179,6 +1179,10 @@ input[type="text"], input[type="password"] {
 	height: 30px;
 }
 
+.prod_specs table tr td {
+	width: 50%;
+}
+
 .price {
 	font-size: 30px;
 	font-weight: 400;
@@ -1346,5 +1350,6 @@ form .row {
 .upload_form_fields select {
 	width: 100%;
 }
+
 
 /*# sourceMappingURL=style.css.map */

@@ -35,27 +35,6 @@
             }
         });
 
-        $("#menu").tabify();
-
-        $("#cart_symbol, #cart_symbol:hidden").click(function(event) {
-            window.cart.showCart();
-            return false;
-        });
-
-        $("#user_symbol, #user_symbol:hidden").click(function(event) {
-            window.user.showLogin();
-            return false;
-        });
-
-        $("#cart_popup, #user_popup, #newuser_popup").click(function(event) {
-            event.stopPropagation();
-        });
-
-        $("#authgo").click(function(event) {
-            window.user.login("#login_form");
-            return false;
-        });
-
         $("#newuser").click(function(event) {
             window.user.hideLogin();
             window.user.showNewUser();
