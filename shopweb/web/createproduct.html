@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+
+<!-- template:headers -->
+
+<title>idid.ro - Creaza un produs nou</title>
+</head>
+
+<body>
+
+	<div class="box-wrap-all">
+		<div class="box-wrap">
+
+			<!-- template:menu -->
+
+			<div class="intro-cat" data-animate-effect="fadeIn">
+				<h2>Adaugă un produs nou</h2>
+			</div>
+
+			<div id="fh5co-media-section">
+				<div class="container">
+
+					<form action="/product/create" id="upload_form" method="POST">
+
+						<div class="upload_form_fields">
+
+							<div class="row">
+								<div class="col-md-2">
+									<label for="create_title"> <!-- loc:title --></label>
+								</div>
+								<div class="col-md-4">
+									<input id="create_title" type="text" name="create_title" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-2">
+									<label for="create_price"> <!-- loc:price --></label>
+								</div>
+								<div class="col-md-4">
+									<input id="create_price" type="text" name="create_price" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-2">
+									<label for="create_discount_price"> <!-- loc:discount.price --></label>
+								</div>
+								<div class="col-md-4">
+									<input id="create_discount_price" type="text"
+										name="discount_price" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-2">
+									<label for="create_categories"> <!-- loc:categories --></label>
+								</div>
+								<div class="col-md-4">
+
+									<select id="create_categories" multiple="multiple"
+										name="create_categories">
+										<!-- snip:catlist -->
+										  
+										<!-- end -->
+									</select>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-2">
+									<label for="create_keywords"> <!-- loc:keywords -->
+									</label>
+								</div>
+								<div class="col-md-4">
+									<input id="create_keywords" type="text" name="create_keywords" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-2">
+									<label for="create_stock"> <!-- loc:stock -->
+									</label>
+								</div>
+								<div class="col-md-4">
+									<input id="create_stock" type="text" name="create_stock" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-2">
+									<label for="create_pos"> <!-- loc:list.pos -->
+									</label>
+								</div>
+								<div class="col-md-4">
+									<input id="create_pos" type="text" name="create_position" />
+								</div>
+							</div>
+							<div class="row unique_prod">
+								<div class="col-md-2">
+									<label for="create_unique"> <!-- loc:unique.product -->
+									</label>
+								</div>
+								<div class="col-md-2">
+									<input id="create_unique" type="checkbox" name="create_unique" />
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="row pad15H">
+									<label for="create_specs"> <!-- loc:specs --></label>
+								</div>
+								<div class="row pad15H">
+									<textarea class="description" id="create_specs"
+										name="create_specs"></textarea>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="row pad15H">
+									<label for="create_description"> <!-- loc:description --></label>
+								</div>
+								<div class="row pad15H">
+									<textarea class="description" id="create_description"
+										name="create_description"></textarea>
+								</div>
+							</div>
+
+							<div class="row pad15H">
+								<input type="file" id="fileselect" name="files"
+									multiple="multiple" />
+							</div>
+
+						</div>
+					</form>
+					<div class="row top15">
+						<a id="create_product" class="margin15 cartt" href="#">Adaugă</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- template:footermenu -->
+		</div>
+		<!-- template:footer -->
+	</div>
+	<!-- template:endscripts -->
+	<script src="/static/js/admin.js"></script>
+	<script src="/static/js/createproduct.js"></script>
+</body>
+</html>
+

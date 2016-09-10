@@ -83,7 +83,7 @@ trait ProductService extends TraversingSpec
   def createProduct(implicit fs: FileSystem) = for {
     r <- post
     Path(_, _ :: "product" :: "create" :: Nil) <- path
-    user <- userRequired(Loc.loc0(r.language)("login.fail").text)
+    //user <- userRequired(Loc.loc0(r.language)("login.fail").text)
     mp <- multipartForm
   } yield {
     val extracted = duration(extract(r.language, None, "create_", mp)) { d =>
@@ -139,7 +139,7 @@ trait ProductService extends TraversingSpec
     val productFormlet = Validator(product) <*>
       Validator(validateMapField(fieldPrefix + "title", ?("title").text)) <*>
       Validator(validateMapField(fieldPrefix + "description", ?("description").text)) <*>
-      Validator(validateProps) <*>
+      Validator(validateSpecs(fieldPrefix)) <*>
       Validator(validateDouble(fieldPrefix + "price", ?("price").text)) <*>
       Validator(validateOptional(fieldPrefix + "discount_price", s => Option(s.toDouble))) <*>
       Validator(validateDefault(0)) <*>

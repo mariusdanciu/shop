@@ -58,11 +58,19 @@ trait FormValidation extends ServiceDependencies {
       }
     }
 
-  def validateProps(implicit lang: Language): ValidationFunc[ValidationMap] =
+  def validateSpecs(prefix: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
     env => {
-      (env.get("pkey"), env.get("pval")) match {
-        case (Some(k), Some(v)) => Valid(k.zip(v).toMap)
-        case _                  => Valid(Map.empty)
+      env.get(prefix + "specs") match {
+        case Some(specs :: Nil) =>
+          val map = (for { kv <- specs.split("\n") } yield {
+            val split = kv.split("=")
+            if (split.length == 2) {
+              List(split(0).trim -> split(1).trim)
+            } else Nil
+          }).flatten.toMap
+
+          Valid(map)
+        case _ => Valid(Map.empty)
       }
     }
 

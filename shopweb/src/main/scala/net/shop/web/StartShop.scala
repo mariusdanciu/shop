@@ -43,6 +43,7 @@ import net.shop.web.pages.AboutUsPage
 import net.shop.web.pages.CartPage
 import net.shop.web.pages.CartInfo
 import net.shift.http.HTTPServer
+import net.shop.web.pages.CreateProductPage
 
 object StartShop extends App with DefaultLog {
 
@@ -118,6 +119,11 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
     val store = self.store
   }
 
+  val createProductPage = new CreateProductPage {
+    val cfg = self.cfg
+    val store = self.store
+  }
+
   def servingRule = for {
     r <- withLanguage(Language("ro"))
     c <- staticFiles(Path("web/static")) |
@@ -134,6 +140,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       page("/aboutus", Path("web/aboutus.html"), AboutUsPage) |
       page("/cart", Path("web/cart.html"), cartPage, CartInfo(r, Nil)) |
       settingsPage("/accountsettings", Path("web/accountsettings.html"), accPage) |
+      page("/createproduct", Path("web/createproduct.html"), createProductPage) |
       getCart() |
       orderService.order |
       productService.createProduct |
