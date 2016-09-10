@@ -1,31 +1,6 @@
 (function() {
 	$(function() {
 
-		$("#create_category_form").keydown(function(event) {
-			if (event.keyCode == 13) {
-				window.admin.saveCategory("#create_category_form");
-				return false;
-			}
-		});
-
-		$("#create_category").click(function(event) {
-			window.admin.saveCategory("#create_category_form");
-			return false;
-		});
-
-		$("#create_product").click(function(event) {
-			window.admin.save("#upload_form", function() {
-				window.common.closeDialog();
-				window.products.reloadProducts();
-			});
-			return false;
-		});
-
-		$("#search_users").click(function(event) {
-			admin.users("#users_result");
-			return false;
-		});
-
 	});
 
 })();
@@ -74,7 +49,6 @@ var admin = {
 
 	saveCategory : function(formId) {
 		window.admin.save(formId, function() {
-			window.common.closeDialog();
 			window.categories.reloadCategories();
 		});
 	},
@@ -126,8 +100,8 @@ var admin = {
 				timeout : 10000,
 				data : formData,
 				statusCode : {
-					201 : function() {
-						successFunc();
+					201 : function(data) {
+						successFunc(data);
 					},
 					403 : function(msg) {
 						var data = JSON.parse(msg.responseText);

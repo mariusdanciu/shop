@@ -11,11 +11,6 @@ var categories = {
 
     refreshList : function() {
 
-        $(".close_dialog").bind("click", function(event) {
-            window.common.closeDialog();
-            return false;
-        });
-
         $(".cat_box").each(function(index) {
             var me = $(this);
             var pid = me.attr("id");

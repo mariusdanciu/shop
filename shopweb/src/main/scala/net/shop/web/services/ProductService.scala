@@ -99,13 +99,11 @@ trait ProductService extends TraversingSpec
 
         create match {
           case scala.util.Success(p) =>
-            Future {
-              duration(
-                files.map { f =>
-                  IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
-                }) { d => log.debug("Write files: " + d) }
-            }
-            service(_(created))
+            duration(
+              files.map { f =>
+                IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
+              }) { d => log.debug("Write files: " + d) }
+            service(_(created.withJsonBody("{\"pid\": \"" + p.head + "\"}")))
           case scala.util.Failure(ShopError(msg, _)) => service(_(ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create product ", t)
