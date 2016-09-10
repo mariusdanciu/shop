@@ -33,8 +33,11 @@ import net.shift.template.PageState
 import net.shop.messaging.Messaging
 import net.shift.engine.page.Html5
 import net.shop.api.Formatter
-
 import net.shift.template.Template._
+import net.shift.http.Responses._
+import net.shift.http.ContentType._
+import net.shift.http.HTTPRequest
+import net.shift.http.HTTPParam
 
 trait UserService extends TraversingSpec
     with DefaultLog
@@ -43,59 +46,59 @@ trait UserService extends TraversingSpec
     with ServiceDependencies {
 
   def deleteAnyUser = for {
-    r <- DELETE
-    PathObj(_, "delete" :: "user" :: email :: Nil) <- path
+    r <- delete
+    PathObj(_, _ :: "delete" :: "user" :: email :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
     implicit val lang = r.language
     if (user.hasAllPermissions(Permission("write"))) {
       store.deleteUserByEmail(email) match {
         case Success(1) =>
-          service(_(Resp.ok))
+          service(_(ok))
         case scala.util.Failure(err: ShopError) =>
-          service(_(JsonResponse(Formatter.format(err)).code(500)))
+          service(_(serverError.withTextBody(Formatter.format(err))))
         case _ =>
-          service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
+          service(_(notFound.withTextBody(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
       }
     } else {
-      service(_(JsonResponse(Formatter.format(new ShopError("no.permissions"))).code(403)))
+      service(_(forbidden.withTextBody(Formatter.format(new ShopError("no.permissions")))))
     }
   }
 
   def deleteThisUser = for {
-    r <- DELETE
+    r <- delete
     _ <- path("delete/user")
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
     store.deleteUserByEmail(user.name) match {
       case Success(1) =>
-        service(_(Resp.ok))
+        service(_(ok))
       case scala.util.Failure(err: ShopError) =>
         implicit val lang = r.language
-        service(_(JsonResponse(Formatter.format(err)).code(500)))
+        service(_(serverError.withTextBody(Formatter.format(err))))
       case _ =>
-        service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
+        service(_(notFound.withTextBody(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
     }
   }
 
   def userInfo = for {
-    r <- GET
-    Path(_, "userinfo" :: Nil) <- path
+    r <- get
+    Path(_, _ :: "userinfo" :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
     store.userByEmail(user.name) match {
       case Success(Some(ud)) =>
         implicit val l = r.language
-        service(_(JsonResponse(Formatter.format(ud))))
-      case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
+        service(_(ok.withJsonBody(Formatter.format(ud))))
+      case scala.util.Failure(ShopError(msg, _)) => service(_(ok.withTextBody(Loc.loc0(r.language)(msg).text)))
       case _ =>
-        service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
+        service(_(notFound.withTextBody(Loc.loc(r.language)("user.not.found", Seq(user.name)).text)))
     }
   }
 
   def forgotPassword = for {
-    r <- POST
-    Path(_, "forgotpassword" :: b64 :: Nil) <- path
+    r <- post
+    Path(_, _ :: "forgotpassword" :: b64 :: Nil) <- path
   } yield {
     val email = Base64.decodeString(b64)
     (for {
@@ -104,15 +107,15 @@ trait UserService extends TraversingSpec
     } yield {
       Messaging.send(ForgotPassword(r.language, email, n.toString))
     }) match {
-      case Success(_) => service(_(TextResponse(Loc.loc(r.language)("forgotpass.mail.sent", Seq(email)).text)))
+      case Success(_) => service(_(ok.withTextBody(Loc.loc(r.language)("forgotpass.mail.sent", Seq(email)).text)))
       case Failure(t) =>
-        service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("user.not.found", Seq(email)).text)))
+        service(_(notFound.withTextBody(Loc.loc(r.language)("user.not.found", Seq(email)).text)))
     }
   }
 
   def createUser = for {
-    r <- POST
-    Path(_, "create" :: "user" :: Nil) <- path
+    r <- post
+    Path(_, _ :: "create" :: "user" :: Nil) <- path
   } yield {
     implicit val loc = r.language
     extract(r) match {
@@ -136,11 +139,11 @@ trait UserService extends TraversingSpec
 
         store.createUsers(usr) match {
           case scala.util.Success(ids) =>
-            service(_(Resp.created.securityCookies(User(usr.email, None, usr.permissions.map { Permission(_) }.toSet))))
-          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
+            service(_(created.withSecurityCookies(User(usr.email, None, usr.permissions.map { Permission(_) }.toSet))))
+          case scala.util.Failure(ShopError(msg, _)) => service(_(ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create user ", t)
-            service(_(Resp.serverError.withBody(Loc.loc0(r.language)("user.cannot.create").text)))
+            service(_(serverError.withTextBody(Loc.loc0(r.language)("user.cannot.create").text)))
         }
 
       case Invalid(msgs) =>
@@ -148,7 +151,7 @@ trait UserService extends TraversingSpec
     }
   }
 
-  private def extract(r: Request)(implicit loc: Language): Validation[CreateUser, FieldError] = {
+  private def extract(r: HTTPRequest)(implicit loc: Language): Validation[CreateUser, FieldError] = {
     val user = (CreateUser.apply _).curried
     val ? = Loc.loc0(loc) _
 
@@ -161,7 +164,9 @@ trait UserService extends TraversingSpec
       Validator(required("cu_password", ?("password").text, Valid(_))) <*>
       Validator(required("cu_password2", ?("retype.password").text, Valid(_)))
 
-    (userFormlet validate r.params flatMap {
+    val params = r.uri.params map { case HTTPParam(k, v) => (k, v) } toMap
+
+    (userFormlet validate params flatMap {
       case p @ CreateUser(_,
         _,
         _,

@@ -10,12 +10,7 @@ import net.shift.common.TimeUtils.duration
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
-import net.shift.engine.http.DELETE
 import net.shift.engine.http.MultiPartBody
-import net.shift.engine.http.POST
-import net.shift.engine.http.Resp
-import net.shift.engine.http.Response.augmentResponse
-import net.shift.engine.utils.ShiftUtils
 import net.shift.io.LocalFileSystem
 import net.shift.io.FileSystem
 import net.shift.io.IO
@@ -32,7 +27,8 @@ import net.shift.common.Validation
 import net.shift.common.Invalid
 import net.shift.common.Validator
 import net.shift.engine.http.HttpPredicates._
-import net.shift.engine.utils.ShiftUtils
+import net.shift.http.Responses._
+import net.shift.http.ContentType._
 
 trait ProductService extends TraversingSpec
     with DefaultLog
@@ -41,22 +37,22 @@ trait ProductService extends TraversingSpec
     with ServiceDependencies {
 
   def deleteProduct(implicit fs: FileSystem) = for {
-    r <- DELETE
-    Path(_, "product" :: "delete" :: id :: Nil) <- path
+    r <- delete
+    Path(_, _ :: "product" :: "delete" :: id :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
     store.deleteProducts(id) match {
       case scala.util.Success(num) =>
         fs.deletePath(Path(s"${dataPath}/products/$id"))
-        service(_(Resp.ok))
-      case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
-      case scala.util.Failure(t)                 => service(_(Resp.notFound))
+        service(_(ok))
+      case scala.util.Failure(ShopError(msg, _)) => service(_(ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+      case scala.util.Failure(t)                 => service(_(notFound))
     }
   }
 
   def updateProduct(implicit fs: FileSystem) = for {
-    r <- POST
-    Path(_, "product" :: "update" :: pid :: Nil) <- path
+    r <- post
+    Path(_, _ :: "product" :: "update" :: pid :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
     mp <- multipartForm
   } yield {
@@ -71,11 +67,11 @@ trait ProductService extends TraversingSpec
           files.map { f =>
             IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${u.head}/${f._1}")))
           }
-          service(_(Resp.created))
+          service(_(created))
         }) match {
           case scala.util.Success(s)                 => s
-          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
-          case scala.util.Failure(t)                 => service(_(Resp.serverError))
+          case scala.util.Failure(ShopError(msg, _)) => service(_(ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+          case scala.util.Failure(t)                 => service(_(serverError))
         }
 
       case (_, Invalid(msgs)) =>
@@ -85,8 +81,8 @@ trait ProductService extends TraversingSpec
   }
 
   def createProduct(implicit fs: FileSystem) = for {
-    r <- POST
-    Path(_, "product" :: "create" :: Nil) <- path
+    r <- post
+    Path(_, _ :: "product" :: "create" :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
     mp <- multipartForm
   } yield {
@@ -109,11 +105,11 @@ trait ProductService extends TraversingSpec
                   IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
                 }) { d => log.debug("Write files: " + d) }
             }
-            service(_(Resp.created))
-          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
+            service(_(created))
+          case scala.util.Failure(ShopError(msg, _)) => service(_(ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create product ", t)
-            service(_(Resp.serverError))
+            service(_(serverError))
         }
 
       case (_, Invalid(msgs)) =>

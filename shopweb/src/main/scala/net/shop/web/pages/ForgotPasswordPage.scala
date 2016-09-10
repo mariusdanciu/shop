@@ -1,7 +1,6 @@
 package net.shop.web.pages
 
 import net.shift.template.DynamicContent
-import net.shift.engine.http.Request
 import net.shift.template.Snippet._
 import net.shift.loc.Loc
 import scala.util.Success

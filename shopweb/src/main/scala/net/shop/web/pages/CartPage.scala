@@ -9,7 +9,6 @@ import org.json4s.native.JsonMethods.parse
 import org.json4s.string2JsonInput
 import net.shift.common.XmlImplicits._
 import net.shift.common.XmlUtils._
-import net.shift.engine.http.Request
 import net.shift.loc.Loc
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
@@ -24,8 +23,9 @@ import net.shop.utils.ShopUtils._
 import scala.Option
 import net.shop.api.ProductDetail
 import net.shop.utils.ShopUtils
+import net.shift.http.HTTPRequest
 
-case class CartInfo(r: Request, items: Seq[(String, Int, ProductDetail)])
+case class CartInfo(r: HTTPRequest, items: Seq[(String, Int, ProductDetail)])
 
 trait CartPage extends Cart[CartInfo] with ServiceDependencies { self =>
   implicit val formats = DefaultFormats
@@ -34,11 +34,11 @@ trait CartPage extends Cart[CartInfo] with ServiceDependencies { self =>
 
   override def snippets = List(cartProds, quantities, empty) ++ super.snippets
 
-  private def getCart(r: Request): Option[CCart] = {
+  private def getCart(r: HTTPRequest): Option[CCart] = {
     for {
       json <- r.cookie("cart")
     } yield {
-      parse(java.net.URLDecoder.decode(json.value, "UTF-8")).extract[net.shop.api.Cart]
+      parse(java.net.URLDecoder.decode(json.cookieValue, "UTF-8")).extract[net.shop.api.Cart]
     }
   }
 

@@ -10,7 +10,6 @@ import scala.xml.NodeSeq.seqToNodeSeq
 import net.shift.common.Path
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
-import net.shift.engine.http.Request
 import net.shift.engine.page.Html5
 import net.shift.loc.Loc
 import net.shift.template.Binds.bind
@@ -29,16 +28,17 @@ import net.shop.web.services.ServiceDependencies
 import net.shop.api.persistence.Persistence
 import scala.xml.Text
 import net.shift.template.HasClasses
+import net.shift.http.HTTPRequest
 
-trait ProductsPage extends Cart[Request] with ServiceDependencies {
+trait ProductsPage extends Cart[HTTPRequest] with ServiceDependencies {
 
   override def snippets = List(catName, item, catList) ++ cartSnips
 
   val cartSnips = super.snippets
 
-  private def render(s: SnipState[Request], prod: ProductDetail): NodeSeq = {
+  private def render(s: SnipState[HTTPRequest], prod: ProductDetail): NodeSeq = {
     bind(s.node) {
-      case Xml("a", HasClass("hover", a), childs)           => <a href={ s"/product?pid=${prod.stringId}" }>{ childs }</a> % a
+      case Xml("a", HasClass("hover", a), childs)                       => <a href={ s"/product?pid=${prod.stringId}" }>{ childs }</a> % a
       case Xml("a", HasClasses(_ :: "add_to_cart_box" :: _, a), childs) => <a id={ prod.stringId }>{ childs }</a> % a
       case Xml("img", a, _) =>
         <img title={ prod title_? (s.state.lang.name) } src={ imagePath("normal", prod) }></img> % a
@@ -57,7 +57,8 @@ trait ProductsPage extends Cart[Request] with ServiceDependencies {
 
   val catName = reqSnip("cat_name") {
     s =>
-      store.categoryById(s.state.initialState.param("cat").map { _.head }.getOrElse("...")) match {
+      val id = s.state.initialState.uri.paramValue("cat").map { _.head }.getOrElse("...")
+      store.categoryById(id) match {
         case Success(cat) =>
           Success((s.state.initialState, Text(cat.title_?(s.state.lang.name))))
         case Failure(f) =>
@@ -78,7 +79,8 @@ trait ProductsPage extends Cart[Request] with ServiceDependencies {
               (nopos flatMap { (p: ProductDetail) => render(s, p) })
 
             nodes.grouped(4).map { l => <div class="row hover01">{ NodeSeq.fromSeq(l) }</div> }
-          case Failure(t) => errorTag(Loc.loc0(s.state.lang)("no.category").text)
+          case Failure(t) =>
+            errorTag(Loc.loc0(s.state.lang)("no.category").text)
         }
         Success((s.state.initialState, prods.toSeq))
       }
@@ -102,17 +104,17 @@ trait ProductsPage extends Cart[Request] with ServiceDependencies {
 }
 
 object ProductsQuery {
-  def fetch(r: Request, store: Persistence): Try[Iterator[ProductDetail]] = {
+  def fetch(r: HTTPRequest, store: Persistence): Try[Iterator[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
-    (r.param("cat"), r.param("search")) match {
+    (r.uri.paramValue("cat"), r.uri.paramValue("search")) match {
       case (Some(cat :: _), None)    => store.categoryProducts(cat, spec)
       case (None, Some(search :: _)) => store.searchProducts(search, spec)
       case _                         => Success(Iterator.empty)
     }
   }
 
-  def toSortSpec(r: Request): SortSpec = {
-    r.param("sort") match {
+  def toSortSpec(r: HTTPRequest): SortSpec = {
+    r.uri.paramValue("sort") match {
       case Some(v :: _) => SortSpec.fromString(v, r.language.name)
       case _            => NoSort
     }

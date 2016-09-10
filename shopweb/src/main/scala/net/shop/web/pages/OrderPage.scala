@@ -5,7 +5,6 @@ import scala.xml.{ NodeSeq, Text }
 import net.shift.common.Bind
 import net.shift.common.Path
 import net.shift.common.XmlUtils._
-import net.shift.engine.http.Request
 import net.shift.engine.page.Html5
 import net.shift.loc.Language
 import net.shift.template._

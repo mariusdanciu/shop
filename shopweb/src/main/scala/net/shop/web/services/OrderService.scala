@@ -21,12 +21,7 @@ import net.shift.common.Path
 import net.shift.common.ShiftFailure
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http.GET
 import net.shift.engine.http.HttpPredicates
-import net.shift.engine.http.JsResponse
-import net.shift.engine.http.JsonResponse
-import net.shift.engine.http.POST
-import net.shift.engine.http.Response.augmentResponse
 import net.shift.io.IO
 import net.shift.js.JsDsl
 import net.shift.js.JsStatement
@@ -49,6 +44,9 @@ import net.shift.common.Invalid
 import net.shift.engine.http.HttpPredicates
 import net.shift.io.LocalFileSystem
 import net.shift.engine.http.HttpPredicates._
+import net.shift.http.HTTPParam
+import net.shift.http.Responses
+import net.shift.http.ContentType
 
 trait OrderService extends FormValidation with TraversingSpec with ServiceDependencies { self =>
 
@@ -78,12 +76,10 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
 
   def order = {
     for {
-      r <- POST
-      Path(_, "order" :: Nil) <- path
+      r <- post
+      Path(_, _ :: "order" :: Nil) <- path
     } yield service(resp => {
-      val params = r.params.map { case (k, v) => (k, v.head) }
-
-      val json = IO.toString(r.readBody)
+      val json = IO.producerToString(r.body)
 
       val norms = json.map { extractOrder }
 
@@ -97,7 +93,7 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
           (v validate norm) match {
             case Valid(o) =>
               Future {
-                resp(JsonResponse(s"""{"msg" : "${Loc.loc0(r.language)("order.done").text}"}"""))
+                resp(Responses.ok.withJsonBody(s"""{"msg" : "${Loc.loc0(r.language)("order.done").text}"}"""))
               }
               Future {
                 val order = new OrderPage {
@@ -120,14 +116,14 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
           }
 
         case Failure(t) =>
-          resp(JsonResponse(s"""{"msg" : "${Loc.loc0(r.language)("order.fail").text}"}"""))
+          resp(Responses.ok.withJsonBody(s"""{"msg" : "${Loc.loc0(r.language)("order.fail").text}"}"""))
       }
     })
   }
 
   def orderByEmail = for {
-    r <- GET
-    Path(_, "orders" :: Nil) <- path
+    r <- get
+    Path(_, _ :: "orders" :: Nil) <- path
     email <- param("email")
   } yield service(resp => {
 
@@ -136,27 +132,27 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
     implicit val l = r.language
     store.ordersByEmail(email) match {
       case Success(orders) =>
-        resp(JsonResponse(Formatter.format(orders.toList)))
+        resp(Responses.ok.withJsonBody(Formatter.format(orders.toList)))
       case Failure(t) =>
-        resp(JsonResponse(Formatter.format(ShopError(Loc.loc(r.language)("orders.not.found.for.email", List(email)).text, t))))
+        resp(Responses.ok.withJsonBody(Formatter.format(ShopError(Loc.loc(r.language)("orders.not.found.for.email", List(email)).text, t))))
     }
 
   })
 
   def orderByProduct = for {
-    r <- GET
-    Path(_, "orders" :: Nil) <- path
+    r <- get
+    Path(_, _ :: "orders" :: Nil) <- path
     id <- param("productid")
   } yield service(resp => {
     import model.Formatters._
     implicit val l = r.language
     store.ordersByProduct(id) match {
       case Success(orders) =>
-        resp(JsonResponse(Formatter.format(orders.toList)))
+        resp(Responses.ok.withJsonBody(Formatter.format(orders.toList)))
       case Failure(t: ShopError) =>
-        resp(JsonResponse(Formatter.format(t)).code(500))
+        resp(Responses.serverError.withJsonBody(Formatter.format(t)))
       case Failure(t) =>
-        resp(JsonResponse(Formatter.format(ShopError(t.getMessage, t))).code(500))
+        resp(Responses.serverError.withJsonBody(Formatter.format(ShopError(t.getMessage, t))))
     }
 
   })

@@ -32,9 +32,7 @@ import net.shift.io.IODefaults
 import net.shop.web.pages.CookiesPage
 import net.shop.api.persistence.Persistence
 import net.shop.mongodb.MongoDBPersistence
-import net.shift.spray.SprayServer
 import net.shop.web.pages.AboutUsPage
-import net.shop.web.services.mobile.MobileServices
 import net.shift.engine.http.HttpPredicates._
 import net.shop.web.pages.CookiesPage
 import net.shop.web.pages.DataProtectionPage
@@ -42,9 +40,9 @@ import net.shop.web.pages.TermsPage
 import net.shift.io.LocalFileSystem
 import net.shop.web.pages.ReturnPolicyPage
 import net.shop.web.pages.AboutUsPage
-import net.shift.engine.utils.ShiftUtils._
 import net.shop.web.pages.CartPage
 import net.shop.web.pages.CartInfo
+import net.shift.http.HTTPServer
 
 object StartShop extends App with DefaultLog {
 
@@ -58,7 +56,7 @@ object StartShop extends App with DefaultLog {
 
     implicit val c = cfg append Map("db.pwd" -> dbPass)
 
-    SprayServer.start(port, ShopApplication())
+    HTTPServer().start(ShopApplication().shiftService)
 
     println("Server started on port " + port)
   }
@@ -115,11 +113,6 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
     val store = self.store
   }
 
-  val mobileServices = new MobileServices {
-    val cfg = self.cfg
-    val store = self.store
-  }
-
   val cartPage = new CartPage {
     val cfg = self.cfg
     val store = self.store
@@ -127,27 +120,20 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
 
   def servingRule = for {
     r <- withLanguage(Language("ro"))
-    c <- toMobileIfNeeded |
-      staticFiles(Path("web/static")) |
+    c <- staticFiles(Path("web/static")) |
       ajaxLogin |
-      ajaxProductsList |
-      ajaxCategoriesList |
-      ajaxProductDetail |
-      ajaxOrdersView |
-      ajaxUsersView |
       productsVariantImages |
       categoriesImages |
-      categoriesMobileImages |
-      page("", Path("web/categories.html"), catPage) |
-      page(ProductPageState.build _, "product", Path("web/product.html"), prodDetailPage) |
-      page("products", Path("web/products.html"), productsPage) |
-      page("terms", Path("web/terms.html"), TermsPage) |
-      page("dataprotection", Path("web/dataprotection.html"), DataProtectionPage) |
-      page("returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
-      page("cookies", Path("web/cookies.html"), CookiesPage) |
-      page("aboutus", Path("web/aboutus.html"), AboutUsPage) |
-      page("cart", Path("web/cart.html"), cartPage, CartInfo(r, Nil)) |
-      settingsPage("accountsettings", Path("web/accountsettings.html"), accPage) |
+      page("/", Path("web/categories.html"), catPage) |
+      page(ProductPageState.build _, "/product", Path("web/product.html"), prodDetailPage) |
+      page("/products", Path("web/products.html"), productsPage) |
+      page("/terms", Path("web/terms.html"), TermsPage) |
+      page("/dataprotection", Path("web/dataprotection.html"), DataProtectionPage) |
+      page("/returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
+      page("/cookies", Path("web/cookies.html"), CookiesPage) |
+      page("/aboutus", Path("web/aboutus.html"), AboutUsPage) |
+      page("/cart", Path("web/cart.html"), cartPage, CartInfo(r, Nil)) |
+      settingsPage("/accountsettings", Path("web/accountsettings.html"), accPage) |
       getCart() |
       orderService.order |
       productService.createProduct |
@@ -166,8 +152,8 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       settingsService.updateOrderStatus |
       orderService.orderByEmail |
       orderService.orderByProduct |
-      staticTextFiles("google339a4b5281321c21.html") |
-      staticTextFiles("sitemap.xml") |
+      staticFile(Path("/google339a4b5281321c21.html")) |
+      staticFile(Path("/sitemap.xml")) |
       notFoundService
     s <- refresh(c)
     t <- tryLogout(r, s)

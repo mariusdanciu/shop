@@ -3,19 +3,15 @@ package web.services
 
 import net.shift.engine.ShiftApplication.service
 import net.shift.common.TraversingSpec
-import net.shift.engine.utils.ShiftUtils
 import net.shift.common.DefaultLog
-import net.shift.engine.http.POST
 import net.shift.common.Path
 import net.shift.loc.Loc
 import net.shift.loc.Language
-import net.shift.engine.http.Request
 import net.shop.web.ShopApplication
 import net.shift.security.User
 import net.shop.api.UserInfo
 import net.shop.api.CompanyInfo
 import net.shop.api.Address
-import net.shift.engine.http.Resp
 import net.shop.model.ValidationFail
 import net.shop.model.FieldError
 import net.shop.web.services.FormImplicits._
@@ -29,8 +25,11 @@ import net.shift.common.Valid
 import net.shift.common.Validation
 import net.shift.common.Invalid
 import net.shift.common.Validator
-
 import net.shift.engine.http.HttpPredicates._
+import net.shift.http.Responses._
+import net.shift.http.ContentType._
+import net.shift.http.HTTPRequest
+import net.shift.http.HTTPParam
 
 trait SettingsService extends TraversingSpec
     with DefaultLog
@@ -39,20 +38,20 @@ trait SettingsService extends TraversingSpec
     with ServiceDependencies {
 
   def updateOrderStatus = for {
-    r <- POST
-    Path(_, "order" :: "updatestatus" :: orderId :: status :: Nil) <- path
+    r <- post
+    Path(_, _ :: "order" :: "updatestatus" :: orderId :: status :: Nil) <- path
     u <- permissions(Loc.loc0(r.language)("user.not.found").text, Permission("write"))
   } yield {
     store.updateOrderStatus(orderId, OrderStatus.fromIndex(status.toInt)) match {
-      case Success(_)                            => service(_(Resp.ok))
-      case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
-      case Failure(msg)                          => service(_(Resp.notFound.asText.withBody(Loc.loc(r.language)("order.not.found", List(orderId)).text)))
+      case Success(_)                            => service(_(ok))
+      case scala.util.Failure(ShopError(msg, _)) => service(_(ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+      case Failure(msg)                          => service(_(ok.withTextBody(Loc.loc(r.language)("order.not.found", List(orderId)).text)))
     }
   }
 
   def updateSettings = for {
-    r <- POST
-    Path(_, "update" :: "settings" :: Nil) <- path
+    r <- post
+    Path(_, _ :: "update" :: "settings" :: Nil) <- path
     u <- user
   } yield {
     u match {
@@ -68,13 +67,13 @@ trait SettingsService extends TraversingSpec
                   password = if (u.user.pass.isEmpty) ud.password else u.user.pass)
                 store.updateUsers(merged)
 
-              case _ => service(_(Resp.serverError.asText.withBody(Loc.loc0(r.language)("login.fail").text)))
+              case _ => service(_(serverError.withTextBody(Loc.loc0(r.language)("login.fail").text)))
             }
-            service(_(Resp.created.asText.withBody(Loc.loc0(r.language)("settings.saved").text)))
+            service(_(created.withTextBody(Loc.loc0(r.language)("settings.saved").text)))
           case Invalid(e) =>
             validationFail(e)
         }
-      case None => service(_(Resp.forbidden.asText.withBody(Loc.loc0(r.language)("login.fail").text)))
+      case None => service(_(forbidden.withTextBody(Loc.loc0(r.language)("login.fail").text)))
     }
   }
 
@@ -120,7 +119,7 @@ trait SettingsService extends TraversingSpec
     }
   }
 
-  private def extract(r: Request, u: User)(implicit loc: Language): Validation[UserForm, FieldError] = {
+  private def extract(r: HTTPRequest, u: User)(implicit loc: Language): Validation[UserForm, FieldError] = {
     val ? = Loc.loc0(loc) _
 
     val ui = (UserInfo.apply _).curried
@@ -145,7 +144,9 @@ trait SettingsService extends TraversingSpec
       Validator(validateText("update_password", ?("password").text)) <*>
       Validator(validateText("update_password2", ?("retype.password").text))
 
-    val valid = (updateFormlet validate r.params flatMap {
+    val params = r.uri.params.map { case HTTPParam(name, values) => (name, values) }.toMap
+
+    val valid = (updateFormlet validate params flatMap {
       case p @ UpdateUser(_,
         _,
         pass,
@@ -155,7 +156,7 @@ trait SettingsService extends TraversingSpec
         Valid(p)
     })
 
-    (valid, extractAddresses(r.params)) match {
+    (valid, extractAddresses(params)) match {
       case (Invalid(l), Invalid(r)) => Invalid(l ++ r)
       case (Invalid(l), _)          => Invalid(l)
       case (_, Invalid(r))          => Invalid(r)

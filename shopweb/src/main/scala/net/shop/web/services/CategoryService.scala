@@ -7,13 +7,7 @@ import net.shift.common.Path
 import net.shift.common.TraversingSpec
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
-import net.shift.engine.http.DELETE
-import net.shift.engine.http.GET
-import net.shift.engine.http.JsonResponse
 import net.shift.engine.http.MultiPartBody
-import net.shift.engine.http.POST
-import net.shift.engine.http.Resp
-import net.shift.engine.http.Response.augmentResponse
 import net.shift.io.LocalFileSystem
 import net.shift.io.FileSystem
 import net.shift.io.IO
@@ -32,6 +26,8 @@ import net.shift.common.Valid
 import net.shift.common.Invalid
 import net.shop.model.FieldError
 import net.shift.engine.http.HttpPredicates._
+import net.shift.http.Responses
+import net.shift.http.ContentType
 
 trait CategoryService extends TraversingSpec
     with DefaultLog
@@ -40,7 +36,7 @@ trait CategoryService extends TraversingSpec
     with ServiceDependencies {
 
   def getCategory(implicit fs: FileSystem) = for {
-    r <- GET
+    r <- get
     Path(_, "category" :: id :: Nil) <- path
     user <- auth
   } yield {
@@ -48,28 +44,28 @@ trait CategoryService extends TraversingSpec
       case scala.util.Success(cat) =>
         fs.deletePath(Path(s"${dataPath}/categories/$id"))
         implicit val l = r.language
-        service(_(JsonResponse(Formatter.format(cat))))
-      case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
-      case scala.util.Failure(t)                 => service(_(Resp.notFound))
+        service(_(Responses.ok.withJsonBody(Formatter.format(cat))))
+      case scala.util.Failure(ShopError(msg, _)) => service(_(Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+      case scala.util.Failure(t)                 => service(_(Responses.notFound))
     }
   }
 
   def deleteCategory(implicit fs: FileSystem) = for {
-    r <- DELETE
+    r <- delete
     Path(_, "category" :: "delete" :: id :: Nil) <- path
     user <- auth
   } yield {
     store.deleteCategories(id) match {
       case scala.util.Success(num) =>
         fs.deletePath(Path(s"${dataPath}/categories/$id"));
-        service(_(Resp.ok))
-      case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
-      case scala.util.Failure(t)                 => service(_(Resp.notFound))
+        service(_(Responses.ok))
+      case scala.util.Failure(ShopError(msg, _)) => service(_(Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+      case scala.util.Failure(t)                 => service(_(Responses.notFound))
     }
   }
 
   def updateCategory(implicit fs: FileSystem) = for {
-    r <- POST
+    r <- post
     Path(_, "category" :: "update" :: id :: Nil) <- path
     user <- auth
     mp <- multipartForm
@@ -82,11 +78,11 @@ trait CategoryService extends TraversingSpec
             file.map { f =>
               IO.arrayProducer(f._2)(LocalFileSystem.writer(Path(s"${dataPath}/categories/${cpy.id.getOrElse("")}.png")))
             }
-            service(_(Resp.created))
+            service(_(Responses.created))
 
-          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
+          case scala.util.Failure(ShopError(msg, _)) => service(_(Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
-            service(_(Resp.serverError.asText.withBody("category.create.fail")))
+            service(_(Responses.serverError.withTextBody(Loc.loc0(r.language)("category.create.fail").text)))
         }
 
       case (_, Invalid(msgs)) =>
@@ -98,7 +94,7 @@ trait CategoryService extends TraversingSpec
   }
 
   def createCategory = for {
-    r <- POST
+    r <- post
     Path(_, "category" :: "create" :: Nil) <- path
     user <- auth
     mp <- multipartForm
@@ -111,12 +107,12 @@ trait CategoryService extends TraversingSpec
             file.map { f =>
               IO.arrayProducer(f._2)(LocalFileSystem.writer(Path(s"${dataPath}/categories/${p.head}.png")))
             }
-            service(_(Resp.created))
+            service(_(Responses.created))
 
-          case scala.util.Failure(ShopError(msg, _)) => service(_(Resp.ok.asText.withBody(Loc.loc0(r.language)(msg).text)))
+          case scala.util.Failure(ShopError(msg, _)) => service(_(Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create category ", t)
-            service(_(Resp.serverError))
+            service(_(Responses.serverError))
         }
 
       case (_, Invalid(msgs)) =>

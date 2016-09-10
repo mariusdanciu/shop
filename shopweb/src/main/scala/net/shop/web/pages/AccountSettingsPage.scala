@@ -9,7 +9,6 @@ import scala.xml.NodeSeq.seqToNodeSeq
 import scala.xml.Text
 import scala.xml.Elem
 import net.shift.common.Path
-import net.shift.engine.http.Request
 import net.shift.engine.page.Html5
 import net.shift.io.IODefaults
 import net.shift.loc.Loc
@@ -39,9 +38,9 @@ import net.shift.common.Xml
 import net.shift.common.XmlAttr
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
-
 import IODefaults._
 import net.shift.template.Template._
+import net.shift.http.HTTPRequest
 
 trait AccountSettingsPage extends Cart[SettingsPageState] with ServiceDependencies { self =>
 
@@ -96,9 +95,10 @@ trait AccountSettingsPage extends Cart[SettingsPageState] with ServiceDependenci
       {
         val res: NodeSeq = s.state.initialState.user match {
           case Some(u) => u.addresses.flatMap { addr =>
-            val ak = Html5.runPageFromFile(PageState(addr,
+            val ak: Try[NodeSeq] = Html5.runPageFromFile(PageState(addr,
               s.state.initialState.req.language),
               Path("web/templates/address.html"), AddressPage).map(_._2)
+
             ak match {
               case Success(n) => n.head match {
                 case e: Elem => e.child
@@ -116,7 +116,8 @@ trait AccountSettingsPage extends Cart[SettingsPageState] with ServiceDependenci
   val orders = reqSnip("orders") {
     s =>
       {
-        val email = s.state.initialState.req.param("email").getOrElse(List("")).head
+        val email = s.state.initialState.req.uri.param("email").map { _.value.head }.getOrElse("")
+
         def userDetail(state: SettingsPageState): Try[Option[UserDetail]] = {
           state.user match {
             case Some(u) => Success(Some(u))
@@ -129,7 +130,7 @@ trait AccountSettingsPage extends Cart[SettingsPageState] with ServiceDependenci
         }
 
         def query(u: UserDetail) =
-          s.state.initialState.req.path match {
+          Path(s.state.initialState.req.uri.path) match {
             case Path(_, _ :: "received" :: Nil) => store.ordersByStatus(OrderReceived)
             case Path(_, _ :: "pending" :: Nil)  => store.ordersByStatus(OrderPending)
             case _                               => store.ordersByEmail(u.email)
@@ -307,7 +308,7 @@ trait AccountSettingsPage extends Cart[SettingsPageState] with ServiceDependenci
 
 }
 
-case class SettingsPageState(req: Request, user: Option[UserDetail])
+case class SettingsPageState(req: HTTPRequest, user: Option[UserDetail])
 
 object AddressPage extends DynamicContent[Address] { self =>
   override def snippets = List(addr)

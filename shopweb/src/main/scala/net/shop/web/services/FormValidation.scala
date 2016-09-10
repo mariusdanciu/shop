@@ -4,10 +4,7 @@ import net.shift.common.FileSplit
 import net.shift.common.Semigroup
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.BinaryPart
-import net.shift.engine.http.Header
-import net.shift.engine.http.JsonResponse
 import net.shift.engine.http.MultiPart
-import net.shift.engine.http.Response.augmentResponse
 import net.shift.engine.http.TextPart
 import net.shift.io.IODefaults
 import net.shift.loc.Language
@@ -22,10 +19,12 @@ import net.shift.common.Valid
 import net.shift.common.Validation
 import net.shift.common.Invalid
 import net.shift.engine.http.ContentDisposition
-
 import IODefaults._
+import net.shift.http.AsyncResponse
+import net.shift.http.Responses
+import net.shift.http.ContentType
 
-object FormImplicits  {
+object FormImplicits {
   implicit val o = new Ordering[Double] {
     def compare(l: Double, r: Double): Int = (l - r).toInt
   }
@@ -158,11 +157,11 @@ trait FormValidation extends ServiceDependencies {
 
   def validationFail(msgs: List[FieldError])(implicit lang: Language, fs: FileSystem) =
     service(r => {
-      r(JsonResponse(Formatter.format(msgs)).code(403))
+      r(Responses.forbidden.withJsonBody(Formatter.format(msgs)))
     })
 
-  def respValidationFail(resp: net.shift.engine.http.AsyncResponse, msgs: List[FieldError])(implicit lang: Language, fs: FileSystem) =
-    resp(JsonResponse(Formatter.format(msgs)).code(403))
+  def respValidationFail(resp: AsyncResponse, msgs: List[FieldError])(implicit lang: Language, fs: FileSystem) =
+    resp(Responses.forbidden.withJsonBody(Formatter.format(msgs)))
 
 }
 

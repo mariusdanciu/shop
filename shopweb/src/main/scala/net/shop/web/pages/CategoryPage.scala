@@ -20,8 +20,9 @@ import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
 import net.shift.io.LocalFileSystem
+import net.shift.http.HTTPRequest
 
-trait CategoryPage extends Cart[Request] with ServiceDependencies { self =>
+trait CategoryPage extends Cart[HTTPRequest] with ServiceDependencies { self =>
 
   override def snippets = List(item) ++ super.snippets
 

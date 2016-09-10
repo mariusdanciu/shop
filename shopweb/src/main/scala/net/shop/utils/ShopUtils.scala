@@ -13,8 +13,6 @@ object ShopUtils {
 
   def categoryImagePath(cat: Category): String = s"/data/categories/${cat.stringId}.png"
 
-  def mobileCategoryImagePath(cat: Category): String = s"/data/categories/mobile/${cat.stringId}.png"
-
   def imagePath(id: String, variant: String, prod: String): String = s"/data/products/$id/$variant/$prod"
 
   def imagePath(variant: String, prod: ProductDetail): String =

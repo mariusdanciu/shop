@@ -7,8 +7,6 @@ import scala.util.Try
 import scala.xml._
 import net.shift.common.XmlUtils._
 import net.shift.engine._
-import net.shift.engine.http.Request._
-import net.shift.engine.http.Request
 import net.shift.loc.Loc
 import net.shift.template._
 import net.shift.template.Binds._
@@ -26,6 +24,7 @@ import net.shift.common.XmlAttr
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
+import net.shift.http.HTTPRequest
 
 trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies {
 
@@ -35,7 +34,8 @@ trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies 
   def product(s: SnipState[ProductPageState]): Try[ProductDetail] = {
     s.state.initialState.product match {
       case Failure(t) =>
-        s.state.initialState.req.param("pid") match {
+        s.state.initialState.req.uri.paramValue("pid") match {
+
           case Some(id :: _) =>
             store.productById(id) match {
               case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
@@ -268,8 +268,8 @@ trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies 
 }
 
 object ProductPageState {
-  def build(req: Request, user: Option[User]): ProductPageState = new ProductPageState(req, Failure[ProductDetail](new RuntimeException("Product not found")), user)
+  def build(req: HTTPRequest, user: Option[User]): ProductPageState = new ProductPageState(req, Failure[ProductDetail](new RuntimeException("Product not found")), user)
 }
 
-case class ProductPageState(req: Request, product: Try[ProductDetail], user: Option[User]) 
+case class ProductPageState(req: HTTPRequest, product: Try[ProductDetail], user: Option[User]) 
 

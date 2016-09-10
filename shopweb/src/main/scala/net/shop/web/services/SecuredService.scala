@@ -6,14 +6,11 @@ import net.shift.security.User
 import net.shift.security.Permission
 import net.shift.security.Credentials
 import net.shift.loc.Loc
-import net.shift.engine.utils.ShiftUtils
-import net.shift.engine.http.Request
 import net.shop.web.ShopApplication
 import scala.util.Success
 import net.shift.common.Config
 import net.shift.io.IODefaults
 import net.shift.engine.http.HttpPredicates._
-import net.shift.engine.utils.ShiftUtils
 import scala.util.Try
 import scala.util.Failure
 import net.shift.common.ShiftFailure
