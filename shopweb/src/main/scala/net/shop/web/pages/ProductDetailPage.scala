@@ -28,7 +28,7 @@ import net.shift.http.HTTPRequest
 
 trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies {
 
-  override def snippets = List(title, meta, catlink, productLink, images, detailPrice, stock,
+  override def snippets = List(checkProd, title, meta, catlink, productLink, images, detailPrice, stock,
     details, specs, edit, canShowSpecs) ++ super.snippets
 
   def product(s: SnipState[ProductPageState]): Try[ProductDetail] = {
@@ -48,12 +48,22 @@ trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies 
     }
   }
 
+  val checkProd = reqSnip("checkProd") {
+    s =>
+      product(s) match {
+        case Success(p) =>
+          Success((ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node))
+        case Failure(f) => Success((ProductPageState(s.state.initialState.req, Failure(f), s.state.user), NodeSeq.Empty))
+      }
+  }
+
   val title = reqSnip("title") {
     s =>
       product(s) match {
         case Success(p) =>
           Success((ProductPageState(s.state.initialState.req, Success(p), s.state.user), Text(p.title_?(s.state.lang.name))))
-        case Failure(f) => Failure(f)
+        case Failure(f) => 
+          Success((ProductPageState(s.state.initialState.req, Failure(f), s.state.user), Text(Loc.loc0(s.state.lang)("no.product").text)))
       }
   }
   val meta = reqSnip("fb_meta") {

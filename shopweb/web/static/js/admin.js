@@ -53,13 +53,18 @@ var admin = {
 		});
 	},
 
-	deleteProduct : function(id) {
+	deleteProduct : function(id, f) {
 		$.ajax({
 			cache : false,
 			url : "/product/delete/" + id,
 			timeout : 3000,
-			type : "DELETE"
-		}).success(products.reloadProducts);
+			type : "DELETE",
+			statusCode : {
+				200 : function(data) {
+					f();
+				}
+			}
+		});
 	},
 
 	getCategory : function(id, categoryFunc) {
@@ -72,13 +77,13 @@ var admin = {
 		}).success(categoryFunc);
 	},
 
-	deleteCategory : function(id) {
+	deleteCategory : function(id, f) {
 		$.ajax({
 			cache : false,
 			url : "/category/delete/" + id,
 			timeout : 3000,
 			type : "DELETE",
-		}).success(categories.reloadCategories());
+		}).success(f());
 	},
 
 	save : function(formId, successFunc) {

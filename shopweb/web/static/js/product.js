@@ -3,8 +3,6 @@
         var galleryOffset = 0;
         var total = $("#gallery ul li").length;
 
-        if (window.admin) {
-        }
 
         $("#add_to_cart_box").click(function(event) {
             var pid = $.url().param("pid");
@@ -22,17 +20,15 @@
             scrollZoom : true,
             borderSize : 1
         });
-
-        $("#fb-share-button").click(function(e) {
+        
+        $("#del_prod").click(function(event) {
             var pid = $.url().param("pid");
-            FB.ui({
-                method : 'share',
-                href : 'http://idid.ro/product?pid=' + pid,
-            }, function(response) {
-                if (response && !response.error_code) {
-                } else {
-                }
+            window.admin.deleteProduct(pid, function() {
+            	window.location.href = "/";
             });
+            event.stopPropagation();
+            event.preventDefault();
+            return false;
         });
 
     });

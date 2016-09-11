@@ -1362,9 +1362,14 @@ form .row {
 .add_cat_btn {
 	position: fixed;
 	left: 10px;
-	top: 50px;
+	top: 60px;
 	z-index: 999;
 	color: #000;
+}
+
+.del_prod {
+	color: #000;
+	margin-top: 20px;
 }
 
 /*# sourceMappingURL=style.css.map */
