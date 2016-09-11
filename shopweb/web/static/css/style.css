@@ -1354,7 +1354,7 @@ form .row {
 .add_prod_btn {
 	position: fixed;
 	left: 10px;
-	top: 10px;
+	bottom: 80px;
 	z-index: 999;
 	color: #000;
 }
@@ -1362,7 +1362,7 @@ form .row {
 .add_cat_btn {
 	position: fixed;
 	left: 10px;
-	top: 60px;
+	bottom: 20px;
 	z-index: 999;
 	color: #000;
 }
