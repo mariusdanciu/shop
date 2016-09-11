@@ -14,8 +14,6 @@ libraryDependencies += "shift" % "shift-engine_2.11" % buildProps.getProperty("s
 
 libraryDependencies += "shift" % "shift-html_2.11" % buildProps.getProperty("shift.version")
 
-libraryDependencies += "shift" % "shift-spray_2.11" % buildProps.getProperty("shift.version")
-
 libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.2"
  
 libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.3"
