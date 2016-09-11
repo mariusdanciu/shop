@@ -25,11 +25,12 @@ import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
 import IODefaults._
 import net.shift.io.LocalFileSystem
+import net.shift.security.Permission
 
 trait Cart[T] extends DynamicContent[T] {
 
   override def inlines = List(authClass, logout)
-  def snippets = List(connectError, user)
+  def snippets = List(connectError, user, permissions)
 
   def reqSnip(name: String) = snip[T](name) _
 
@@ -69,4 +70,14 @@ trait Cart[T] extends DynamicContent[T] {
       Success((s.state.initialState, icon))
   }
 
+  val permissions = snip[T]("permissions") {
+    s =>
+
+      val perms = s.params.map(Permission(_))
+      s.state.user match {
+        case Some(u) => u.requireAll(perms: _*)((s.state.initialState, s.node))
+        case _       => Success((s.state.initialState, NodeSeq.Empty))
+      }
+
+  }
 }

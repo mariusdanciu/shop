@@ -1351,5 +1351,18 @@ form .row {
 	width: 100%;
 }
 
+.add_prod_btn {
+	position: fixed;
+	left: 10px;
+	top: 10px;
+	z-index: 999;
+}
+
+.add_cat_btn {
+	position: fixed;
+	left: 10px;
+	top: 50px;
+	z-index: 999;
+}
 
 /*# sourceMappingURL=style.css.map */

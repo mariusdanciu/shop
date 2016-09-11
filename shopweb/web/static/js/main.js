@@ -217,9 +217,14 @@
 		parallax();
 
 		$("#login").click(function(e) {
-			$("#login-box").toggle();
-			e.preventDefault();
-			return false;
+			var cls = $("#login span").attr("class")
+			if (cls === "icon-exit") {
+				return true;
+			} else {
+				$("#login-box").toggle();
+				e.preventDefault();
+				return false;
+			}
 		});
 		$("#login_form").keydown(function(event) {
 			if (event.keyCode == 13) {
@@ -227,7 +232,7 @@
 				return false;
 			}
 		});
-		
+
 	});
 
 }());
