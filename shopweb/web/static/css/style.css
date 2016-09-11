@@ -1356,6 +1356,7 @@ form .row {
 	left: 10px;
 	top: 10px;
 	z-index: 999;
+	color: #000;
 }
 
 .add_cat_btn {
@@ -1363,6 +1364,7 @@ form .row {
 	left: 10px;
 	top: 50px;
 	z-index: 999;
+	color: #000;
 }
 
 /*# sourceMappingURL=style.css.map */
