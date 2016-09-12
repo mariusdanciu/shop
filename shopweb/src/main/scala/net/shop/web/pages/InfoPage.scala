@@ -19,23 +19,23 @@ import scala.util.Failure
 import net.shop.utils.ShopUtils
 import net.shift.http.HTTPRequest
 
-object TermsPage extends Cart[HTTPRequest] { self =>
+object TermsPage extends PageCommon[HTTPRequest] { self =>
 
 }
 
-object DataProtectionPage extends Cart[HTTPRequest] { self =>
+object DataProtectionPage extends PageCommon[HTTPRequest] { self =>
 
 }
 
-object ReturnPolicyPage extends Cart[HTTPRequest] { self =>
+object ReturnPolicyPage extends PageCommon[HTTPRequest] { self =>
 
 }
 
-object CookiesPage extends Cart[HTTPRequest] { self =>
+object CookiesPage extends PageCommon[HTTPRequest] { self =>
 
 }
 
-object AboutUsPage extends Cart[HTTPRequest] { self =>
+object AboutUsPage extends PageCommon[HTTPRequest] { self =>
 
 }
 

@@ -26,7 +26,7 @@ import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
 import net.shift.http.HTTPRequest
 
-trait ProductDetailPage extends Cart[ProductPageState] with ServiceDependencies {
+trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDependencies {
 
   override def snippets = List(checkProd, title, meta, catlink, productLink, images, detailPrice, stock,
     details, specs, edit, canShowSpecs) ++ super.snippets

@@ -27,7 +27,7 @@ import net.shift.http.HTTPRequest
 
 case class CartInfo(r: HTTPRequest, items: Seq[(String, Int, ProductDetail)])
 
-trait CartPage extends Cart[CartInfo] with ServiceDependencies { self =>
+trait CartPage extends PageCommon[CartInfo] with ServiceDependencies { self =>
   implicit val formats = DefaultFormats
 
   override def inlines = List(emptyMsg, total) ++ super.inlines

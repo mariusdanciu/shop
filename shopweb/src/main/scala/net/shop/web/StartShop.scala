@@ -43,7 +43,7 @@ import net.shop.web.pages.AboutUsPage
 import net.shop.web.pages.CartPage
 import net.shop.web.pages.CartInfo
 import net.shift.http.HTTPServer
-import net.shop.web.pages.CreateProductPage
+import net.shop.web.pages.SaveProductPage
 import net.shift.loc.Loc
 import net.shift.security.Permission
 
@@ -121,13 +121,14 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
     val store = self.store
   }
 
-  val createProductPage = new CreateProductPage {
+  val saveProductPage = new SaveProductPage {
     val cfg = self.cfg
     val store = self.store
   }
 
   def servingRule = for {
     r <- withLanguage(Language("ro"))
+    u <- user
     c <- staticFiles(Path("web/static")) |
       ajaxLogin |
       productsVariantImages |
@@ -142,11 +143,11 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       page("/aboutus", Path("web/aboutus.html"), AboutUsPage) |
       page("/cart", Path("web/cart.html"), cartPage, CartInfo(r, Nil)) |
       settingsPage("/accountsettings", Path("web/accountsettings.html"), accPage) |
-      pageWithRules("/createproduct", Path("web/createproduct.html"), createProductPage,
+      pageWithRules("/saveproduct", Path("web/saveproduct.html"), saveProductPage,
         for {
           _ <- userRequired(Loc.loc0(r.language)("login.fail").text)
           r <- permissions("Unauthorized", Permission("write"))
-        } yield r) |
+        } yield r, ProductPageState.build(r, u)) |
         getCart() |
         orderService.order |
         productService.createProduct |

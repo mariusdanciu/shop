@@ -27,7 +27,7 @@ import IODefaults._
 import net.shift.io.LocalFileSystem
 import net.shift.security.Permission
 
-trait Cart[T] extends DynamicContent[T] {
+trait PageCommon[T] extends DynamicContent[T] {
 
   override def inlines = List(authClass, logout)
   def snippets = List(connectError, user, permissions)

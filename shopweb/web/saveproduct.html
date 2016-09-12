@@ -36,7 +36,7 @@
 									<label for="create_title"> <!-- loc:title --></label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_title" type="text" name="create_title" />
+									<input id="create_title" type="text" name="create_title" value="<!-- inline:prod(title) -->"/>
 								</div>
 							</div>
 							<div class="row">
@@ -44,7 +44,7 @@
 									<label for="create_price"> <!-- loc:price --></label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_price" type="text" name="create_price" />
+									<input id="create_price" type="text" name="create_price" value="<!-- inline:prod(price) -->"/>
 								</div>
 							</div>
 							<div class="row">
@@ -53,7 +53,7 @@
 								</div>
 								<div class="col-md-4">
 									<input id="create_discount_price" type="text"
-										name="discount_price" />
+										name="discount_price" value="<!-- inline:prod(discount) -->"/>
 								</div>
 							</div>
 							<div class="row">
@@ -76,7 +76,7 @@
 									</label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_keywords" type="text" name="create_keywords" />
+									<input id="create_keywords" type="text" name="create_keywords" value="<!-- inline:prod(keywords) -->"/>
 								</div>
 							</div>
 							<div class="row">
@@ -85,7 +85,7 @@
 									</label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_stock" type="text" name="create_stock" />
+									<input id="create_stock" type="text" name="create_stock" value="<!-- inline:prod(stock) -->"/>
 								</div>
 							</div>
 							<div class="row">
@@ -94,7 +94,7 @@
 									</label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_pos" type="text" name="create_position" />
+									<input id="create_pos" type="text" name="create_position" value="<!-- inline:prod(pos) -->"/>
 								</div>
 							</div>
 							<div class="row unique_prod">
@@ -103,7 +103,7 @@
 									</label>
 								</div>
 								<div class="col-md-2">
-									<input id="create_unique" type="checkbox" name="create_unique" />
+									<input id="create_unique" type="checkbox" name="create_unique" value="<!-- inline:prod(unique) -->"/>
 								</div>
 							</div>
 
@@ -113,7 +113,7 @@
 								</div>
 								<div class="row pad15H">
 									<textarea class="description" id="create_specs"
-										name="create_specs"></textarea>
+										name="create_specs"><!-- inline:prod(specs) --></textarea>
 								</div>
 							</div>
 
@@ -123,7 +123,7 @@
 								</div>
 								<div class="row pad15H">
 									<textarea class="description" id="create_description"
-										name="create_description"></textarea>
+										name="create_description"><!-- inline:prod(desc) --></textarea>
 								</div>
 							</div>
 
@@ -135,7 +135,7 @@
 						</div>
 					</form>
 					<div class="row top15">
-						<div id="create_product" class="margin15 btn">Adaugă</div>
+						<div id="create_product" class="margin15 btn">Salvează</div>
 					</div>
 				</div>
 			</div>

@@ -30,7 +30,7 @@ import scala.xml.Text
 import net.shift.template.HasClasses
 import net.shift.http.HTTPRequest
 
-trait ProductsPage extends Cart[HTTPRequest] with ServiceDependencies {
+trait ProductsPage extends PageCommon[HTTPRequest] with ServiceDependencies {
 
   override def snippets = List(catName, item, catList) ++ cartSnips
 
