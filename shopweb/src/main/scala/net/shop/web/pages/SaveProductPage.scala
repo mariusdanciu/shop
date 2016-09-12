@@ -20,6 +20,7 @@ import net.shop.api.ProductDetail
 import net.shift.template.Snippet._
 import net.shift.template.InlineState
 import net.shop.utils.ShopUtils
+import net.shift.common.Path
 
 trait SaveProductPage extends PageCommon[ProductPageState] with ServiceDependencies { self =>
   override def inlines = List(prod) ++ super.inlines
@@ -28,8 +29,8 @@ trait SaveProductPage extends PageCommon[ProductPageState] with ServiceDependenc
   def product(s: InlineState[ProductPageState]): Try[ProductDetail] = {
     s.state.initialState.product match {
       case Failure(t) =>
-        s.state.initialState.req.uri.paramValue("pid") match {
-          case Some(id :: _) =>
+        Path(s.state.initialState.req.uri.path) match {
+          case Path(_, _ :: _ :: id :: _) =>
             store.productById(id) match {
               case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
               case Failure(t)                 => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry

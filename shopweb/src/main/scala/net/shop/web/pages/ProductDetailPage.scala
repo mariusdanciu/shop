@@ -25,11 +25,21 @@ import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
 import net.shift.http.HTTPRequest
+import net.shop.utils.ShopUtils
+import Snippet._
 
 trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDependencies {
 
+  override def inlines = List(saveUrl) ++ super.inlines
   override def snippets = List(checkProd, title, meta, catlink, productLink, images, detailPrice, stock,
     details, specs, edit, canShowSpecs) ++ super.snippets
+
+  def saveUrl = inline[ProductPageState]("saveurl") {
+    s =>
+      s.state.initialState.product map {
+        p => (s.state.initialState, s"/saveproduct/${p.stringId}")
+      }
+  }
 
   def product(s: SnipState[ProductPageState]): Try[ProductDetail] = {
     s.state.initialState.product match {
@@ -62,7 +72,7 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
       product(s) match {
         case Success(p) =>
           Success((ProductPageState(s.state.initialState.req, Success(p), s.state.user), Text(p.title_?(s.state.lang.name))))
-        case Failure(f) => 
+        case Failure(f) =>
           Success((ProductPageState(s.state.initialState.req, Failure(f), s.state.user), Text(Loc.loc0(s.state.lang)("no.product").text)))
       }
   }
