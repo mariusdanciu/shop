@@ -27,6 +27,7 @@ import net.shop.web.services.ServiceDependencies
 import net.shift.http.HTTPRequest
 import net.shop.utils.ShopUtils
 import Snippet._
+import net.shift.common.Path
 
 trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDependencies {
 
@@ -44,9 +45,8 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
   def product(s: SnipState[ProductPageState]): Try[ProductDetail] = {
     s.state.initialState.product match {
       case Failure(t) =>
-        s.state.initialState.req.uri.paramValue("pid") match {
-
-          case Some(id :: _) =>
+        Path(s.state.initialState.req.uri.path) match {
+          case Path(_, _ :: _ :: id :: _) =>
             store.productById(id) match {
               case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
               case Failure(t)                 => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry

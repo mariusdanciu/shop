@@ -136,7 +136,6 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       productsVariantImages |
       categoriesImages |
       page("/", Path("web/categories.html"), catPage) |
-      page(ProductPageState.build _, "/product", Path("web/product.html"), prodDetailPage) |
       page("/products", Path("web/products.html"), productsPage) |
       page("/terms", Path("web/terms.html"), TermsPage) |
       page("/dataprotection", Path("web/dataprotection.html"), DataProtectionPage) |
@@ -145,6 +144,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       page("/aboutus", Path("web/aboutus.html"), AboutUsPage) |
       page("/cart", Path("web/cart.html"), cartPage, CartInfo(r, Nil)) |
       settingsPage("/accountsettings", Path("web/accountsettings.html"), accPage) |
+      product(r, u) |
       saveProduct(r, u) |
       getCart() |
       orderService.order |
@@ -173,10 +173,17 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
 
   def saveProduct(req: HTTPRequest, u: Option[User]) = pageWithRules(Path("web/saveproduct.html"), saveProductPage,
     for {
+      _ <- get
       Path(_, _ :: "saveproduct" :: _) <- path
       _ <- userRequired(Loc.loc0(req.language)("login.fail").text)
       r <- permissions("Unauthorized", Permission("write"))
     } yield r, ProductPageState.build(req, u))
+
+  def product(req: HTTPRequest, u: Option[User]) = pageWithRules(Path("web/product.html"), prodDetailPage,
+    for {
+      _ <- get
+      Path(_, _ :: "product" :: _) <- path
+    } yield (), ProductPageState.build(req, u))
 
 }
 

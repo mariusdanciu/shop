@@ -41,6 +41,7 @@ trait ProductService extends TraversingSpec
     r <- delete
     Path(_, _ :: "product" :: "delete" :: id :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
+    _ <- permissions("Unauthorized", Permission("write"))
   } yield {
     store.deleteProducts(id) match {
       case scala.util.Success(num) =>
@@ -55,6 +56,7 @@ trait ProductService extends TraversingSpec
     r <- post
     Path(_, _ :: "product" :: "update" :: pid :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
+    _ <- permissions("Unauthorized", Permission("write"))
     mp <- multipartForm
   } yield {
     extract(r.language, Some(pid), "edit_", mp) match {
