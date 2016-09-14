@@ -60,9 +60,12 @@ trait ShopServices extends TraversingSpec
   } yield {
     r.header("X-Requested-With") match {
       case Some(TextHeader(_, "XMLHttpRequest")) =>
-        service(_(ok))
+        service(_(notFound))
       case _ =>
-        service(_(redirect("/")))
+        if (r.uri.path.startsWith("/static"))
+          service(_(notFound))
+        else
+          service(_(redirect("/")))
     }
   }
 
