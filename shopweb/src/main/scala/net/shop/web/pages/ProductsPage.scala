@@ -29,10 +29,11 @@ import net.shop.api.persistence.Persistence
 import scala.xml.Text
 import net.shift.template.HasClasses
 import net.shift.http.HTTPRequest
+import net.shift.common.XmlAttr
 
 trait ProductsPage extends PageCommon[HTTPRequest] with ServiceDependencies {
 
-  override def snippets = List(catName, item, catList) ++ cartSnips
+  override def snippets = List(catName, item, catList, sort) ++ cartSnips
 
   val cartSnips = super.snippets
 
@@ -57,14 +58,17 @@ trait ProductsPage extends PageCommon[HTTPRequest] with ServiceDependencies {
 
   val catName = reqSnip("cat_name") {
     s =>
-      val id = s.state.initialState.uri.paramValue("cat").map { _.head }.getOrElse("...")
-      store.categoryById(id) match {
-        case Success(cat) =>
-          Success((s.state.initialState, Text(cat.title_?(s.state.lang.name))))
-        case Failure(f) =>
-          Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no.category").text)))
-      }
+      val c = s.state.initialState.uri.paramValue("cat").map {
+        case l =>
+          store.categoryById(l.head) match {
+            case Success(cat) =>
+              Text(cat.title_?(s.state.lang.name))
+            case Failure(f) =>
+              errorTag(Loc.loc0(s.state.lang)("no.category").text)
+          }
+      }.orElse(s.state.initialState.uri.paramValue("search").map { s => Text(s.head) }).getOrElse(Text("..."))
 
+      Success((s.state.initialState, c))
   }
 
   val item = reqSnip("item") {
@@ -99,6 +103,20 @@ trait ProductsPage extends PageCommon[HTTPRequest] with ServiceDependencies {
         case Failure(ShopError(msg, _)) => Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)(msg).text)))
         case Failure(t)                 => Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no.category").text)))
       }
+  }
+
+  val sort = reqSnip("sort") {
+    s =>
+      val n = s.state.initialState.uri.paramValue("sort") match {
+        case Some(v :: _) => bind(s.node) {
+          case Xml("option", attrs, childs) if (attrs.attrs.get("value") == Some(v)) =>
+            Xml("option", XmlAttr(attrs.attrs + ("selected" -> "true")), childs)
+          case n => n
+        } getOrElse s.node
+        case _ => s.node
+      }
+
+      Success((s.state.initialState, n))
   }
 
 }

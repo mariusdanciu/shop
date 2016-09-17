@@ -1303,9 +1303,12 @@ form .row {
 	position: relative;
 }
 
-.login {
+.login, .search {
 	display: none;
 	text-align: center;
+}
+.search input {
+	width: 100%;
 }
 
 .login .row * {
@@ -1370,6 +1373,10 @@ form .row {
 .del_prod {
 	color: #000;
 	margin-top: 20px;
+}
+
+.icon-search2 {
+	font-size: 18px;
 }
 
 /*# sourceMappingURL=style.css.map */

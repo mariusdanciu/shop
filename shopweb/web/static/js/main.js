@@ -1,4 +1,3 @@
-;
 (function() {
 
 	'use strict';
@@ -208,6 +207,54 @@
 		}
 	};
 
+	var common = {
+
+		normUrl : function(url, cat, sort, search) {
+			var params = [];
+			if (cat !== undefined && cat !== null) { 
+			    params.push("cat=" + cat);
+			}
+			if (sort !== undefined && sort !== null) {
+				params.push("sort=" + sort); 
+			}
+			if (search !== undefined && search !== null) {
+				params.push("search=" + search);
+			}
+
+			var q = ""
+			for (var i in params) {
+				if (i > 0) {
+					q += "&";
+			    }
+				q += params[i];
+			}
+			
+			return url + "?" +q;
+		},
+
+		showNotice : function(text) {
+			$("#notice_i").html(text);
+			$("#notice_i").show().delay(5000).fadeOut("slow");
+		},
+
+		showError : function(text) {
+			$("#notice_e").html(text);
+			$("#notice_e").show().delay(5000).fadeOut("slow");
+		},
+
+		showConnectionError : function() {
+			$("#notice_connect_e").show().delay(5000).fadeOut("slow");
+		},
+
+		showFormErrors : function(errors) {
+			$.each(errors, function() {
+				$("label[for='" + this.id + "']").css("color", "#ff0000").attr(
+						"title", this.error);
+			});
+		},
+
+	};
+
 	// Document on load.
 	$(function() {
 
@@ -222,16 +269,42 @@
 				return true;
 			} else {
 				$("#login-box").toggle();
+				$("#username").focus();
 				e.preventDefault();
 				return false;
 			}
 		});
+
 		$("#login_form").keydown(function(event) {
 			if (event.keyCode == 13) {
 				user.login("#login_form");
 				return false;
 			}
 		});
+
+		$("#search-icon").click(function(e) {
+			$("#search-box").toggle();
+			$("#search").focus();
+			e.preventDefault();
+			return false;
+		});
+
+		$("#search").keydown(
+				function(event) {
+					if (event.keyCode == 13) {
+						var s = $("#search").val();
+
+						var url = common.normUrl(
+								"/products", null, $.url().param("sort"), s);
+						
+						console.log(url);
+						
+						window.location.href = url; 
+
+						event.preventDefault();
+						return false;
+					}
+				});
 
 	});
 

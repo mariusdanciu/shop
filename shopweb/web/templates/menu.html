@@ -16,22 +16,32 @@
 						<li><a href="/cart"><span class="icon-cart"></span><span
 								class="left_10">Coș (<span id="cart_num">0</span>)
 							</span></a></li>
-						<li><a id="login" href="<!-- inline:logout -->"><span class="<!-- inline:auth_class -->"></span></a></li>
+						<li><a id="search-icon" href="#"><span class="icon-search2"></span></a></li>
+						<li><a id="login" href="<!-- inline:logout -->"><span
+								class="<!-- inline:auth_class -->"></span></a></li>
 					</ul>
 				</div>
 			</div>
 			<div id="login-box" class="row login">
 				<form action="/auth" id="login_form" method="POST">
 					<div class="row">
-						<label for="username">E-mail </label><input id="username" type="text" />
-						<label for="password">Parola </label><input id="password"
-							type="password" />
+						<label for="username">E-mail </label><input id="username"
+							type="text" /> <label for="password">Parola </label><input
+							id="password" type="password" />
 					</div>
 				</form>
 			</div>
+			<div id="search-box" class="row search">
+				<div class="row">
+					<input id="search" class="" type="text" />
+				</div>
+			</div>
+
 			<!-- snip:permissions(write) -->
-			<a href="/saveproduct"> <div class="add_prod_btn btn"> Adaugă produs </div> </a>
-			<div class="add_cat_btn btn"> Adaugă categorie </div>
+			<a href="/saveproduct">
+				<div class="add_prod_btn btn">Adaugă produs</div>
+			</a>
+			<div class="add_cat_btn btn">Adaugă categorie</div>
 			<!-- end -->
 		</nav>
 	</div>
