@@ -71,25 +71,26 @@ trait ShopServices extends TraversingSpec
 
   def ajaxLogin = for {
     _ <- ajax
-    r <- path("auth")
+    r <- path("/auth")
     u <- authenticate(Loc.loc0(r.language)("login.fail").text, 406)
   } yield service(_(ok.withSecurityCookies(u)))
 
-  def tryLogout(r: HTTPRequest, attempt: Attempt) = State.put[HTTPRequest, Attempt] {
-    val logout = !r.uri.param("logout").isEmpty
-    if (logout)
-      attempt.map(_.withResponse { _ dropSecurityCookies })
-    else
-      attempt
-  }
+  def logout = for {
+    r <- path("/logout")
+  } yield service(_(redirect("/").dropSecurityCookies))
 
   def refresh(attempt: Attempt) = for {
+    r <- req
     u <- user
     serv <- State.put[HTTPRequest, Attempt](attempt)
   } yield {
-    u match {
-      case Some(usr) => serv.map(_.withResponse { _ withSecurityCookies (usr) })
-      case _         => serv
+    if (r.uri.path == "/logout")
+      serv
+    else {
+      u match {
+        case Some(usr) => serv.map(_.withResponse { _ withSecurityCookies (usr) })
+        case _         => serv
+      }
     }
   }
 
@@ -102,8 +103,7 @@ trait ShopServices extends TraversingSpec
       r <- req
       u <- user
     } yield {
-      val logout = !r.uri.param("logout").isEmpty
-      Html5.pageFromFile(PageState(initialState, r.language, if (logout) None else u), filePath, snipets)
+      Html5.pageFromFile(PageState(initialState, r.language, u), filePath, snipets)
     }
 
   }
@@ -112,16 +112,14 @@ trait ShopServices extends TraversingSpec
     r <- path(uri)
     u <- user
   } yield {
-    val logout = !r.uri.param("logout").isEmpty
-    Html5.pageFromFile(PageState(r, r.language, if (logout) None else u), filePath, snipets)
+    Html5.pageFromFile(PageState(r, r.language, u), filePath, snipets)
   }
 
   def page[T](uri: String, filePath: Path, snipets: DynamicContent[T], initialState: T) = for {
     r <- path(uri)
     u <- user
   } yield {
-    val logout = !r.uri.param("logout").isEmpty
-    Html5.pageFromFile(PageState(initialState, r.language, if (logout) None else u), filePath, snipets)
+    Html5.pageFromFile(PageState(initialState, r.language, u), filePath, snipets)
   }
 
   def settingsPage(uri: String, filePath: Path, snipets: DynamicContent[SettingsPageState]) = for {
@@ -144,8 +142,7 @@ trait ShopServices extends TraversingSpec
     r <- path(uri)
     u <- user
   } yield {
-    val logout = !r.uri.param("logout").isEmpty
-    Html5.pageFromFile(PageState(f(r, u), r.language, if (logout) None else u), filePath, snipets)
+    Html5.pageFromFile(PageState(f(r, u), r.language, u), filePath, snipets)
   }
 
   def productsVariantImages = for {

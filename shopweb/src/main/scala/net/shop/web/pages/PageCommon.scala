@@ -66,7 +66,7 @@ trait PageCommon[T] extends DynamicContent[T] {
       val icon = if (s.state.user.isEmpty)
         "#"
       else
-        "/?logout=true"
+        "/logout"
       Success((s.state.initialState, icon))
   }
 

@@ -100,7 +100,7 @@ var cart = {
 	clear : function() {
 		$.cookie("cart", JSON.stringify({
 			items : []
-		}));
+		}), { path: '/' });
 	},
 
 	computeTotal : function(add) {
@@ -155,14 +155,14 @@ var cart = {
 			} else {
 				found.count = found.count + 1;
 			}
-			$.cookie("cart", JSON.stringify(cart));
+			$.cookie("cart", JSON.stringify(cart), { path: '/' });
 		} else {
 			$.cookie("cart", JSON.stringify({
 				items : [ {
 					id : id,
 					count : 1
 				} ]
-			}));
+			}), { path: '/' });
 		}
 		$("#cart_num").text(this.numItems());
 	},
@@ -180,7 +180,7 @@ var cart = {
 					a[i].count = parseInt(count);
 				}
 			}
-			$.cookie("cart", JSON.stringify(cart));
+			$.cookie("cart", JSON.stringify(cart), { path: '/' });
 			$("#cart_num").text(this.numItems());
 		}
 	},
@@ -197,7 +197,7 @@ var cart = {
 				}
 			}
 			cart.items = na;
-			$.cookie("cart", JSON.stringify(cart));
+			$.cookie("cart", JSON.stringify(cart), { path: '/' });
 			$("#cart_num").text(this.numItems());
 		}
 	}

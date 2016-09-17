@@ -135,6 +135,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       ajaxLogin |
       productsVariantImages |
       categoriesImages |
+      logout |
       page("/", Path("web/categories.html"), catPage) |
       page("/products", Path("web/products.html"), productsPage) |
       page("/terms", Path("web/terms.html"), TermsPage) |
@@ -168,8 +169,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       staticFile(Path("/sitemap.xml")) |
       notFoundService
     s <- refresh(c)
-    t <- tryLogout(r, s)
-  } yield t
+  } yield s
 
   def saveProduct(req: HTTPRequest, u: Option[User]) = pageWithRules(Path("web/saveproduct.html"), saveProductPage,
     for {
