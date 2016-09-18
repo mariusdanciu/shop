@@ -64,6 +64,7 @@ figure {
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
+	cursor: pointer;
 }
 
 figure:hover+span {
@@ -613,6 +614,9 @@ h1, h2, h3, h4, h5, h6 {
 .hover:hover, a.cartt:hover, a.cartt_small:hover {
 	text-decoration: none !important;
 	color: #000 !important;
+}
+.hover {
+	width: 100%;
 }
 
 a.cartt {
@@ -1379,4 +1383,8 @@ form .row {
 	font-size: 18px;
 }
 
+.welcome {
+	font-size: 14px;
+	float: right;
+}
 /*# sourceMappingURL=style.css.map */

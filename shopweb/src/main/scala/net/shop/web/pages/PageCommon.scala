@@ -30,7 +30,7 @@ import net.shift.security.Permission
 trait PageCommon[T] extends DynamicContent[T] {
 
   override def inlines = List(authClass, logout)
-  def snippets = List(connectError, user, permissions)
+  def snippets = List(connectError, user, permissions, loggedUser)
 
   def reqSnip(name: String) = snip[T](name) _
 
@@ -79,5 +79,18 @@ trait PageCommon[T] extends DynamicContent[T] {
         case _       => Success((s.state.initialState, NodeSeq.Empty))
       }
 
+  }
+
+  val loggedUser = snip[T]("logged_user") {
+    s =>
+      s.state.user match {
+        case Some(u) =>
+          val res = bind(s.node) {
+            case Xml("span", a, c) =>
+              Xml("span", a, Text(u.name))
+          }
+          res map { (s.state.initialState, _) }
+        case _ => Success((s.state.initialState, NodeSeq.Empty))
+      }
   }
 }

@@ -10,12 +10,20 @@
 		$("#sortSelect").change(function(event) {
 
 			var sel = $("#sortSelect option:selected").val();
-			
+
 			var cat = $.url().param("cat");
 
 			window.location.href = "/products?cat=" + cat + "&sort=" + sel;
 			event.stopPropagation();
 			return false;
 		});
+
+		$("figure").each(function(i) {
+			$(this).click(function(e) {
+				window.location.href = "/product/" + $(this).attr("id");
+				e.stopPropagation();
+				return false;
+			})
+		})
 	});
 })();
