@@ -21,7 +21,7 @@ var admin = {
 				403 : function(msg) {
 					var data = JSON.parse(msg.responseText);
 					if (data.errors) {
-						common.showFormErrors(data.errors);
+						window.common.showFormErrors(data.errors);
 					}
 				}
 			}
@@ -31,7 +31,7 @@ var admin = {
 	users : function(selector) {
 		$(selector).load("/usersview", function(response, status, xhr) {
 			if (status === "error") {
-				common.showError(xhr.statusText);
+				window.common.showError(xhr.statusText);
 			} else {
 				settings.refreshAccordion();
 
@@ -111,7 +111,7 @@ var admin = {
 					403 : function(msg) {
 						var data = JSON.parse(msg.responseText);
 						if (data.errors) {
-							common.showFormErrors(data.errors);
+							window.common.showFormErrors(data.errors);
 						}
 						return false;
 					}

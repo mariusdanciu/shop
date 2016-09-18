@@ -48,6 +48,7 @@ import net.shift.loc.Loc
 import net.shift.security.Permission
 import net.shift.http.HTTPRequest
 import net.shift.security.User
+import net.shop.web.pages.NewUserPage
 
 object StartShop extends App with DefaultLog {
 
@@ -128,6 +129,11 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
     val store = self.store
   }
 
+  val newUserPage = new NewUserPage {
+    val cfg = self.cfg
+    val store = self.store
+  }
+
   def servingRule = for {
     r <- withLanguage(Language("ro"))
     u <- user
@@ -144,6 +150,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       page("/cookies", Path("web/cookies.html"), CookiesPage) |
       page("/aboutus", Path("web/aboutus.html"), AboutUsPage) |
       page("/cart", Path("web/cart.html"), cartPage, CartInfo(r, Nil)) |
+      page("/newuser", Path("web/newuser.html"), newUserPage) |
       settingsPage("/accountsettings", Path("web/accountsettings.html"), accPage) |
       product(r, u) |
       saveProduct(r, u) |

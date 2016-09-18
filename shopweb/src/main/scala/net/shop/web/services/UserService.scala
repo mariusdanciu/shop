@@ -38,6 +38,9 @@ import net.shift.http.Responses._
 import net.shift.http.ContentType._
 import net.shift.http.HTTPRequest
 import net.shift.http.HTTPParam
+import net.shift.io.IO
+import net.shift.http.HTTPUtils
+import scala.util.Try
 
 trait UserService extends TraversingSpec
     with DefaultLog
@@ -119,7 +122,7 @@ trait UserService extends TraversingSpec
   } yield {
     implicit val loc = r.language
     extract(r) match {
-      case Valid(u) =>
+      case Success(Valid(u)) =>
 
         val ui = UserInfo(
           firstName = u.firstName,
@@ -146,38 +149,49 @@ trait UserService extends TraversingSpec
             service(_(serverError.withTextBody(Loc.loc0(r.language)("user.cannot.create").text)))
         }
 
-      case Invalid(msgs) =>
+      case Success(Invalid(msgs)) =>
         validationFail(msgs)
+      case Failure(t) =>
+        log.error("Cannot create user", t)
+        service(_(badRequest))
     }
   }
 
-  private def extract(r: HTTPRequest)(implicit loc: Language): Validation[CreateUser, FieldError] = {
+  private def extract(r: HTTPRequest)(implicit loc: Language): Try[Validation[CreateUser, FieldError]] = {
     val user = (CreateUser.apply _).curried
     val ? = Loc.loc0(loc) _
 
     val userFormlet = Validator(user) <*>
       Validator(required("cu_firstName", ?("first.name").text, Valid(_))) <*>
       Validator(required("cu_lastName", ?("last.name").text, Valid(_))) <*>
-      Validator(required("cu_cnp", ?("cnp").text, Valid(_))) <*>
-      Validator(required("cu_phone", ?("phone").text, Valid(_))) <*>
+      Validator(optional("cu_cnp", ?("cnp").text, "", Valid(_))) <*>
+      Validator(optional("cu_phone", ?("phone").text, "", Valid(_))) <*>
       Validator(validateCreateUser("cu_email", ?("email").text)) <*>
       Validator(required("cu_password", ?("password").text, Valid(_))) <*>
       Validator(required("cu_password2", ?("retype.password").text, Valid(_)))
 
-    val params = r.uri.params map { case HTTPParam(k, v) => (k, v) } toMap
+    val qs = IO.producerToString(r.body)
 
-    (userFormlet validate params flatMap {
-      case p @ CreateUser(_,
-        _,
-        _,
-        _,
-        _,
-        pass,
-        pass2) if (pass != pass2) =>
-        Invalid(List(FieldError("cu_password2", Loc.loc0(loc)("password.not.match").text)))
-      case p =>
-        Valid(p)
-    })
+    for {
+      q <- qs
+      p <- HTTPUtils.formURLEncodedToParams(q)
+    } yield {
+      val params = p map { case HTTPParam(k, v) => (k, v) } toMap
+
+      (userFormlet validate params flatMap {
+        case p @ CreateUser(_,
+          _,
+          _,
+          _,
+          _,
+          pass,
+          pass2) if (pass != pass2) =>
+          Invalid(List(FieldError("cu_password2", Loc.loc0(loc)("password.not.match").text)))
+        case p =>
+          Valid(p)
+      })
+    }
+
   }
 
 }

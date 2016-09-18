@@ -181,80 +181,6 @@
 		});
 	};
 
-	var user = {
-		login : function(frmId) {
-			var creds = $.base64.encode($(frmId + " #username").val() + ":"
-					+ $(frmId + " #password").val());
-
-			console.log(creds);
-
-			$.ajax({
-				url : $(frmId).attr('action'),
-				type : "GET",
-				cache : false,
-				timeout : 3000,
-				headers : {
-					'Authorization' : "Basic " + creds
-				},
-				statusCode : {
-					200 : function() {
-						window.location.href = "/";
-					},
-					406 : function(m) {
-					}
-				}
-			});
-		}
-	};
-
-	var common = {
-
-		normUrl : function(url, cat, sort, search) {
-			var params = [];
-			if (cat !== undefined && cat !== null) { 
-			    params.push("cat=" + cat);
-			}
-			if (sort !== undefined && sort !== null) {
-				params.push("sort=" + sort); 
-			}
-			if (search !== undefined && search !== null) {
-				params.push("search=" + search);
-			}
-
-			var q = ""
-			for (var i in params) {
-				if (i > 0) {
-					q += "&";
-			    }
-				q += params[i];
-			}
-			
-			return url + "?" +q;
-		},
-
-		showNotice : function(text) {
-			$("#notice_i").html(text);
-			$("#notice_i").show().delay(5000).fadeOut("slow");
-		},
-
-		showError : function(text) {
-			$("#notice_e").html(text);
-			$("#notice_e").show().delay(5000).fadeOut("slow");
-		},
-
-		showConnectionError : function() {
-			$("#notice_connect_e").show().delay(5000).fadeOut("slow");
-		},
-
-		showFormErrors : function(errors) {
-			$.each(errors, function() {
-				$("label[for='" + this.id + "']").css("color", "#ff0000").attr(
-						"title", this.error);
-			});
-		},
-
-	};
-
 	// Document on load.
 	$(function() {
 
@@ -275,9 +201,15 @@
 			}
 		});
 
+		$("#login-btn").click(function(e) {
+			window.user.login("#login_form");
+			e.preventDefault();
+			return false;
+		});
+
 		$("#login_form").keydown(function(event) {
 			if (event.keyCode == 13) {
-				user.login("#login_form");
+				window.user.login("#login_form");
 				return false;
 			}
 		});
@@ -294,12 +226,12 @@
 					if (event.keyCode == 13) {
 						var s = $("#search").val();
 
-						var url = common.normUrl(
-								"/products", null, $.url().param("sort"), s);
-						
+						var url = window.common.normUrl("/products", null, $.url()
+								.param("sort"), s);
+
 						console.log(url);
-						
-						window.location.href = url; 
+
+						window.location.href = url;
 
 						event.preventDefault();
 						return false;
@@ -309,3 +241,103 @@
 	});
 
 }());
+
+var user = {
+	login : function(frmId) {
+		var creds = $.base64.encode($(frmId + " #username").val() + ":"
+				+ $(frmId + " #password").val());
+
+		console.log(creds);
+
+		$.ajax({
+			url : $(frmId).attr('action'),
+			type : "GET",
+			cache : false,
+			timeout : 3000,
+			headers : {
+				'Authorization' : "Basic " + creds
+			},
+			statusCode : {
+				200 : function() {
+					window.location.href = "/";
+				},
+				406 : function(m) {
+				}
+			}
+		});
+	},
+
+	createUser : function(formId) {
+		$(formId).each(function() {
+			var frm = this;
+
+			$(formId + ' label').css("color", "#555555").removeAttr("title");
+			$.ajax({
+				url : $(formId).attr('action'),
+				type : "POST",
+				cache : false,
+				timeout : 3000,
+				data : $(formId).serialize(),
+				statusCode : {
+					201 : function() {
+						window.location.href = "/";
+					},
+					403 : function(msg) {
+						var data = JSON.parse(msg.responseText);
+						if (data.errors) {
+							window.common.showFormErrors(data.errors);
+						}
+					}
+				}
+			});
+		});
+	}
+};
+
+var common = {
+
+	normUrl : function(url, cat, sort, search) {
+		var params = [];
+		if (cat !== undefined && cat !== null) {
+			params.push("cat=" + cat);
+		}
+		if (sort !== undefined && sort !== null) {
+			params.push("sort=" + sort);
+		}
+		if (search !== undefined && search !== null) {
+			params.push("search=" + search);
+		}
+
+		var q = ""
+		for ( var i in params) {
+			if (i > 0) {
+				q += "&";
+			}
+			q += params[i];
+		}
+
+		return url + "?" + q;
+	},
+
+	showNotice : function(text) {
+		$("#notice_i").html(text);
+		$("#notice_i").show().delay(5000).fadeOut("slow");
+	},
+
+	showError : function(text) {
+		$("#notice_e").html(text);
+		$("#notice_e").show().delay(5000).fadeOut("slow");
+	},
+
+	showConnectionError : function() {
+		$("#notice_connect_e").show().delay(5000).fadeOut("slow");
+	},
+
+	showFormErrors : function(errors) {
+		$.each(errors, function() {
+			$("label[for='" + this.id + "']").css("color", "#ff0000").attr(
+					"title", this.error);
+		});
+	},
+
+};

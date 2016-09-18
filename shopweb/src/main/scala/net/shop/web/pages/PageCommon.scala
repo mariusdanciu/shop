@@ -75,7 +75,7 @@ trait PageCommon[T] extends DynamicContent[T] {
 
       val perms = s.params.map(Permission(_))
       s.state.user match {
-        case Some(u) => u.requireAll(perms: _*)((s.state.initialState, s.node))
+        case Some(u) => u.requireAll(perms: _*)((s.state.initialState, s.node)).recover { case t => (s.state.initialState, NodeSeq.Empty) }
         case _       => Success((s.state.initialState, NodeSeq.Empty))
       }
 
