@@ -30,6 +30,9 @@ import net.shift.http.Responses._
 import net.shift.http.ContentType._
 import net.shift.http.HTTPRequest
 import net.shift.http.HTTPParam
+import net.shift.io.IO
+import net.shift.http.HTTPUtils
+import scala.util.Try
 
 trait SettingsService extends TraversingSpec
     with DefaultLog
@@ -58,11 +61,10 @@ trait SettingsService extends TraversingSpec
       case Some(usr) =>
         implicit val loc = r.language
         extract(r, usr) match {
-          case Valid(u) =>
+          case Success(Valid(u)) =>
             store.userByEmail(usr.name) match {
               case scala.util.Success(Some(ud)) =>
                 val merged = ud.copy(userInfo = u.user.userInfo,
-                  companyInfo = u.user.companyInfo,
                   addresses = u.addresses,
                   password = if (u.user.pass.isEmpty) ud.password else u.user.pass)
                 store.updateUsers(merged)
@@ -70,8 +72,11 @@ trait SettingsService extends TraversingSpec
               case _ => service(_(serverError.withTextBody(Loc.loc0(r.language)("login.fail").text)))
             }
             service(_(created.withTextBody(Loc.loc0(r.language)("settings.saved").text)))
-          case Invalid(e) =>
+          case Success(Invalid(e)) =>
             validationFail(e)
+          case Failure(t) =>
+            log.error("Cannot update settings", t)
+            service(_(badRequest))
         }
       case None => service(_(forbidden.withTextBody(Loc.loc0(r.language)("login.fail").text)))
     }
@@ -119,54 +124,56 @@ trait SettingsService extends TraversingSpec
     }
   }
 
-  private def extract(r: HTTPRequest, u: User)(implicit loc: Language): Validation[UserForm, FieldError] = {
+  private def extract(r: HTTPRequest, u: User)(implicit loc: Language): Try[Validation[UserForm, FieldError]] = {
     val ? = Loc.loc0(loc) _
 
     val ui = (UserInfo.apply _).curried
-    val ci = (CompanyInfo.apply _).curried
     val uu = (UpdateUser.apply _).curried
+    val adr: String => String => String => String => String => List[Address] =
+      country => region => city => adr => zip => List(Address(None, "", country, region, city, adr, zip))
+    val uf = (UserForm.apply _).curried
 
     val uiFormlet = Validator(ui) <*>
-      Validator(validateText("update_firstName", ?("first.name").text)) <*>
-      Validator(validateText("update_lastName", ?("last.name").text)) <*>
-      Validator(validateText("update_cnp", ?("cnp").text)) <*>
-      Validator(validateText("update_phone", ?("phone").text))
+      Validator(validateText("update_firstName")) <*>
+      Validator(validateText("update_lastName")) <*>
+      Validator(validateText("update_cnp")) <*>
+      Validator(validateText("update_phone"))
 
-    val ciFormlet = Validator(ci) <*>
-      Validator(validateText("update_cname", ?("company.name").text)) <*>
-      Validator(validateText("update_cif", ?("compnay.cif").text)) <*>
-      Validator(validateText("update_cregcom", ?("company.reg.com").text)) <*>
-      Validator(validateText("update_cbank", ?("company.bank").text)) <*>
-      Validator(validateText("update_cbankaccount", ?("company.bank.account").text)) <*>
-      Validator(validateText("update_cphone", ?("phone").text))
+    val updateFormlet = Validator(uu) <*> uiFormlet <*>
+      Validator(validateText("update_password")) <*>
+      Validator(validateText("update_password2"))
 
-    val updateFormlet = Validator(uu) <*> uiFormlet <*> ciFormlet <*>
-      Validator(validateText("update_password", ?("password").text)) <*>
-      Validator(validateText("update_password2", ?("retype.password").text))
+    val adrFormlet = Validator(adr) <*>
+      Validator(validateDefault("Romania")) <*>
+      Validator(validateText("addr_region")) <*>
+      Validator(validateText("addr_city")) <*>
+      Validator(validateText("addr_addr")) <*>
+      Validator(validateText("addr_zip"))
 
-    val params = r.uri.params.map { case HTTPParam(name, values) => (name, values) }.toMap
+    val userFormFormlet = Validator(uf) <*> updateFormlet <*> adrFormlet
 
-    val valid = (updateFormlet validate params flatMap {
-      case p @ UpdateUser(_,
-        _,
-        pass,
-        pass2) if (pass != pass2) =>
-        Invalid(List(FieldError("update_password2", Loc.loc0(loc)("password.not.match").text)))
-      case p =>
-        Valid(p)
-    })
+    val qs = IO.producerToString(r.body)
 
-    (valid, extractAddresses(params)) match {
-      case (Invalid(l), Invalid(r)) => Invalid(l ++ r)
-      case (Invalid(l), _)          => Invalid(l)
-      case (_, Invalid(r))          => Invalid(r)
-      case (Valid(l), Valid(r))     => Valid(UserForm(l, r))
+    for {
+      q <- qs
+      p <- HTTPUtils.formURLEncodedToParams(q)
+    } yield {
+      val params = p map { case HTTPParam(k, v) => (k, v) } toMap
+
+      val valid = userFormFormlet validate params flatMap {
+        case p @ UserForm(UpdateUser(_,
+          pass,
+          pass2), addr) if (pass != pass2) =>
+          Invalid(List(FieldError("update_password2", Loc.loc0(loc)("password.not.match").text)))
+        case p =>
+          Valid(p)
+      }
+      valid
     }
-
   }
 }
 
-case class UpdateUser(userInfo: UserInfo, companyInfo: CompanyInfo, pass: String, verifyPass: String)
+case class UpdateUser(userInfo: UserInfo, pass: String, verifyPass: String)
 case class UserForm(user: UpdateUser, addresses: List[Address])
 
 

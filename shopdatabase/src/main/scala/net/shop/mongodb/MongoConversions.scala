@@ -151,16 +151,7 @@ trait MongoConversions {
     userInfo += "cnp" -> u.userInfo.cnp
     userInfo += "phone" -> u.userInfo.phone
 
-    val companyInfo = MongoDBObject.newBuilder
-    companyInfo += "name" -> u.companyInfo.name
-    companyInfo += "cif" -> u.companyInfo.cif
-    companyInfo += "regCom" -> u.companyInfo.regCom
-    companyInfo += "bank" -> u.companyInfo.bank
-    companyInfo += "bankAccount" -> u.companyInfo.bankAccount
-    companyInfo += "phone" -> u.companyInfo.phone
-
     db += "userInfo" -> userInfo.result
-    db += "companyInfo" -> companyInfo.result
     db += "addresses" -> u.addresses.map(addressToMongo(_))
     db += "email" -> u.email
     db += "password" -> u.password
@@ -227,7 +218,6 @@ trait MongoConversions {
 
     UserDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
       userInfo = ui,
-      companyInfo = ci,
       addresses = obj.getAsOrElse[List[DBObject]]("addresses", Nil).map(mongoToAddress(_)),
       email = obj.getAsOrElse[String]("email", ""),
       password = obj.getAsOrElse[String]("password", ""),

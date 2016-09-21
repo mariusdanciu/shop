@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+
+<!-- template:headers -->
+
+<title>idid.ro - Setari cont.</title>
+</head>
+
+<body>
+
+	<div class="box-wrap-all">
+		<div class="box-wrap">
+
+			<!-- template:menu -->
+
+			<div class="intro-cat" data-animate-effect="fadeIn">
+				<h2>Contul meu</h2>
+			</div>
+
+			<div id="fh5co-media-section">
+				<div class="container">
+					<div class="row animate-box">
+						<form action="/update/settings" method="POST"
+							id="updatesettings_form" method="POST">
+							<!-- snip:userInfo -->
+							<div class="row">
+								<div class="col-md-3">
+									<label for="update_firstName"> <!-- loc:first.name -->
+									</label>
+								</div>
+								<div class="col-md-3">
+									<input id="update_firstName" type="text"
+										name="update_firstName" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-3">
+									<label for="update_lastName"> <!-- loc:last.name -->
+									</label>
+								</div>
+								<div class="col-md-3">
+									<input id="update_lastName" type="text" name="update_lastName" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-3">
+									<label for="update_cnp"> <!-- loc:cnp -->
+									</label>
+								</div>
+								<div class="col-md-3">
+									<input id="update_cnp" type="text" name="update_cnp" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-3">
+									<label for="update_phone"> <!-- loc:phone -->
+									</label>
+								</div>
+								<div class="col-md-3">
+									<input id="update_phone" type="text" name="update_phone" />
+								</div>
+							</div>
+							<!-- end -->
+							<fieldset>
+								<legend>Parola</legend>
+								<div class="row">
+									<div class="col-md-3">
+										<label for="update_password"> <!-- loc:password -->
+										</label>
+									</div>
+									<div class="col-md-3">
+										<input id="update_password" type="password"
+											name="update_password" />
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-3">
+										<label for="update_password2"> <!-- loc:retype.password -->
+										</label>
+									</div>
+									<div class="col-md-3">
+										<input id="update_password2" type="password"
+											name="update_password2" />
+									</div>
+								</div>
+							</fieldset>
+							<!-- snip:address -->
+							<fieldset>
+								<legend>Adresa</legend>
+								<div class="fields">
+									<div class="row">
+										<div class="col-md-3">
+											<label for="addr_region"> <!-- loc:region --></label>
+										</div>
+										<div class="col-md-3">
+											<input id="addr_region" type="text" name="addr_region" />
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<label for="addr_city"> <!-- loc:city --></label>
+										</div>
+										<div class="col-md-3">
+											<input id="addr_city" type="text" name="addr_city" />
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<label for="addr_addr"> <!-- loc:address --></label>
+										</div>
+										<div class="col-md-3">
+											<input id="addr_addr" type="text" name="addr_addr" />
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-3">
+											<label for="addr_zip"> <!-- loc:zip-->
+											</label>
+										</div>
+										<div class="col-md-3">
+											<input id="addr_zip" type="text" name="addr_zip" />
+										</div>
+									</div>
+								</div>
+							</fieldset>
+							<!-- end -->
+						</form>
+					</div>
+					<div class="row animate-box">
+						<div id="save_user" class="margin15 btn">Salvează</div>
+					</div>
+				</div>
+
+			</div>
+
+			<!-- template:footermenu -->
+		</div>
+		<!-- template:footer -->
+	</div>
+	<!-- template:endscripts -->
+	<script src="/static/js/accountsettings.js"></script>
+</body>
+</html>

@@ -51,10 +51,10 @@ object Formatters {
 
     def write(user: UserDetail)(implicit lang: Language, fs: FileSystem): String = {
       import org.json4s.native.Serialization.writePretty
-      writePretty(UserSummary(user.userInfo, user.companyInfo, user.email, user.addresses))
+      writePretty(UserSummary(user.userInfo, user.email, user.addresses))
     }
 
-    case class UserSummary(userInfo: UserInfo, companyInfo: CompanyInfo, email: String, addresses: List[Address])
+    case class UserSummary(userInfo: UserInfo, email: String, addresses: List[Address])
   }
 
   implicit object ValidationErrorWriter extends Formatter[List[FieldError]] {

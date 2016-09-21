@@ -46,9 +46,9 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDepe
 
   val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy - hh:mm")
 
-  override def snippets = List(settingsForm, addressTemplate, addresses, orders, users) ++ super.snippets
+  override def snippets = List(userInfo, address, orders, users) ++ super.snippets
 
-  val settingsForm = reqSnip("settingsForm") {
+  val userInfo = reqSnip("userInfo") {
     s =>
       {
         s.state.user match {
@@ -56,18 +56,10 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDepe
             val r = store.userByEmail(user.name) match {
               case scala.util.Success(Some(ud)) =>
                 (Some(ud), bind(s.node) {
-                  case HasName("update_firstName", a)    => Xml("input", a + ("value", ud.userInfo.firstName))
-                  case HasName("update_lastName", a)     => Xml("input", a + ("value", ud.userInfo.lastName))
-                  case HasName("update_cnp", a)          => Xml("input", a + ("value", ud.userInfo.cnp))
-                  case HasName("update_phone", a)        => Xml("input", a + ("value", ud.userInfo.phone))
-
-                  case HasName("update_cname", a)        => Xml("input", a + ("value", ud.companyInfo.name))
-                  case HasName("update_cif", a)          => Xml("input", a + ("value", ud.companyInfo.cif))
-                  case HasName("update_cregcom", a)      => Xml("input", a + ("value", ud.companyInfo.regCom))
-                  case HasName("update_cbank", a)        => Xml("input", a + ("value", ud.companyInfo.bank))
-                  case HasName("update_cbankaccount", a) => Xml("input", a + ("value", ud.companyInfo.bankAccount))
-                  case HasName("update_cphone", a)       => Xml("input", a + ("value", ud.companyInfo.phone))
-
+                  case HasName("update_firstName", a) => Xml("input", a + ("value", ud.userInfo.firstName))
+                  case HasName("update_lastName", a)  => Xml("input", a + ("value", ud.userInfo.lastName))
+                  case HasName("update_cnp", a)       => Xml("input", a + ("value", ud.userInfo.cnp))
+                  case HasName("update_phone", a)     => Xml("input", a + ("value", ud.userInfo.phone))
                 })
               case _ => (None, Success(NodeSeq.Empty))
             }
@@ -79,34 +71,27 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDepe
       }
   }
 
-  val addressTemplate = reqSnip("address_template") {
-    s =>
-      {
-        val res = Html5.runPageFromFile(PageState(Address(None, "", "", "", "", "", ""),
-          s.state.initialState.req.language),
-          Path("web/templates/address.html"), AddressPage).map(_._2)
-
-        res.map(((s.state.initialState, _)))
-      }
-  }
-
-  val addresses = reqSnip("addresses") {
+  val address = reqSnip("address") {
     s =>
       {
         val res: NodeSeq = s.state.initialState.user match {
-          case Some(u) => u.addresses.flatMap { addr =>
-            val ak: Try[NodeSeq] = Html5.runPageFromFile(PageState(addr,
-              s.state.initialState.req.language),
-              Path("web/templates/address.html"), AddressPage).map(_._2)
+          case Some(u) =>
 
-            ak match {
-              case Success(n) => n.head match {
-                case e: Elem => e.child
-                case _       => NodeSeq.Empty
-              }
-              case _ => NodeSeq.Empty
+            val addr = u.addresses match {
+              case Nil    => Address(None, "", "", "", "", "", "")
+              case h :: _ => h
             }
-          }
+
+            val ak = bind(s.node) {
+              case HasName("addr_region", a) => Xml("input", a + ("value", addr.region))
+              case HasName("addr_city", a)   => Xml("input", a + ("value", addr.city))
+              case HasName("addr_addr", a)   => Xml("input", a + ("value", addr.address))
+              case HasName("addr_zip", a)    => Xml("input", a + ("value", addr.zipCode))
+            }
+            ak match {
+              case Success(n) => n
+              case _          => NodeSeq.Empty
+            }
           case _ => NodeSeq.Empty
         }
         Success((s.state.initialState, res))
@@ -161,24 +146,6 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDepe
                         case Xml(_, HasId("address", a), _) => <span>{ address }</span> % a
                         case Xml(_, HasId("email", a), _)   => <span>{ email }</span> % a
                         case Xml(_, HasId("phone", a), _)   => <span>{ phone }</span> % a
-                      } getOrElse NodeSeq.Empty
-                    case _ => NodeSeq.Empty
-                  }
-
-                  case Xml(_, HasId("company_info", a), childs) => o match {
-                    case OrderLog(id, time, Company(cn, cif, regCom, bank, account), Address(_, _, country, region, city, address, zip), email, phone, _, _, _) =>
-                      bind(childs) {
-                        case Xml(_, HasId("oid", a), _)          => <span>{ id }</span> % a
-                        case Xml(_, HasId("cname", a), _)        => <span>{ cn }</span> % a
-                        case Xml(_, HasId("cif", a), _)          => <span>{ cif }</span> % a
-                        case Xml(_, HasId("cregcom", a), _)      => <span>{ regCom }</span> % a
-                        case Xml(_, HasId("cbank", a), _)        => <span>{ bank }</span> % a
-                        case Xml(_, HasId("cbankaccount", a), _) => <span>{ account }</span> % a
-                        case Xml(_, HasId("cregion", a), _)      => <span>{ region }</span> % a
-                        case Xml(_, HasId("ccity", a), _)        => <span>{ city }</span> % a
-                        case Xml(_, HasId("caddress", a), _)     => <span>{ address }</span> % a
-                        case Xml(_, HasId("cemail", a), _)       => <span>{ email }</span> % a
-                        case Xml(_, HasId("cphone", a), _)       => <span>{ phone }</span> % a
                       } getOrElse NodeSeq.Empty
                     case _ => NodeSeq.Empty
                   }
@@ -257,19 +224,12 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDepe
           case Success(users) =>
             val n = users.flatMap { user =>
               bind(s.node.head.child) {
-                case HasClass("user_title", a)       => <span>{ user.email }</span>
+                case HasClass("user_title", a)    => <span>{ user.email }</span>
 
-                case HasId("update_firstName", a)    => Xml("span", a) / Text(user.userInfo.firstName)
-                case HasId("update_lastName", a)     => Xml("span", a) / Text(user.userInfo.lastName)
-                case HasId("update_cnp", a)          => Xml("span", a) / Text(user.userInfo.cnp)
-                case HasId("update_phone", a)        => Xml("span", a) / Text(user.userInfo.phone)
-
-                case HasId("update_cname", a)        => Xml("span", a) / Text(user.companyInfo.name)
-                case HasId("update_cif", a)          => Xml("span", a) / Text(user.companyInfo.cif)
-                case HasId("update_cregcom", a)      => Xml("span", a) / Text(user.companyInfo.regCom)
-                case HasId("update_cbank", a)        => Xml("span", a) / Text(user.companyInfo.bank)
-                case HasId("update_cbankaccount", a) => Xml("span", a) / Text(user.companyInfo.bankAccount)
-                case HasId("update_cphone", a)       => Xml("span", a) / Text(user.companyInfo.phone)
+                case HasId("update_firstName", a) => Xml("span", a) / Text(user.userInfo.firstName)
+                case HasId("update_lastName", a)  => Xml("span", a) / Text(user.userInfo.lastName)
+                case HasId("update_cnp", a)       => Xml("span", a) / Text(user.userInfo.cnp)
+                case HasId("update_phone", a)     => Xml("span", a) / Text(user.userInfo.phone)
 
                 case HasId("addresses", a) =>
                   user.addresses.flatMap { addr =>
@@ -309,31 +269,3 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDepe
 }
 
 case class SettingsPageState(req: HTTPRequest, user: Option[UserDetail])
-
-object AddressPage extends DynamicContent[Address] { self =>
-  override def snippets = List(addr)
-
-  val addr = snip[Address]("addr") {
-    s =>
-      {
-        def augmentAttr(in: Map[String, String], name: String, s: String): String = in.get(name).map(_ + ":" + s).getOrElse("")
-
-        val name = s.state.initialState.name
-
-        def augmentInput(a: XmlAttr, v: String) = Xml("input", a +
-          ("value", v) +
-          ("id", augmentAttr(a.attrs, "id", name)) +
-          ("name", augmentAttr(a.attrs, "name", name)))
-
-        val res = bind(s.node) {
-          case HasClass("addr_title", a) => Xml("a", a) / Text(name)
-          case Xml("label", a, _)        => Xml("label", a + ("for", augmentAttr(a.attrs, "for", name)))
-          case HasName("addr_region", a) => augmentInput(a, s.state.initialState.region)
-          case HasName("addr_city", a)   => augmentInput(a, s.state.initialState.city)
-          case HasName("addr_addr", a)   => augmentInput(a, s.state.initialState.address)
-          case HasName("addr_zip", a)    => augmentInput(a, s.state.initialState.zipCode)
-        }
-        res.map(r => (s.state.initialState, r))
-      }
-  }
-}

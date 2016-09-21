@@ -24,6 +24,8 @@ import scala.Option
 import net.shop.api.ProductDetail
 import net.shop.utils.ShopUtils
 import net.shift.http.HTTPRequest
+import net.shift.template.HasName
+import net.shop.api.Address
 
 case class CartInfo(r: HTTPRequest, items: Seq[(String, Int, ProductDetail)])
 
@@ -32,7 +34,7 @@ trait CartPage extends PageCommon[CartInfo] with ServiceDependencies { self =>
 
   override def inlines = List(emptyMsg, total) ++ super.inlines
 
-  override def snippets = List(cartProds, quantities, empty) ++ super.snippets
+  override def snippets = List(cartProds, quantities, empty, userInfo) ++ super.snippets
 
   private def getCart(r: HTTPRequest): Option[CCart] = {
     for {
@@ -105,5 +107,33 @@ trait CartPage extends PageCommon[CartInfo] with ServiceDependencies { self =>
       Success((s.state.initialState, nodes))
   }
 
+  val userInfo = reqSnip("userInfo") {
+    s =>
+      s.state.user match {
+        case Some(user) =>
+          store.userByEmail(user.name) match {
+            case scala.util.Success(Some(ud)) =>
+              val addr = ud.addresses match {
+                case Nil    => Address(None, "", "", "", "", "", "")
+                case h :: _ => h
+              }
+
+              bind(s.node) {
+                case HasName("fname", a)   => Xml("input", a + ("value", ud.userInfo.firstName))
+                case HasName("lname", a)   => Xml("input", a + ("value", ud.userInfo.lastName))
+                case HasName("email", a)   => Xml("input", a + ("value", user.name))
+                case HasName("phone", a)   => Xml("input", a + ("value", ud.userInfo.phone))
+                case HasName("cnp", a)     => Xml("input", a + ("value", ud.userInfo.cnp))
+                case HasName("region", a)  => Xml("input", a + ("value", addr.region))
+                case HasName("city", a)    => Xml("input", a + ("value", addr.city))
+                case HasName("address", a) => Xml("input", a + ("value", addr.address))
+                case HasName("zip", a)     => Xml("input", a + ("value", addr.zipCode))
+              } map { (s.state.initialState, _) }
+            case _ => Success((s.state.initialState, s.node))
+          }
+        case _ => Success((s.state.initialState, s.node))
+      }
+
+  }
 }
 

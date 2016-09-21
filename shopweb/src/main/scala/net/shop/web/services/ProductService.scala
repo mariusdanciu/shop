@@ -147,11 +147,11 @@ trait ProductService extends TraversingSpec
       Validator(validateDefault(0)) <*>
       Validator(validateOptional(fieldPrefix + "position", s => Option(s.toInt))) <*>
       Validator(validateOptional(fieldPrefix + "presentation_position", s => Option(s.toInt))) <*>
-      Validator(validateBoolean(fieldPrefix + "unique", ?("unique.product").text)) <*>
+      Validator(validateBoolean(fieldPrefix + "unique")) <*>
       Validator(validateOptional(fieldPrefix + "stock", stockFunc)) <*>
       Validator(validateListField(fieldPrefix + "categories", ?("categories").text)) <*>
       Validator(validateDefault(Nil)) <*>
-      Validator(optionalListField(fieldPrefix + "keywords", ?("keywords").text))
+      Validator(optionalListField(fieldPrefix + "keywords"))
 
     try {
       (files, productFormlet validate params flatMap {

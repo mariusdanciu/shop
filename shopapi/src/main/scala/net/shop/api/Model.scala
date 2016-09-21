@@ -14,7 +14,6 @@ case class CompanyInfo(name: String, cif: String, regCom: String, bank: String, 
 
 case class UserDetail(id: Option[String] = None,
                       userInfo: UserInfo,
-                      companyInfo: CompanyInfo,
                       addresses: List[Address],
                       email: String,
                       password: String,

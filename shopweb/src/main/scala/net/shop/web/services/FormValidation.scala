@@ -38,9 +38,9 @@ trait FormValidation extends ServiceDependencies {
   type ValidationInput = Map[String, List[String]]
   type ValidationFunc[T] = ValidationInput => Validation[T, FieldError]
 
-  def required[T](name: String, title: String, f: String => Validation[T, FieldError])(implicit lang: Language): ValidationFunc[T] =
+  def required[T](name: String, err: String, f: String => Validation[T, FieldError])(implicit lang: Language): ValidationFunc[T] =
     env => {
-      val failed = Invalid(List(FieldError(name, Loc.loc(lang)("field.required", Seq(title)).text)))
+      val failed = Invalid(List(FieldError(name, Loc.loc(lang)("field.required", Seq(err)).text)))
 
       env.get(name) match {
         case Some(n :: _) if !n.isEmpty => f(n)
@@ -49,7 +49,7 @@ trait FormValidation extends ServiceDependencies {
       }
     }
 
-  def optional[T](name: String, title: String, default: => T, f: String => Validation[T, FieldError])(implicit lang: Language): ValidationFunc[T] =
+  def optional[T](name: String, default: => T, f: String => Validation[T, FieldError])(implicit lang: Language): ValidationFunc[T] =
     env => {
       env.get(name) match {
         case Some(n :: _) if !n.isEmpty => f(n)
@@ -74,14 +74,14 @@ trait FormValidation extends ServiceDependencies {
       }
     }
 
-  def validateMapField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
-    required(name, title, s => Valid(Map(lang.name -> s)))
+  def validateMapField(name: String, err: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
+    required(name, err, s => Valid(Map(lang.name -> s)))
 
   def validateListField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationList] =
     required(name, title, s => Valid(s.split("\\s*,\\s*").toList))
 
-  def optionalListField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationList] =
-    optional(name, title, Nil, s => Valid(s.split("\\s*,\\s*").toList))
+  def optionalListField(name: String)(implicit lang: Language): ValidationFunc[ValidationList] =
+    optional(name, Nil, s => Valid(s.split("\\s*,\\s*").toList))
 
   def validateInt(name: String, title: String)(implicit lang: Language): ValidationFunc[Int] =
     required(name, title, s =>
@@ -91,8 +91,8 @@ trait FormValidation extends ServiceDependencies {
         case e: Exception => Invalid(List(FieldError(name, Loc.loc(lang)("field.incorrect", Seq(title)).text)))
       })
 
-  def validateBoolean(name: String, title: String)(implicit lang: Language): ValidationFunc[Boolean] =
-    optional(name, title, false, s => {
+  def validateBoolean(name: String)(implicit lang: Language): ValidationFunc[Boolean] =
+    optional(name, false, s => {
       Valid(!s.isEmpty())
     })
 
@@ -105,8 +105,8 @@ trait FormValidation extends ServiceDependencies {
         case e: Exception => Invalid(List(FieldError(name, Loc.loc(lang)("field.incorrect", Seq(title)).text)))
       })
 
-  def validateText(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[String, FieldError] =
-    optional(name, title, "", Valid(_))
+  def validateText(name: String)(implicit lang: Language): ValidationInput => Validation[String, FieldError] =
+    optional(name, "", Valid(_))
 
   def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[String, FieldError] =
     required(name, title, s => store.userByEmail(s) match {

@@ -134,7 +134,6 @@ trait UserService extends TraversingSpec
 
         val usr = UserDetail(id = None,
           userInfo = ui,
-          companyInfo = CompanyInfo("", "", "", "", "", ""),
           addresses = Nil,
           email = u.email,
           password = u.password,
@@ -164,8 +163,8 @@ trait UserService extends TraversingSpec
     val userFormlet = Validator(user) <*>
       Validator(required("cu_firstName", ?("first.name").text, Valid(_))) <*>
       Validator(required("cu_lastName", ?("last.name").text, Valid(_))) <*>
-      Validator(optional("cu_cnp", ?("cnp").text, "", Valid(_))) <*>
-      Validator(optional("cu_phone", ?("phone").text, "", Valid(_))) <*>
+      Validator(optional("cu_cnp", "", Valid(_))) <*>
+      Validator(optional("cu_phone", "", Valid(_))) <*>
       Validator(validateCreateUser("cu_email", ?("email").text)) <*>
       Validator(required("cu_password", ?("password").text, Valid(_))) <*>
       Validator(required("cu_password2", ?("retype.password").text, Valid(_)))
