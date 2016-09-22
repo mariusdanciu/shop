@@ -88,7 +88,7 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
       norms match {
         case Success(norm) =>
 
-          val v = if (norm.contains("cif")) OrderForm.companyForm(r.language) else OrderForm.form(r.language)
+          val v = OrderForm.form(r.language)
 
           (v validate norm) match {
             case Valid(o) =>
@@ -100,13 +100,7 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
                   val cfg = self.cfg
                   val store = self.store
                 }
-                (o.submitter match {
-
-                  case c: Company =>
-                    order.orderCompanyTemplate(OrderState(o.toOrderLog, r.language))
-                  case c: Person =>
-                    order.orderTemplate(OrderState(o.toOrderLog, r.language))
-                }) map { n =>
+                order.orderTemplate(OrderState(o.toOrderLog, r.language)) map { n =>
                   Messaging.send(OrderDocument(r.language, o, n toString))
                 }
               }

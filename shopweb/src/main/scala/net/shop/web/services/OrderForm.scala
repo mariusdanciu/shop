@@ -121,35 +121,5 @@ object OrderForm {
       Validator(validItems)
   }
 
-  def companyForm(implicit lang: Language) = {
-    val order = ((Order.apply _).curried)(uuid)
-    val ? = Loc.loc0(lang) _
-
-    val company = (Company.apply _).curried
-    val address = ((Address.apply _).curried)(None)("destination")("Romania")
-
-    val companyFormlet = Validator(company) <*>
-      Validator(reqStr("cname", ?("company.name").text, Valid(_))) <*>
-      Validator(reqStr("cif", ?("company.cif").text, Valid(_))) <*>
-      Validator(reqStr("cregcom", ?("company.reg.com").text, Valid(_))) <*>
-      Validator(reqStr("cbank", ?("company.bank").text, Valid(_))) <*>
-      Validator(reqStr("cbankaccount", ?("company.bank.account").text, Valid(_)))
-
-    val addressFormlet = Validator(address) <*>
-      Validator(reqStr("cregion", ?("region").text, Valid(_))) <*>
-      Validator(reqStr("ccity", ?("city").text, Valid(_))) <*>
-      Validator(reqStr("caddress", ?("address").text, Valid(_))) <*>
-      Validator(reqStr("czip", ?("zip").text, Valid(_)))
-
-    Validator(order) <*>
-      companyFormlet <*>
-      addressFormlet <*>
-      Validator(validEmail("cemail", "cemail")) <*>
-      Validator(validPhone("cphone", "cphone")) <*>
-      Validator(validTerms("cterms")) <*>
-      Validator(validTransport("transport_pj")) <*>
-      Validator(validItems)
-  }
-
 }
 

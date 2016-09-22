@@ -42,9 +42,6 @@ trait OrderPage extends DynamicContent[OrderState] with ServiceDependencies {
     Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_${state.lang.name}.html"), this).map(in => in._2)
   }
 
-  def orderCompanyTemplate(state: OrderState): Try[NodeSeq] =
-    Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_company_${state.lang.name}.html"), this).map(in => in._2)
-
   val logoUrl = inline[OrderState]("logo_url") {
     s => Success((s.state.initialState, s"http://${cfg.string("host")}:${cfg.string("port")}/static/images/logo.svg"))
   }

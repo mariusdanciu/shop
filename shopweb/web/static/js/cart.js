@@ -27,18 +27,6 @@
 })();
 
 var cart = {
-	cleanFormMessages : function() {
-		$('#order_form label, #order_form_company label').css("color",
-				"#555555").removeAttr("title");
-	},
-
-	showFormErrors : function(errors) {
-		$.each(errors, function() {
-			$("label[for='" + this.id + "']").css("color", "#ff0000").attr(
-					"title", this.error);
-		});
-	},
-
 	buy : function(okFunc) {
 
 		var form = "#order_form";
@@ -59,7 +47,7 @@ var cart = {
 			})
 		}
 
-		cart.cleanFormMessages();
+		$(form + ' label').css("color", "#555555").removeAttr("title");
 
 		$.ajax({
 			url : "/order",
@@ -72,7 +60,7 @@ var cart = {
 				403 : function(msg) {
 					var data = JSON.parse(msg.responseText);
 					if (data.errors) {
-						window.cart.showFormErrors(data.errors);
+						window.common.showFormErrors(data.errors);
 					}
 				},
 
@@ -83,18 +71,6 @@ var cart = {
 		});
 		return false;
 
-	},
-
-	fetchUserInfo : function() {
-		$.ajax({
-			url : "/userinfo",
-			dataType : "json",
-			timeout : 3000,
-			cache : false,
-			context : $("#cart_content")
-		}).done(function(data) {
-			cart.populateForm(data);
-		});
 	},
 
 	clear : function() {

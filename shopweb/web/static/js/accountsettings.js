@@ -16,7 +16,7 @@ var settings = {
 		$(selector).load("/ordersview/myorders",
 				function(response, status, xhr) {
 					if (status === "error") {
-						common.showError(xhr.statusText);
+						common.showNotice(xhr.statusText);
 					} else {
 						settings.refreshAccordion();
 					}
@@ -25,8 +25,6 @@ var settings = {
 
 	updateUser : function(formId) {
 
-		console.log( $(formId).attr('action'));
-		
 		$(formId + ' label').css("color", "#555555").removeAttr("title");
 		$.ajax({
 			url : $(formId).attr('action'),

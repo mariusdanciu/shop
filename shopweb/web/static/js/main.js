@@ -226,8 +226,8 @@
 					if (event.keyCode == 13) {
 						var s = $("#search").val();
 
-						var url = window.common.normUrl("/products", null, $.url()
-								.param("sort"), s);
+						var url = window.common.normUrl("/products", null, $
+								.url().param("sort"), s);
 
 						console.log(url);
 
@@ -262,6 +262,8 @@ var user = {
 					window.location.href = "/";
 				},
 				406 : function(m) {
+					console.log(m);
+					window.common.showNotice(m.responseText);
 				}
 			}
 		});
@@ -324,20 +326,45 @@ var common = {
 		$("#notice_i").show().delay(5000).fadeOut("slow");
 	},
 
-	showError : function(text) {
-		$("#notice_e").html(text);
-		$("#notice_e").show().delay(5000).fadeOut("slow");
-	},
-
-	showConnectionError : function() {
-		$("#notice_connect_e").show().delay(5000).fadeOut("slow");
-	},
-
 	showFormErrors : function(errors) {
 		$.each(errors, function() {
 			$("label[for='" + this.id + "']").css("color", "#ff0000").attr(
 					"title", this.error);
 		});
 	},
+	
+	save : function(formId, successFunc) {
+		$(formId).each(
+				function() {
+					var frm = this;
+					var formData = new FormData(frm);
+
+					$(formId + ' label').css("color", "#555555")
+							.removeAttr("title");
+
+					$.ajax({
+						url : $(frm).attr('action'),
+						type : "POST",
+						cache : false,
+						contentType : false,
+						processData : false,
+						timeout : 10000,
+						data : formData,
+						statusCode : {
+							201 : function(data) {
+								successFunc(data);
+							},
+							403 : function(msg) {
+								var data = JSON.parse(msg.responseText);
+								if (data.errors) {
+									window.common.showFormErrors(data.errors);
+								}
+								return false;
+							}
+						}
+					});
+				});
+	}
+
 
 };
