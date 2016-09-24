@@ -70,12 +70,12 @@ trait UserService extends TraversingSpec
 
   def deleteThisUser = for {
     r <- delete
-    _ <- path("delete/user")
+    _ <- path("/user")
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
   } yield {
     store.deleteUserByEmail(user.name) match {
       case Success(1) =>
-        service(_(ok))
+        service(_(ok.dropSecurityCookies))
       case scala.util.Failure(err: ShopError) =>
         implicit val lang = r.language
         service(_(serverError.withTextBody(Formatter.format(err))))
@@ -104,6 +104,7 @@ trait UserService extends TraversingSpec
     Path(_, _ :: "forgotpassword" :: b64 :: Nil) <- path
   } yield {
     val email = Base64.decodeString(b64)
+    println(store.userByEmail(email))
     (for {
       Some(ud) <- store.userByEmail(email)
       (_, n) <- Html5.runPageFromFile(PageState(ud, r.language), Path(s"web/templates/forgotpassword_${r.language.name}.html"), ForgotPasswordPage)

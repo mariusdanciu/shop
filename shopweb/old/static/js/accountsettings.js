@@ -51,7 +51,7 @@ var settings = {
 
     deleteUser : function() {
         $.ajax({
-            url : "delete/user?logout=true",
+            url : "delete/user",
             type : "DELETE",
             cache : false,
             timeout : 3000,

@@ -1311,6 +1311,11 @@ form .row {
 	display: none;
 	text-align: center;
 }
+
+.search {
+	margin-top: 20px;
+}
+
 .search input {
 	width: 100%;
 }

@@ -166,7 +166,6 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       userService.createUser |
       userService.userInfo |
       userService.deleteThisUser |
-      userService.deleteAnyUser |
       userService.forgotPassword |
       settingsService.updateSettings |
       settingsService.updateOrderStatus |

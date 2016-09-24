@@ -2,7 +2,6 @@ package net.shop
 package web.services
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import net.shift.common.Config
 import net.shift.common.DefaultLog
 import net.shift.common.Path

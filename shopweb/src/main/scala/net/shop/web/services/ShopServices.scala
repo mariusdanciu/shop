@@ -84,13 +84,15 @@ trait ShopServices extends TraversingSpec
     u <- user
     serv <- State.put[HTTPRequest, Attempt](attempt)
   } yield {
-    if (r.uri.path == "/logout")
-      serv
-    else {
-      u match {
-        case Some(usr) => serv.map(_.withResponse { _ withSecurityCookies (usr) })
-        case _         => serv
-      }
+    u match {
+      case Some(usr) => serv.map(_.withResponse { r =>
+        val isLogout = r.cookie("identity").map { c => c.maxAge == Some(0) } getOrElse false
+        if (isLogout)
+          r
+        else
+          r.withSecurityCookies(usr)
+      })
+      case _ => serv
     }
   }
 

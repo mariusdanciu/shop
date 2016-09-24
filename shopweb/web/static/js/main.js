@@ -201,6 +201,12 @@
 			}
 		});
 
+		$("#forgot-pass-btn").click(function(e) {
+			window.user.forgotPassword("#login_form");
+			e.preventDefault();
+			return false;
+		});
+
 		$("#login-btn").click(function(e) {
 			window.user.login("#login_form");
 			e.preventDefault();
@@ -293,7 +299,25 @@ var user = {
 				}
 			});
 		});
-	}
+	},
+
+	forgotPassword : function(frmId) {
+		var email = $.base64.encode($(frmId + " #username").val());
+		$.ajax({
+			url : "/forgotpassword/" + email,
+			type : "POST",
+			timeout : 3000,
+			cache : false,
+			statusCode : {
+				404 : function(m) {
+					common.showNotice(m.responseText);
+				}
+			}
+		}).success(function(m) {
+			common.showNotice(m);
+		});
+	},
+
 };
 
 var common = {
@@ -332,39 +356,36 @@ var common = {
 					"title", this.error);
 		});
 	},
-	
+
 	save : function(formId, successFunc) {
-		$(formId).each(
-				function() {
-					var frm = this;
-					var formData = new FormData(frm);
+		$(formId).each(function() {
+			var frm = this;
+			var formData = new FormData(frm);
 
-					$(formId + ' label').css("color", "#555555")
-							.removeAttr("title");
+			$(formId + ' label').css("color", "#555555").removeAttr("title");
 
-					$.ajax({
-						url : $(frm).attr('action'),
-						type : "POST",
-						cache : false,
-						contentType : false,
-						processData : false,
-						timeout : 10000,
-						data : formData,
-						statusCode : {
-							201 : function(data) {
-								successFunc(data);
-							},
-							403 : function(msg) {
-								var data = JSON.parse(msg.responseText);
-								if (data.errors) {
-									window.common.showFormErrors(data.errors);
-								}
-								return false;
-							}
+			$.ajax({
+				url : $(frm).attr('action'),
+				type : "POST",
+				cache : false,
+				contentType : false,
+				processData : false,
+				timeout : 10000,
+				data : formData,
+				statusCode : {
+					201 : function(data) {
+						successFunc(data);
+					},
+					403 : function(msg) {
+						var data = JSON.parse(msg.responseText);
+						if (data.errors) {
+							window.common.showFormErrors(data.errors);
 						}
-					});
-				});
+						return false;
+					}
+				}
+			});
+		});
 	}
-
 
 };

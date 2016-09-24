@@ -7,6 +7,13 @@
 			return false;
 		});
 
+		
+
+		$("#delete_user").click(function(event) {
+			window.settings.deleteUser()
+			event.preventDefault();
+			return false;
+		});
 	});
 
 })();
@@ -23,6 +30,24 @@ var settings = {
 				});
 	},
 
+    deleteUser : function() {
+        $.ajax({
+            url : "/user",
+            type : "DELETE",
+            cache : false,
+            timeout : 3000,
+            statusCode : {
+                200 : function(msg) {
+                    window.location.href = "/";
+                },
+
+                403 : function(msg) {
+                    common.showNotice(msg);
+                }
+            }
+        });
+    },
+	
 	updateUser : function(formId) {
 
 		$(formId + ' label').css("color", "#555555").removeAttr("title");

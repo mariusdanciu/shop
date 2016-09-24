@@ -10,6 +10,8 @@ resolvers += "mvnrepository" at "http://mvnrepository.com/artifact/"
 
 resolvers += "akka" at "http://repo.akka.io/snapshots"
 
+libraryDependencies += "shift" % "shift-http_2.11" % buildProps.getProperty("shift.version")
+
 libraryDependencies += "shift" % "shift-engine_2.11" % buildProps.getProperty("shift.version")
 
 libraryDependencies += "shift" % "shift-html_2.11" % buildProps.getProperty("shift.version")
