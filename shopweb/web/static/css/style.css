@@ -1197,9 +1197,8 @@ input[type="text"], input[type="password"] {
 
 .cart_item {
 	margin-bottom: 20px;
-	border-radius: 10px;
 	padding: 10px;
-	box-shadow: 0px 0px 5px 1px #ddd;
+	border-bottom: 1px solid #ddd;
 }
 
 .cart_item img {
