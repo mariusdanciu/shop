@@ -49,6 +49,7 @@ import net.shift.security.Permission
 import net.shift.http.HTTPRequest
 import net.shift.security.User
 import net.shop.web.pages.NewUserPage
+import net.shift.http.ServerSpecs
 
 object StartShop extends App with DefaultLog {
 
@@ -57,12 +58,12 @@ object StartShop extends App with DefaultLog {
 
   for { cfg <- Config.load() } yield {
 
-    val port = cfg.int("port")
+    val port = cfg.int("http.port")
     val dbPass = args.apply(0)
 
     implicit val c = cfg append Map("db.pwd" -> dbPass)
 
-    HTTPServer().start(ShopApplication().shiftService)
+    HTTPServer(ServerSpecs.fromConfig(c)).start(ShopApplication().shiftService)
 
     println("Server started on port " + port)
   }
