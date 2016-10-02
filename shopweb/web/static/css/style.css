@@ -666,6 +666,7 @@ a.cartt_small {
 }
 
 .fh5co-cover {
+	text-align: center;
 	min-height: 448px;
 	position: relative;
 	margin-bottom: 40px;
@@ -1408,4 +1409,8 @@ form .row {
 	z-index: 9999;
 }
 
+.cat_img {
+	width: 368px;
+	height: 458px;
+}
 /*# sourceMappingURL=style.css.map */
