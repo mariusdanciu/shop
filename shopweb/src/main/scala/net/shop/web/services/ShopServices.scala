@@ -43,7 +43,7 @@ import net.shift.http.TextHeader
 import net.shift.engine.Attempt
 import net.shift.http.Responses._
 import net.shift.http.ContentType._
-import net.shift.http.HTTPRequest
+import net.shift.http.Request
 import net.shift.http.Responses._
 import net.shop.web.pages.SettingsPageState
 import net.shop.web.pages.CartState
@@ -59,7 +59,7 @@ trait ShopServices extends TraversingSpec
     r <- req
   } yield {
     r.header("X-Requested-With") match {
-      case Some(TextHeader(_, "XMLHttpRequest")) =>
+      case Some(TextHeader(_, "XMLRequest")) =>
         service(_(notFound))
       case _ =>
         if (r.uri.path.startsWith("/static"))
@@ -82,7 +82,7 @@ trait ShopServices extends TraversingSpec
   def refresh(attempt: Attempt) = for {
     r <- req
     u <- user
-    serv <- State.put[HTTPRequest, Attempt](attempt)
+    serv <- State.put[Request, Attempt](attempt)
   } yield {
     u match {
       case Some(usr) => serv.map(_.withResponse { r =>
@@ -98,8 +98,8 @@ trait ShopServices extends TraversingSpec
 
   def pageWithRules[S, T](filePath: Path,
                           snipets: DynamicContent[S],
-                          rules: State[HTTPRequest, T],
-                          initialState: S): State[HTTPRequest, Attempt] = {
+                          rules: State[Request, T],
+                          initialState: S): State[Request, Attempt] = {
     for {
       _ <- rules
       r <- req
@@ -110,7 +110,7 @@ trait ShopServices extends TraversingSpec
 
   }
 
-  def page(uri: String, filePath: Path, snipets: DynamicContent[HTTPRequest]) = for {
+  def page(uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
     r <- path(uri)
     u <- user
   } yield {
@@ -140,7 +140,7 @@ trait ShopServices extends TraversingSpec
     Html5.pageFromFile(PageState(SettingsPageState(r, None), r.language, Some(u)), filePath, snipets)
   }
 
-  def page[T](f: (HTTPRequest, Option[User]) => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
+  def page[T](f: (Request, Option[User]) => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
     r <- path(uri)
     u <- user
   } yield {

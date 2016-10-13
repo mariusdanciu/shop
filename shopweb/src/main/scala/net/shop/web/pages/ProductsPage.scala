@@ -28,16 +28,16 @@ import net.shop.web.services.ServiceDependencies
 import net.shop.api.persistence.Persistence
 import scala.xml.Text
 import net.shift.template.HasClasses
-import net.shift.http.HTTPRequest
+import net.shift.http.Request
 import net.shift.common.XmlAttr
 
-trait ProductsPage extends PageCommon[HTTPRequest] with ServiceDependencies {
+trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
 
   override def snippets = List(catName, item, catList, sort) ++ cartSnips
 
   val cartSnips = super.snippets
 
-  private def render(s: SnipState[HTTPRequest], prod: ProductDetail): NodeSeq = {
+  private def render(s: SnipState[Request], prod: ProductDetail): NodeSeq = {
     bind(s.node) {
       case Xml("figure", a, c) => Xml("figure", XmlAttr(Map("id" -> prod.stringId))) / c
       case Xml("a", HasClasses(_ :: "add_to_cart_box" :: _, a), childs) => <a id={ prod.stringId }>{ childs }</a> % a
@@ -122,7 +122,7 @@ trait ProductsPage extends PageCommon[HTTPRequest] with ServiceDependencies {
 }
 
 object ProductsQuery {
-  def fetch(r: HTTPRequest, store: Persistence): Try[Iterator[ProductDetail]] = {
+  def fetch(r: Request, store: Persistence): Try[Iterator[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
     (r.uri.paramValue("cat"), r.uri.paramValue("search")) match {
       case (Some(cat :: _), None)    => store.categoryProducts(cat, spec)
@@ -131,7 +131,7 @@ object ProductsQuery {
     }
   }
 
-  def toSortSpec(r: HTTPRequest): SortSpec = {
+  def toSortSpec(r: Request): SortSpec = {
     r.uri.paramValue("sort") match {
       case Some(v :: _) => SortSpec.fromString(v, r.language.name)
       case _            => NoSort

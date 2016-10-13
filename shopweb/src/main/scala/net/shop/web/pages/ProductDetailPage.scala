@@ -24,7 +24,7 @@ import net.shift.common.XmlAttr
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
-import net.shift.http.HTTPRequest
+import net.shift.http.Request
 import net.shop.utils.ShopUtils
 import Snippet._
 import net.shift.common.Path
@@ -288,8 +288,8 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
 }
 
 object ProductPageState {
-  def build(req: HTTPRequest, user: Option[User]): ProductPageState = new ProductPageState(req, Failure[ProductDetail](new RuntimeException("Product not found")), user)
+  def build(req: Request, user: Option[User]): ProductPageState = new ProductPageState(req, Failure[ProductDetail](new RuntimeException("Product not found")), user)
 }
 
-case class ProductPageState(req: HTTPRequest, product: Try[ProductDetail], user: Option[User]) 
+case class ProductPageState(req: Request, product: Try[ProductDetail], user: Option[User]) 
 

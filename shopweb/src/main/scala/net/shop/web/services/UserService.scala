@@ -36,8 +36,8 @@ import net.shop.api.Formatter
 import net.shift.template.Template._
 import net.shift.http.Responses._
 import net.shift.http.ContentType._
-import net.shift.http.HTTPRequest
-import net.shift.http.HTTPParam
+import net.shift.http.Request
+import net.shift.http.Param
 import net.shift.io.IO
 import net.shift.http.HTTPUtils
 import scala.util.Try
@@ -157,7 +157,7 @@ trait UserService extends TraversingSpec
     }
   }
 
-  private def extract(r: HTTPRequest)(implicit loc: Language): Try[Validation[CreateUser, FieldError]] = {
+  private def extract(r: Request)(implicit loc: Language): Try[Validation[CreateUser, FieldError]] = {
     val user = (CreateUser.apply _).curried
     val ? = Loc.loc0(loc) _
 
@@ -176,7 +176,7 @@ trait UserService extends TraversingSpec
       q <- qs
       p <- HTTPUtils.formURLEncodedToParams(q)
     } yield {
-      val params = p map { case HTTPParam(k, v) => (k, v) } toMap
+      val params = p map { case Param(k, v) => (k, v) } toMap
 
       (userFormlet validate params flatMap {
         case p @ CreateUser(_,

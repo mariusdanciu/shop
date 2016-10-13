@@ -23,11 +23,11 @@ import net.shop.utils.ShopUtils._
 import scala.Option
 import net.shop.api.ProductDetail
 import net.shop.utils.ShopUtils
-import net.shift.http.HTTPRequest
+import net.shift.http.Request
 import net.shift.template.HasName
 import net.shop.api.Address
 
-case class CartInfo(r: HTTPRequest, items: Seq[(String, Int, ProductDetail)])
+case class CartInfo(r: Request, items: Seq[(String, Int, ProductDetail)])
 
 trait CartPage extends PageCommon[CartInfo] with ServiceDependencies { self =>
   implicit val formats = DefaultFormats
@@ -36,7 +36,7 @@ trait CartPage extends PageCommon[CartInfo] with ServiceDependencies { self =>
 
   override def snippets = List(cartProds, quantities, empty, userInfo) ++ super.snippets
 
-  private def getCart(r: HTTPRequest): Option[CCart] = {
+  private def getCart(r: Request): Option[CCart] = {
     for {
       json <- r.cookie("cart")
     } yield {

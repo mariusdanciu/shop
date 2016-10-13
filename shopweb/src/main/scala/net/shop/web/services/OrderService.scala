@@ -44,7 +44,7 @@ import net.shift.common.Invalid
 import net.shift.engine.http.HttpPredicates
 import net.shift.io.LocalFileSystem
 import net.shift.engine.http.HttpPredicates._
-import net.shift.http.HTTPParam
+import net.shift.http.Param
 import net.shift.http.Responses
 import net.shift.http.ContentType
 

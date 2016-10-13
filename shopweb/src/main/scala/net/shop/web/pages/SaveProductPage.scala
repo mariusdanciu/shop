@@ -1,6 +1,6 @@
 package net.shop.web.pages
 
-import net.shift.http.HTTPRequest
+import net.shift.http.Request
 import scala.xml.NodeSeq
 import net.shop.web.services.ServiceDependencies
 import scala.util.Success

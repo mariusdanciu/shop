@@ -28,8 +28,8 @@ import net.shift.common.Validator
 import net.shift.engine.http.HttpPredicates._
 import net.shift.http.Responses._
 import net.shift.http.ContentType._
-import net.shift.http.HTTPRequest
-import net.shift.http.HTTPParam
+import net.shift.http.Request
+import net.shift.http.Param
 import net.shift.io.IO
 import net.shift.http.HTTPUtils
 import scala.util.Try
@@ -124,7 +124,7 @@ trait SettingsService extends TraversingSpec
     }
   }
 
-  private def extract(r: HTTPRequest, u: User)(implicit loc: Language): Try[Validation[UserForm, FieldError]] = {
+  private def extract(r: Request, u: User)(implicit loc: Language): Try[Validation[UserForm, FieldError]] = {
     val ? = Loc.loc0(loc) _
 
     val ui = (UserInfo.apply _).curried
@@ -158,7 +158,7 @@ trait SettingsService extends TraversingSpec
       q <- qs
       p <- HTTPUtils.formURLEncodedToParams(q)
     } yield {
-      val params = p map { case HTTPParam(k, v) => (k, v) } toMap
+      val params = p map { case Param(k, v) => (k, v) } toMap
 
       val valid = userFormFormlet validate params flatMap {
         case p @ UserForm(UpdateUser(_,

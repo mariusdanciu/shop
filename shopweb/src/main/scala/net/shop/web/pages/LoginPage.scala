@@ -1,8 +1,8 @@
 package net.shop.web.pages
 
 import net.shift.template.DynamicContent
-import net.shift.http.HTTPRequest
+import net.shift.http.Request
 
-object LoginPage extends DynamicContent[HTTPRequest] {
+object LoginPage extends DynamicContent[Request] {
   def snippets = Nil
 }

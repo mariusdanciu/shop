@@ -42,14 +42,15 @@ import net.shop.web.pages.ReturnPolicyPage
 import net.shop.web.pages.AboutUsPage
 import net.shop.web.pages.CartPage
 import net.shop.web.pages.CartInfo
-import net.shift.http.HTTPServer
+import net.shift.server.Server
 import net.shop.web.pages.SaveProductPage
 import net.shift.loc.Loc
 import net.shift.security.Permission
-import net.shift.http.HTTPRequest
+import net.shift.http.Request
 import net.shift.security.User
 import net.shop.web.pages.NewUserPage
-import net.shift.http.ServerSpecs
+import net.shift.server.ServerSpecs
+import net.shift.http.HttpProtocol
 
 object StartShop extends App with DefaultLog {
 
@@ -63,7 +64,7 @@ object StartShop extends App with DefaultLog {
 
     implicit val c = cfg append Map("db.pwd" -> dbPass)
 
-    HTTPServer(ServerSpecs.fromConfig(c)).start(ShopApplication().shiftService)
+    Server(ServerSpecs.fromConfig(c)).start(HttpProtocol(ShopApplication().shiftService))
 
     println("Server started on port " + port)
   }
@@ -178,7 +179,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
     s <- refresh(c)
   } yield s
 
-  def saveProduct(req: HTTPRequest, u: Option[User]) = pageWithRules(Path("web/saveproduct.html"), saveProductPage,
+  def saveProduct(req: Request, u: Option[User]) = pageWithRules(Path("web/saveproduct.html"), saveProductPage,
     for {
       _ <- get
       Path(_, _ :: "saveproduct" :: _) <- path
@@ -186,7 +187,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       r <- permissions("Unauthorized", Permission("write"))
     } yield r, ProductPageState.build(req, u))
 
-  def product(req: HTTPRequest, u: Option[User]) = pageWithRules(Path("web/product.html"), prodDetailPage,
+  def product(req: Request, u: Option[User]) = pageWithRules(Path("web/product.html"), prodDetailPage,
     for {
       _ <- get
       Path(_, _ :: "product" :: _) <- path

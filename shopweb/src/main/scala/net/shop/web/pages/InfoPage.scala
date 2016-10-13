@@ -17,25 +17,25 @@ import net.shop.web.ShopApplication
 import scala.util.Success
 import scala.util.Failure
 import net.shop.utils.ShopUtils
-import net.shift.http.HTTPRequest
+import net.shift.http.Request
 
-object TermsPage extends PageCommon[HTTPRequest] { self =>
-
-}
-
-object DataProtectionPage extends PageCommon[HTTPRequest] { self =>
+object TermsPage extends PageCommon[Request] { self =>
 
 }
 
-object ReturnPolicyPage extends PageCommon[HTTPRequest] { self =>
+object DataProtectionPage extends PageCommon[Request] { self =>
 
 }
 
-object CookiesPage extends PageCommon[HTTPRequest] { self =>
+object ReturnPolicyPage extends PageCommon[Request] { self =>
 
 }
 
-object AboutUsPage extends PageCommon[HTTPRequest] { self =>
+object CookiesPage extends PageCommon[Request] { self =>
+
+}
+
+object AboutUsPage extends PageCommon[Request] { self =>
 
 }
 
