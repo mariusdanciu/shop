@@ -56,7 +56,8 @@ trait CartPage extends PageCommon[CartInfo] with ServiceDependencies { self =>
         (item.id, item.count, p)
       }
 
-      Success((CartInfo(req, info), ci.map { c => if (c.items.isEmpty) Loc.loc0(s.state.lang)("cart.empty").text else "" } getOrElse ""))
+      val emptyMsg = Loc.loc0(s.state.lang)("cart.empty").text
+      Success((CartInfo(req, info), ci.map { c => if (c.items.isEmpty) emptyMsg else "" } getOrElse emptyMsg))
   }
 
   val total = inline[CartInfo]("total") {
