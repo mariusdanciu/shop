@@ -59,7 +59,7 @@ object StartShop extends App with DefaultLog {
 
   for { cfg <- Config.load() } yield {
 
-    val port = cfg.int("http.port")
+    val port = cfg.int("server.port")
     val dbPass = args.apply(0)
 
     implicit val c = cfg append Map("db.pwd" -> dbPass)
