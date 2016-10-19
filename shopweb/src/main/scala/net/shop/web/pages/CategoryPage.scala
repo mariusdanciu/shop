@@ -20,7 +20,7 @@ import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
 import net.shift.io.LocalFileSystem
-import net.shift.http.Request
+import net.shift.server.http.Request
 
 trait CategoryPage extends PageCommon[Request] with ServiceDependencies { self =>
 

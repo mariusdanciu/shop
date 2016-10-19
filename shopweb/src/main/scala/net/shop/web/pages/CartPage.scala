@@ -23,7 +23,7 @@ import net.shop.utils.ShopUtils._
 import scala.Option
 import net.shop.api.ProductDetail
 import net.shop.utils.ShopUtils
-import net.shift.http.Request
+import net.shift.server.http.Request
 import net.shift.template.HasName
 import net.shop.api.Address
 

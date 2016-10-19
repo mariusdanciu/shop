@@ -17,7 +17,7 @@ import net.shop.web.ShopApplication
 import scala.util.Success
 import scala.util.Failure
 import net.shop.utils.ShopUtils
-import net.shift.http.Request
+import net.shift.server.http.Request
 
 object TermsPage extends PageCommon[Request] { self =>
 

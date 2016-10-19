@@ -20,9 +20,9 @@ import net.shift.common.Validation
 import net.shift.common.Invalid
 import net.shift.engine.http.ContentDisposition
 import IODefaults._
-import net.shift.http.AsyncResponse
-import net.shift.http.Responses
-import net.shift.http.ContentType
+import net.shift.server.http.AsyncResponse
+import net.shift.server.http.Responses
+import net.shift.server.http.ContentType
 
 object FormImplicits {
   implicit val o = new Ordering[Double] {

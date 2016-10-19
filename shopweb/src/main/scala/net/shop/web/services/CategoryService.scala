@@ -26,8 +26,8 @@ import net.shift.common.Valid
 import net.shift.common.Invalid
 import net.shop.model.FieldError
 import net.shift.engine.http.HttpPredicates._
-import net.shift.http.Responses
-import net.shift.http.ContentType
+import net.shift.server.http.Responses
+import net.shift.server.http.ContentType
 
 trait CategoryService extends TraversingSpec
     with DefaultLog

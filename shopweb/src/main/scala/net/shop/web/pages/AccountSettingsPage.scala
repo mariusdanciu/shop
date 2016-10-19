@@ -40,7 +40,7 @@ import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
 import IODefaults._
 import net.shift.template.Template._
-import net.shift.http.Request
+import net.shift.server.http.Request
 
 trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDependencies { self =>
 

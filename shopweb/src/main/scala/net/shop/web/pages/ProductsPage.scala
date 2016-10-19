@@ -28,7 +28,7 @@ import net.shop.web.services.ServiceDependencies
 import net.shop.api.persistence.Persistence
 import scala.xml.Text
 import net.shift.template.HasClasses
-import net.shift.http.Request
+import net.shift.server.http.Request
 import net.shift.common.XmlAttr
 
 trait ProductsPage extends PageCommon[Request] with ServiceDependencies {

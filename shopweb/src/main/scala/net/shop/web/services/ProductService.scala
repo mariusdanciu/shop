@@ -26,8 +26,8 @@ import net.shift.common.Validation
 import net.shift.common.Invalid
 import net.shift.common.Validator
 import net.shift.engine.http.HttpPredicates._
-import net.shift.http.Responses._
-import net.shift.http.ContentType._
+import net.shift.server.http.Responses._
+import net.shift.server.http.ContentType._
 import net.shift.security.Permission
 
 trait ProductService extends TraversingSpec

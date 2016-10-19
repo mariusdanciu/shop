@@ -24,7 +24,7 @@ import net.shift.common.XmlAttr
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
 import net.shop.web.services.ServiceDependencies
-import net.shift.http.Request
+import net.shift.server.http.Request
 import net.shop.utils.ShopUtils
 import Snippet._
 import net.shift.common.Path

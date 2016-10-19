@@ -46,27 +46,39 @@ import net.shift.server.Server
 import net.shop.web.pages.SaveProductPage
 import net.shift.loc.Loc
 import net.shift.security.Permission
-import net.shift.http.Request
+import net.shift.server.http.Request
 import net.shift.security.User
 import net.shop.web.pages.NewUserPage
 import net.shift.server.ServerSpecs
-import net.shift.http.HttpProtocol
+import net.shift.server.http.HttpProtocol
+import net.shift.server.http.HttpProtocolBuilder
 
 object StartShop extends App with DefaultLog {
 
   implicit val fs = LocalFileSystem
   PropertyConfigurator.configure("config/log4j.properties");
 
-  for { cfg <- Config.load() } yield {
+  for { cfg <- Config.load(profile) } yield {
 
     val port = cfg.int("server.port")
     val dbPass = args.apply(0)
 
     implicit val c = cfg append Map("db.pwd" -> dbPass)
 
-    Server(ServerSpecs.fromConfig(c)).start(HttpProtocol(ShopApplication().shiftService))
+    log.info("Configs " + c.configs)
+
+    Server(ServerSpecs.fromConfig(c)).start(HttpProtocolBuilder(ShopApplication().shiftService))
 
     println("Server started on port " + port)
+  }
+
+  def profile = {
+    var prof = System.getProperty("config.profile")
+    if (prof == null) {
+      ""
+    } else {
+      s"-$prof"
+    }
   }
 
 }

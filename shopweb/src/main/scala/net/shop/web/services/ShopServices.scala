@@ -39,15 +39,15 @@ import net.shop.web.pages.SettingsPageState
 import net.shift.common.ShiftFailure
 import net.shift.engine.http.HttpPredicates._
 import net.shift.template.Template._
-import net.shift.http.TextHeader
+import net.shift.server.http.TextHeader
 import net.shift.engine.Attempt
-import net.shift.http.Responses._
-import net.shift.http.ContentType._
-import net.shift.http.Request
-import net.shift.http.Responses._
+import net.shift.server.http.Responses._
+import net.shift.server.http.ContentType._
+import net.shift.server.http.Request
+import net.shift.server.http.Responses._
 import net.shop.web.pages.SettingsPageState
 import net.shop.web.pages.CartState
-import net.shift.http.ContentType._
+import net.shift.server.http.ContentType._
 import net.shop.utils.ShopUtils
 
 trait ShopServices extends TraversingSpec

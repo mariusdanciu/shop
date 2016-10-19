@@ -44,9 +44,9 @@ import net.shift.common.Invalid
 import net.shift.engine.http.HttpPredicates
 import net.shift.io.LocalFileSystem
 import net.shift.engine.http.HttpPredicates._
-import net.shift.http.Param
-import net.shift.http.Responses
-import net.shift.http.ContentType
+import net.shift.server.http.Param
+import net.shift.server.http.Responses
+import net.shift.server.http.ContentType
 
 trait OrderService extends FormValidation with TraversingSpec with ServiceDependencies { self =>
 

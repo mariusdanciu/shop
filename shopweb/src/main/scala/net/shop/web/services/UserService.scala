@@ -34,12 +34,12 @@ import net.shop.messaging.Messaging
 import net.shift.engine.page.Html5
 import net.shop.api.Formatter
 import net.shift.template.Template._
-import net.shift.http.Responses._
-import net.shift.http.ContentType._
-import net.shift.http.Request
-import net.shift.http.Param
+import net.shift.server.http.Responses._
+import net.shift.server.http.ContentType._
+import net.shift.server.http.Request
+import net.shift.server.http.Param
 import net.shift.io.IO
-import net.shift.http.HTTPUtils
+import net.shift.server.http.HTTPUtils
 import scala.util.Try
 
 trait UserService extends TraversingSpec
