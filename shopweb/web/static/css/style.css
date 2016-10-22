@@ -1411,4 +1411,11 @@ form .row {
 
 .cat_img {
 }
+
+.desc strike, .price strike {
+	color: #c00;
+	margin-left: 5px;
+	margin-right: 5px;
+	opacity: 0.3;
+}
 /*# sourceMappingURL=style.css.map */
