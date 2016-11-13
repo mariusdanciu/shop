@@ -18,7 +18,6 @@ import scala.util.Failure
 import scala.util.Try
 import net.shop.api.ProductDetail
 import net.shift.template.Snippet._
-import net.shift.template.InlineState
 import net.shop.utils.ShopUtils
 import net.shift.common.Path
 
@@ -26,7 +25,7 @@ trait SaveProductPage extends PageCommon[ProductPageState] with ServiceDependenc
   override def inlines = List(prod) ++ super.inlines
   override def snippets = List(catList) ++ super.snippets
 
-  def product(s: InlineState[ProductPageState]): Try[ProductDetail] = {
+  def product(s: SnipState[ProductPageState]): Try[ProductDetail] = {
     s.state.initialState.product match {
       case Failure(t) =>
         Path(s.state.initialState.req.uri.path) match {

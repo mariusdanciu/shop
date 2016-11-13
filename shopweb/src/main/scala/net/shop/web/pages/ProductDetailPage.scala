@@ -31,14 +31,42 @@ import net.shift.common.Path
 
 trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDependencies {
 
-  override def inlines = List(saveUrl, pageUrl, prodImageUrl) ++ super.inlines
-  override def snippets = List(checkProd, title, meta, catlink, productLink, images, detailPrice, stock,
-    details, specs, edit, canShowSpecs) ++ super.snippets
+  override def inlines = List(saveUrl, title, pageUrl, prodImageUrl, desc) ++ super.inlines
+  override def snippets = List(checkProd, catlink, productLink, images, detailPrice, stock,
+    specs, edit, canShowSpecs) ++ super.snippets
 
   def saveUrl = inline[ProductPageState]("saveurl") {
     s =>
-      s.state.initialState.product map {
+      product(s) map {
         p => (s.state.initialState, s"/saveproduct/${p.stringId}")
+      }
+  }
+
+  def title = inline[ProductPageState]("title") {
+    s =>
+      product(s) map {
+        p => (s.state.initialState, p.title_?(s.state.lang.name))
+      }
+  }
+
+  def desc = inline[ProductPageState]("desc") {
+    s =>
+      product(s) map {
+        p => (s.state.initialState, p.description.get(s.state.lang.name) getOrElse "")
+      }
+  }
+
+  val pageUrl = inline[ProductPageState]("pageUrl") {
+    s =>
+      product(s) map {
+        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + s"/product/${p.stringId}")
+      }
+  }
+
+  val prodImageUrl = inline[ProductPageState]("prodImageUrl") {
+    s =>
+      product(s) map {
+        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + imagePath("normal", p))
       }
   }
 
@@ -64,35 +92,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
         case Success(p) =>
           Success((ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node))
         case Failure(f) => Success((ProductPageState(s.state.initialState.req, Failure(f), s.state.user), NodeSeq.Empty))
-      }
-  }
-
-  val title = reqSnip("title") {
-    s =>
-      product(s) match {
-        case Success(p) =>
-          Success((ProductPageState(s.state.initialState.req, Success(p), s.state.user), Text(p.title_?(s.state.lang.name))))
-        case Failure(f) =>
-          Success((ProductPageState(s.state.initialState.req, Failure(f), s.state.user), Text(Loc.loc0(s.state.lang)("no.product").text)))
-      }
-  }
-  val meta = reqSnip("fb_meta") {
-    s =>
-      {
-        product(s) match {
-          case Success(prod) =>
-            val fb = bind(s.node) {
-              case Xml("meta", a, _) if (a.hasAttr(("property", "og:url")))               => Xml("meta", a + ("content", s"http://${cfg.string("host")}/product?pid=${prod.stringId}"))
-              case Xml("meta", a, _) if (a.hasAttr(("property", "og:title")))             => Xml("meta", a + ("content", prod.title_?(s.state.lang.name)))
-              case Xml("meta", a, _) if (a.hasAttr(("property", "og:description")))       => Xml("meta", a + ("content", prod.title_?(s.state.lang.name)))
-              case Xml("meta", a, _) if (a.hasAttr(("property", "og:image")))             => Xml("meta", a + ("content", s"http://${cfg.string("host")}${imagePath(prod.stringId, "normal", prod.images.head)}"))
-              case Xml("meta", a, _) if (a.hasAttr(("property", "product:price:amount"))) => Xml("meta", a + ("content", price(prod.price)))
-            }
-            for { n <- fb } yield {
-              (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), n)
-            }
-          case Failure(f) => Failure(f)
-        }
       }
   }
 
@@ -195,18 +194,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
-  val details = reqSnip("details") {
-    s =>
-      {
-        (for {
-          p <- product(s)
-          desc <- p.description.get(s.state.lang.name)
-        } yield {
-          (ProductPageState(s.state.initialState.req, Success(p), s.state.user), Text(desc))
-        }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
-      }
-  }
-
   val specs = reqSnip("specs") {
     s =>
       {
@@ -268,20 +255,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
             case _          => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node)
           }
         }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
-      }
-  }
-
-  val pageUrl = inline[ProductPageState]("pageUrl") {
-    s =>
-      s.state.initialState.product map {
-        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + s"/product/${p.stringId}")
-      }
-  }
-
-  val prodImageUrl = inline[ProductPageState]("prodImageUrl") {
-    s =>
-      s.state.initialState.product map {
-        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + imagePath("normal", p))
       }
   }
 
