@@ -66,7 +66,7 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
   val prodImageUrl = inline[ProductPageState]("prodImageUrl") {
     s =>
       product(s) map {
-        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + imagePath("normal", p))
+        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + imagePath("large", p))
       }
   }
 
