@@ -31,7 +31,7 @@ import net.shift.common.Path
 
 trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDependencies {
 
-  override def inlines = List(saveUrl) ++ super.inlines
+  override def inlines = List(saveUrl, pageUrl, prodImageUrl) ++ super.inlines
   override def snippets = List(checkProd, title, meta, catlink, productLink, images, detailPrice, stock,
     details, specs, edit, canShowSpecs) ++ super.snippets
 
@@ -268,6 +268,20 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
             case _          => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node)
           }
         }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
+      }
+  }
+
+  val pageUrl = inline[ProductPageState]("pageUrl") {
+    s =>
+      s.state.initialState.product map {
+        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + s"/product/${p.stringId}")
+      }
+  }
+
+  val prodImageUrl = inline[ProductPageState]("prodImageUrl") {
+    s =>
+      s.state.initialState.product map {
+        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + imagePath("normal", p))
       }
   }
 
