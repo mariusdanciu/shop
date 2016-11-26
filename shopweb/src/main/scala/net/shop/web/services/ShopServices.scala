@@ -49,6 +49,8 @@ import net.shop.web.pages.SettingsPageState
 import net.shop.web.pages.CartState
 import net.shift.server.http.ContentType._
 import net.shop.utils.ShopUtils
+import net.shift.common.PathObj
+import net.shop.api.persistence.Persistence
 
 trait ShopServices extends TraversingSpec
     with DefaultLog
@@ -219,6 +221,13 @@ trait ShopServices extends TraversingSpec
     val cfg = self.cfg
     val store = self.store
   }.updateCategory
+
+  def siteMap(store: Persistence) = for {
+    PathObj(_, _ :: "sitemap.xml" :: Nil) <- path
+  } yield {
+    
+    
+  }
 
 }
 

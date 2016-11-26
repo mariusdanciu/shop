@@ -232,11 +232,10 @@
 					if (event.keyCode == 13) {
 						var s = $("#search").val();
 
-						var url = window.common.normUrl("/products", null, $
-								.url().param("sort"), s);
+						var url = window.common.normUrl("/products/find", $.url().param(
+								"sort"), s);
 
 						console.log(url);
-
 						window.location.href = url;
 
 						event.preventDefault();
@@ -322,11 +321,9 @@ var user = {
 
 var common = {
 
-	normUrl : function(url, cat, sort, search) {
+	normUrl : function(url, sort, search) {
 		var params = [];
-		if (cat !== undefined && cat !== null) {
-			params.push("cat=" + cat);
-		}
+
 		if (sort !== undefined && sort !== null) {
 			params.push("sort=" + sort);
 		}
@@ -346,7 +343,7 @@ var common = {
 	},
 
 	showNotice : function(text) {
-		$("#notice_i").html(text);
+		$("#notice_i span").html(text);
 		$("#notice_i").show().delay(5000).fadeOut("slow");
 	},
 

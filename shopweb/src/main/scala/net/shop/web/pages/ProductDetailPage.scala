@@ -32,8 +32,8 @@ import net.shift.common.Path
 trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDependencies {
 
   override def inlines = List(saveUrl, title, pageUrl, prodImageUrl, desc) ++ super.inlines
-  override def snippets = List(checkProd, catlink, productLink, images, detailPrice, stock,
-    specs, edit, canShowSpecs) ++ super.snippets
+  override def snippets = List(checkProd, images, detailPrice, stock,
+    specs, edit) ++ super.snippets
 
   def saveUrl = inline[ProductPageState]("saveurl") {
     s =>
@@ -90,8 +90,8 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
     s =>
       product(s) match {
         case Success(p) =>
-          Success((ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node))
-        case Failure(f) => Success((ProductPageState(s.state.initialState.req, Failure(f), s.state.user), NodeSeq.Empty))
+          Success((ProductPageState(s.state.initialState.req, Success(p)), s.node))
+        case Failure(f) => Success((ProductPageState(s.state.initialState.req, Failure(f)), NodeSeq.Empty))
       }
   }
 
@@ -104,39 +104,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
       }
     }
     (node map { l => (s.state.initialState, l) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
-  }
-
-  val canShowSpecs = reqSnip("can_show_specs") {
-    s => ignoreNode(s, _.properties.isEmpty)
-  }
-
-  val catlink = reqSnip("catlink") {
-    s =>
-      ((product(s) map { p =>
-        (p.categories.flatMap(e => {
-          store.categoryById(e) match {
-            case Success(cat) => (<a href={ s"/products?cat=${e}" }>{ cat.title_?(s.state.lang.name) }</a> ++ <span>, </span>)
-            case _            => NodeSeq.Empty
-          }
-        }).toList.dropRight(1))
-      }) map { l => (s.state.initialState, NodeSeq.fromSeq(l)) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
-  }
-
-  val productLink = reqSnip("productlink") {
-    s =>
-      val r = for {
-        prod <- product(s)
-        el <- {
-          bind(s.node) {
-            case Xml("a", _, _) =>
-              <a href={ s"/product?pid=${prod.stringId}" }>{ Loc.loc0(s.state.lang)("product.page").text }</a>
-          }
-        }
-      } yield {
-        el
-      }
-
-      (r map { (s.state.initialState, _) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
   val images = reqSnip("images") {
@@ -167,7 +134,7 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
                                       </a>)
                 })
 
-            } map { b => (ProductPageState(s.state.initialState.req, Success(prod), s.state.user), b) }
+            } map { b => (ProductPageState(s.state.initialState.req, Success(prod)), b) }
         }
 
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
@@ -178,7 +145,7 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
       (for {
         p <- product(s)
       } yield {
-        (ProductPageState(s.state.initialState.req, Success(p), s.state.user), priceTag(p))
+        (ProductPageState(s.state.initialState.req, Success(p)), priceTag(p))
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
@@ -187,7 +154,7 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
       (for {
         p <- product(s)
       } yield {
-        (ProductPageState(s.state.initialState.req, Success(p), s.state.user), p.stock match {
+        (ProductPageState(s.state.initialState.req, Success(p)), p.stock match {
           case None    => Text(Loc.loc0(s.state.lang)("stock.order").text)
           case Some(v) => Text(Loc.loc0(s.state.lang)("in.stock").text)
         })
@@ -210,7 +177,7 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
                 case _          => NodeSeq.Empty
               }
           }
-          (ProductPageState(s.state.initialState.req, Success(p), s.state.user), n)
+          (ProductPageState(s.state.initialState.req, Success(p)), n)
         }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
       }
   }
@@ -251,8 +218,8 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
               NodeSeq.fromSeq(res.flatten.toSeq)
 
           }) match {
-            case Success(n) => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), n)
-            case _          => (ProductPageState(s.state.initialState.req, Success(p), s.state.user), s.node)
+            case Success(n) => (ProductPageState(s.state.initialState.req, Success(p)), n)
+            case _          => (ProductPageState(s.state.initialState.req, Success(p)), s.node)
           }
         }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
       }
@@ -275,8 +242,8 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
 }
 
 object ProductPageState {
-  def build(req: Request, user: Option[User]): ProductPageState = new ProductPageState(req, Failure[ProductDetail](new RuntimeException("Product not found")), user)
+  def build(req: Request): ProductPageState = new ProductPageState(req, Failure[ProductDetail](new RuntimeException("Product not found")))
 }
 
-case class ProductPageState(req: Request, product: Try[ProductDetail], user: Option[User]) 
+case class ProductPageState(req: Request, product: Try[ProductDetail]) 
 

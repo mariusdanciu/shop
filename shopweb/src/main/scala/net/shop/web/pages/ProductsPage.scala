@@ -30,7 +30,17 @@ import scala.xml.Text
 import net.shift.template.HasClasses
 import net.shift.server.http.Request
 import net.shift.common.XmlAttr
+import net.shift.common.ShiftFailure
 
+object ProductsPage {
+
+  def extractCat(r: Request): Try[String] = {
+    Path(r.uri.path) match {
+      case Path(_, _ :: _ :: id :: _) => Success(id)
+      case _                          => ShiftFailure("Category was not set").toTry
+    }
+  }
+}
 trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
 
   override def snippets = List(catName, item, catList, sort) ++ cartSnips
@@ -58,15 +68,17 @@ trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
 
   val catName = reqSnip("cat_name") {
     s =>
-      val c = s.state.initialState.uri.paramValue("cat").map {
-        case l =>
-          store.categoryById(l.head) match {
-            case Success(cat) =>
-              Text(cat.title_?(s.state.lang.name))
-            case Failure(f) =>
-              errorTag(Loc.loc0(s.state.lang)("no.category").text)
-          }
-      }.orElse(s.state.initialState.uri.paramValue("search").map { s => Text(s.head) }).getOrElse(Text("..."))
+
+      val c = (for {
+        id <- ProductsPage.extractCat(s.state.initialState).toOption
+        cat <- store.categoryById(id).toOption
+      } yield {
+        Text(cat.title_?(s.state.lang.name))
+      }) orElse {
+        s.state.initialState.r.uri.param("search") map { s => Text(s.value.head) }
+      } getOrElse {
+        errorTag(Loc.loc0(s.state.lang)("no.category").text)
+      }
 
       Success((s.state.initialState, c))
   }
@@ -124,10 +136,10 @@ trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
 object ProductsQuery {
   def fetch(r: Request, store: Persistence): Try[Iterator[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
-    (r.uri.paramValue("cat"), r.uri.paramValue("search")) match {
-      case (Some(cat :: _), None)    => store.categoryProducts(cat, spec)
-      case (None, Some(search :: _)) => store.searchProducts(search, spec)
-      case _                         => Success(Iterator.empty)
+    (ProductsPage.extractCat(r), r.uri.paramValue("search")) match {
+      case (Success(cat), None)   => store.categoryProducts(cat, spec)
+      case (_, Some(search :: _)) => store.searchProducts(search, spec)
+      case _                      => Success(Iterator.empty)
     }
   }
 

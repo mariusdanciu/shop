@@ -1397,8 +1397,9 @@ form .row {
 	background-color: #000;
 	color: #ffffff;
     opacity: 0.6;
-	font-size: 20px;
-	height: 36px;
+	font-size: 32px;
+	font-weight: 400;
+	height: 140px;
 	padding-top: 0px;
 	position: fixed;
 	top: 0px;
@@ -1407,6 +1408,12 @@ form .row {
 	width: 100%;
 	display: none;
 	z-index: 9999;
+	line-height: 0.8;
+}
+
+#notice_i span {
+	position: relative;
+	top: 40px;
 }
 
 .cat_img {

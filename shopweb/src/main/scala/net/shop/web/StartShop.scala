@@ -157,7 +157,6 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       categoriesImages |
       logout |
       page("/", Path("web/categories.html"), catPage) |
-      page("/products", Path("web/products.html"), productsPage) |
       page("/terms", Path("web/terms.html"), TermsPage) |
       page("/dataprotection", Path("web/dataprotection.html"), DataProtectionPage) |
       page("/returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
@@ -166,6 +165,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       page("/cart", Path("web/cart.html"), cartPage, CartInfo(r, Nil)) |
       page("/newuser", Path("web/newuser.html"), newUserPage) |
       settingsPage("/accountsettings", Path("web/accountsettings.html"), accPage) |
+      products(r) |
       product(r, u) |
       saveProduct(r, u) |
       getCart() |
@@ -197,13 +197,19 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       Path(_, _ :: "saveproduct" :: _) <- path
       _ <- userRequired(Loc.loc0(req.language)("login.fail").text)
       r <- permissions("Unauthorized", Permission("write"))
-    } yield r, ProductPageState.build(req, u))
+    } yield r, ProductPageState.build(req))
 
   def product(req: Request, u: Option[User]) = pageWithRules(Path("web/product.html"), prodDetailPage,
     for {
       _ <- get
       Path(_, _ :: "product" :: _) <- path
-    } yield (), ProductPageState.build(req, u))
+    } yield (), ProductPageState.build(req))
+
+  def products(req: Request) = pageWithRules(Path("web/products.html"), productsPage,
+    for {
+      _ <- get
+      Path(_, _ :: "products" :: _) <- path
+    } yield (), req)
 
 }
 

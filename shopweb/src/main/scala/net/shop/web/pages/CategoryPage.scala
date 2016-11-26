@@ -33,7 +33,7 @@ trait CategoryPage extends PageCommon[Request] with ServiceDependencies { self =
           case Success(list) =>
             val items = list flatMap { cat =>
               (bind(s.node) {
-                case Xml("a", a, childs)   => <a href={ s"/products?cat=${cat.stringId}" }>{ childs }</a> % a
+                case Xml("a", a, childs)   => <a href={ s"/products/${cat.stringId}" }>{ childs }</a> % a
                 case Xml("img", a, childs) => <img id={ cat stringId }/> % (a + ("src", categoryImagePath(cat)))
                 case Xml("h3", a, _)       => <h3>{ cat.title_?(s.state.lang.name) }</h3> % a
               }) match {
