@@ -1,36 +1,20 @@
 package net.shop
 package web.pages
 
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
-import scala.xml.Elem
-import scala.xml.NodeSeq
-import scala.xml.NodeSeq.seqToNodeSeq
-import net.shift.common.Path
-import net.shift.common.Xml
+import net.shift.common.{Path, ShiftFailure, Xml, XmlAttr}
 import net.shift.common.XmlImplicits._
-import net.shift.engine.page.Html5
 import net.shift.loc.Loc
-import net.shift.template.Binds.bind
-import net.shift.template.HasClass
-import net.shift.template.HasId
-import net.shift.template.PageState
-import net.shift.template.SnipState
-import net.shop.api.ProductDetail
-import net.shop.api.ShopError
-import net.shop.api.persistence.NoSort
-import net.shop.api.persistence.SortSpec
-import net.shop.utils.ShopUtils.errorTag
-import net.shop.utils.ShopUtils.imagePath
-import net.shop.web.ShopApplication
-import net.shop.web.services.ServiceDependencies
-import net.shop.api.persistence.Persistence
-import scala.xml.Text
-import net.shift.template.HasClasses
 import net.shift.server.http.Request
-import net.shift.common.XmlAttr
-import net.shift.common.ShiftFailure
+import net.shift.template.Binds.bind
+import net.shift.template.{HasClass, HasClasses, SnipState}
+import net.shop.api.{ProductDetail, ShopError}
+import net.shop.api.persistence.{NoSort, Persistence, SortSpec}
+import net.shop.utils.ShopUtils.{errorTag, imagePath, _}
+import net.shop.web.services.ServiceDependencies
+
+import scala.util.{Failure, Success, Try}
+import scala.xml.NodeSeq.seqToNodeSeq
+import scala.xml.{Elem, NodeSeq, Text}
 
 object ProductsPage {
 
@@ -70,8 +54,8 @@ trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
     s =>
 
       val c = (for {
-        id <- ProductsPage.extractCat(s.state.initialState).toOption
-        cat <- store.categoryById(id).toOption
+        name <- ProductsPage.extractCat(s.state.initialState).toOption
+        cat <- store.categoryByName(catFromPath(name)).toOption
       } yield {
         Text(cat.title_?(s.state.lang.name))
       }) orElse {
@@ -137,7 +121,7 @@ object ProductsQuery {
   def fetch(r: Request, store: Persistence): Try[Iterator[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
     (ProductsPage.extractCat(r), r.uri.paramValue("search")) match {
-      case (Success(cat), None)   => store.categoryProducts(cat, spec)
+      case (Success(name), None)   => store.categoryProducts(catFromPath(name), spec)
       case (_, Some(search :: _)) => store.searchProducts(search, spec)
       case _                      => Success(Iterator.empty)
     }

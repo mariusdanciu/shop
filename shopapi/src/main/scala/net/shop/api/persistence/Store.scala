@@ -10,6 +10,7 @@ trait Persistence {
   def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]]
   def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]]
 
+  def categoryByName(name: String): Try[Category]
   def categoryById(id: String): Try[Category]
   def allCategories: Try[Iterator[Category]]
 

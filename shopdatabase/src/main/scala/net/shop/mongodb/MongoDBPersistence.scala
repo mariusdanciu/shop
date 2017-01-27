@@ -3,21 +3,20 @@ package mongodb
 
 import scala.util.Success
 import scala.util.Try
-
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.commons.MongoDBObject
-
-import net.shift.common.Config
+import net.shift.common.{Config, ShiftFailure}
 import net.shop.api._
 import net.shop.api.ShopError._
 import net.shop.api.persistence._
+import org.bson.types.ObjectId
 
 class MongoDBPersistence(implicit val cfg: Config) extends Persistence with MongoConversions {
 
   val server = new ServerAddress(cfg.string("db.host", "localhost"), cfg.int("db.port", 27017))
   val user = cfg.string("db.user", "idid")
   val pwd = cfg.string("db.pwd", "idid.admin")
-  
+
   val credentials = MongoCredential.createScramSha1Credential(
     user,
     "idid",
@@ -37,33 +36,58 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
   def productById(id: String): Try[ProductDetail] = try {
     db("products").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
       case Some(obj) => Success(mongoToProduct(obj))
-      case _         => fail("no.product")
+      case _ => fail("no.product")
     }
   } catch {
     case e: Exception => fail("internal.error", e)
   }
 
   def allProducts: Try[Iterator[ProductDetail]] = try {
-    Success(for { p <- db("products").find() } yield {
+    Success(for {p <- db("products").find()} yield {
       mongoToProduct(p)
     })
   } catch {
     case e: Exception => fail("internal.error", e)
   }
 
+  def categoryByName(name: String): Try[Category] = {
+    try {
+      db("categories").findOne( "name" $eq name) match {
+        case Some(obj) => Success(mongoToCategory(obj))
+        case _ => fail("no.product")
+      }
+    } catch {
+      case e: Exception => fail("internal.error", e)
+    }
+  }
+
+
   def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = try {
 
-    val query = spec match {
-      case SortByName(true, _)   => db("products").find("categories" $in List(cat)).sort(MongoDBObject("title" -> 1))
-      case SortByName(false, _)  => db("products").find("categories" $in List(cat)).sort(MongoDBObject("title" -> -1))
-      case SortByPrice(true, _)  => db("products").find("categories" $in List(cat)).sort(MongoDBObject("price" -> 1))
-      case SortByPrice(false, _) => db("products").find("categories" $in List(cat)).sort(MongoDBObject("price" -> -1))
-      case _                     => db("products").find("categories" $in List(cat)).sort(MongoDBObject("position" -> 1))
+    val r = for {res <- db("categories").findOne {
+      "name" $eq cat
+    }
+         id <- res._id
+    } yield {
+      val idStr = id.toString
+
+      val query = spec match {
+        case SortByName(true, _) => db("products").find("categories" $in List(idStr)).sort(MongoDBObject("title" -> 1))
+        case SortByName(false, _) => db("products").find("categories" $in List(idStr)).sort(MongoDBObject("title" -> -1))
+        case SortByPrice(true, _) => db("products").find("categories" $in List(idStr)).sort(MongoDBObject("price" -> 1))
+        case SortByPrice(false, _) => db("products").find("categories" $in List(idStr)).sort(MongoDBObject("price" -> -1))
+        case _ => db("products").find("categories" $in List(idStr)).sort(MongoDBObject("position" -> 1))
+      }
+
+      for {p <- query} yield {
+        mongoToProduct(p)
+      }
     }
 
-    Success(for { p <- query } yield {
-      mongoToProduct(p)
-    })
+    r match {
+      case Some(a) => Success(a)
+      case None => ShiftFailure("not found").toTry
+    }
   } catch {
     case e: Exception => fail("internal.error", e)
   }
@@ -71,15 +95,15 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
   def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]] = try {
     val query = text match {
       case ":onsale" => db("products").find(MongoDBObject("discountPrice" -> MongoDBObject("$ne" -> None)))
-      case t         => db("products").find(MongoDBObject("$text" -> MongoDBObject("$search" -> t)))
+      case t => db("products").find(MongoDBObject("$text" -> MongoDBObject("$search" -> t)))
     }
 
     val sorted = spec match {
-      case SortByName(true, _)   => query.sort(MongoDBObject("title" -> 1))
-      case SortByName(false, _)  => query.sort(MongoDBObject("title" -> -1))
-      case SortByPrice(true, _)  => query.sort(MongoDBObject("price" -> 1))
+      case SortByName(true, _) => query.sort(MongoDBObject("title" -> 1))
+      case SortByName(false, _) => query.sort(MongoDBObject("title" -> -1))
+      case SortByPrice(true, _) => query.sort(MongoDBObject("price" -> 1))
       case SortByPrice(false, _) => query.sort(MongoDBObject("price" -> -1))
-      case _                     => query.sort(MongoDBObject("position" -> 1))
+      case _ => query.sort(MongoDBObject("position" -> 1))
     }
 
     Success(
@@ -106,14 +130,14 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
   def categoryById(id: String): Try[Category] = try {
     db("categories").findOne(MongoDBObject("_id" -> new ObjectId(id))) match {
       case Some(obj) => Success(mongoToCategory(obj))
-      case _         => fail("no.category")
+      case _ => fail("no.category")
     }
   } catch {
     case e: Exception => fail("internal.error", e)
   }
 
   def allCategories: Try[Iterator[Category]] = try {
-    Success(for { p <- db("categories").find().sort(MongoDBObject("position" -> 1)) } yield {
+    Success(for {p <- db("categories").find().sort(MongoDBObject("position" -> 1))} yield {
       mongoToCategory(p)
     })
   } catch {
@@ -121,7 +145,7 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
   }
 
   def deleteProducts(ids: String*): Try[Int] = try {
-    val num = (0 /: ids)((acc, id) => db("products").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
+    val num = (0 /: ids) ((acc, id) => db("products").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
     Success(num)
   } catch {
     case e: Exception => fail("internal.error")
@@ -182,7 +206,7 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
   }
 
   def deleteCategories(ids: String*): Try[Int] = try {
-    val num = (0 /: ids)((acc, id) => db("categories").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
+    val num = (0 /: ids) ((acc, id) => db("categories").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
     Success(num)
   } catch {
     case e: Exception => fail("internal.error")
@@ -216,7 +240,7 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
   }
 
   def deleteUsers(ids: String*): Try[Int] = try {
-    val num = (0 /: ids)((acc, id) => db("users").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
+    val num = (0 /: ids) ((acc, id) => db("users").remove(MongoDBObject("_id" -> new ObjectId(id))).getN)
     Success(num)
   } catch {
     case e: Exception => fail("internal.error")
@@ -229,7 +253,7 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
   }
 
   def allUsers: Try[Iterator[UserDetail]] = try {
-    Success(for { p <- db("users").find() } yield {
+    Success(for {p <- db("users").find()} yield {
       mongoToUser(p)
     })
   } catch {
@@ -239,14 +263,16 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
   def userByEmail(email: String): Try[Option[UserDetail]] = try {
     db("users").findOne(MongoDBObject("email" -> email)) match {
       case Some(obj) => Success(Some(mongoToUser(obj)))
-      case _         => Success(None)
+      case _ => Success(None)
     }
   } catch {
     case e: Exception => fail("internal.error", e)
   }
 
   def createOrder(order: OrderLog*): Try[Seq[String]] = {
-    val mongos = order.map { orderToMongo }
+    val mongos = order.map {
+      orderToMongo
+    }
     try {
       db("orders").insert(mongos: _*)
 
@@ -257,7 +283,9 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
         db("products").update(MongoDBObject("_id" -> new ObjectId(p.id)), $inc("soldCount" -> p.quantity))
       }
 
-      Success(mongos map { _.getOrElse("_id", "?").toString })
+      Success(mongos map {
+        _.getOrElse("_id", "?").toString
+      })
     } catch {
       case e: Exception => fail("internal.error", e)
     }
@@ -291,6 +319,7 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
   }
 
 }
+
 /*
 db.createUser(
   {

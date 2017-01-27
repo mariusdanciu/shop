@@ -7,6 +7,9 @@ import scala.util.Random
 import net.shift.common.Config
 
 object ShopUtils {
+
+  private val OBJECT_SUFFIX = "-handmade-lucrat-manual"
+
   val random = new Random(System.currentTimeMillis())
 
   def dataPath(implicit cfg: Config) = cfg.string("data.folder", "../data")
@@ -31,5 +34,16 @@ object ShopUtils {
   def uuid = ("" /: Range.apply(0, 7))((acc, v) => acc + random.nextInt(9))
 
   def price(p: Double) = if ((p % 1) == 0) "%.0f" format p else "%.2f" format p
+
+  def catToPath(cat: Category): String = {
+    val n = cat.name.replaceAll(" ", "-").toLowerCase
+    n + OBJECT_SUFFIX
+  }
+
+  def catFromPath(name: String): String = {
+    name.substring(0, name.indexOf(OBJECT_SUFFIX)).replaceAll("-", "")
+  }
+
+
 }
 

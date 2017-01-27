@@ -62,6 +62,7 @@ case class Cart(items: List[CartItem])
 case class Category(id: Option[String] = None, position: Int, title: Map[String, String]) {
   def title_?(l: String) = title.getOrElse(l, "???")
   def stringId = id getOrElse "?"
+  def name = title.getOrElse("ro", "???")
 }
 
 sealed trait Submitter

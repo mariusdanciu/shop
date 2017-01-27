@@ -1,62 +1,24 @@
 package net.shop
 package web
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import org.apache.log4j.PropertyConfigurator
-import net.shift.common.Config
-import net.shift.common.DefaultLog
-import net.shift.common.Path
+import net.shift.common.{Config, DefaultLog, Path}
 import net.shift.engine.ShiftApplication
-import net.shift.engine.ShiftApplication.rule
-import net.shift.engine.ShiftApplication.service
-import net.shift.loc.Language
-import net.shop.mongodb.MongoDBPersistence
-import net.shop.web.pages.CategoryPage
-import net.shop.web.pages.LoginPage
-import net.shop.web.pages.ProductDetailPage
-import net.shop.web.pages.ProductPageState
-import net.shop.web.pages.ProductsPage
-import net.shop.web.pages.TermsPage
-import net.shop.web.services.ShopServices
-import net.shop.api.persistence.Persistence
-import net.shop.web.pages.AccountSettingsPage
-import net.shop.web.services.UserService
-import net.shop.web.services.SettingsService
-import net.shop.web.services.CategoryService
-import net.shop.web.services.ProductService
-import net.shop.web.services.OrderService
-import net.shop.web.services.ShopServices
-import net.shop.web.pages.ReturnPolicyPage
-import net.shop.web.pages.DataProtectionPage
-import net.shift.io.IODefaults
-import net.shop.web.pages.CookiesPage
-import net.shop.api.persistence.Persistence
-import net.shop.mongodb.MongoDBPersistence
-import net.shop.web.pages.AboutUsPage
 import net.shift.engine.http.HttpPredicates._
-import net.shop.web.pages.CookiesPage
-import net.shop.web.pages.DataProtectionPage
-import net.shop.web.pages.TermsPage
 import net.shift.io.LocalFileSystem
-import net.shop.web.pages.ReturnPolicyPage
-import net.shop.web.pages.AboutUsPage
-import net.shop.web.pages.CartPage
-import net.shop.web.pages.CartInfo
-import net.shift.server.Server
-import net.shop.web.pages.SaveProductPage
-import net.shift.loc.Loc
-import net.shift.security.Permission
-import net.shift.server.http.Request
-import net.shift.security.User
-import net.shop.web.pages.NewUserPage
-import net.shift.server.ServerSpecs
-import net.shift.server.http.HttpProtocol
-import net.shift.server.http.HttpProtocolBuilder
+import net.shift.loc.{Language, Loc}
+import net.shift.security.{Permission, User}
+import net.shift.server.{Server, ServerSpecs}
+import net.shift.server.http.{HttpProtocolBuilder, Request}
+import net.shop.api.persistence.Persistence
+import net.shop.mongodb.MongoDBPersistence
+import net.shop.web.pages._
+import net.shop.web.services._
+import org.apache.log4j.PropertyConfigurator
 
 object StartShop extends App with DefaultLog {
 
   implicit val fs = LocalFileSystem
-  PropertyConfigurator.configure("config/log4j.properties");
+  PropertyConfigurator.configure("config/log4j.properties")
 
   for { cfg <- Config.load(profile) } yield {
 
@@ -73,7 +35,7 @@ object StartShop extends App with DefaultLog {
   }
 
   def profile = {
-    var prof = System.getProperty("config.profile")
+    val prof = System.getProperty("config.profile")
     if (prof == null) {
       ""
     } else {
@@ -113,40 +75,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
     val store = self.store
   }
 
-  val catPage = new CategoryPage {
-    val cfg = self.cfg
-    val store = self.store
-  }
-
-  val prodDetailPage = new ProductDetailPage {
-    val cfg = self.cfg
-    val store = self.store
-  }
-
-  val productsPage = new ProductsPage {
-    val cfg = self.cfg
-    val store = self.store
-  }
-
-  val accPage = new AccountSettingsPage {
-    val cfg = self.cfg
-    val store = self.store
-  }
-
-  val cartPage = new CartPage {
-    val cfg = self.cfg
-    val store = self.store
-  }
-
-  val saveProductPage = new SaveProductPage {
-    val cfg = self.cfg
-    val store = self.store
-  }
-
-  val newUserPage = new NewUserPage {
-    val cfg = self.cfg
-    val store = self.store
-  }
+  val pages = Pages(cfg, store)
 
   def servingRule = for {
     r <- withLanguage(Language("ro"))
@@ -156,15 +85,15 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       productsVariantImages |
       categoriesImages |
       logout |
-      page("/", Path("web/categories.html"), catPage) |
+      page("/", Path("web/categories.html"), pages.catPage) |
       page("/terms", Path("web/terms.html"), TermsPage) |
       page("/dataprotection", Path("web/dataprotection.html"), DataProtectionPage) |
       page("/returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
       page("/cookies", Path("web/cookies.html"), CookiesPage) |
       page("/aboutus", Path("web/aboutus.html"), AboutUsPage) |
-      page("/cart", Path("web/cart.html"), cartPage, CartInfo(r, Nil)) |
-      page("/newuser", Path("web/newuser.html"), newUserPage) |
-      settingsPage("/accountsettings", Path("web/accountsettings.html"), accPage) |
+      page("/cart", Path("web/cart.html"), pages.cartPage, CartInfo(r, Nil)) |
+      page("/newuser", Path("web/newuser.html"), pages.newUserPage) |
+      settingsPage("/accountsettings", Path("web/accountsettings.html"), pages.accPage) |
       products(r) |
       product(r, u) |
       saveProduct(r, u) |
@@ -191,7 +120,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
     s <- refresh(c)
   } yield s
 
-  def saveProduct(req: Request, u: Option[User]) = pageWithRules(Path("web/saveproduct.html"), saveProductPage,
+  def saveProduct(req: Request, u: Option[User]) = pageWithRules(Path("web/saveproduct.html"), pages.saveProductPage,
     for {
       _ <- get
       Path(_, _ :: "saveproduct" :: _) <- path
@@ -199,13 +128,13 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       r <- permissions("Unauthorized", Permission("write"))
     } yield r, ProductPageState.build(req))
 
-  def product(req: Request, u: Option[User]) = pageWithRules(Path("web/product.html"), prodDetailPage,
+  def product(req: Request, u: Option[User]) = pageWithRules(Path("web/product.html"), pages.prodDetailPage,
     for {
       _ <- get
       Path(_, _ :: "product" :: _) <- path
     } yield (), ProductPageState.build(req))
 
-  def products(req: Request) = pageWithRules(Path("web/products.html"), productsPage,
+  def products(req: Request) = pageWithRules(Path("web/products.html"), pages.productsPage,
     for {
       _ <- get
       Path(_, _ :: "products" :: _) <- path
