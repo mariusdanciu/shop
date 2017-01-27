@@ -2,10 +2,11 @@ package net.shop.api
 package persistence
 
 import scala.util.Try
-import scala.util.Failure
 
 trait Persistence {
   def productById(id: String): Try[ProductDetail]
+
+  def productByName(name: String): Try[ProductDetail]
   def allProducts: Try[Iterator[ProductDetail]]
   def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]]
   def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]]

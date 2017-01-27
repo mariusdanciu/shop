@@ -1,29 +1,27 @@
 package net.shop
 package mongodb
 
-import scala.util.Success
-import scala.util.Try
 import com.mongodb.casbah.Imports._
 import com.mongodb.casbah.commons.MongoDBObject
 import net.shift.common.{Config, ShiftFailure}
-import net.shop.api._
 import net.shop.api.ShopError._
+import net.shop.api._
 import net.shop.api.persistence._
 import org.bson.types.ObjectId
 
+import scala.util.{Success, Try}
+
 class MongoDBPersistence(implicit val cfg: Config) extends Persistence with MongoConversions {
 
+  lazy val db = mongoClient("idid")
   val server = new ServerAddress(cfg.string("db.host", "localhost"), cfg.int("db.port", 27017))
   val user = cfg.string("db.user", "idid")
   val pwd = cfg.string("db.pwd", "idid.admin")
-
   val credentials = MongoCredential.createScramSha1Credential(
     user,
     "idid",
     pwd.toCharArray())
   val mongoClient = MongoClient(server, List(credentials))
-
-  lazy val db = mongoClient("idid")
 
   db.command(MongoDBObject("setParameter" -> 1, "textSearchEnabled" -> 1))
 
@@ -48,6 +46,17 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
     })
   } catch {
     case e: Exception => fail("internal.error", e)
+  }
+
+  def productByName(name: String): Try[ProductDetail] = {
+    try {
+      db("products").findOne("name" $eq name) match {
+        case Some(obj) => Success(mongoToProduct(obj))
+        case _ => fail("no.product")
+      }
+    } catch {
+      case e: Exception => fail("internal.error", e)
+    }
   }
 
   def categoryByName(name: String): Try[Category] = {
