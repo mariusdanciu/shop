@@ -1,24 +1,12 @@
 package net.shop
 package mongodb
 
-import com.mongodb.casbah.Imports._
-import com.mongodb.casbah.MongoClient
-import com.mongodb.casbah.commons.MongoDBObject
-import net.shop.api.ProductDetail
-import net.shop.api.Category
-import org.bson.types.ObjectId
-import net.shop.api.UserDetail
-import net.shop.api.Address
-import net.shop.api.UserInfo
-import net.shop.api.CompanyInfo
-import net.shop.api.Order
-import net.shop.api.Person
-import net.shop.api.Company
-import net.shop.api.OrderLog
-import net.shop.api.ProductLog
 import java.util.Date
-import net.shop.api.OrderStatus
-import net.shop.api.Transport
+
+import com.mongodb.casbah.Imports._
+import com.mongodb.casbah.commons.MongoDBObject
+import net.shop.api._
+import org.bson.types.ObjectId
 
 trait MongoConversions {
 
@@ -58,6 +46,24 @@ trait MongoConversions {
     }
     db += "items" -> items
     db += "status" -> obj.status.index
+    db.result
+  }
+
+  def transportToMongo(obj: Transport): MongoDBObject = {
+    val db = MongoDBObject.newBuilder
+    db += "name" -> obj.name
+    db += "price" -> obj.price
+    db.result
+  }
+
+  def addressToMongo(addr: Address): DBObject = {
+    val db = MongoDBObject.newBuilder
+    db += "name" -> addr.name
+    db += "country" -> addr.country
+    db += "region" -> addr.region
+    db += "city" -> addr.city
+    db += "address" -> addr.address
+    db += "zipCode" -> addr.zipCode
     db.result
   }
 
@@ -105,13 +111,6 @@ trait MongoConversions {
       status = OrderStatus.fromIndex(obj.getAsOrElse[Int]("status", 0)))
   }
 
-  def transportToMongo(obj: Transport): MongoDBObject = {
-    val db = MongoDBObject.newBuilder
-    db += "name" -> obj.name
-    db += "price" -> obj.price
-    db.result
-  }
-
   def mongoToTransport(obj: DBObject): Transport =
     Transport(
       name = obj.getAsOrElse[String]("name", ""),
@@ -119,6 +118,7 @@ trait MongoConversions {
 
   def productToMongo(obj: ProductDetail): MongoDBObject = {
     val db = MongoDBObject.newBuilder
+    db += "name" -> obj.name.toLowerCase()
     db += "title" -> MongoDBObject(obj.title.toList)
     db += "description" -> MongoDBObject(obj.description.toList)
     db += "properties" -> MongoDBObject(obj.properties.toList)
@@ -137,6 +137,7 @@ trait MongoConversions {
 
   def categoryToMongo(obj: Category): MongoDBObject = {
     val db = MongoDBObject.newBuilder
+    db += "name" -> obj.name.toLowerCase
     db += "position" -> obj.position
     db += "title" -> MongoDBObject(obj.title.toList)
     db.result
@@ -159,23 +160,11 @@ trait MongoConversions {
     db.result
   }
 
-  def addressToMongo(addr: Address): DBObject = {
-    val db = MongoDBObject.newBuilder
-    db += "name" -> addr.name
-    db += "country" -> addr.country
-    db += "region" -> addr.region
-    db += "city" -> addr.city
-    db += "address" -> addr.address
-    db += "zipCode" -> addr.zipCode
-    db.result
-  }
-
-  import scala.collection.JavaConversions._
-
   def mongoToProduct(obj: DBObject): ProductDetail = {
 
     try {
       ProductDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
+        name = obj.getAsOrElse[String]("name", ""),
         title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
         description = obj.getAsOrElse[Map[String, String]]("description", Map.empty),
         properties = obj.getAsOrElse[Map[String, String]]("properties", Map.empty),
@@ -197,6 +186,7 @@ trait MongoConversions {
   }
   def mongoToCategory(obj: DBObject): Category =
     Category(id = obj.getAs[ObjectId]("_id").map(_.toString),
+      name = obj.getAsOrElse[String]("name", ""),
       position = obj.getAsOrElse[Int]("position", 0),
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty))
 

@@ -1,16 +1,15 @@
 package net.shop
 package utils
 
-import net.shop.api.ProductDetail
-import net.shop.api.Category
-import scala.util.Random
 import net.shift.common.Config
+import net.shop.api.{Category, NamedItem, ProductDetail}
+
+import scala.util.Random
 
 object ShopUtils {
 
-  private val OBJECT_SUFFIX = "-handmade-lucrat-manual"
-
   val random = new Random(System.currentTimeMillis())
+  private val OBJECT_SUFFIX = "-handmade-lucrat-manual"
 
   def dataPath(implicit cfg: Config) = cfg.string("data.folder", "../data")
 
@@ -35,13 +34,13 @@ object ShopUtils {
 
   def price(p: Double) = if ((p % 1) == 0) "%.0f" format p else "%.2f" format p
 
-  def catToPath(cat: Category): String = {
-    val n = cat.name.replaceAll(" ", "-").toLowerCase
+  def itemToPath(cat: NamedItem): String = {
+    val n = cat.name.replaceAll(" ", "-")
     n + OBJECT_SUFFIX
   }
 
-  def catFromPath(name: String): String = {
-    name.substring(0, name.indexOf(OBJECT_SUFFIX)).replaceAll("-", "")
+  def itemFromPath(name: String): String = {
+    name.substring(0, name.indexOf(OBJECT_SUFFIX)).replaceAll("-", " ")
   }
 
 

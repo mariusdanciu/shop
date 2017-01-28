@@ -27,12 +27,5 @@
 			return false;
 		});
 
-		$("figure").each(function(i) {
-			$(this).click(function(e) {
-				window.location.href = "/product/" + $(this).attr("id");
-				e.stopPropagation();
-				return false;
-			})
-		})
 	});
 })();

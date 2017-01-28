@@ -1,60 +1,21 @@
 package net.shop
 package web.pages
 
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
-import scala.xml._
-import net.shift.common.XmlUtils._
-import net.shift.engine._
-import net.shift.loc.Loc
-import net.shift.template._
-import net.shift.template.Binds._
-import net.shift.template.DynamicContent
-import net.shift.template.Snippet.snip
-import net.shop.api.ProductDetail
-import net.shop.utils.ShopUtils._
-import net.shop.web.ShopApplication
-import net.shift.loc.Language
-import net.shift.common.ShiftFailure
-import net.shift.security.User
-import net.shift.common.Config
-import net.shop.api.ShopError
-import net.shift.common.XmlAttr
-import net.shift.common.Xml
+import net.shift.common.{Path, ShiftFailure, Xml, XmlAttr}
 import net.shift.common.XmlImplicits._
-import net.shop.web.services.ServiceDependencies
+import net.shift.loc.{Language, Loc}
 import net.shift.server.http.Request
-import net.shop.utils.ShopUtils
-import Snippet._
-import net.shift.common.Path
+import net.shift.template.Binds._
+import net.shift.template.Snippet._
+import net.shift.template._
+import net.shop.api.{ProductDetail, ShopError}
+import net.shop.utils.ShopUtils._
+import net.shop.web.services.ServiceDependencies
+
+import scala.util.{Failure, Success, Try}
+import scala.xml._
 
 trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDependencies {
-
-  override def inlines = List(saveUrl, title, pageUrl, prodImageUrl, desc) ++ super.inlines
-  override def snippets = List(checkProd, images, detailPrice, stock,
-    specs, edit) ++ super.snippets
-
-  def saveUrl = inline[ProductPageState]("saveurl") {
-    s =>
-      product(s) map {
-        p => (s.state.initialState, s"/saveproduct/${p.stringId}")
-      }
-  }
-
-  def title = inline[ProductPageState]("title") {
-    s =>
-      product(s) map {
-        p => (s.state.initialState, p.title_?(s.state.lang.name))
-      }
-  }
-
-  def desc = inline[ProductPageState]("desc") {
-    s =>
-      product(s) map {
-        p => (s.state.initialState, p.description.get(s.state.lang.name) getOrElse "")
-      }
-  }
 
   val pageUrl = inline[ProductPageState]("pageUrl") {
     s =>
@@ -62,30 +23,12 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
         p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + s"/product/${p.stringId}")
       }
   }
-
   val prodImageUrl = inline[ProductPageState]("prodImageUrl") {
     s =>
       product(s) map {
         p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + imagePath("large", p))
       }
   }
-
-  def product(s: SnipState[ProductPageState]): Try[ProductDetail] = {
-    s.state.initialState.product match {
-      case Failure(t) =>
-        Path(s.state.initialState.req.uri.path) match {
-          case Path(_, _ :: _ :: id :: _) =>
-            store.productById(id) match {
-              case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
-              case Failure(t)                 => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
-              case s                          => s
-            }
-          case _ => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
-        }
-      case s => s
-    }
-  }
-
   val checkProd = reqSnip("checkProd") {
     s =>
       product(s) match {
@@ -94,18 +37,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
         case Failure(f) => Success((ProductPageState(s.state.initialState.req, Failure(f)), NodeSeq.Empty))
       }
   }
-
-  private def ignoreNode(s: SnipState[ProductPageState], f: ProductDetail => Boolean) = {
-    val node = for { p <- product(s) } yield {
-      if (f(p)) {
-        NodeSeq.Empty
-      } else {
-        s.node
-      }
-    }
-    (node map { l => (s.state.initialState, l) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
-  }
-
   val images = reqSnip("images") {
     s =>
       (product(s) flatMap { prod =>
@@ -139,7 +70,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
 
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
-
   val detailPrice = reqSnip("detailPrice") {
     s =>
       (for {
@@ -148,7 +78,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
         (ProductPageState(s.state.initialState.req, Success(p)), priceTag(p))
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
-
   val stock = reqSnip("stock") {
     s =>
       (for {
@@ -160,7 +89,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
         })
       }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
-
   val specs = reqSnip("specs") {
     s =>
       {
@@ -181,7 +109,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
         }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
       }
   }
-
   val edit = reqSnip("edit") {
     s =>
       {
@@ -192,7 +119,7 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
           val desc = p.description.get(s.state.lang.name).getOrElse("")
           val discountPrice = p.discountPrice.map(_.toString()).getOrElse("")
 
-          (bind(s.node) {
+          bind(s.node) {
             case Xml("form", attrs, childs)          => Xml("form", attrs + ("action", ("/product/update/" + p.stringId))) / childs
             case HasId("edit_pid", attrs)            => Xml("input", attrs + ("value", p.stringId))
             case HasId("edit_title", attrs)          => Xml("input", attrs + ("value", title))
@@ -209,20 +136,73 @@ trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDepende
             case HasId("edit_description", attrs) => Xml("textarea", attrs) / Text(desc)
             case n @ HasId("edit_prop_fields", attrs) =>
               val res = for { (k, v) <- p.properties } yield {
-                (bind(n.child) {
+                bind(n.child) {
                   case e @ HasName("pkey", attrs) => Xml(e.label, XmlAttr(attrs.attrs + ("value" -> k)))
                   case e @ HasName("pval", attrs) => Xml(e.label, XmlAttr(attrs.attrs + ("value" -> v)))
-                }).getOrElse(NodeSeq.Empty).flatten
+                }.getOrElse(NodeSeq.Empty).flatten
               }
 
               NodeSeq.fromSeq(res.flatten.toSeq)
 
-          }) match {
+          } match {
             case Success(n) => (ProductPageState(s.state.initialState.req, Success(p)), n)
             case _          => (ProductPageState(s.state.initialState.req, Success(p)), s.node)
           }
         }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
       }
+  }
+
+  override def inlines = List(saveUrl, title, pageUrl, prodImageUrl, desc) ++ super.inlines
+
+  def saveUrl = inline[ProductPageState]("saveurl") {
+    s =>
+      product(s) map {
+        p => (s.state.initialState, s"/saveproduct/${p.stringId}")
+      }
+  }
+
+  def product(s: SnipState[ProductPageState]): Try[ProductDetail] = {
+    s.state.initialState.product match {
+      case Failure(t) =>
+        Path(s.state.initialState.req.uri.path) match {
+          case Path(_, _ :: _ :: name :: _) =>
+            store.productByName(itemFromPath(name)) match {
+              case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
+              case Failure(t) => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
+              case s => s
+            }
+          case _ => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
+        }
+      case s => s
+    }
+  }
+
+  def title = inline[ProductPageState]("title") {
+    s =>
+      product(s) map {
+        p => (s.state.initialState, p.title_?(s.state.lang.name))
+      }
+  }
+
+  def desc = inline[ProductPageState]("desc") {
+    s =>
+      product(s) map {
+        p => (s.state.initialState, p.description.get(s.state.lang.name) getOrElse "")
+      }
+  }
+
+  override def snippets = List(checkProd, images, detailPrice, stock,
+    specs, edit) ++ super.snippets
+
+  private def ignoreNode(s: SnipState[ProductPageState], f: ProductDetail => Boolean) = {
+    val node = for {p <- product(s)} yield {
+      if (f(p)) {
+        NodeSeq.Empty
+      } else {
+        s.node
+      }
+    }
+    (node map { l => (s.state.initialState, l) }).recover { case _ => (s.state.initialState, NodeSeq.Empty) }
   }
 
   private def handleCategories(attrs: XmlAttr, l: Language, categs: Set[String]) = Xml("select", attrs) / {

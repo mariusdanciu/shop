@@ -1,33 +1,17 @@
 package net.shop
 package web.services
 
-import net.shift.common.Config
-import net.shift.common.DefaultLog
-import net.shift.common.Path
-import net.shift.common.TraversingSpec
+import net.shift.common._
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http.BinaryPart
-import net.shift.engine.http.MultiPartBody
-import net.shift.io.LocalFileSystem
-import net.shift.io.FileSystem
-import net.shift.io.IO
-import net.shift.io.IODefaults
-import net.shift.loc.Language
-import net.shift.loc.Loc
-import net.shop.api.Category
-import net.shop.api.Formatter
-import net.shop.api.ShopError
+import net.shift.engine.http.HttpPredicates._
+import net.shift.engine.http.{BinaryPart, MultiPartBody}
+import net.shift.io.{FileSystem, IO, LocalFileSystem}
+import net.shift.loc.{Language, Loc}
+import net.shift.server.http.Responses
+import net.shop.api.{Category, Formatter, ShopError}
+import net.shop.model.FieldError
 import net.shop.model.Formatters.CategoryWriter
 import net.shop.utils.ShopUtils.dataPath
-import net.shop.web.ShopApplication
-import net.shift.common.Validator
-import net.shift.common.Validation
-import net.shift.common.Valid
-import net.shift.common.Invalid
-import net.shop.model.FieldError
-import net.shift.engine.http.HttpPredicates._
-import net.shift.server.http.Responses
-import net.shift.server.http.ContentType
 
 trait CategoryService extends TraversingSpec
     with DefaultLog
@@ -136,6 +120,7 @@ trait CategoryService extends TraversingSpec
     val ? = Loc.loc0(loc) _
 
     val categoryFormlet = Validator(category) <*>
+      Validator(validateDefault("")) <*>
       Validator(validateInt("pos", ?("list.pos").text)) <*>
       Validator(validateMapField("title", ?("title").text))
 

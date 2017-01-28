@@ -2,12 +2,12 @@ package net.shop
 package api
 
 import java.util.Date
-import scala.util.Failure
-import net.shift.security.User
-import net.shift.security.Permissions
-import net.shift.security.Permission
-import net.shift.loc.Language
+
 import net.shift.io.FileSystem
+import net.shift.loc.Language
+import net.shift.security.{Permission, User}
+
+import scala.util.Failure
 
 case class UserInfo(firstName: String, lastName: String, cnp: String, phone: String)
 case class CompanyInfo(name: String, cif: String, regCom: String, bank: String, bankAccount: String, phone: String)
@@ -29,7 +29,12 @@ case class Address(id: Option[String] = None,
                    address: String,
                    zipCode: String)
 
+trait NamedItem {
+  def name: String
+}
+
 case class ProductDetail(id: Option[String] = None,
+                         name: String,
                          title: Map[String, String],
                          description: Map[String, String],
                          properties: Map[String, String],
@@ -42,27 +47,29 @@ case class ProductDetail(id: Option[String] = None,
                          stock: Option[Int],
                          categories: List[String],
                          images: List[String],
-                         keyWords: List[String]) {
-
-  def stringId = id getOrElse "?"
-
-  def actualPrice = discountPrice getOrElse price
+                         keyWords: List[String]) extends NamedItem {
 
   def title_?(l: String) = title.getOrElse(l, "???")
 
   def description_?(l: String) = description.getOrElse(l, "???")
 
   def toProductLog(quantity: Int) = ProductLog(stringId, actualPrice, quantity)
+
+  def stringId = id getOrElse "?"
+
+  def actualPrice = discountPrice getOrElse price
 }
 
 case class CartItem(id: String, count: Int)
 
 case class Cart(items: List[CartItem])
 
-case class Category(id: Option[String] = None, position: Int, title: Map[String, String]) {
+case class Category(id: Option[String] = None,
+                    name: String,
+                    position: Int,
+                    title: Map[String, String]) extends NamedItem {
   def title_?(l: String) = title.getOrElse(l, "???")
   def stringId = id getOrElse "?"
-  def name = title.getOrElse("ro", "???")
 }
 
 sealed trait Submitter

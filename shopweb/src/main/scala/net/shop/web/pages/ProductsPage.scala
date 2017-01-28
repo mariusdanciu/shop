@@ -1,14 +1,14 @@
 package net.shop
 package web.pages
 
-import net.shift.common.{Path, ShiftFailure, Xml, XmlAttr}
 import net.shift.common.XmlImplicits._
+import net.shift.common.{Path, ShiftFailure, Xml, XmlAttr}
 import net.shift.loc.Loc
 import net.shift.server.http.Request
 import net.shift.template.Binds.bind
 import net.shift.template.{HasClass, HasClasses, SnipState}
-import net.shop.api.{ProductDetail, ShopError}
 import net.shop.api.persistence.{NoSort, Persistence, SortSpec}
+import net.shop.api.{ProductDetail, ShopError}
 import net.shop.utils.ShopUtils.{errorTag, imagePath, _}
 import net.shop.web.services.ServiceDependencies
 
@@ -27,35 +27,13 @@ object ProductsPage {
 }
 trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
 
-  override def snippets = List(catName, item, catList, sort) ++ cartSnips
-
   val cartSnips = super.snippets
-
-  private def render(s: SnipState[Request], prod: ProductDetail): NodeSeq = {
-    bind(s.node) {
-      case Xml("figure", a, c) => Xml("figure", XmlAttr(Map("id" -> prod.stringId))) / c
-      case Xml("a", HasClasses(_ :: "add_to_cart_box" :: _, a), childs) => <a id={ prod.stringId }>{ childs }</a> % a
-      case Xml("img", a, _) =>
-        <img title={ prod title_? (s.state.lang.name) } src={ imagePath("normal", prod) }></img> % a
-      case Xml("h3", a, _) =>
-        <h3>{ prod title_? (s.state.lang.name) }</h3> % a
-      case Xml("p", a, childs) => <p>{ priceTag(prod) % a }</p>
-      case Xml("div", HasClass("unicat", a), childs) => if (prod.unique)
-        <div></div> % a
-      else
-        NodeSeq.Empty
-    } match {
-      case Success(n) => n
-      case Failure(f) => errorTag(f toString)
-    }
-  }
-
   val catName = reqSnip("cat_name") {
     s =>
 
       val c = (for {
         name <- ProductsPage.extractCat(s.state.initialState).toOption
-        cat <- store.categoryByName(catFromPath(name)).toOption
+        cat <- store.categoryByName(itemFromPath(name)).toOption
       } yield {
         Text(cat.title_?(s.state.lang.name))
       }) orElse {
@@ -66,7 +44,6 @@ trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
 
       Success((s.state.initialState, c))
   }
-
   val item = reqSnip("item") {
     s =>
       {
@@ -85,7 +62,6 @@ trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
         Success((s.state.initialState, prods.toSeq))
       }
   }
-
   val catList = reqSnip("catlist") {
     s =>
       store.allCategories match {
@@ -100,7 +76,6 @@ trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
         case Failure(t)                 => Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no.category").text)))
       }
   }
-
   val sort = reqSnip("sort") {
     s =>
       val n = s.state.initialState.uri.paramValue("sort") match {
@@ -115,13 +90,41 @@ trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
       Success((s.state.initialState, n))
   }
 
+  override def snippets = List(catName, item, catList, sort) ++ cartSnips
+
+  private def render(s: SnipState[Request], prod: ProductDetail): NodeSeq = {
+    bind(s.node) {
+
+      case Xml("a", HasClasses(_ :: "add_to_cart_box" :: _, a), childs) => <a id={prod.stringId}>
+        {childs}
+      </a> % a
+      case Xml("a", a: XmlAttr, c) => Xml("a", a + ("href", s"/product/${itemToPath(prod)}")) / c
+      case Xml("img", a, _) =>
+        <img title={prod title_? (s.state.lang.name)} src={imagePath("normal", prod)}></img> % a
+      case Xml("h3", a, _) =>
+        <h3>
+          {prod title_? (s.state.lang.name)}
+        </h3> % a
+      case Xml("p", a, childs) => <p>
+        {priceTag(prod) % a}
+      </p>
+      case Xml("div", HasClass("unicat", a), childs) => if (prod.unique)
+        <div></div> % a
+      else
+        NodeSeq.Empty
+    } match {
+      case Success(n) => n
+      case Failure(f) => errorTag(f toString)
+    }
+  }
+
 }
 
 object ProductsQuery {
   def fetch(r: Request, store: Persistence): Try[Iterator[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
     (ProductsPage.extractCat(r), r.uri.paramValue("search")) match {
-      case (Success(name), None)   => store.categoryProducts(catFromPath(name), spec)
+      case (Success(name), None) => store.categoryProducts(itemFromPath(name), spec)
       case (_, Some(search :: _)) => store.searchProducts(search, spec)
       case _                      => Success(Iterator.empty)
     }

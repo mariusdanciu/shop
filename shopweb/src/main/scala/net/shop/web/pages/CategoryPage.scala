@@ -1,30 +1,19 @@
 package net.shop
 package web.pages
 
-import scala.util.Failure
-import scala.util.Success
-import scala.xml._
-import scala.xml._
-import net.shift._
-import net.shift._
-import net.shift.engine.http._
-import net.shift.loc._
-import net.shift.template._
-import net.shift.template._
-import net.shift.template.Binds._
-import net.shift.template.Snippet._
-import net.shop.utils.ShopUtils._
-import net.shop.web.ShopApplication
-import net.shop.api.ShopError
 import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
-import net.shop.web.services.ServiceDependencies
-import net.shift.io.LocalFileSystem
+import net.shift.loc._
 import net.shift.server.http.Request
+import net.shift.template.Binds._
+import net.shop.api.ShopError
+import net.shop.utils.ShopUtils._
+import net.shop.web.services.ServiceDependencies
+
+import scala.util.{Failure, Success}
+import scala.xml._
 
 trait CategoryPage extends PageCommon[Request] with ServiceDependencies { self =>
-
-  override def snippets = List(item) ++ super.snippets
 
   val item = reqSnip("item") {
     s =>
@@ -33,7 +22,9 @@ trait CategoryPage extends PageCommon[Request] with ServiceDependencies { self =
           case Success(list) =>
             val items = list flatMap { cat =>
               bind(s.node) {
-                case Xml("a", a, childs)   => <a href={ s"/products/${catToPath(cat)}" }>{ childs }</a> % a
+                case Xml("a", a, childs) => <a href={s"/products/${itemToPath(cat)}"}>
+                  {childs}
+                </a> % a
                 case Xml("img", a, childs) => <img id={ cat stringId }/> % (a + ("src", categoryImagePath(cat)))
                 case Xml("h3", a, _)       => <h3>{ cat.title_?(s.state.lang.name) }</h3> % a
               } match {
@@ -50,6 +41,8 @@ trait CategoryPage extends PageCommon[Request] with ServiceDependencies { self =
         Success(s.state.initialState, prods.toSeq)
       }
   }
+
+  override def snippets = List(item) ++ super.snippets
 
 }
 
