@@ -4,8 +4,9 @@
 		var total = $("#gallery ul li").length;
 
 		$("#add_to_cart_box").click(function(event) {
-			var pid = window.location.pathname.split('/')[2];
+			var pid = $(this).attr("data-id");
 			cart.addItem(pid);
+            window.common.showNotice("Produsul a fost adăugat in coș.")
 			event.stopPropagation();
 			return false;
 		});

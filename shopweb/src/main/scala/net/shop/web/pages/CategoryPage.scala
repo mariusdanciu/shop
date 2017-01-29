@@ -7,6 +7,7 @@ import net.shift.loc._
 import net.shift.server.http.Request
 import net.shift.template.Binds._
 import net.shop.api.ShopError
+import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils._
 import net.shop.web.services.ServiceDependencies
 
@@ -14,7 +15,6 @@ import scala.util.{Failure, Success}
 import scala.xml._
 
 trait CategoryPage extends PageCommon[Request] with ServiceDependencies { self =>
-
   val item = reqSnip("item") {
     s =>
       {
@@ -25,7 +25,7 @@ trait CategoryPage extends PageCommon[Request] with ServiceDependencies { self =
                 case Xml("a", a, childs) => <a href={s"/products/${itemToPath(cat)}"}>
                   {childs}
                 </a> % a
-                case Xml("img", a, childs) => <img id={ cat stringId }/> % (a + ("src", categoryImagePath(cat)))
+                case Xml("img", a, childs) => <img id={cat stringId} alt={cat.title_?(s.state.lang.name) + ShopUtils.OBJECT_SUFFIX}/> % (a + ("src", categoryImagePath(cat)))
                 case Xml("h3", a, _)       => <h3>{ cat.title_?(s.state.lang.name) }</h3> % a
               } match {
                 case Success(n)                 => n
@@ -43,6 +43,7 @@ trait CategoryPage extends PageCommon[Request] with ServiceDependencies { self =
   }
 
   override def snippets = List(item) ++ super.snippets
+
 
 }
 

@@ -1,51 +1,25 @@
 package net.shop.web.pages
 
-import scala.util.Try
-import scala.xml.{ NodeSeq, Text }
-import net.shift.common.Bind
-import net.shift.common.Path
-import net.shift.common.XmlUtils._
-import net.shift.engine.page.Html5
-import net.shift.loc.Language
-import net.shift.template._
-import Snippet._
-import net.shop.model._
-import net.shop.web.ShopApplication
-import scala.util.Success
-import net.shop.utils.ShopUtils._
-import scala.util.Failure
-import Binds._
-import net.shift.common.Config
-import net.shop.utils.ShopUtils
-import net.shop.api.OrderLog
-import net.shop.api.Person
-import net.shop.api.Company
-import net.shop.api.Address
-import net.shift.io.IODefaults
-import net.shift.loc.Loc
-import net.shop.api.ShopError
-import net.shift.common.Xml
 import net.shift.common.XmlImplicits._
-import net.shop.web.services.ServiceDependencies
-import net.shift.io.LocalFileSystem
-
+import net.shift.common.{Path, Xml}
+import net.shift.engine.page.Html5
+import net.shift.loc.{Language, Loc}
+import net.shift.template.Binds._
+import net.shift.template.Snippet._
 import net.shift.template.Template._
+import net.shift.template._
+import net.shop.api._
+import net.shop.utils.ShopUtils._
+import net.shop.web.services.ServiceDependencies
+
+import scala.util.{Failure, Success, Try}
+import scala.xml.NodeSeq
 
 trait OrderPage extends DynamicContent[OrderState] with ServiceDependencies {
-
-  override def inlines = List(logoUrl, transport, total)
-  override def snippets = List(info, content)
-
-  def reqSnip(name: String) = snip[OrderState](name) _
-
-  def orderTemplate(state: OrderState): Try[NodeSeq] = {
-    Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_${state.lang.name}.html"), this).map(in => in._2)
-  }
 
   val logoUrl = inline[OrderState]("logo_url") {
     s => Success((s.state.initialState, s"http://${cfg.string("host")}:${cfg.string("port")}/static/images/logo.svg"))
   }
-
   val info = reqSnip("info") {
     s =>
       s.state.initialState.o match {
@@ -86,7 +60,6 @@ trait OrderPage extends DynamicContent[OrderState] with ServiceDependencies {
       }
 
   }
-
   val content = reqSnip("content") {
     s =>
       {
@@ -94,13 +67,15 @@ trait OrderPage extends DynamicContent[OrderState] with ServiceDependencies {
           case (acc, prod) =>
             store.productById(prod.id) match {
               case Success(p) =>
-                (bind(s.node) {
+                bind(s.node) {
+                  case Xml("a", HasClass("page", a), childs) =>
+                    (<a href={s"http://${cfg.string("host")}:${cfg.string("port")}${productPage(prod.id)}"}/> % a) / childs
                   case Xml("img", a, _) =>
                     <img/> % (a + ("src", s"http://${cfg.string("host")}:${cfg.string("port")}${imagePath(prod.id, "normal", p.images.head)}"))
                   case Xml("td", HasClass("c1", a), _) => <td>{ p.title_?(s.state.lang.name) }</td> % a
                   case Xml("td", HasClass("c2", a), _) => <td>{ prod.quantity }</td> % a
                   case Xml("td", HasClass("c3", a), _) => <td>{ p.actualPrice }</td> % a
-                }) match {
+                } match {
                   case Success(n)                 => acc ++ n
                   case Failure(ShopError(msg, _)) => acc ++ errorTag(Loc.loc0(s.state.lang)(msg).text)
                   case Failure(f)                 => acc ++ errorTag(f toString)
@@ -112,15 +87,23 @@ trait OrderPage extends DynamicContent[OrderState] with ServiceDependencies {
         Success(s.state.initialState, items)
       }
   }
-
   val total = inline[OrderState]("total") {
     s =>
       Success((s.state.initialState, price(s.state.initialState.o.total + s.state.initialState.o.transport.price)))
   }
-
   val transport = inline[OrderState]("transport") {
     s =>
       Success((s.state.initialState, s.state.initialState.o.transport.name))
+  }
+
+  override def inlines = List(logoUrl, transport, total)
+
+  override def snippets = List(info, content)
+
+  def reqSnip(name: String) = snip[OrderState](name) _
+
+  def orderTemplate(state: OrderState): Try[NodeSeq] = {
+    Html5.runPageFromFile(PageState(state, state.lang), Path(s"web/templates/order_${state.lang.name}.html"), this).map(in => in._2)
   }
 }
 
