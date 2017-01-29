@@ -27,43 +27,46 @@
 			<div id="fh5co-media-section">
 				<div class="container">
 
-					<form action="/product/create" id="upload_form" method="POST">
+					<form action="<!--inline:path-->" id="upload_form" method="POST">
 
 						<div class="upload_form_fields">
 
 							<div class="row">
 								<div class="col-md-2">
-									<label for="create_title"> <!-- loc:title --></label>
+									<label for="<!--inline:field_prefix-->_title"> <!-- loc:title --></label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_title" type="text" name="create_title" value="<!-- inline:prod(title) -->"/>
+									<input id="<!--inline:field_prefix-->_title" type="text"
+										   name="<!--inline:field_prefix-->_title" value="<!-- inline:prod(title) -->"/>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-2">
-									<label for="create_price"> <!-- loc:price --></label>
+									<label for="<!--inline:field_prefix-->_price"> <!-- loc:price --></label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_price" type="text" name="create_price" value="<!-- inline:prod(price) -->"/>
+									<input id="<!--inline:field_prefix-->_price" type="text"
+										   name="<!--inline:field_prefix-->_price" value="<!-- inline:prod(price) -->"/>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-2">
-									<label for="create_discount_price"> <!-- loc:discount.price --></label>
+									<label for="<!--inline:field_prefix-->_discount_price">
+										<!-- loc:discount.price --></label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_discount_price" type="text"
-										name="discount_price" value="<!-- inline:prod(discount) -->"/>
+									<input id="<!--inline:field_prefix-->_discount_price" type="text"
+										   name="discount_price" value="<!-- inline:prod(discount) -->"/>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-2">
-									<label for="create_categories"> <!-- loc:categories --></label>
+									<label for="<!--inline:field_prefix-->_categories"> <!-- loc:categories --></label>
 								</div>
 								<div class="col-md-4">
 
-									<select id="create_categories" multiple="multiple"
-										name="create_categories">
+									<select id="<!--inline:field_prefix-->_categories" multiple="multiple"
+											name="<!--inline:field_prefix-->_categories">
 										<!-- snip:catlist -->
 										  
 										<!-- end -->
@@ -72,58 +75,66 @@
 							</div>
 							<div class="row">
 								<div class="col-md-2">
-									<label for="create_keywords"> <!-- loc:keywords -->
+									<label for="<!--inline:field_prefix-->_keywords"> <!-- loc:keywords -->
 									</label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_keywords" type="text" name="create_keywords" value="<!-- inline:prod(keywords) -->"/>
+									<input id="<!--inline:field_prefix-->_keywords" type="text"
+										   name="<!--inline:field_prefix-->_keywords"
+										   value="<!-- inline:prod(keywords) -->"/>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-2">
-									<label for="create_stock"> <!-- loc:stock -->
+									<label for="<!--inline:field_prefix-->_stock"> <!-- loc:stock -->
 									</label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_stock" type="text" name="create_stock" value="<!-- inline:prod(stock) -->"/>
+									<input id="<!--inline:field_prefix-->_stock" type="text"
+										   name="<!--inline:field_prefix-->_stock" value="<!-- inline:prod(stock) -->"/>
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-2">
-									<label for="create_pos"> <!-- loc:list.pos -->
+									<label for="<!--inline:field_prefix-->_pos"> <!-- loc:list.pos -->
 									</label>
 								</div>
 								<div class="col-md-4">
-									<input id="create_pos" type="text" name="create_position" value="<!-- inline:prod(pos) -->"/>
+									<input id="<!--inline:field_prefix-->_pos" type="text"
+										   name="<!--inline:field_prefix-->_position"
+										   value="<!-- inline:prod(pos) -->"/>
 								</div>
 							</div>
 							<div class="row unique_prod">
 								<div class="col-md-2">
-									<label for="create_unique"> <!-- loc:unique.product -->
+									<label for="<!--inline:field_prefix-->_unique"> <!-- loc:unique.product -->
 									</label>
 								</div>
 								<div class="col-md-2">
-									<input id="create_unique" type="checkbox" name="create_unique" value="<!-- inline:prod(unique) -->"/>
+									<input id="<!--inline:field_prefix-->_unique" type="checkbox"
+										   name="<!--inline:field_prefix-->_unique"
+										   value="<!-- inline:prod(unique) -->"/>
 								</div>
 							</div>
 
 							<div class="row">
 								<div class="row pad15H">
-									<label for="create_specs"> <!-- loc:specs --></label>
+									<label for="<!--inline:field_prefix-->_specs"> <!-- loc:specs --></label>
 								</div>
 								<div class="row pad15H">
-									<textarea class="description" id="create_specs"
-										name="create_specs"><!-- inline:prod(specs) --></textarea>
+									<textarea class="description" id="<!--inline:field_prefix-->_specs"
+											  name="<!--inline:field_prefix-->_specs"><!-- inline:prod(specs) --></textarea>
 								</div>
 							</div>
 
 							<div class="row">
 								<div class="row pad15H">
-									<label for="create_description"> <!-- loc:description --></label>
+									<label for="<!--inline:field_prefix-->_description">
+										<!-- loc:description --></label>
 								</div>
 								<div class="row pad15H">
-									<textarea class="description" id="create_description"
-										name="create_description"><!-- inline:prod(desc) --></textarea>
+									<textarea class="description" id="<!--inline:field_prefix-->_description" _
+											  name="<!--inline:field_prefix-->_description"><!-- inline:prod(desc) --></textarea>
 								</div>
 							</div>
 
@@ -135,7 +146,7 @@
 						</div>
 					</form>
 					<div class="row top15">
-						<div id="create_product" class="margin15 btn">Salvează</div>
+						<div id="save_product" class="margin15 btn">Salvează</div>
 					</div>
 				</div>
 			</div>

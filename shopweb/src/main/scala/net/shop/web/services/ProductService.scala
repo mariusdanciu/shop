@@ -12,6 +12,7 @@ import net.shift.security.Permission
 import net.shift.server.http.Responses._
 import net.shop.api.{ProductDetail, ShopError}
 import net.shop.model.FieldError
+import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils.dataPath
 
 trait ProductService extends TraversingSpec
@@ -53,7 +54,7 @@ trait ProductService extends TraversingSpec
           files.map { f =>
             IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${u.head}/${f._1}")))
           }
-          service(_ (created))
+          service(_ (ok.withJsonBody("{\"href\": \"" + ShopUtils.productPage(pid) + "\"}")))
         }) match {
           case scala.util.Success(s) => s
           case scala.util.Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
@@ -90,7 +91,7 @@ trait ProductService extends TraversingSpec
               files.map { f =>
                 IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
               }) { d => log.debug("Write files: " + d) }
-            service(_ (created.withJsonBody("{\"pid\": \"" + p.head + "\"}")))
+            service(_ (created.withJsonBody("{\"href\": \"" + ShopUtils.productPage(o) + "\"}")))
           case scala.util.Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create product ", t)
@@ -154,7 +155,7 @@ trait ProductService extends TraversingSpec
         _,
         _,
         _) if (discountPrice >= price) => Invalid(List(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text)))
-        case p => Valid(p)
+        case p => Valid(p.copy(name = p.title_?(loc.name)))
       })
     } catch {
       case e: Exception =>

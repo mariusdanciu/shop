@@ -1,46 +1,24 @@
 package net.shop
 package web.services
 
-import scala.util.Failure
-import scala.util.Success
-import net.shift.common.Base64
-import net.shift.common.Config
-import net.shift.common.DefaultLog
-import net.shift.common.Invalid
-import net.shift.common.Path
-import net.shift.common.PathObj
-import net.shift.common.TraversingSpec
-import net.shift.common.Valid
-import net.shift.common.Validation
-import net.shift.common.Validator
+import net.shift.common._
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http._
 import net.shift.engine.http.HttpPredicates._
-import net.shift.loc.Language
-import net.shift.loc.Loc
-import net.shift.security.Permission
-import net.shift.security.User
-import net.shop.api.CompanyInfo
-import net.shop.api.ShopError
-import net.shop.api.UserDetail
-import net.shop.api.UserInfo
+import net.shift.engine.page.Html5
+import net.shift.io.IO
+import net.shift.loc.{Language, Loc}
+import net.shift.security.{Permission, User}
+import net.shift.server.http.{HTTPUtils, Param, Request}
+import net.shift.server.http.Responses._
+import net.shift.template.PageState
+import net.shift.template.Template._
+import net.shop.api.{Formatter, ShopError, UserDetail, UserInfo}
+import net.shop.messaging.{ForgotPassword, Messaging}
 import net.shop.model.FieldError
 import net.shop.model.Formatters._
-import net.shop.web.services.FormImplicits._
 import net.shop.web.pages.ForgotPasswordPage
-import net.shop.messaging.ForgotPassword
-import net.shift.template.PageState
-import net.shop.messaging.Messaging
-import net.shift.engine.page.Html5
-import net.shop.api.Formatter
-import net.shift.template.Template._
-import net.shift.server.http.Responses._
-import net.shift.server.http.ContentType._
-import net.shift.server.http.Request
-import net.shift.server.http.Param
-import net.shift.io.IO
-import net.shift.server.http.HTTPUtils
-import scala.util.Try
+
+import scala.util.{Failure, Success, Try}
 
 trait UserService extends TraversingSpec
     with DefaultLog
@@ -131,7 +109,7 @@ trait UserService extends TraversingSpec
           cnp = u.cnp,
           phone = u.phone)
 
-        val perms = List("read") ++ (if (cfg.string("admin.user") == u.email) List("write") else Nil)
+        val perms = List("read") ++ (if (cfg.list("admin.user") contains u.email) List("write") else Nil)
 
         val usr = UserDetail(id = None,
           userInfo = ui,

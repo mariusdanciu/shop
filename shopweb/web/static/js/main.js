@@ -370,6 +370,9 @@ var common = {
 				timeout : 10000,
 				data : formData,
 				statusCode : {
+					200 : function(data) {
+						successFunc(data);
+					},
 					201 : function(data) {
 						successFunc(data);
 					},

@@ -26,6 +26,8 @@ object ShopUtils {
     n + OBJECT_SUFFIX
   }
 
+  def productPage(p: ProductDetail): String = s"/product/${itemToPath(p)}"
+
   def imagePath(variant: String, prod: ProductDetail): String =
     prod.images match {
       case h :: _ => s"/data/products/${prod.stringId}/$variant/${h}"
