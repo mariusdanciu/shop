@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+    <!-- created with Free Online Sitemap Generator www.smallseotools.com -->
+    <url>
+        <loc>http://idid.ro</loc>
+    </url>
+    <url>
+        <loc>http://www.idid.ro/terms</loc>
+    </url>
+    <url>
+        <loc>http://www.idid.ro/dataprotection</loc>
+    </url>
+    <url>
+        <loc>http://www.idid.ro/returnpolicy</loc>
+    </url>
+    <url>
+        <loc>http://www.idid.ro/cookies</loc>
+    </url>
+    <url>
+        <loc>http://www.idid.ro/aboutus</loc>
+    </url>
+    <url>
+        <loc>http://www.idid.ro/newuser</loc>
+    </url>
+    <url>
+        <loc>http://www.idid.ro/categories</loc>
+    </url>
+    <url>
+        <loc>http://www.idid.ro/cart</loc>
+    </url>
+    <!-- snip:categories -->
+    <url>
+        <loc></loc>
+    </url>
+
+    <!-- end -->
+    <!-- snip:products -->
+    <url>
+        <loc></loc>
+    </url>
+
+    <!-- end -->
+</urlset>

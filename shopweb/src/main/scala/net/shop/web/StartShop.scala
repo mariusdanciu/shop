@@ -7,8 +7,8 @@ import net.shift.engine.http.HttpPredicates._
 import net.shift.io.LocalFileSystem
 import net.shift.loc.{Language, Loc}
 import net.shift.security.{Permission, User}
-import net.shift.server.{Server, ServerSpecs}
 import net.shift.server.http.{HttpProtocolBuilder, Request}
+import net.shift.server.{Server, ServerSpecs}
 import net.shop.api.persistence.Persistence
 import net.shop.mongodb.MongoDBPersistence
 import net.shop.web.pages._
@@ -93,6 +93,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       page("/aboutus", Path("web/aboutus.html"), AboutUsPage) |
       page("/cart", Path("web/cart.html"), pages.cartPage, CartInfo(r, Nil)) |
       page("/newuser", Path("web/newuser.html"), pages.newUserPage) |
+      page("/sitemap.xml", Path("web/sitemap.xml"), pages.siteMapPage) |
       settingsPage("/accountsettings", Path("web/accountsettings.html"), pages.accPage) |
       products(r) |
       product(r, u) |
@@ -115,7 +116,6 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       orderService.orderByEmail |
       orderService.orderByProduct |
       staticFile(Path("/google339a4b5281321c21.html")) |
-      staticFile(Path("/sitemap.xml")) |
       notFoundService
     s <- refresh(c)
   } yield s

@@ -45,4 +45,9 @@ case class Pages(cfg: Config, store: Persistence) extends ServiceDependencies { 
     val store = pages.store
   }
 
+  val siteMapPage = new SiteMapPage {
+    val cfg = pages.cfg
+    val store = pages.store
+  }
+
 }
