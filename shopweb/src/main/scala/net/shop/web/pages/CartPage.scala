@@ -5,12 +5,11 @@ import net.shift.common.XmlImplicits._
 import net.shift.loc.Loc
 import net.shift.server.http.Request
 import net.shift.template.Binds._
-import net.shift.template.{HasClass, HasName}
 import net.shift.template.Snippet._
+import net.shift.template.{HasClass, HasName}
 import net.shop.api.{Address, ProductDetail, Cart => CCart}
 import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils._
-import net.shop.web.services.ServiceDependencies
 import org.json4s.native.JsonMethods.parse
 import org.json4s.{DefaultFormats, string2JsonInput}
 
@@ -19,7 +18,7 @@ import scala.xml.{NodeSeq, Text}
 
 case class CartInfo(r: Request, items: Seq[(String, Int, ProductDetail)])
 
-trait CartPage extends PageCommon[CartInfo] with ServiceDependencies {
+trait CartPage extends PageCommon[CartInfo] {
   self =>
   implicit val formats = DefaultFormats
   val emptyMsg = inline[CartInfo]("emptyMsg") {

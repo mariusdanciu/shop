@@ -1,68 +1,84 @@
-
 <div id="notice_e"></div>
 <div id="notice_connect_e" data-snip="connect_error"></div>
-<div id="notice_i"><span></span></div>
+<div id="notice_i"></div>
 
 <header role="banner" id="fh5co-header">
 
-	<div class="container">
-		<nav class="navbar navbar-default">
-			<div class="row">
-				<div class="col-md-3">
-					<div class="fh5co-navbar-brand">
-						<a class="fh5co-logo" href="/"><img
-							src="/static/images/logo.svg" alt="logo" width="250px" /></a>
-					</div>
-				</div>
-				<div class="col-md-9 main-nav">
-					<ul class="nav text-right">
-						<li class="active"><a href="/"><span>Acasă</span></a></li>
-						<li><a href="/aboutus">Despre Noi</a></li>
-						<li><a href="/cart"><span class="icon-cart"></span><span
-								class="left_10">Coș (<span id="cart_num">0</span>)
+    <div class="container">
+        <nav class="navbar navbar-default">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="fh5co-navbar-brand">
+                        <a class="fh5co-logo" href="/"><img
+                                src="/static/images/logo.svg" alt="logo" width="250px"/></a>
+                    </div>
+                </div>
+                <div class="col-md-9 main-nav">
+                    <ul class="nav text-right">
+                        <li class="active"><a href="/"><span>Acasă / Magazin</span></a></li>
+                        <li><a href="/aboutus">Despre Noi</a></li>
+                        <li><a href="/cart"><span class="icon-cart"></span><span
+                                class="left_10">Coș (<span id="cart_num">0</span>)
 							</span></a></li>
-						<!-- snip:logged_user -->
-						<li><a href="/accountsettings">Contul meu</a></li>
-						<!-- end -->
-						<li><a id="search-icon" href="#"><span
-								class="icon-search2"></span></a></li>
-						<li><a id="login" href="<!-- inline:logout -->"><span
-								class="<!-- inline:auth_class -->"></span></a></li>
-					</ul>
-					<!-- snip:logged_user -->
-					<div class="welcome">
-						Bine ai venit <span></span>
-					</div>
-					<!-- end -->
-				</div>
-			</div>
-			<div id="login-box" class="row login">
-				<form action="/auth" id="login_form" method="POST">
-					<div class="row">
-						<label for="username">E-mail </label><input id="username"
-							type="text" /> <label for="password">Parola </label><input
-							id="password" type="password" />
-					</div>
-				</form>
-				<div class="row">
-					<div id="login-btn" class="btn">Login</div>
-					<a href="/newuser"><div id="new-user-btn" class="btn">Utilizator
-							nou</div></a>
-					<div id="forgot-pass-btn" class="btn">Am uitat parola</div>
-				</div>
-			</div>
-			<div id="search-box" class="row search">
-				<div class="row">
-					<input id="search" type="text" placeholder="Căutare produse"/>
-				</div>
-			</div>
+                        <!-- snip:logged_user -->
+                        <li><a href="/accountsettings">Contul meu</a></li>
+                        <!-- end -->
+                        <li><a id="search-icon" href="#"><span
+                                class="icon-search2"></span></a></li>
+                        <li><a id="login" href="<!-- inline:logout -->"><span
+                                class="<!-- inline:auth_class -->"></span></a></li>
+                    </ul>
+                    <!-- snip:logged_user -->
+                    <div class="welcome">
+                        Bine ai venit <span></span>
+                    </div>
+                    <!-- end -->
+                </div>
+            </div>
+            <div id="login-box" class="row login">
+                <form action="/auth" id="login_form" method="POST">
+                    <div class="row">
+                        <label for="username">E-mail </label><input id="username"
+                                                                    type="text"/> <label
+                            for="password">Parola </label><input
+                            id="password" type="password"/>
+                    </div>
+                </form>
+                <div class="row">
+                    <div id="login-btn" class="btn">Login</div>
+                    <a href="/newuser">
+                        <div id="new-user-btn" class="btn">Utilizator
+                            nou
+                        </div>
+                    </a>
+                    <div id="forgot-pass-btn" class="btn">Am uitat parola</div>
+                </div>
+            </div>
+            <div id="search-box" class="row search">
+                <div class="row">
+                    <input id="search" type="text" placeholder="Căutare produse"/>
+                </div>
+            </div>
 
-			<!-- snip:permissions(write) -->
-			<a href="/saveproduct">
-				<div class="add_prod_btn btn">Adaugă produs</div>
-			</a>
-			<div class="add_cat_btn btn">Adaugă categorie</div>
-			<!-- end -->
-		</nav>
-	</div>
+            <!-- snip:permissions(write) -->
+            <a href="/saveproduct">
+                <div class="add_prod_btn btn">Adaugă produs</div>
+            </a>
+            <div class="add_cat_btn btn">Adaugă categorie</div>
+            <!-- end -->
+        </nav>
+    </div>
+    <div class="container submeniu">
+
+        <div class="col-md-12 main-nav">
+            <ul class="nav">
+                <li class="produsehandmade">Produse Handmade:</li>
+                <!--snip:catmenu-->
+                <li><a><span></span></a></li>
+                <!--end-->
+            </ul>
+
+        </div>
+
+    </div>
 </header>

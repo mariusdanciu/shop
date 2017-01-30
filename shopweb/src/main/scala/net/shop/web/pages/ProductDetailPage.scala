@@ -11,12 +11,11 @@ import net.shift.template._
 import net.shop.api.{ProductDetail, ShopError}
 import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils._
-import net.shop.web.services.ServiceDependencies
 
 import scala.util.{Failure, Success, Try}
 import scala.xml._
 
-trait ProductDetailPage extends PageCommon[ProductPageState] with ServiceDependencies {
+trait ProductDetailPage extends PageCommon[ProductPageState] {
   val prodId = inline[ProductPageState]("prodId") {
     s =>
       product(s) map {

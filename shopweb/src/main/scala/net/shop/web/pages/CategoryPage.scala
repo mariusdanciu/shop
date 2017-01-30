@@ -9,12 +9,12 @@ import net.shift.template.Binds._
 import net.shop.api.ShopError
 import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils._
-import net.shop.web.services.ServiceDependencies
 
 import scala.util.{Failure, Success}
 import scala.xml._
 
-trait CategoryPage extends PageCommon[Request] with ServiceDependencies { self =>
+trait CategoryPage extends PageCommon[Request] {
+  self =>
   val item = reqSnip("item") {
     s =>
       {

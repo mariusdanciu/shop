@@ -11,7 +11,6 @@ import net.shop.api.persistence.{NoSort, Persistence, SortSpec}
 import net.shop.api.{ProductDetail, ShopError}
 import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils.{errorTag, imagePath, _}
-import net.shop.web.services.ServiceDependencies
 
 import scala.util.{Failure, Success, Try}
 import scala.xml.NodeSeq.seqToNodeSeq
@@ -22,11 +21,12 @@ object ProductsPage {
   def extractCat(r: Request): Try[String] = {
     Path(r.uri.path) match {
       case Path(_, _ :: _ :: id :: _) => Success(id)
-      case _                          => ShiftFailure("Category was not set").toTry
+      case _ => ShiftFailure("Category was not set").toTry
     }
   }
 }
-trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
+
+trait ProductsPage extends PageCommon[Request] {
 
   val cartSnips = super.snippets
   val catName = reqSnip("cat_name") {
@@ -46,22 +46,25 @@ trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
       Success((s.state.initialState, c))
   }
   val item = reqSnip("item") {
-    s =>
-      {
-        val prods = ProductsQuery.fetch(s.state.initialState, store) match {
-          case Success(list) =>
+    s => {
+      val prods = ProductsQuery.fetch(s.state.initialState, store) match {
+        case Success(list) =>
 
-            val (nopos, pos) = list.span(p => p.position.isEmpty)
+          val (nopos, pos) = list.span(p => p.position.isEmpty)
 
-            val nodes = (pos flatMap { (p: ProductDetail) => render(s, p) }) ++
-              (nopos flatMap { (p: ProductDetail) => render(s, p) })
+          val nodes = (pos flatMap { (p: ProductDetail) => render(s, p) }) ++
+            (nopos flatMap { (p: ProductDetail) => render(s, p) })
 
-            nodes.grouped(4).map { l => <div class="row hover01">{ NodeSeq.fromSeq(l) }</div> }
-          case Failure(t) =>
-            errorTag(Loc.loc0(s.state.lang)("no.category").text)
-        }
-        Success((s.state.initialState, prods.toSeq))
+          nodes.grouped(4).map { l =>
+            <div class="row hover01">
+              {NodeSeq.fromSeq(l)}
+            </div>
+          }
+        case Failure(t) =>
+          errorTag(Loc.loc0(s.state.lang)("no.category").text)
       }
+      Success((s.state.initialState, prods.toSeq))
+    }
   }
   val catList = reqSnip("catlist") {
     s =>
@@ -69,12 +72,14 @@ trait ProductsPage extends PageCommon[Request] with ServiceDependencies {
         case Success(list) =>
           s.node match {
             case e: Elem =>
-              val v = list.map(c => (<option value={ c.id getOrElse "?" }>{ c.title_?(s.state.lang.name) }</option>)).toSeq
+              val v = list.map(c => (<option value={c.id getOrElse "?"}>
+                {c.title_?(s.state.lang.name)}
+              </option>)).toSeq
               Success((s.state.initialState, e / NodeSeq.fromSeq(v)))
             case _ => Success((s.state.initialState, NodeSeq.Empty))
           }
         case Failure(ShopError(msg, _)) => Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)(msg).text)))
-        case Failure(t)                 => Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no.category").text)))
+        case Failure(t) => Success((s.state.initialState, errorTag(Loc.loc0(s.state.lang)("no.category").text)))
       }
   }
   val sort = reqSnip("sort") {
@@ -127,14 +132,14 @@ object ProductsQuery {
     (ProductsPage.extractCat(r), r.uri.paramValue("search")) match {
       case (Success(name), None) => store.categoryProducts(itemFromPath(name), spec)
       case (_, Some(search :: _)) => store.searchProducts(search, spec)
-      case _                      => Success(Iterator.empty)
+      case _ => Success(Iterator.empty)
     }
   }
 
   def toSortSpec(r: Request): SortSpec = {
     r.uri.paramValue("sort") match {
       case Some(v :: _) => SortSpec.fromString(v, r.language.name)
-      case _            => NoSort
+      case _ => NoSort
     }
   }
 }

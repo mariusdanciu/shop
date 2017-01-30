@@ -1,53 +1,24 @@
 package net.shop
 package web.pages
 
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
-import scala.xml.NodeSeq
-import scala.xml.NodeSeq.seqToNodeSeq
-import scala.xml.Text
-import scala.xml.Elem
-import net.shift.common.Path
-import net.shift.engine.page.Html5
-import net.shift.io.IODefaults
+import net.shift.common.{Path, Xml, XmlAttr}
+import net.shift.common.XmlImplicits._
 import net.shift.loc.Loc
 import net.shift.security.Permission
-import net.shift.template.Binds.bind
-import net.shift.template.DynamicContent
-import net.shift.template.HasClass
-import net.shift.template.HasId
-import net.shift.template.HasName
-import net.shift.template.HasValue
-import net.shift.template.PageState
-import net.shift.template.Snippet.snip
-import net.shop.api.Address
-import net.shop.api.OrderCanceled
-import net.shop.api.OrderFinalized
-import net.shop.api.OrderLog
-import net.shop.api.OrderPending
-import net.shop.api.OrderReceived
-import net.shop.api.UserDetail
-import net.shop.utils.ShopUtils._
-import net.shop.web.ShopApplication
-import net.shift.template.Binds._
-import net.shift.common.XmlUtils._
-import net.shop.api.Person
-import net.shop.api.Company
-import net.shift.common.Xml
-import net.shift.common.XmlAttr
-import net.shift.common.XmlImplicits._
-import net.shop.web.services.ServiceDependencies
-import IODefaults._
-import net.shift.template.Template._
 import net.shift.server.http.Request
+import net.shift.template.Binds.bind
+import net.shift.template.{HasClass, HasId, HasName, HasValue}
+import net.shop.api._
+import net.shop.utils.ShopUtils._
 
-trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDependencies { self =>
+import scala.util.{Failure, Success, Try}
+import scala.xml.NodeSeq.seqToNodeSeq
+import scala.xml.{NodeSeq, Text}
+
+trait AccountSettingsPage extends PageCommon[SettingsPageState] {
+  self =>
 
   val dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy - hh:mm")
-
-  override def snippets = List(userInfo, address, orders, users) ++ super.snippets
-
   val userInfo = reqSnip("userInfo") {
     s =>
       {
@@ -70,7 +41,6 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDepe
         }
       }
   }
-
   val address = reqSnip("address") {
     s =>
       {
@@ -97,7 +67,6 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDepe
         Success((s.state.initialState, res))
       }
   }
-
   val orders = reqSnip("orders") {
     s =>
       {
@@ -208,15 +177,6 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDepe
 
       }
   }
-
-  private def optsToNode(opts: Map[String, String]): NodeSeq = {
-    NodeSeq.fromSeq((for { (k, v) <- opts } yield {
-      <div class="row_simple">
-        <span>{ k + " : " + v }</span>
-      </div>
-    }).toSeq)
-  }
-
   val users = reqSnip("users") {
     s =>
       {
@@ -248,6 +208,18 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] with ServiceDepe
           case Failure(t) => Failure(t)
         }
       }
+  }
+
+  override def snippets = List(userInfo, address, orders, users) ++ super.snippets
+
+  private def optsToNode(opts: Map[String, String]): NodeSeq = {
+    NodeSeq.fromSeq((for {(k, v) <- opts} yield {
+      <div class="row_simple">
+        <span>
+          {k + " : " + v}
+        </span>
+      </div>
+    }).toSeq)
   }
 
   private def makeSelect(o: OrderLog, childs: NodeSeq): NodeSeq = {

@@ -1,19 +1,20 @@
 package net.shop.web.pages
 
-import net.shift.common.{Path, ShiftFailure, Xml, XmlAttr}
 import net.shift.common.XmlImplicits._
+import net.shift.common.{Path, ShiftFailure, Xml, XmlAttr}
 import net.shift.loc.Loc
 import net.shift.template.SnipState
 import net.shift.template.Snippet._
 import net.shop.api.{ProductDetail, ShopError}
 import net.shop.utils.ShopUtils
-import net.shop.web.services.ServiceDependencies
 
 import scala.util.{Failure, Success, Try}
 import scala.xml.{NodeSeq, Text}
 
-trait SaveProductPage extends PageCommon[ProductPageState] with ServiceDependencies {
+trait SaveProductPage extends PageCommon[ProductPageState] {
   self =>
+
+
   val prod = inline[ProductPageState]("prod") {
     s =>
       product(s) match {

@@ -4,7 +4,6 @@ import net.shift.common.Xml
 import net.shift.server.http.Request
 import net.shift.template.Binds.bind
 import net.shop.utils.ShopUtils
-import net.shop.web.services.ServiceDependencies
 
 import scala.util.Success
 import scala.xml.{NodeSeq, Text}
@@ -12,7 +11,7 @@ import scala.xml.{NodeSeq, Text}
 /**
   * Created by mariu on 1/29/2017.
   */
-trait SiteMapPage extends PageCommon[Request] with ServiceDependencies {
+trait SiteMapPage extends PageCommon[Request] {
   self =>
   val categories = reqSnip("categories") {
     s =>

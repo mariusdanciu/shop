@@ -1,3 +1,14 @@
+
+
+.numeprodus {padding-right:3px} 
+.margine{margin-top:60px}
+.submeniu {background: #a980cd; width:100% !important;}
+.submeniu .nav li a {padding: 10px 20px !important; border: 2px solid #fff !important;background: #a980cd !important;}
+.submeniu .nav li a:hover {background: #fff !important;}
+.submeniu .nav li.produsehandmade {color:#fff; text-transform: capitalize !important; font-weight: 600}
+.submeniu .main-nav {padding: 15px 0 !important;}
+p.mic {font-size:15px !important;}
+
 @font-face {
 	font-family: 'icomoon';
 	src: url("../fonts/icomoon/icomoon.eot?srf3rx");
@@ -78,13 +89,22 @@ figure:hover+span {
 
 .intro {
 	text-align: center;
-	padding: 300px 0
+	padding: 250px 0
 }
 
 .intro-cat {
 	text-align: center;
 	padding: 110px 0 60px 0;
 	margin-bottom: 50px;
+}
+
+.intro h1, .intro-cat h1 {
+	text-transform: uppercase;
+	font-size: 38px;
+	font-weight: bold;
+	text-transform: uppercase;
+	position: relative;
+	color: #a980cd;
 }
 
 .intro h2, .intro-cat h2 {
@@ -178,7 +198,7 @@ h1, h2, h3, h4, h5, h6 {
 #fh5co-header {
 	padding-top: 5px;
 	padding-bottom: 0;
-	margin-bottom: 5px;
+	margin-bottom: 0px;
 }
 
 #fh5co-header .navbar-default {
