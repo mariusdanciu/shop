@@ -52,7 +52,11 @@ object ShopUtils {
   def price(p: Double) = if ((p % 1) == 0) "%.0f" format p else "%.2f" format p
 
   def itemFromPath(name: String): String = {
-    name.substring(0, name.indexOf(OBJECT_SUFFIX)).replaceAll("-", " ")
+    val idx = name.indexOf(OBJECT_SUFFIX)
+    if (idx < 0)
+      name
+    else
+      name.substring(0, idx).replaceAll("-", " ")
   }
 
 

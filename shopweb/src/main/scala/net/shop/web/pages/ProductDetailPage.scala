@@ -16,6 +16,10 @@ import scala.util.{Failure, Success, Try}
 import scala.xml._
 
 trait ProductDetailPage extends PageCommon[ProductPageState] {
+
+  override def snippets = List(checkProd, images, detailPrice, stock, specs, edit) ++ super.snippets
+  override def inlines = List(saveUrl, title, pageUrl, prodImageUrl, desc, prodId) ++ super.inlines
+
   val prodId = inline[ProductPageState]("prodId") {
     s =>
       product(s) map {
@@ -155,7 +159,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] {
     }
   }
 
-  override def inlines = List(saveUrl, title, pageUrl, prodImageUrl, desc, prodId) ++ super.inlines
 
   def saveUrl = inline[ProductPageState]("saveurl") {
     s =>
@@ -194,7 +197,6 @@ trait ProductDetailPage extends PageCommon[ProductPageState] {
     }
   }
 
-  override def snippets = List(checkProd, images, detailPrice, stock, specs, edit) ++ super.snippets
 
   private def ignoreNode(s: SnipState[ProductPageState], f: ProductDetail => Boolean) = {
     val node = for {p <- product(s)} yield {

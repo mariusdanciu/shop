@@ -86,11 +86,11 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       categoriesImages |
       logout |
       page("/", Path("web/categories.html"), pages.catPage) |
-      page("/terms", Path("web/terms.html"), TermsPage) |
-      page("/dataprotection", Path("web/dataprotection.html"), DataProtectionPage) |
-      page("/returnpolicy", Path("web/returnpolicy.html"), ReturnPolicyPage) |
-      page("/cookies", Path("web/cookies.html"), CookiesPage) |
-      page("/aboutus", Path("web/aboutus.html"), AboutUsPage) |
+      page("/terms", Path("web/terms.html"), pages.termsPage) |
+      page("/dataprotection", Path("web/dataprotection.html"), pages.dataProtectionPage) |
+      page("/returnpolicy", Path("web/returnpolicy.html"), pages.returnPolicyPage) |
+      page("/cookies", Path("web/cookies.html"), pages.cookiesPage) |
+      page("/aboutus", Path("web/aboutus.html"), pages.aboutUsPage) |
       page("/cart", Path("web/cart.html"), pages.cartPage, CartInfo(r, Nil)) |
       page("/newuser", Path("web/newuser.html"), pages.newUserPage) |
       page("/sitemap.xml", Path("web/sitemap.xml"), pages.siteMapPage) |

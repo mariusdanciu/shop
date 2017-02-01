@@ -22,9 +22,9 @@
 		});
 
 		$("#del_prod").click(function(event) {
-			var id = window.location.pathname.split('/')[2];
-			window.admin.deleteProduct(id, function() {
-				window.location.href = "/";
+			var id = $(this).attr("data-prod");
+			window.admin.deleteProduct(id, function(href) {
+			 	window.location.href = href;
 			});
 			event.stopPropagation();
 			event.preventDefault();

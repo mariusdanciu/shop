@@ -1,6 +1,8 @@
 package net.shop.web
 
 import net.shift.common.Config
+import net.shift.server.http.Request
+import net.shift.template.DynamicContent
 import net.shop.api.persistence.Persistence
 import net.shop.web.pages._
 import net.shop.web.services.ServiceDependencies
@@ -50,4 +52,33 @@ case class Pages(cfg: Config, store: Persistence) extends ServiceDependencies { 
     val store = pages.store
   }
 
+  val termsPage = new PageCommon[Request] {
+    val cfg = pages.cfg
+    val store = pages.store
+  }
+
+  val dataProtectionPage = new PageCommon[Request] {
+    val cfg = pages.cfg
+    val store = pages.store
+  }
+
+  val returnPolicyPage = new PageCommon[Request] {
+    val cfg = pages.cfg
+    val store = pages.store
+  }
+
+  val cookiesPage = new PageCommon[Request] {
+    val cfg = pages.cfg
+    val store = pages.store
+  }
+
+  val aboutUsPage = new PageCommon[Request] {
+    val cfg = pages.cfg
+    val store = pages.store
+  }
+
+  val loginPage = new PageCommon[Request] {
+    val cfg = pages.cfg
+    val store = pages.store
+  }
 }

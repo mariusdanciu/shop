@@ -72,7 +72,7 @@ trait PageCommon[T] extends DynamicContent[T] with ServiceDependencies {
           val cats = categs.toList
           val list = (for {c <- cats} yield {
             bind(s.node) {
-              case Xml("a", a, childs) => <a href={s"http://${cfg.string("host")}:${cfg.string("port")}/products/${itemToPath(c)}"}/> / childs
+              case Xml("a", a, childs) => <a href={s"/products/${itemToPath(c)}"}/> / childs
               case Xml("span", a, childs) => <span>
                 {c.title_?(s.state.lang.name)}
               </span>

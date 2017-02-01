@@ -23,14 +23,14 @@ trait ProductService extends TraversingSpec
 
   def deleteProduct(implicit fs: FileSystem) = for {
     r <- delete
-    Path(_, _ :: "product" :: "delete" :: id :: Nil) <- path
+    Path(_, _ :: "product" :: id :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
     _ <- permissions("Unauthorized", Permission("write"))
   } yield {
     store.deleteProducts(id) match {
       case scala.util.Success(num) =>
         fs.deletePath(Path(s"${dataPath}/products/$id"))
-        service(_ (ok))
+        service(_ (ok.withJsonBody("{\"href\": \"/\"}")))
       case scala.util.Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
       case scala.util.Failure(t) => service(_ (notFound))
     }

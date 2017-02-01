@@ -31,12 +31,12 @@ var admin = {
 	deleteProduct : function(id, f) {
 		$.ajax({
 			cache : false,
-			url : "/product/delete/" + id,
+			url : "/product/" + id,
 			timeout : 3000,
 			type : "DELETE",
 			statusCode : {
 				200 : function(data) {
-					f();
+					f(data.href);
 				}
 			}
 		});
