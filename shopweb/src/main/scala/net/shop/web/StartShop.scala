@@ -93,7 +93,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       page("/aboutus", Path("web/aboutus.html"), pages.aboutUsPage) |
       page("/cart", Path("web/cart.html"), pages.cartPage, CartInfo(r, Nil)) |
       page("/newuser", Path("web/newuser.html"), pages.newUserPage) |
-      page("/sitemap.xml", Path("web/sitemap.xml"), pages.siteMapPage) |
+      xmlPage("/sitemap.xml", Path("web/sitemap.xml"), pages.siteMapPage) |
       settingsPage("/accountsettings", Path("web/accountsettings.html"), pages.accPage) |
       products(r) |
       product(r, u) |

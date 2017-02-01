@@ -39,11 +39,10 @@ import net.shop.web.pages.SettingsPageState
 import net.shift.common.ShiftFailure
 import net.shift.engine.http.HttpPredicates._
 import net.shift.template.Template._
-import net.shift.server.http.TextHeader
+import net.shift.server.http.{ContentType, Request, Responses, TextHeader}
 import net.shift.engine.Attempt
 import net.shift.server.http.Responses._
 import net.shift.server.http.ContentType._
-import net.shift.server.http.Request
 import net.shift.server.http.Responses._
 import net.shop.web.pages.SettingsPageState
 import net.shop.web.pages.CartState
@@ -112,7 +111,13 @@ trait ShopServices extends TraversingSpec
 
   }
 
-  def page(uri: String, filePath: Path, snipets: DynamicContent[Request]) = for {
+  def xmlPage(uri: String, filePath: Path, snippets: DynamicContent[Request]) = for {
+    attempt <- page(uri, filePath, snippets)
+  } yield {
+    attempt.map(_.withResponse { r => r.withMime(ContentType.TextXml) })
+  }
+
+  def page(uri: String, filePath: Path, snipets: DynamicContent[Request]): State[Request, Attempt] = for {
     r <- path(uri)
     u <- user
   } yield {
