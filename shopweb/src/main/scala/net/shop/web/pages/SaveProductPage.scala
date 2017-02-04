@@ -3,6 +3,7 @@ package net.shop.web.pages
 import net.shift.common.XmlImplicits._
 import net.shift.common.{Path, ShiftFailure, Xml, XmlAttr}
 import net.shift.loc.Loc
+import net.shift.template.Binds.bind
 import net.shift.template.SnipState
 import net.shift.template.Snippet._
 import net.shop.api.{ProductDetail, ShopError}
@@ -13,6 +14,10 @@ import scala.xml.{NodeSeq, Text}
 
 trait SaveProductPage extends PageCommon[ProductPageState] {
   self =>
+
+  override def inlines = List(prod, path, fieldPrefix) ++ super.inlines
+
+  override def snippets = List(catList, delImgList) ++ super.snippets
 
 
   val prod = inline[ProductPageState]("prod") {
@@ -56,6 +61,27 @@ trait SaveProductPage extends PageCommon[ProductPageState] {
         case _ => Success((s.state.initialState, NodeSeq.Empty))
       }
   }
+
+  val delImgList = reqSnip("delimglist") {
+    s =>
+      val xml = s.state.initialState.product map { p =>
+
+        (ShopUtils.productImages("thumb", p) zip p.images).map {
+          case (img, name) =>
+            val red: NodeSeq = bind(s.node) {
+              case Xml("img", a, _) => <img src={img}/>
+              case Xml("input", a, _) => <input value={name}/> % a
+            } getOrElse NodeSeq.Empty
+            red
+        }
+
+      } getOrElse NodeSeq.Empty
+
+      Success((s.state.initialState, xml flatten))
+
+  }
+
+
   val path = inline[ProductPageState]("path") {
     s =>
       product(s) match {
@@ -70,10 +96,6 @@ trait SaveProductPage extends PageCommon[ProductPageState] {
         case _ => Success(s.state.initialState -> "create")
       }
   }
-
-  override def inlines = List(prod, path, fieldPrefix) ++ super.inlines
-
-  override def snippets = List(catList) ++ super.snippets
 
   def product(s: SnipState[ProductPageState]): Try[ProductDetail] = {
     s.state.initialState.product match {

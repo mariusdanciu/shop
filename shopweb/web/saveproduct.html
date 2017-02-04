@@ -1,163 +1,180 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!-->
 <html class="no-js">
 <!--<![endif]-->
 
 <head>
 
-<!-- template:headers -->
+    <!-- template:headers -->
 
-<title>idid.ro - Creaza un produs nou</title>
+    <title>idid.ro - Creaza un produs nou</title>
 </head>
 
 <body>
 
-	<div class="box-wrap-all">
-		<div class="box-wrap">
+<div class="box-wrap-all">
+    <div class="box-wrap">
 
-			<!-- template:menu -->
+        <!-- template:menu -->
 
-			<div class="intro-cat" data-animate-effect="fadeIn">
-				<h2>Salvează detalii produs</h2>
-			</div>
+        <div class="intro-cat" data-animate-effect="fadeIn">
+            <h2>Salvează detalii produs</h2>
+        </div>
 
-			<div id="fh5co-media-section">
-				<div class="container">
+        <div id="fh5co-media-section">
+            <div class="container">
 
-					<form action="<!--inline:path-->" id="upload_form" method="POST">
+                <form action="<!--inline:path-->" id="upload_form" method="POST">
 
-						<div class="upload_form_fields">
+                    <div class="upload_form_fields">
 
-							<div class="row">
-								<div class="col-md-2">
-									<label for="<!--inline:field_prefix-->_title"> <!-- loc:title --></label>
-								</div>
-								<div class="col-md-4">
-									<input id="<!--inline:field_prefix-->_title" type="text"
-										   name="<!--inline:field_prefix-->_title" value="<!-- inline:prod(title) -->"/>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-2">
-									<label for="<!--inline:field_prefix-->_price"> <!-- loc:price --></label>
-								</div>
-								<div class="col-md-4">
-									<input id="<!--inline:field_prefix-->_price" type="text"
-										   name="<!--inline:field_prefix-->_price" value="<!-- inline:prod(price) -->"/>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-2">
-									<label for="<!--inline:field_prefix-->_discount_price">
-										<!-- loc:discount.price --></label>
-								</div>
-								<div class="col-md-4">
-									<input id="<!--inline:field_prefix-->_discount_price" type="text"
-										   name="discount_price" value="<!-- inline:prod(discount) -->"/>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-2">
-									<label for="<!--inline:field_prefix-->_categories"> <!-- loc:categories --></label>
-								</div>
-								<div class="col-md-4">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="<!--inline:field_prefix-->_title"> <!-- loc:title --></label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="<!--inline:field_prefix-->_title" type="text"
+                                       name="<!--inline:field_prefix-->_title" value="<!-- inline:prod(title) -->"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="<!--inline:field_prefix-->_price"> <!-- loc:price --></label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="<!--inline:field_prefix-->_price" type="text"
+                                       name="<!--inline:field_prefix-->_price" value="<!-- inline:prod(price) -->"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="<!--inline:field_prefix-->_discount_price">
+                                    <!-- loc:discount.price --></label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="<!--inline:field_prefix-->_discount_price" type="text"
+                                       name="discount_price" value="<!-- inline:prod(discount) -->"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="<!--inline:field_prefix-->_categories"> <!-- loc:categories --></label>
+                            </div>
+                            <div class="col-md-4">
 
-									<select id="<!--inline:field_prefix-->_categories" multiple="multiple"
-											name="<!--inline:field_prefix-->_categories">
-										<!-- snip:catlist -->
-										  
-										<!-- end -->
-									</select>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-2">
-									<label for="<!--inline:field_prefix-->_keywords"> <!-- loc:keywords -->
-									</label>
-								</div>
-								<div class="col-md-4">
-									<input id="<!--inline:field_prefix-->_keywords" type="text"
-										   name="<!--inline:field_prefix-->_keywords"
-										   value="<!-- inline:prod(keywords) -->"/>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-2">
-									<label for="<!--inline:field_prefix-->_stock"> <!-- loc:stock -->
-									</label>
-								</div>
-								<div class="col-md-4">
-									<input id="<!--inline:field_prefix-->_stock" type="text"
-										   name="<!--inline:field_prefix-->_stock" value="<!-- inline:prod(stock) -->"/>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-2">
-									<label for="<!--inline:field_prefix-->_pos"> <!-- loc:list.pos -->
-									</label>
-								</div>
-								<div class="col-md-4">
-									<input id="<!--inline:field_prefix-->_pos" type="text"
-										   name="<!--inline:field_prefix-->_position"
-										   value="<!-- inline:prod(pos) -->"/>
-								</div>
-							</div>
-							<div class="row unique_prod">
-								<div class="col-md-2">
-									<label for="<!--inline:field_prefix-->_unique"> <!-- loc:unique.product -->
-									</label>
-								</div>
-								<div class="col-md-2">
-									<input id="<!--inline:field_prefix-->_unique" type="checkbox"
-										   name="<!--inline:field_prefix-->_unique"
-										   value="<!-- inline:prod(unique) -->"/>
-								</div>
-							</div>
+                                <select id="<!--inline:field_prefix-->_categories" multiple="multiple"
+                                        name="<!--inline:field_prefix-->_categories">
+                                    <!-- snip:catlist -->
 
-							<div class="row">
-								<div class="row pad15H">
-									<label for="<!--inline:field_prefix-->_specs"> <!-- loc:specs --></label>
-								</div>
-								<div class="row pad15H">
+                                    <!-- end -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="<!--inline:field_prefix-->_keywords"> <!-- loc:keywords -->
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="<!--inline:field_prefix-->_keywords" type="text"
+                                       name="<!--inline:field_prefix-->_keywords"
+                                       value="<!-- inline:prod(keywords) -->"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="<!--inline:field_prefix-->_stock"> <!-- loc:stock -->
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="<!--inline:field_prefix-->_stock" type="text"
+                                       name="<!--inline:field_prefix-->_stock" value="<!-- inline:prod(stock) -->"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="<!--inline:field_prefix-->_pos"> <!-- loc:list.pos -->
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="<!--inline:field_prefix-->_pos" type="text"
+                                       name="<!--inline:field_prefix-->_position"
+                                       value="<!-- inline:prod(pos) -->"/>
+                            </div>
+                        </div>
+                        <div class="row unique_prod">
+                            <div class="col-md-2">
+                                <label for="<!--inline:field_prefix-->_unique"> <!-- loc:unique.product -->
+                                </label>
+                            </div>
+                            <div class="col-md-2">
+                                <input id="<!--inline:field_prefix-->_unique" type="checkbox"
+                                       name="<!--inline:field_prefix-->_unique"
+                                       value="<!-- inline:prod(unique) -->"/>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="row pad15H">
+                                <label for="<!--inline:field_prefix-->_specs"> <!-- loc:specs --></label>
+                            </div>
+                            <div class="row pad15H">
 									<textarea class="description" id="<!--inline:field_prefix-->_specs"
-											  name="<!--inline:field_prefix-->_specs"><!-- inline:prod(specs) --></textarea>
-								</div>
-							</div>
+                                              name="<!--inline:field_prefix-->_specs"><!-- inline:prod(specs) --></textarea>
+                            </div>
+                        </div>
 
-							<div class="row">
-								<div class="row pad15H">
-									<label for="<!--inline:field_prefix-->_description">
-										<!-- loc:description --></label>
-								</div>
-								<div class="row pad15H">
+                        <div class="row">
+                            <div class="row pad15H">
+                                <label for="<!--inline:field_prefix-->_description">
+                                    <!-- loc:description --></label>
+                            </div>
+                            <div class="row pad15H">
 									<textarea class="description" id="<!--inline:field_prefix-->_description" _
-											  name="<!--inline:field_prefix-->_description"><!-- inline:prod(desc) --></textarea>
-								</div>
-							</div>
+                                              name="<!--inline:field_prefix-->_description"><!-- inline:prod(desc) --></textarea>
+                            </div>
+                        </div>
 
-							<div class="row pad15H">
-								<input type="file" id="fileselect" name="files"
-									multiple="multiple" />
-							</div>
+                        <div class="row pad15H">
+                            <input type="file" id="fileselect" name="files"
+                                   multiple="multiple"/>
+                        </div>
 
-						</div>
-					</form>
-					<div class="row top15">
-						<div id="save_product" class="margin15 btn">Salvează</div>
-					</div>
-				</div>
-			</div>
+                        <div class="row">
+                            <fieldset>
+                                <legend>Selectează pozele pentru a fi șterse</legend>
+                                <ul class="list-inline">
+                                    <!--snip:delimglist-->
+                                    <li>
+                                        <input type="checkbox" name="delimg"/>
+                                        <img/>
+                                    </li>
+                                    <!--end-->
+                                </ul>
+                            </fieldset>
+                        </div>
 
-			<!-- template:footermenu -->
-		</div>
-		<!-- template:footer -->
-	</div>
-	<!-- template:endscripts -->
-	<script src="/static/js/admin.js"></script>
-	<script src="/static/js/saveproduct.js"></script>
+                    </div>
+                </form>
+                <div class="row top15">
+                    <div id="save_product" class="margin15 btn">Salvează</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- template:footermenu -->
+    </div>
+    <!-- template:footer -->
+</div>
+<!-- template:endscripts -->
+<script src="/static/js/admin.js"></script>
+<script src="/static/js/saveproduct.js"></script>
 </body>
 </html>
 
