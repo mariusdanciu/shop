@@ -45,7 +45,7 @@ trait ProductService extends TraversingSpec
     _ <- permissions("Unauthorized", Permission("write"))
     mp <- multipartForm
   } yield {
-    extract(r.language, Some(pid), "edit_", mp) match {
+    extract(r.language, Some(pid), "edit_", mp, false) match {
       case (files, Valid(o)) =>
         val cpy = o.copy(
           name = normalizeName(o.title_?(r.language.name)),
@@ -78,7 +78,7 @@ trait ProductService extends TraversingSpec
     _ <- permissions("Unauthorized", Permission("write"))
     mp <- multipartForm
   } yield {
-    val extracted = duration(extract(r.language, None, "create_", mp)) { d =>
+    val extracted = duration(extract(r.language, None, "create_", mp, true)) { d =>
       log.debug("Extraction : " + d)
     }
 
@@ -113,7 +113,12 @@ trait ProductService extends TraversingSpec
 
   }
 
-  private def extract(implicit loc: Language, id: Option[String], fieldPrefix: String, multipart: MultiPartBody): (List[(String, String, Array[Byte])], Validation[ProductDetail, FieldError]) = {
+  private def extract(implicit loc: Language,
+                      id: Option[String],
+                      fieldPrefix: String,
+                      multipart: MultiPartBody,
+                      checkExists: Boolean
+                     ): (List[(String, String, Array[Byte])], Validation[ProductDetail, FieldError]) = {
 
     val (bins, text) = multipart.parts partition {
       case BinaryPart(h, content) => true
@@ -130,7 +135,12 @@ trait ProductService extends TraversingSpec
 
     val productFormlet = Validator(product) <*>
       Validator(validateDefault("")) <*>
-      Validator(validateMapField(fieldPrefix + "title", ?("title").text)) <*>
+      Validator {
+        val v = validateMapField(fieldPrefix + "title", ?("title").text)
+        if (checkExists)
+          checkNameExists(v, fieldPrefix + "title", store)
+        else v
+      } <*>
       Validator(validateMapField(fieldPrefix + "description", ?("description").text)) <*>
       Validator(validateSpecs(fieldPrefix)) <*>
       Validator(validateDouble(fieldPrefix + "price", ?("price").text)) <*>
@@ -146,7 +156,7 @@ trait ProductService extends TraversingSpec
 
     try {
       (files, productFormlet validate params flatMap {
-        case p @ ProductDetail(_,
+        case p@ProductDetail(_,
         _,
         _,
         _,

@@ -23,6 +23,10 @@ import IODefaults._
 import net.shift.server.http.AsyncResponse
 import net.shift.server.http.Responses
 import net.shift.server.http.ContentType
+import net.shop.api.persistence.Persistence
+import net.shop.utils.ShopUtils
+
+import scala.util.Success
 
 object FormImplicits {
   implicit val o = new Ordering[Double] {
@@ -44,8 +48,8 @@ trait FormValidation extends ServiceDependencies {
 
       env.get(name) match {
         case Some(n :: _) if !n.isEmpty => f(n)
-        case Some(n) if n.isEmpty       => failed
-        case _                          => failed
+        case Some(n) if n.isEmpty => failed
+        case _ => failed
       }
     }
 
@@ -53,8 +57,8 @@ trait FormValidation extends ServiceDependencies {
     env => {
       env.get(name) match {
         case Some(n :: _) if !n.isEmpty => f(n)
-        case Some(n) if n.isEmpty       => Valid(default)
-        case _                          => Valid(default)
+        case Some(n) if n.isEmpty => Valid(default)
+        case _ => Valid(default)
       }
     }
 
@@ -62,7 +66,7 @@ trait FormValidation extends ServiceDependencies {
     env => {
       env.get(prefix + "specs") match {
         case Some(specs :: Nil) =>
-          val map = (for { kv <- specs.split("\n") } yield {
+          val map = (for {kv <- specs.split("\n")} yield {
             val split = kv.split("=")
             if (split.length == 2) {
               List(split(0).trim -> split(1).trim)
@@ -76,6 +80,19 @@ trait FormValidation extends ServiceDependencies {
 
   def validateMapField(name: String, err: String)(implicit lang: Language): ValidationFunc[ValidationMap] =
     required(name, err, s => Valid(Map(lang.name -> s)))
+
+  def checkNameExists(f: ValidationFunc[ValidationMap], fieldName: String, store: Persistence)(implicit lang: Language): ValidationFunc[ValidationMap] = {
+    env =>
+      f(env) match {
+        case r @ Valid(v) => (env.get(fieldName).map { n =>
+          store.productByName(ShopUtils.normalizeName(n.head)) match {
+            case Success(r) => Invalid(List(FieldError(fieldName, Loc.loc0(lang)("name_in_use").text)))
+            case _ => r
+          }
+        }) getOrElse r
+        case e => e
+      }
+  }
 
   def validateListField(name: String, title: String)(implicit lang: Language): ValidationFunc[ValidationList] =
     required(name, title, s => Valid(s.split("\\s*,\\s*").toList))
@@ -111,13 +128,13 @@ trait FormValidation extends ServiceDependencies {
   def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[String, FieldError] =
     required(name, title, s => store.userByEmail(s) match {
       case scala.util.Success(Some(email)) => Invalid(List(FieldError(name, Loc.loc0(lang)("user.already.exists").text)))
-      case _                               => Valid(s)
+      case _ => Valid(s)
     })
 
   def validateOptional[T](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[Option[T], FieldError] = env => {
     env.get(name) match {
       case Some(n :: _) if !n.isEmpty => Valid(f(n))
-      case _                          => Valid(None)
+      case _ => Valid(None)
     }
   }
 

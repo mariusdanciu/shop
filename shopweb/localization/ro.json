@@ -683,7 +683,12 @@
    "code" : "208",
    "name" : "logout",
    "text" : "Ieșire"
- }
+ },
+  {
+    "code" : "208",
+    "name" : "name_in_use",
+    "text" : "Denumirea este deja folosită"
+  }
  
 ]
 

@@ -63,7 +63,7 @@ object ShopUtils {
 
   def normalizeName(name: String): String = {
     Normalizer.normalize(name, Normalizer.Form.NFD)
-      .replaceAll("[\\p{InCombiningDiacriticalMarks}+\\p{Punct}]", "")
+      .replaceAll("[\\p{InCombiningDiacriticalMarks}+\\p{Punct}]", "").toLowerCase
   }
 
 }
