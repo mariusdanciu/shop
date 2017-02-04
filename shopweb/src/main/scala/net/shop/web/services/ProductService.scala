@@ -97,7 +97,7 @@ trait ProductService extends TraversingSpec
               files.map { f =>
                 IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
               }) { d => log.debug("Write files: " + d) }
-            service(_ (created.withJsonBody("{\"href\": \"" + ShopUtils.productPage(o) + "\"}")))
+            service(_ (created.withJsonBody("{\"href\": \"" + ShopUtils.productPage(cpy) + "\"}")))
           case scala.util.Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create product ", t)
