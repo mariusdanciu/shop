@@ -22,7 +22,7 @@ trait CategoryPage extends PageCommon[Request] {
           case Success(list) =>
             val items = list flatMap { cat =>
               bind(s.node) {
-                case Xml("a", a, childs) => <a href={s"/products/${itemToPath(cat)}"}>
+                case Xml("a", a, childs) => <a href={s"/products/${nameToPath(cat)}"}>
                   {childs}
                 </a> % a
                 case Xml("img", a, childs) => <img id={cat stringId} alt={cat.title_?(s.state.lang.name) + ShopUtils.OBJECT_SUFFIX}/> % (a + ("src", categoryImagePath(cat)))

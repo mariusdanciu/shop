@@ -11,7 +11,7 @@ import net.shift.server.http.Responses
 import net.shop.api.{Category, Formatter, ShopError}
 import net.shop.model.FieldError
 import net.shop.model.Formatters.CategoryWriter
-import net.shop.utils.ShopUtils.dataPath
+import net.shop.utils.ShopUtils._
 
 trait CategoryService extends TraversingSpec
     with DefaultLog
@@ -56,7 +56,10 @@ trait CategoryService extends TraversingSpec
   } yield {
     extract(r.language, None, mp) match {
       case (file, Valid(o)) =>
-        val cpy = o.copy(id = Some(id))
+        val cpy = o.copy(
+          id = Some(id),
+          name = normalizeName(o.title_?(r.language.name))
+        )
         store.updateCategories(cpy) match {
           case scala.util.Success(p) =>
             file.map { f =>
@@ -84,8 +87,10 @@ trait CategoryService extends TraversingSpec
     mp <- multipartForm
   } yield {
     extract(r.language, None, mp) match {
-      case (file, Valid(o)) =>
-
+      case (file, Valid(a)) =>
+        val o = a.copy(
+          name = normalizeName(a.title_?(r.language.name))
+        )
         store.createCategories(o) match {
           case scala.util.Success(p) =>
             file.map { f =>

@@ -46,7 +46,7 @@ trait SaveProductPage extends PageCommon[ProductPageState] {
         case Success(cats) =>
           val res = NodeSeq.fromSeq((for {c <- cats} yield {
             if (prodCats.contains(c.stringId)) {
-              <option value="c.stringId" selected="true">
+              <option value={c.stringId} selected="true">
                 {Text(c.title_?(s.state.initialState.req.language.name))}
               </option>
             } else

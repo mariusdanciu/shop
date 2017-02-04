@@ -1,6 +1,8 @@
 package net.shop
 package utils
 
+import java.text.Normalizer
+
 import net.shift.common.Config
 import net.shop.api.persistence.Persistence
 import net.shop.api.{Category, NamedItem, ProductDetail}
@@ -19,14 +21,9 @@ object ShopUtils {
   def imagePath(id: String, variant: String, prod: String): String = s"/data/products/$id/$variant/$prod"
 
   def productPage(id: String)(implicit p: Persistence): String =
-    p.productById(id) map { p => s"/product/${itemToPath(p)}" } getOrElse ("???")
+    p.productById(id) map { p => s"/product/${nameToPath(p)}" } getOrElse ("???")
 
-  def itemToPath(cat: NamedItem): String = {
-    val n = cat.name.replaceAll(" ", "-")
-    n + OBJECT_SUFFIX
-  }
-
-  def productPage(p: ProductDetail): String = s"/product/${itemToPath(p)}"
+  def productPage(p: ProductDetail): String = s"/product/${nameToPath(p)}"
 
   def imagePath(variant: String, prod: ProductDetail): String =
     prod.images match {
@@ -51,7 +48,7 @@ object ShopUtils {
 
   def price(p: Double) = if ((p % 1) == 0) "%.0f" format p else "%.2f" format p
 
-  def itemFromPath(name: String): String = {
+  def extractName(name: String): String = {
     val idx = name.indexOf(OBJECT_SUFFIX)
     if (idx < 0)
       name
@@ -59,6 +56,14 @@ object ShopUtils {
       name.substring(0, idx).replaceAll("-", " ")
   }
 
+  def nameToPath(item: NamedItem): String = {
+    val n = item.name.replaceAll(" ", "-")
+    n + OBJECT_SUFFIX
+  }
+
+  def normalizeName(name: String): String = {
+    Normalizer.normalize(name, Normalizer.Form.NFD)
+      .replaceAll("[\\p{InCombiningDiacriticalMarks}+\\p{Punct}]", "")
+  }
 
 }
-

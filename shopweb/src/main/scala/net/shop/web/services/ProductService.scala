@@ -14,6 +14,8 @@ import net.shop.api.{ProductDetail, ShopError}
 import net.shop.model.FieldError
 import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils.dataPath
+import net.shop.utils.ShopUtils._
+
 
 trait ProductService extends TraversingSpec
   with DefaultLog
@@ -45,7 +47,9 @@ trait ProductService extends TraversingSpec
   } yield {
     extract(r.language, Some(pid), "edit_", mp) match {
       case (files, Valid(o)) =>
-        val cpy = o.copy(images = Set(files.map(f => f._2): _*).toList)
+        val cpy = o.copy(
+          name = normalizeName(o.title_?(r.language.name)),
+          images = Set(files.map(f => f._2): _*).toList)
 
         (for {
           p <- store.productById(pid)
@@ -80,7 +84,9 @@ trait ProductService extends TraversingSpec
 
     extracted match {
       case (files, Valid(o)) =>
-        val cpy = o.copy(images = Set(files.map(f => f._2): _*).toList)
+        val cpy = o.copy(
+          name = normalizeName(o.title_?(r.language.name)),
+          images = Set(files.map(f => f._2): _*).toList)
         val create = duration(store.createProducts(cpy)) { d =>
           log.debug("Persist : " + d)
         }
@@ -155,7 +161,7 @@ trait ProductService extends TraversingSpec
         _,
         _,
         _) if (discountPrice >= price) => Invalid(List(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text)))
-        case p => Valid(p.copy(name = p.title_?(loc.name)))
+        case p => Valid(p)
       })
     } catch {
       case e: Exception =>

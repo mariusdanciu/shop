@@ -186,7 +186,7 @@ trait ProductDetailPage extends PageCommon[ProductPageState] {
       case Failure(t) =>
         Path(s.state.initialState.req.uri.path) match {
           case Path(_, _ :: _ :: name :: _) =>
-            store.productByName(itemFromPath(name)) match {
+            store.productByName(extractName(name)) match {
               case Failure(ShopError(msg, _)) => ShiftFailure(Loc.loc0(s.state.lang)(msg).text).toTry
               case Failure(t) => ShiftFailure(Loc.loc0(s.state.lang)("no.product").text).toTry
               case s => s

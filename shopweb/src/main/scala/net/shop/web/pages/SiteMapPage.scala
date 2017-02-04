@@ -19,7 +19,7 @@ trait SiteMapPage extends PageCommon[Request] {
         for {c <- cats} yield {
           bind(s.node) {
             case Xml("loc", attrs, _) =>
-              Xml("loc", attrs, Text(s"http://${cfg.string("host")}/products/${ShopUtils.itemToPath(c)}"))
+              Xml("loc", attrs, Text(s"http://${cfg.string("host")}/products/${ShopUtils.nameToPath(c)}"))
             case n => n
           } getOrElse s.node
         }
@@ -33,7 +33,7 @@ trait SiteMapPage extends PageCommon[Request] {
         for {c <- prods} yield {
           bind(s.node) {
             case Xml("loc", attrs, _) =>
-              Xml("loc", attrs, Text(s"http://${cfg.string("host")}/product/${ShopUtils.itemToPath(c)}"))
+              Xml("loc", attrs, Text(s"http://${cfg.string("host")}/product/${ShopUtils.nameToPath(c)}"))
             case n => n
           } getOrElse s.node
         }

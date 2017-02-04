@@ -34,7 +34,7 @@ trait ProductsPage extends PageCommon[Request] {
 
       val c = (for {
         name <- ProductsPage.extractCat(s.state.initialState).toOption
-        cat <- store.categoryByName(itemFromPath(name)).toOption
+        cat <- store.categoryByName(extractName(name)).toOption
       } yield {
         Text(cat.title_?(s.state.lang.name))
       }) orElse {
@@ -72,9 +72,9 @@ trait ProductsPage extends PageCommon[Request] {
         case Success(list) =>
           s.node match {
             case e: Elem =>
-              val v = list.map(c => (<option value={c.id getOrElse "?"}>
+              val v = list.map(c => <option value={c.id getOrElse "?"}>
                 {c.title_?(s.state.lang.name)}
-              </option>)).toSeq
+              </option>).toSeq
               Success((s.state.initialState, e / NodeSeq.fromSeq(v)))
             case _ => Success((s.state.initialState, NodeSeq.Empty))
           }
@@ -104,7 +104,7 @@ trait ProductsPage extends PageCommon[Request] {
       case Xml("a", HasClasses(_ :: "add_to_cart_box" :: _, a), childs) => <a id={prod.stringId}>
         {childs}
       </a> % a
-      case Xml("a", a: XmlAttr, c) => Xml("a", a + ("href", s"/product/${itemToPath(prod)}")) / c
+      case Xml("a", a: XmlAttr, c) => Xml("a", a + ("href", s"/product/${nameToPath(prod)}")) / c
       case Xml("img", a, _) =>
         <img src={imagePath("normal", prod)} alt={prod.title_?(s.state.lang.name) + ShopUtils.OBJECT_SUFFIX}></img> % a
       case Xml("h3", a, _) =>
@@ -130,7 +130,7 @@ object ProductsQuery {
   def fetch(r: Request, store: Persistence): Try[Iterator[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
     (ProductsPage.extractCat(r), r.uri.paramValue("search")) match {
-      case (Success(name), None) => store.categoryProducts(itemFromPath(name), spec)
+      case (Success(name), None) => store.categoryProducts(extractName(name), spec)
       case (_, Some(search :: _)) => store.searchProducts(search, spec)
       case _ => Success(Iterator.empty)
     }
