@@ -1327,13 +1327,17 @@ form .row {
 	position: relative;
 }
 
+.login {
+    padding-bottom: 10px;
+}
+
 .login, .search {
 	display: none;
 	text-align: center;
 }
 
 .search {
-	margin-top: 20px;
+	 padding-bottom: 10px;
 }
 
 .search input {
@@ -1446,3 +1450,21 @@ form .row {
 	opacity: 0.3;
 }
 /*# sourceMappingURL=style.css.map */
+
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(1.5); /* IE */
+  -moz-transform: scale(1.5); /* FF */
+  -webkit-transform: scale(1.5); /* Safari and Chrome */
+  -o-transform: scale(1.5); /* Opera */
+  padding: 10px;
+}
+
+input[type=checkbox]:checked + label img {
+    opacity : 1;
+}
+
+label img {
+    opacity : 0.3;
+}

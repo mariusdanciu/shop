@@ -46,18 +46,30 @@ trait ProductService extends TraversingSpec
     mp <- multipartForm
   } yield {
     extract(r.language, Some(pid), "edit_", mp, false) match {
-      case (files, Valid(o)) =>
+      case (files, params, Valid(o)) =>
         val cpy = o.copy(
           name = normalizeName(o.title_?(r.language.name)),
           images = Set(files.map(f => f._2): _*).toList)
 
+          val delImages = params.get("delimg") match {
+            case Some(list) => list
+            case _ => Nil
+          }
+
         (for {
           p <- store.productById(pid)
-          u <- store.updateProducts(cpy.copy(images = p.images ++ cpy.images))
+          u <- store.updateProducts(cpy.copy(images = (p.images ++ cpy.images).filter( e => ! delImages.contains(e))))
         } yield {
           files.map { f =>
-            IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${u.head}/${f._1}")))
+            IO.arrayProducer(f._3)(fs.writer(Path(s"$dataPath/products/${u.head}/${f._1}")))
           }
+
+          delImages.map { img =>
+            fs.deletePath(Path(s"$dataPath/products/${u.head}/thumb/$img"))
+            fs.deletePath(Path(s"$dataPath/products/${u.head}/normal/$img"))
+            fs.deletePath(Path(s"$dataPath/products/${u.head}/large/$img"))
+          }
+
           service(_ (ok.withJsonBody("{\"href\": \"" + ShopUtils.productPage(pid) + "\"}")))
         }) match {
           case scala.util.Success(s) => s
@@ -65,7 +77,7 @@ trait ProductService extends TraversingSpec
           case scala.util.Failure(t) => service(_ (serverError))
         }
 
-      case (_, Invalid(msgs)) =>
+      case (_, _, Invalid(msgs)) =>
         implicit val l = r.language
         validationFail(msgs)
     }
@@ -83,7 +95,7 @@ trait ProductService extends TraversingSpec
     }
 
     extracted match {
-      case (files, Valid(o)) =>
+      case (files, params, Valid(o)) =>
         val cpy = o.copy(
           name = normalizeName(o.title_?(r.language.name)),
           images = Set(files.map(f => f._2): _*).toList)
@@ -104,7 +116,7 @@ trait ProductService extends TraversingSpec
             service(_ (serverError))
         }
 
-      case (_, Invalid(msgs)) =>
+      case (_, _, Invalid(msgs)) =>
         log.debug("Send FAIL")
         implicit val l = r.language
         validationFail(msgs)
@@ -118,7 +130,7 @@ trait ProductService extends TraversingSpec
                       fieldPrefix: String,
                       multipart: MultiPartBody,
                       checkExists: Boolean
-                     ): (List[(String, String, Array[Byte])], Validation[ProductDetail, FieldError]) = {
+                     ): (List[(String, String, Array[Byte])], Map[String, List[String]], Validation[ProductDetail, FieldError]) = {
 
     val (bins, text) = multipart.parts partition {
       case BinaryPart(h, content) => true
@@ -155,7 +167,7 @@ trait ProductService extends TraversingSpec
       Validator(optionalListField(fieldPrefix + "keywords"))
 
     try {
-      (files, productFormlet validate params flatMap {
+      (files, params, productFormlet validate params flatMap {
         case p@ProductDetail(_,
         _,
         _,
@@ -175,8 +187,7 @@ trait ProductService extends TraversingSpec
       })
     } catch {
       case e: Exception =>
-        e.printStackTrace()
-        (Nil, Invalid(List(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text))))
+        (Nil, params, Invalid(List(FieldError("edit_discount_price", Loc.loc0(loc)("field.discount.smaller").text))))
     }
   }
 

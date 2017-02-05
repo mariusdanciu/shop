@@ -141,7 +141,7 @@ trait FormValidation extends ServiceDependencies {
   def validateDefault[S](v: S)(implicit lang: Language): ValidationInput => Validation[S, FieldError] =
     env => Valid(v)
 
-  def extractParams(text: List[MultiPart]) = ((Map.empty: Map[String, List[String]]) /: text) {
+  def extractParams(text: List[MultiPart]): Map[String, List[String]] = ((Map.empty: Map[String, List[String]]) /: text) {
     case (acc, TextPart(h, content)) =>
       (for {
         ContentDisposition(v, par) <- h.get("Content-Disposition")

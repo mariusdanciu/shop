@@ -69,8 +69,9 @@ trait SaveProductPage extends PageCommon[ProductPageState] {
         (ShopUtils.productImages("thumb", p) zip p.images).map {
           case (img, name) =>
             val red: NodeSeq = bind(s.node) {
-              case Xml("img", a, _) => <img src={img}/>
-              case Xml("input", a, _) => <input value={name}/> % a
+              case Xml("img", a, _) => <img src={img}/> % a
+              case Xml("label", a, childs) => <label for={name}/> % a / childs
+              case Xml("input", a, _) => <input id={name} value={name}/> % a
             } getOrElse NodeSeq.Empty
             red
         }
