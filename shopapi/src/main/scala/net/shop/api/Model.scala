@@ -46,7 +46,6 @@ case class ProductDetail(id: Option[String] = None,
                          unique: Boolean,
                          stock: Option[Int],
                          categories: List[String],
-                         images: List[String],
                          keyWords: List[String]) extends NamedItem {
 
   def title_?(l: String) = title.getOrElse(l, "???")

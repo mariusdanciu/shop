@@ -7,7 +7,7 @@ import net.shift.template.Binds.bind
 import net.shift.template.SnipState
 import net.shift.template.Snippet._
 import net.shop.api.{ProductDetail, ShopError}
-import net.shop.utils.ShopUtils
+import net.shop.utils.{ShopUtils, ThumbPic}
 
 import scala.util.{Failure, Success, Try}
 import scala.xml.{NodeSeq, Text}
@@ -66,7 +66,7 @@ trait SaveProductPage extends PageCommon[ProductPageState] {
     s =>
       val xml = s.state.initialState.product map { p =>
 
-        (ShopUtils.productImages("thumb", p) zip p.images).map {
+        (ShopUtils.productImages(ThumbPic, p) zip ShopUtils.prodImageFiles(p.stringId)).map {
           case (img, name) =>
             val red: NodeSeq = bind(s.node) {
               case Xml("img", a, _) => <img src={img}/> % a

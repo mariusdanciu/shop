@@ -9,7 +9,7 @@ import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shift.template._
 import net.shop.api.{ProductDetail, ShopError}
-import net.shop.utils.ShopUtils
+import net.shop.utils.{LargePic, NormalPic, ShopUtils, ThumbPic}
 import net.shop.utils.ShopUtils._
 
 import scala.util.{Failure, Success, Try}
@@ -35,7 +35,7 @@ trait ProductDetailPage extends PageCommon[ProductPageState] {
   val prodImageUrl = inline[ProductPageState]("prodImageUrl") {
     s =>
       product(s) map {
-        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + imagePath("large", p))
+        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + imagePath(LargePic, p))
       }
   }
   val checkProd = reqSnip("checkProd") {
@@ -49,25 +49,25 @@ trait ProductDetailPage extends PageCommon[ProductPageState] {
   val images = reqSnip("images") {
     s =>
       (product(s) flatMap { prod =>
-        prod.images match {
+        prodImageFiles(prod.stringId) match {
           case Nil => Success(s.state.initialState, NodeSeq.Empty)
           case images =>
             bind(s.node) {
 
               case Xml("b:img", a, _) =>
 
-                val p = imagePath(prod.stringId, "normal", prod.images.head)
-                val large = imagePath(prod.stringId, "large", prod.images.head)
+                val p = imagePath(NormalPic, prod.stringId)
+                val large = imagePath(LargePic, prod.stringId)
 
                 Xml("img", a + ("src", p) + ("alt", prod.title_?(s.state.lang.name) + ShopUtils.OBJECT_SUFFIX) + ("data-zoom-image", large))
 
               case Xml(e, HasId("thumb", a), _) =>
                 NodeSeq.fromSeq(for {
-                  p <- prod.images zipWithIndex
+                  p <- images zipWithIndex
                 } yield {
-                  val normal = imagePath(prod.stringId, "normal", p._1)
-                  val large = imagePath(prod.stringId, "large", p._1)
-                  val thumb = imagePath(prod.stringId, "thumb", p._1)
+                  val normal = imagePath(NormalPic, prod.stringId, p._1)
+                  val large = imagePath(LargePic, prod.stringId, p._1)
+                  val thumb = imagePath(ThumbPic, prod.stringId, p._1)
 
                   (Xml(e, a - "id") / <a href="#" data-image={normal} data-zoom-image={large}>
                     <img id={s"img_${p._2}"} src={thumb} alt={prod.title_?(s.state.lang.name) + ShopUtils.OBJECT_SUFFIX}/>

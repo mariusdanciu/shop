@@ -9,7 +9,7 @@ import net.shift.template.Binds.bind
 import net.shift.template.{HasClass, HasClasses, SnipState}
 import net.shop.api.persistence.{NoSort, Persistence, SortSpec}
 import net.shop.api.{ProductDetail, ShopError}
-import net.shop.utils.ShopUtils
+import net.shop.utils.{NormalPic, ShopUtils}
 import net.shop.utils.ShopUtils.{errorTag, imagePath, _}
 
 import scala.util.{Failure, Success, Try}
@@ -106,7 +106,7 @@ trait ProductsPage extends PageCommon[Request] {
       </a> % a
       case Xml("a", a: XmlAttr, c) => Xml("a", a + ("href", s"/product/${nameToPath(prod)}")) / c
       case Xml("img", a, _) =>
-        <img src={imagePath("normal", prod)} alt={prod.title_?(s.state.lang.name) + ShopUtils.OBJECT_SUFFIX}></img> % a
+        <img src={imagePath(NormalPic, prod)} alt={prod.title_?(s.state.lang.name) + ShopUtils.OBJECT_SUFFIX}></img> % a
       case Xml("h3", a, _) =>
         <h3>
           {prod title_? (s.state.lang.name)}

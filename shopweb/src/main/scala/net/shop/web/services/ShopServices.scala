@@ -56,6 +56,12 @@ trait ShopServices extends TraversingSpec
     with SecuredService
     with ServiceDependencies { self =>
 
+  val cartItemNode = new CartItemNode {
+    val store = self.store
+    val sf = self.fs
+    val cfg = self.cfg
+  }
+
   def notFoundService = for {
     r <- req
   } yield {
@@ -179,7 +185,7 @@ trait ShopServices extends TraversingSpec
           (item, index) <- readCart(c.cookieValue).items.zipWithIndex
           prod <- store.productById(item.id).toOption
         } yield {
-          Html5.runPageFromFile(PageState(CartState(index, item, prod), r.language), Path("web/templates/cartitem.html"), CartItemNode).map(_._2 toString)
+          Html5.runPageFromFile(PageState(CartState(index, item, prod), r.language), Path("web/templates/cartitem.html"), cartItemNode).map(_._2 toString)
         }) match {
           case Success(list)                         => resp(ok.withJsonBody(write(list)))
           case scala.util.Failure(ShopError(msg, _)) => service(_(ok.withTextBody(Loc.loc0(r.language)(msg).text)))

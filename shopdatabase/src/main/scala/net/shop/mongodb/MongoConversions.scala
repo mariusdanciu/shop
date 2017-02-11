@@ -130,7 +130,6 @@ trait MongoConversions {
     db += "presentationPosition" -> obj.presentationPosition
     db += "unique" -> obj.unique
     db += "categories" -> obj.categories
-    db += "images" -> obj.images
     db += "keywords" -> obj.keyWords
     db.result
   }
@@ -176,7 +175,6 @@ trait MongoConversions {
         presentationPosition = obj.getAs[Int]("presentationPosition"),
         unique = obj.getAsOrElse[Boolean]("unique", false),
         categories = obj.getAsOrElse[List[String]]("categories", Nil),
-        images = obj.getAsOrElse[List[String]]("images", Nil),
         keyWords = obj.getAsOrElse[List[String]]("keywords", Nil))
     } catch {
       case e: Exception =>

@@ -8,7 +8,7 @@ import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shift.template.{HasClass, HasName}
 import net.shop.api.{Address, ProductDetail, Cart => CCart}
-import net.shop.utils.ShopUtils
+import net.shop.utils.{ShopUtils, ThumbPic}
 import net.shop.utils.ShopUtils._
 import org.json4s.native.JsonMethods.parse
 import org.json4s.{DefaultFormats, string2JsonInput}
@@ -61,7 +61,7 @@ trait CartPage extends PageCommon[CartInfo] {
           case Xml("a", HasClass("hover", a), childs) =>
             Xml("a", a + ("href", ShopUtils.productPage(prod.stringId)), childs)
           case Xml("img", a, _) => Xml("img", a +
-            ("src", ShopUtils.imagePath(prod.stringId, "thumb", prod.images.head)) +
+            ("src", ShopUtils.imagePath(ThumbPic, prod.stringId)) +
             ("alt", prod.title_?(s.state.lang.name) + ShopUtils.OBJECT_SUFFIX))
           case Xml(name, HasClass("prod_desc", a), childs) =>
             Xml(name, a) / Text(prod title_? (s.state.lang.name))

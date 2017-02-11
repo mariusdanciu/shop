@@ -3,11 +3,28 @@ package utils
 
 import java.text.Normalizer
 
-import net.shift.common.Config
+import net.shift.common.{Config, Path}
+import net.shift.io.FileSystem
 import net.shop.api.persistence.Persistence
 import net.shop.api.{Category, NamedItem, ProductDetail}
 
-import scala.util.Random
+import scala.util.{Random, Try}
+
+trait ProductImageVariant {
+  val name: String
+}
+
+case object ThumbPic extends ProductImageVariant {
+  val name = "thumb"
+}
+
+case object NormalPic extends ProductImageVariant {
+  val name = "normal"
+}
+
+case object LargePic extends ProductImageVariant {
+  val name = "large"
+}
 
 object ShopUtils {
 
@@ -18,22 +35,36 @@ object ShopUtils {
 
   def categoryImagePath(cat: Category): String = s"/data/categories/${cat.stringId}.png"
 
-  def imagePath(id: String, variant: String, prod: String): String = s"/data/products/$id/$variant/$prod"
-
   def productPage(id: String)(implicit p: Persistence): String =
     p.productById(id) map { p => s"/product/${nameToPath(p)}" } getOrElse ("???")
 
   def productPage(p: ProductDetail): String = s"/product/${nameToPath(p)}"
 
-  def imagePath(variant: String, prod: ProductDetail): String =
-    prod.images match {
-      case h :: _ => s"/data/products/${prod.stringId}/$variant/${h}"
+  def prodImageFiles(prodId: String)(implicit fs: FileSystem, cfg: Config): Seq[String] = {
+    val path = s"$dataPath/products/${prodId}/${ThumbPic.name}"
+    fs.ls(Path(path)).map { s =>
+      s.map {
+        _.toString
+      }
+    } getOrElse Nil
+  }
+
+  def imagePath(variant: ProductImageVariant, prodId: String, file: String)(implicit fs: FileSystem, cfg: Config): String =
+    s"/data/products/${prodId}/${variant.name}/$file"
+
+  def imagePath(variant: ProductImageVariant, prodId: String)(implicit fs: FileSystem, cfg: Config): String =
+    prodImageFiles(prodId) match {
+      case h :: _ => s"/data/products/${prodId}/${variant.name}/${h}"
       case Nil => ""
     }
 
-  def productImages(variant: String, prod: ProductDetail): Seq[String] =
-    prod.images map {
-      p => s"/data/products/${prod.stringId}/$variant/${p}"
+
+  def imagePath(variant: ProductImageVariant, prod: ProductDetail)(implicit fs: FileSystem, cfg: Config): String =
+    imagePath(variant, prod.stringId)
+
+  def productImages(variant: ProductImageVariant, prod: ProductDetail)(implicit fs: FileSystem, cfg: Config): Seq[String] =
+    prodImageFiles(prod.stringId) map {
+      p => s"/data/products/${prod.stringId}/${variant.name}/${p}"
     }
 
   def errorTag(text: String) = <div class="error">

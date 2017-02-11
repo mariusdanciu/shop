@@ -10,6 +10,7 @@ import net.shift.template.Binds.bind
 import net.shift.template.{HasClass, HasId, HasName, HasValue}
 import net.shop.api._
 import net.shop.utils.ShopUtils._
+import net.shop.utils.ThumbPic
 
 import scala.util.{Failure, Success, Try}
 import scala.xml.NodeSeq.seqToNodeSeq
@@ -101,7 +102,7 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] {
 
               val v = orders.flatMap { o =>
 
-                (bind(s.node.head.child) {
+                bind(s.node.head.child) {
 
                   case Xml(_, HasId("person_info", a), childs) => o match {
                     case OrderLog(id, time, Person(fn, ln, cnp), Address(_, _, country, region, city, address, zip), email, phone, _, _, _) =>
@@ -126,7 +127,7 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] {
                       <tr> {
                         val prod = store.productById(item.id)
                         val title = prod.map { _.title_?(s.state.lang.name) } getOrElse ""
-                        def img(a: XmlAttr): NodeSeq = prod.map { p => Xml("img", a + ("src", imagePath(item.id, "thumb", p.images.head))) } getOrElse NodeSeq.Empty
+                        def img(a: XmlAttr): NodeSeq = prod.map { p => Xml("img", a + ("src", imagePath(ThumbPic, item.id))) } getOrElse NodeSeq.Empty
 
                         bind(childs) {
                           case HasClass("c1", a)               => img(a)
@@ -167,7 +168,7 @@ trait AccountSettingsPage extends PageCommon[SettingsPageState] {
 
                     e getOrElse NodeSeq.Empty
 
-                }) getOrElse NodeSeq.Empty
+                } getOrElse NodeSeq.Empty
               }
               (SettingsPageState(s.state.initialState.req, Some(u)), NodeSeq.fromSeq(v.toSeq))
             }

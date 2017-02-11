@@ -3,7 +3,7 @@
 .numeprodus {padding-right:3px} 
 .margine{margin-top:60px}
 .submeniu {background: #a980cd; width:100% !important;}
-.submeniu .nav li a {padding: 10px 20px !important; border: 2px solid #fff !important;background: #a980cd !important;}
+.submeniu .nav li a {padding: 10px 16px !important; border: 2px solid #fff !important;background: #a980cd !important;}
 .submeniu .nav li a:hover {background: #fff !important;}
 .submeniu .nav li.produsehandmade {color:#fff; text-transform: capitalize !important; font-weight: 600}
 .submeniu .main-nav {padding: 15px 0 !important;}
@@ -270,7 +270,7 @@ h1, h2, h3, h4, h5, h6 {
 	-webkit-transition: 0.5s;
 	-o-transition: 0.5s;
 	transition: 0.5s;
-	padding: 10px 20px;
+	padding: 10px 18px;
 	border: 2px solid #a980cd;
 	border-radius: 5px;
 	background: #a980cd;
@@ -1453,7 +1453,6 @@ form .row {
 
 input[type=checkbox]
 {
-  /* Double-sized Checkboxes */
   -ms-transform: scale(1.5); /* IE */
   -moz-transform: scale(1.5); /* FF */
   -webkit-transform: scale(1.5); /* Safari and Chrome */

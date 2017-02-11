@@ -47,9 +47,7 @@ trait ProductService extends TraversingSpec
   } yield {
     extract(r.language, Some(pid), "edit_", mp, false) match {
       case (files, params, Valid(o)) =>
-        val cpy = o.copy(
-          name = normalizeName(o.title_?(r.language.name)),
-          images = Set(files.map(f => f._2): _*).toList)
+        val cpy = o.copy(name = normalizeName(o.title_?(r.language.name)))
 
           val delImages = params.get("delimg") match {
             case Some(list) => list
@@ -58,7 +56,7 @@ trait ProductService extends TraversingSpec
 
         (for {
           p <- store.productById(pid)
-          u <- store.updateProducts(cpy.copy(images = (p.images ++ cpy.images).filter( e => ! delImages.contains(e))))
+          u <- store.updateProducts(cpy)
         } yield {
           files.map { f =>
             IO.arrayProducer(f._3)(fs.writer(Path(s"$dataPath/products/${u.head}/${f._1}")))
@@ -97,8 +95,7 @@ trait ProductService extends TraversingSpec
     extracted match {
       case (files, params, Valid(o)) =>
         val cpy = o.copy(
-          name = normalizeName(o.title_?(r.language.name)),
-          images = Set(files.map(f => f._2): _*).toList)
+          name = normalizeName(o.title_?(r.language.name)))
         val create = duration(store.createProducts(cpy)) { d =>
           log.debug("Persist : " + d)
         }
@@ -163,7 +160,6 @@ trait ProductService extends TraversingSpec
       Validator(validateBoolean(fieldPrefix + "unique")) <*>
       Validator(validateOptional(fieldPrefix + "stock", stockFunc)) <*>
       Validator(validateListField(fieldPrefix + "categories", ?("categories").text)) <*>
-      Validator(validateDefault(Nil)) <*>
       Validator(optionalListField(fieldPrefix + "keywords"))
 
     try {
@@ -175,7 +171,6 @@ trait ProductService extends TraversingSpec
         _,
         price,
         Some(discountPrice),
-        _,
         _,
         _,
         _,

@@ -9,6 +9,7 @@ import net.shift.template.Snippet._
 import net.shift.template.Template._
 import net.shift.template._
 import net.shop.api._
+import net.shop.utils.NormalPic
 import net.shop.utils.ShopUtils._
 import net.shop.web.services.ServiceDependencies
 
@@ -71,7 +72,7 @@ trait OrderPage extends DynamicContent[OrderState] with ServiceDependencies {
                   case Xml("a", HasClass("page", a), childs) =>
                     (<a href={s"http://${cfg.string("host")}:${cfg.string("port")}${productPage(prod.id)}"}/> % a) / childs
                   case Xml("img", a, _) =>
-                    <img/> % (a + ("src", s"http://${cfg.string("host")}:${cfg.string("port")}${imagePath(prod.id, "normal", p.images.head)}"))
+                    <img/> % (a + ("src", s"http://${cfg.string("host")}:${cfg.string("port")}${imagePath(NormalPic, prod.id)}"))
                   case Xml("td", HasClass("c1", a), _) => <td>{ p.title_?(s.state.lang.name) }</td> % a
                   case Xml("td", HasClass("c2", a), _) => <td>{ prod.quantity }</td> % a
                   case Xml("td", HasClass("c3", a), _) => <td>{ p.actualPrice }</td> % a
