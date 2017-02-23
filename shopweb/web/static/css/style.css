@@ -99,7 +99,7 @@ figure:hover+span {
 }
 
 .intro h1, .intro-cat h1 {
-	text-transform: uppercase;
+	text-transform: capitalize;
 	font-size: 38px;
 	font-weight: bold;
 	text-transform: uppercase;
@@ -117,7 +117,6 @@ figure:hover+span {
 }
 
 .intro p {
-	text-transform: uppercase;
 	font-size: 18px;
 	font-weight: bold;
 	position: relative;
