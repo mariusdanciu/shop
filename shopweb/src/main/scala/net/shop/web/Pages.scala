@@ -10,7 +10,8 @@ import net.shop.web.services.ServiceDependencies
 /**
   * Created by marius on 1/15/2017.
   */
-case class Pages(cfg: Config, store: Persistence) extends ServiceDependencies { pages =>
+case class Pages(cfg: Config, store: Persistence) extends ServiceDependencies {
+  pages =>
 
   val catPage = new CategoryPage {
     val cfg = pages.cfg
@@ -38,6 +39,11 @@ case class Pages(cfg: Config, store: Persistence) extends ServiceDependencies { 
   }
 
   val saveProductPage = new SaveProductPage {
+    val cfg = pages.cfg
+    val store = pages.store
+  }
+
+  val saveCategoryPage = new SaveCategoryPage {
     val cfg = pages.cfg
     val store = pages.store
   }

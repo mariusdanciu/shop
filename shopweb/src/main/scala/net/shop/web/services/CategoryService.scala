@@ -8,9 +8,11 @@ import net.shift.engine.http.{BinaryPart, MultiPartBody}
 import net.shift.io.{FileSystem, IO, LocalFileSystem}
 import net.shift.loc.{Language, Loc}
 import net.shift.server.http.Responses
+import net.shift.server.http.Responses.created
 import net.shop.api.{Category, Formatter, ShopError}
 import net.shop.model.FieldError
 import net.shop.model.Formatters.CategoryWriter
+import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils._
 
 trait CategoryService extends TraversingSpec
@@ -21,7 +23,7 @@ trait CategoryService extends TraversingSpec
 
   def getCategory(implicit fs: FileSystem) = for {
     r <- get
-    Path(_, "category" :: id :: Nil) <- path
+    Path(_, _ :: "category" :: id :: Nil) <- path
     user <- auth
   } yield {
     store.categoryById(id) match {
@@ -36,7 +38,7 @@ trait CategoryService extends TraversingSpec
 
   def deleteCategory(implicit fs: FileSystem) = for {
     r <- delete
-    Path(_, "category" :: "delete" :: id :: Nil) <- path
+    Path(_, _ :: "category" :: "delete" :: id :: Nil) <- path
     user <- auth
   } yield {
     store.deleteCategories(id) match {
@@ -50,11 +52,11 @@ trait CategoryService extends TraversingSpec
 
   def updateCategory(implicit fs: FileSystem) = for {
     r <- post
-    Path(_, "category" :: "update" :: id :: Nil) <- path
+    Path(_, _ :: "category" :: "update" :: id :: Nil) <- path
     user <- auth
     mp <- multipartForm
   } yield {
-    extract(r.language, None, mp) match {
+    extract(r.language, "update_", None, mp) match {
       case (file, Valid(o)) =>
         val cpy = o.copy(
           id = Some(id),
@@ -82,11 +84,11 @@ trait CategoryService extends TraversingSpec
 
   def createCategory = for {
     r <- post
-    Path(_, "category" :: "create" :: Nil) <- path
+    Path(_, _ :: "category" :: "create" :: Nil) <- path
     user <- auth
     mp <- multipartForm
   } yield {
-    extract(r.language, None, mp) match {
+    extract(r.language, "create_", None, mp) match {
       case (file, Valid(a)) =>
         val o = a.copy(
           name = normalizeName(a.title_?(r.language.name))
@@ -96,7 +98,7 @@ trait CategoryService extends TraversingSpec
             file.map { f =>
               IO.arrayProducer(f._2)(LocalFileSystem.writer(Path(s"${dataPath}/categories/${p.head}.png")))
             }
-            service(_(Responses.created))
+            service(_ (created.withJsonBody("{\"href\": \"/\"}")))
 
           case scala.util.Failure(ShopError(msg, _)) => service(_(Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
@@ -111,7 +113,8 @@ trait CategoryService extends TraversingSpec
 
   }
 
-  private def extract(implicit loc: Language, id: Option[String], multipart: MultiPartBody): (Option[(String, Array[Byte])], Validation[Category, FieldError]) = {
+  private def extract(implicit loc: Language, fieldPrefix: String, id: Option[String], multipart: MultiPartBody)
+  : (Option[(String, Array[Byte])], Validation[Category, FieldError]) = {
 
     val (bins, text) = multipart.parts partition {
       case BinaryPart(h, content) => true
@@ -126,8 +129,8 @@ trait CategoryService extends TraversingSpec
 
     val categoryFormlet = Validator(category) <*>
       Validator(validateDefault("")) <*>
-      Validator(validateInt("pos", ?("list.pos").text)) <*>
-      Validator(validateMapField("title", ?("title").text))
+      Validator(validateInt(fieldPrefix + "pos", ?("list.pos").text)) <*>
+      Validator(validateMapField(fieldPrefix + "title", ?("title").text))
 
     val v = categoryFormlet validate params
     (file, v)

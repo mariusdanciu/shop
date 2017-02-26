@@ -98,6 +98,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       products(r) |
       product(r, u) |
       saveProduct(r, u) |
+      saveCategory(r, u) |
       getCart() |
       orderService.order |
       productService.createProduct |
@@ -127,6 +128,15 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       _ <- userRequired(Loc.loc0(req.language)("login.fail").text)
       r <- permissions("Unauthorized", Permission("write"))
     } yield r, ProductPageState.build(req))
+
+  def saveCategory(req: Request, u: Option[User]) = pageWithRules(Path("web/savecategory.html"), pages.saveCategoryPage,
+    for {
+      _ <- get
+      Path(_, _ :: "savecategory" :: _) <- path
+      _ <- userRequired(Loc.loc0(req.language)("login.fail").text)
+      r <- permissions("Unauthorized", Permission("write"))
+    } yield r, CategoryPageState.build(req))
+
 
   def product(req: Request, u: Option[User]) = pageWithRules(Path("web/product.html"), pages.prodDetailPage,
     for {

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+
+    <!-- template:headers -->
+
+    <title>idid.ro - Creaza un produs nou</title>
+</head>
+
+<body>
+
+<div class="box-wrap-all">
+    <div class="box-wrap">
+
+        <!-- template:menu -->
+
+        <div class="intro-cat" data-animate-effect="fadeIn">
+            <h2>Editează categoria</h2>
+        </div>
+
+        <div id="fh5co-media-section">
+            <div class="container">
+
+                <form action="<!--inline:path-->" id="upload_form" method="POST">
+
+                    <div class="upload_form_fields">
+
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="<!--inline:field_prefix-->_title"> <!-- loc:title --></label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="<!--inline:field_prefix-->_title" type="text"
+                                       name="<!--inline:field_prefix-->_title" value="<!-- inline:cat(title) -->"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <label for="<!--inline:field_prefix-->_pos"> <!-- loc:list.pos -->
+                                </label>
+                            </div>
+                            <div class="col-md-4">
+                                <input id="<!--inline:field_prefix-->_pos" type="text"
+                                       name="<!--inline:field_prefix-->_pos"
+                                       value="<!-- inline:cat(pos) -->"/>
+                            </div>
+                        </div>
+
+                        <div class="row pad15H">
+                            <input type="file" id="fileselect" name="files"
+                                   multiple="multiple"/>
+                        </div>
+                    </div>
+                </form>
+                <div class="row top15">
+                    <div id="save_category" class="margin15 btn">Salvează</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- template:footermenu -->
+    </div>
+    <!-- template:footer -->
+</div>
+<!-- template:endscripts -->
+<script src="/static/js/admin.js"></script>
+<script src="/static/js/savecategory.js"></script>
+</body>
+</html>
+
