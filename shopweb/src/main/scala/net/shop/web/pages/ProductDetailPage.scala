@@ -29,13 +29,13 @@ trait ProductDetailPage extends PageCommon[ProductPageState] {
   val pageUrl = inline[ProductPageState]("pageUrl") {
     s =>
       product(s) map {
-        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + s"/product/${p.stringId}")
+        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + s"/product/${ShopUtils.nameToPath(p)}")
       }
   }
   val prodImageUrl = inline[ProductPageState]("prodImageUrl") {
     s =>
       product(s) map {
-        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + imagePath(LargePic, p))
+        p => (s.state.initialState, "http://" + cfg.string("host", "idid.ro") + imagePath(NormalPic, p))
       }
   }
   val checkProd = reqSnip("checkProd") {

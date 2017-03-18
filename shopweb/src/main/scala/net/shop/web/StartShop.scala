@@ -1,13 +1,14 @@
 package net.shop
 package web
 
-import net.shift.common.{Config, DefaultLog, Path}
+import net.shift.common.{Config, DefaultLog, FileSplit, Path}
 import net.shift.engine.ShiftApplication
+import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.HttpPredicates._
-import net.shift.io.LocalFileSystem
+import net.shift.io.{FileSystem, LocalFileSystem}
 import net.shift.loc.{Language, Loc}
 import net.shift.security.{Permission, User}
-import net.shift.server.http.{HttpProtocolBuilder, Request}
+import net.shift.server.http.{ContentType, ExtentionToMime, HttpProtocolBuilder, Request, Responses, TextHeader}
 import net.shift.server.{Server, ServerSpecs}
 import net.shop.api.persistence.Persistence
 import net.shop.mongodb.MongoDBPersistence
@@ -20,7 +21,7 @@ object StartShop extends App with DefaultLog {
   implicit val fs = LocalFileSystem
   PropertyConfigurator.configure("config/log4j.properties")
 
-  for { cfg <- Config.load(profile) } yield {
+  for {cfg <- Config.load(profile)} yield {
 
     val port = cfg.int("server.port")
     val dbPass = args.apply(0)
@@ -49,7 +50,8 @@ object ShopApplication {
   def apply()(implicit cfg: Config) = new ShopApplication(cfg)
 }
 
-class ShopApplication(c: Config) extends ShiftApplication with ShopServices { self =>
+class ShopApplication(c: Config) extends ShiftApplication with ShopServices {
+  self =>
 
   implicit val cfg = c
   implicit val store: Persistence = new MongoDBPersistence
@@ -116,7 +118,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices { se
       settingsService.updateOrderStatus |
       orderService.orderByEmail |
       orderService.orderByProduct |
-      staticFile(Path("/google339a4b5281321c21.html")) |
+      staticFile(Path("/google339a4b5281321c21.html"), "./web") |
       notFoundService
     s <- refresh(c)
   } yield s
