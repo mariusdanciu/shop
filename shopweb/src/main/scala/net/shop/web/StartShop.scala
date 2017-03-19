@@ -2,7 +2,7 @@ package net.shop
 package web
 
 import net.shift.common.{Config, DefaultLog, FileSplit, Path}
-import net.shift.engine.ShiftApplication
+import net.shift.engine.{Attempt, ShiftApplication}
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.HttpPredicates._
 import net.shift.io.{FileSystem, LocalFileSystem}
@@ -87,7 +87,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices {
       productsVariantImages |
       categoriesImages |
       logout |
-      page("/", Path("web/categories.html"), pages.catPage) |
+      page("/", Path("web/index.html"), pages.catPage) |
       page("/terms", Path("web/terms.html"), pages.termsPage) |
       page("/dataprotection", Path("web/dataprotection.html"), pages.dataProtectionPage) |
       page("/returnpolicy", Path("web/returnpolicy.html"), pages.returnPolicyPage) |
@@ -119,9 +119,19 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices {
       orderService.orderByEmail |
       orderService.orderByProduct |
       staticFile(Path("/google339a4b5281321c21.html"), "./web") |
+      staticFile(Path("/googlef5775953f22a747b.html"), "./web") |
       notFoundService
     s <- refresh(c)
-  } yield s
+
+  } yield commonMeta(r, s)
+
+  def commonMeta(req: Request, a: Attempt): Attempt = {
+    import net.shift.engine._
+
+    a.map{_.withResponse { r => r.withHeaders(
+      TextHeader("Content-Language", req.language.toHttpString)
+    )}}
+  }
 
   def saveProduct(req: Request, u: Option[User]) = pageWithRules(Path("web/saveproduct.html"), pages.saveProductPage,
     for {

@@ -1,55 +1,29 @@
 package net.shop
 package web.services
 
-import scala.Option.option2Iterable
-import scala.util.Failure
-import scala.util.Success
-import org.json4s.DefaultFormats
-import org.json4s.jvalue2extractable
-import org.json4s.native.JsonMethods.parse
-import org.json4s.native.Serialization.write
-import org.json4s.string2JsonInput
-import net.shift.common.Config
-import net.shift.common.DefaultLog
-import net.shift.common.Path
-import net.shift.common.State
-import net.shift.common.TraversingSpec
-import net.shift.engine._
+import net.shift.common._
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http._
+import net.shift.engine.{Attempt, _}
+import net.shift.engine.http.HttpPredicates._
 import net.shift.engine.page.Html5
-import net.shift.io.IODefaults
 import net.shift.loc.Loc
 import net.shift.security.User
-import net.shift.template.DynamicContent
-import net.shift.template.PageState
-import net.shop.api.Cart
-import net.shop.api.ShopError
-import net.shop.tryApplicative
-import net.shop.web.pages.AccountSettingsPage
-import net.shop.web.pages.AccountSettingsPage
-import net.shop.web.pages.CartItemNode
-import net.shop.web.pages.CartState
-import net.shop.web.pages.CategoryPage
-import net.shop.web.pages.CategoryPage
-import net.shop.web.pages.ProductDetailPage
-import net.shop.web.pages.ProductPageState
-import net.shop.web.pages.ProductsPage
-import net.shop.web.pages.SettingsPageState
-import net.shift.common.ShiftFailure
-import net.shift.engine.http.HttpPredicates._
+import net.shift.server.http.ContentType._
+import net.shift.server.http.Responses._
+import net.shift.server.http.{ContentType, Request, TextHeader}
+import net.shift.template.{DynamicContent, PageState}
 import net.shift.template.Template._
-import net.shift.server.http.{ContentType, Request, Responses, TextHeader}
-import net.shift.engine.Attempt
-import net.shift.server.http.Responses._
-import net.shift.server.http.ContentType._
-import net.shift.server.http.Responses._
-import net.shop.web.pages.SettingsPageState
-import net.shop.web.pages.CartState
-import net.shift.server.http.ContentType._
-import net.shop.utils.ShopUtils
-import net.shift.common.PathObj
+import net.shop.api.{Cart, ShopError}
 import net.shop.api.persistence.Persistence
+import net.shop.tryApplicative
+import net.shop.utils.ShopUtils
+import net.shop.web.pages.{CartItemNode, CartState, SettingsPageState}
+import org.json4s.native.JsonMethods.parse
+import org.json4s.native.Serialization.write
+import org.json4s.{DefaultFormats, jvalue2extractable, string2JsonInput}
+
+import scala.Option.option2Iterable
+import scala.util.{Failure, Success}
 
 trait ShopServices extends TraversingSpec
     with DefaultLog
@@ -94,6 +68,7 @@ trait ShopServices extends TraversingSpec
     u match {
       case Some(usr) => serv.map(_.withResponse { r =>
         val isLogout = r.cookie("identity").map { c => c.maxAge == Some(0) } getOrElse false
+
         if (isLogout)
           r
         else
