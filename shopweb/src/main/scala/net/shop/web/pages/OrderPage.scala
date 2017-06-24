@@ -19,7 +19,7 @@ import scala.xml.NodeSeq
 trait OrderPage extends DynamicContent[OrderState] with ServiceDependencies {
 
   val logoUrl = inline[OrderState]("logo_url") {
-    s => Success((s.state.initialState, s"http://${cfg.string("host")}:${cfg.string("port")}/static/images/logo.svg"))
+    s => Success((s.state.initialState, s"http://${cfg.string("host")}:${cfg.string("port")}/static/images/logo.png"))
   }
   val info = reqSnip("info") {
     s =>
