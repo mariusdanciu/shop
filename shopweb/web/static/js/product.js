@@ -6,7 +6,7 @@
 		$("#add_to_cart_box").click(function(event) {
 			var pid = $(this).attr("data-id");
 			cart.addItem(pid);
-            window.common.showNotice("Produsul a fost adăugat in coș.")
+            window.common.showNotice("Produsul a fost adăugat in coș.", $(".item_pics"));
 			event.stopPropagation();
 			return false;
 		});

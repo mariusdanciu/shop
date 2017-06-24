@@ -3,7 +3,7 @@
 		$(".add_to_cart_box").click(function(event) {
 			var pid = $(this).attr("id");
 			cart.addItem(pid);
-			window.common.showNotice("Produsul a fost adăugat in coș.")
+			window.common.showNotice("Produsul a fost adăugat in coș.", $(this).parent());
 			event.stopPropagation();
 			return false;
 		});

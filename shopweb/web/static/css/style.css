@@ -1176,6 +1176,7 @@ input[type="text"], input[type="password"] {
 .item_pics {
 	margin: 0 auto;
 	width: 312px;
+	position: relative;
 }
 
 .purple {
@@ -1440,6 +1441,24 @@ form .row {
 	top: 40px;
 }
 
+.notice_overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    opacity: 0.8;
+}
+
+.notice_overlay span {
+   top: 180px;
+   font-weight: 400;
+   position: relative;
+}
+
 .cat_img {
 }
 
@@ -1466,4 +1485,17 @@ input[type=checkbox]:checked + label img {
 
 label img {
     opacity : 0.3;
+}
+
+.cart_errors ul {
+	padding: 0px;
+	margin-left: 10px;
+}
+
+.cart_errors ul li {
+	list-style-type: none;
+	padding: 0px;
+	margin: 0px;
+	color: #f00;
+	left: 0;
 }

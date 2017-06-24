@@ -342,15 +342,26 @@ var common = {
 		return url + "?" + q;
 	},
 
-	showNotice : function(text) {
-		$("#notice_i span").html(text);
-		$("#notice_i").show().delay(5000).fadeOut("slow");
+	showNotice : function(text, parentDiv) {
+	    console.log(parentDiv);
+	    if (parentDiv !== undefined) {
+ 	        parentDiv.append("<div class='notice_overlay'><span>" + text + "</span></div>");
+	        setTimeout(function() {
+	        console.log( $(parentDiv, '.notice_overlay'));
+              parentDiv.find('.notice_overlay').remove();
+            }, 2000);
+	    } else {
+		  $("#notice_i").html("<span>" + text + "</span>");
+		  $("#notice_i").show().delay(5000).fadeOut("slow");
+		}
 	},
 
 	showFormErrors : function(errors) {
+	    $(".cart_errors ul").html("");
+	    $(".cart_errors ul").append("<li> <b>Comanda nu a fost trimisă. Vă rugăm corectați următoarele erori.</b> </li>");
+
 		$.each(errors, function() {
-			$("label[for='" + this.id + "']").css("color", "#ff0000").attr(
-					"title", this.error);
+			$(".cart_errors ul").append("<li>" + this.error + "</li>");
 		});
 	},
 
