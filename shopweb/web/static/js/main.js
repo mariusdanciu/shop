@@ -245,6 +245,20 @@
 
 	});
 
+    console.log("Attach");
+
+	$("#cart_link").click(function(e){
+	   var cartItems = {
+	     'items': cart.items()
+	   }
+
+	   var enc = $.base64.encode(JSON.stringify(cartItems));
+	   var href = $(this).attr("href") + "?cart=" + encodeURIComponent(enc);
+       $(this).attr("href", href);
+
+       return true;
+	});
+
 }());
 
 var user = {
@@ -343,13 +357,11 @@ var common = {
 	},
 
 	showNotice : function(text, parentDiv) {
-	    console.log(parentDiv);
 	    if (parentDiv !== undefined) {
  	        parentDiv.append("<div class='notice_overlay'><span>" + text + "</span></div>");
 	        setTimeout(function() {
-	        console.log( $(parentDiv, '.notice_overlay'));
               parentDiv.find('.notice_overlay').remove();
-            }, 2000);
+            }, 3000);
 	    } else {
 		  $("#notice_i").html("<span>" + text + "</span>");
 		  $("#notice_i").show().delay(5000).fadeOut("slow");

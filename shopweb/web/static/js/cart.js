@@ -6,7 +6,14 @@
 			$(obj).click(function(e) {
 				var id = $(this).attr("id");
 				cart.removeItem(i);
-				location.reload();
+
+				var cartItems = {
+                   'items': cart.items()
+                }
+
+                var enc = $.base64.encode(JSON.stringify(cartItems));
+                window.location = "/cart?cart=" + encodeURIComponent(enc);
+
 				e.stopPropagation();
 				return false;
 			});
@@ -75,9 +82,7 @@ var cart = {
 	},
 
 	clear : function() {
-		$.cookie("cart", JSON.stringify({
-			items : []
-		}), { path: '/' });
+	    window.localStorage.removeItem("cart")
 	},
 
 	computeTotal : function(add) {
@@ -96,7 +101,7 @@ var cart = {
 	},
 
 	items : function() {
-		var c = $.cookie("cart");
+		var c = window.localStorage.getItem("cart");
 		if (c) {
 			return $.parseJSON(c).items;
 		}
@@ -113,7 +118,8 @@ var cart = {
 	},
 
 	addItem : function(id) {
-		var c = $.cookie("cart");
+		var c = window.localStorage.getItem("cart");
+		console.log(c);
 		if (c) {
 			var cart = $.parseJSON(c);
 			var a = cart.items;
@@ -132,20 +138,20 @@ var cart = {
 			} else {
 				found.count = found.count + 1;
 			}
-			$.cookie("cart", JSON.stringify(cart), { path: '/' });
+			window.localStorage.setItem("cart", JSON.stringify(cart));
 		} else {
-			$.cookie("cart", JSON.stringify({
+			window.localStorage.setItem("cart", JSON.stringify({
 				items : [ {
 					id : id,
 					count : 1
 				} ]
-			}), { path: '/' });
+			}));
 		}
 		$("#cart_num").text(this.numItems());
 	},
 
 	setItemCount : function(pos, count) {
-		var c = $.cookie("cart");
+		var c = window.localStorage.getItem("cart");
 		if (c) {
 			if (count === "")
 				count = 1;
@@ -157,13 +163,13 @@ var cart = {
 					a[i].count = parseInt(count);
 				}
 			}
-			$.cookie("cart", JSON.stringify(cart), { path: '/' });
+			window.localStorage.setItem("cart", JSON.stringify(cart));
 			$("#cart_num").text(this.numItems());
 		}
 	},
 
 	removeItem : function(pos) {
-		var c = $.cookie("cart");
+		var c = window.localStorage.getItem("cart");
 		if (c) {
 			var cart = $.parseJSON(c);
 			var a = cart.items;
@@ -174,7 +180,7 @@ var cart = {
 				}
 			}
 			cart.items = na;
-			$.cookie("cart", JSON.stringify(cart), { path: '/' });
+			window.localStorage.setItem("cart", JSON.stringify(cart));
 			$("#cart_num").text(this.numItems());
 		}
 	}

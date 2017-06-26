@@ -1,15 +1,14 @@
 package net.shop
 package web
 
-import net.shift.common.{Config, DefaultLog, FileSplit, Path}
-import net.shift.engine.{Attempt, ShiftApplication}
-import net.shift.engine.ShiftApplication.service
+import net.shift.common.{Config, DefaultLog, Path}
 import net.shift.engine.http.HttpPredicates._
-import net.shift.io.{FileSystem, LocalFileSystem}
+import net.shift.engine.{Attempt, ShiftApplication}
+import net.shift.io.LocalFileSystem
 import net.shift.loc.{Language, Loc}
 import net.shift.security.{Permission, User}
-import net.shift.server.http.{ContentType, ExtentionToMime, HttpProtocolBuilder, Request, Responses, TextHeader}
-import net.shift.server.{Server, ServerSpecs}
+import net.shift.server.http.{HttpProtocolBuilder, Request, TextHeader}
+import net.shift.server.{Server, ServerConfig}
 import net.shop.api.persistence.Persistence
 import net.shop.mongodb.MongoDBPersistence
 import net.shop.web.pages._
@@ -30,7 +29,7 @@ object StartShop extends App with DefaultLog {
 
     log.info("Configs " + c.configs)
 
-    Server(ServerSpecs.fromConfig(c)).start(HttpProtocolBuilder(ShopApplication().shiftService))
+    Server(ServerConfig.fromConfig(c)).start(HttpProtocolBuilder(ShopApplication().shiftService))
 
     println("Server started on port " + port)
   }

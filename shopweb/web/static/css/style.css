@@ -1455,8 +1455,11 @@ form .row {
 
 .notice_overlay span {
    top: 180px;
-   font-weight: 400;
+   font-weight: 600;
    position: relative;
+   color: #a980cd;
+   opacity: 1;
+   z-index: 999;
 }
 
 .cat_img {

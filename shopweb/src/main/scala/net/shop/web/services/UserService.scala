@@ -82,7 +82,6 @@ trait UserService extends TraversingSpec
     Path(_, _ :: "forgotpassword" :: b64 :: Nil) <- path
   } yield {
     val email = Base64.decodeString(b64)
-    println(store.userByEmail(email))
     (for {
       Some(ud) <- store.userByEmail(email)
       (_, n) <- Html5.runPageFromFile(PageState(ud, r.language), Path(s"web/templates/forgotpassword_${r.language.name}.html"), ForgotPasswordPage)

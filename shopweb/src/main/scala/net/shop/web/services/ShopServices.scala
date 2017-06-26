@@ -10,7 +10,7 @@ import net.shift.loc.Loc
 import net.shift.security.User
 import net.shift.server.http.ContentType._
 import net.shift.server.http.Responses._
-import net.shift.server.http.{ContentType, Request, TextHeader}
+import net.shift.server.http.{ContentType, Param, Request, TextHeader}
 import net.shift.template.{DynamicContent, PageState}
 import net.shift.template.Template._
 import net.shop.api.{Cart, ShopError}
@@ -26,9 +26,10 @@ import scala.Option.option2Iterable
 import scala.util.{Failure, Success}
 
 trait ShopServices extends TraversingSpec
-    with DefaultLog
-    with SecuredService
-    with ServiceDependencies { self =>
+  with DefaultLog
+  with SecuredService
+  with ServiceDependencies {
+  self =>
 
   val cartItemNode = new CartItemNode {
     val store = self.store
@@ -41,12 +42,12 @@ trait ShopServices extends TraversingSpec
   } yield {
     r.header("X-Requested-With") match {
       case Some(TextHeader(_, "XMLRequest")) =>
-        service(_(notFound))
+        service(_ (notFound))
       case _ =>
         if (r.uri.path.startsWith("/static"))
-          service(_(notFound))
+          service(_ (notFound))
         else
-          service(_(redirect("/")))
+          service(_ (redirect("/")))
     }
   }
 
@@ -54,11 +55,11 @@ trait ShopServices extends TraversingSpec
     _ <- ajax
     r <- path("/auth")
     u <- authenticate(Loc.loc0(r.language)("login.fail").text, 406)
-  } yield service(_(ok.withSecurityCookies(u)))
+  } yield service(_ (ok.withSecurityCookies(u)))
 
   def logout = for {
     r <- path("/logout")
-  } yield service(_(redirect("/").dropSecurityCookies))
+  } yield service(_ (redirect("/").dropSecurityCookies))
 
   def refresh(attempt: Attempt) = for {
     r <- req
@@ -151,19 +152,21 @@ trait ShopServices extends TraversingSpec
     r <- req
     lang <- language
     Path(_, _ :: "getcart" :: Nil) <- path
-  } yield service(resp =>
-    r.cookie("cart") match {
-      case Some(c) => {
-        implicit val formats = DefaultFormats
+  } yield service { resp =>
 
+    r.uri.param("cart") match {
+      case Some(Param(_, enc :: _)) => {
+        implicit val formats = DefaultFormats
+        val dec = Base64.decodeString(enc)
+        log.debug(s"Cart content $dec")
         listTraverse.sequence(for {
-          (item, index) <- readCart(c.cookieValue).items.zipWithIndex
+          (item, index) <- readCart(dec).items.zipWithIndex
           prod <- store.productById(item.id).toOption
         } yield {
           Html5.runPageFromFile(PageState(CartState(index, item, prod), r.language), Path("web/templates/cartitem.html"), cartItemNode).map(_._2 toString)
         }) match {
-          case Success(list)                         => resp(ok.withJsonBody(write(list)))
-          case scala.util.Failure(ShopError(msg, _)) => service(_(ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+          case Success(list) => resp(ok.withJsonBody(write(list)))
+          case scala.util.Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case Failure(t) =>
             log.error("Failed processing cart ", t)
             resp(ok.withJsonBody(write(Nil)))
@@ -171,7 +174,8 @@ trait ShopServices extends TraversingSpec
 
       }
       case _ => resp(ok.withJsonBody("[]"))
-    })
+    }
+  }
 
   private def readCart(json: String): Cart = {
     implicit val formats = DefaultFormats
@@ -211,8 +215,8 @@ trait ShopServices extends TraversingSpec
   def siteMap(store: Persistence) = for {
     PathObj(_, _ :: "sitemap.xml" :: Nil) <- path
   } yield {
-    
-    
+
+
   }
 
 }

@@ -1,13 +1,13 @@
 package net.shop.web.pages
 
-import net.shift.common.Xml
+import net.shift.common.{Base64, Xml}
 import net.shift.common.XmlImplicits._
 import net.shift.loc.Loc
 import net.shift.server.http.Request
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shift.template.{HasClass, HasName}
-import net.shop.api.{Address, ProductDetail, Cart => CCart}
+import net.shop.api.{Address, Cart, CartItem, ProductDetail}
 import net.shop.utils.{ShopUtils, ThumbPic}
 import net.shop.utils.ShopUtils._
 import org.json4s.native.JsonMethods.parse
@@ -20,7 +20,9 @@ case class CartInfo(r: Request, items: Seq[(String, Int, ProductDetail)])
 
 trait CartPage extends PageCommon[CartInfo] {
   self =>
+
   implicit val formats = DefaultFormats
+
   val emptyMsg = inline[CartInfo]("emptyMsg") {
     s =>
       val req = s.state.initialState.r
@@ -36,6 +38,7 @@ trait CartPage extends PageCommon[CartInfo] {
       val emptyMsg = Loc.loc0(s.state.lang)("cart.empty").text
       Success((CartInfo(req, info), ci.map { c => if (c.items.isEmpty) emptyMsg else "" } getOrElse emptyMsg))
   }
+
   val total = inline[CartInfo]("total") {
     s =>
       val cart = s.state.initialState
@@ -121,12 +124,27 @@ trait CartPage extends PageCommon[CartInfo] {
 
   override def snippets = List(cartProds, quantities, empty, userInfo) ++ super.snippets
 
-  private def getCart(r: Request): Option[CCart] = {
+  private def getCart(r: Request): Option[Cart] = {
     for {
-      json <- r.cookie("cart")
+      json <- r.uri.param("cart")
     } yield {
-      parse(java.net.URLDecoder.decode(json.cookieValue, "UTF-8")).extract[net.shop.api.Cart]
+      val enc = java.net.URLDecoder.decode(json.value.head, "UTF-8")
+      val dec = Base64.decodeString(enc)
+      val cart = parse(dec).extract[net.shop.api.Cart]
+      cart
     }
   }
 }
 
+object SSS extends App {
+  implicit val formats = DefaultFormats
+  import org.json4s.native.Serialization._
+
+  val json = """[{"id":"55fce5a3e4b0aa0fae6d3553","count":1}]"""
+
+  println(parse(json).extract[net.shop.api.Cart])
+
+  val str = write(Cart(List(CartItem("55fce5a3e4b0aa0fae6d3553", 1))))
+
+  println(str)
+}
