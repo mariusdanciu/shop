@@ -25,7 +25,7 @@ object StartShop extends App with DefaultLog {
     val port = cfg.int("server.port")
     val dbPass = args.apply(0)
 
-    implicit val c = cfg append Map("db.pwd" -> dbPass)
+    implicit val c = cfg + Config("db.pwd" -> dbPass)
 
     log.info("Configs " + c.configs)
 
@@ -39,7 +39,7 @@ object StartShop extends App with DefaultLog {
     if (prof == null) {
       ""
     } else {
-      s"-$prof"
+      prof
     }
   }
 

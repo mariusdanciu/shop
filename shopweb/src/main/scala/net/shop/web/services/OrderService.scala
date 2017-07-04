@@ -1,54 +1,27 @@
 package net.shop
 package web.services
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.util.Failure
-import scala.util.Success
-import scala.util.Try
-import org.json4s.JsonAST.JArray
-import org.json4s.JsonAST.JField
-import org.json4s.JsonAST.JInt
-import org.json4s.JsonAST.JObject
-import org.json4s.JsonAST.JString
-import org.json4s.JsonAST.JValue
-import org.json4s.jvalue2monadic
+import net.shift.common.{Invalid, Path, TraversingSpec, Valid}
+import net.shift.engine.ShiftApplication.service
+import net.shift.engine.http.HttpPredicates._
+import net.shift.io.IO
+import net.shift.loc.Loc
+import net.shift.server.http.Responses
+import net.shop.api.{Formatter, ShopError}
+import net.shop.messaging.{Messaging, OrderDocument}
+import net.shop.web.pages.{OrderPage, OrderState}
+import org.apache.log4j.Logger
+import org.json4s.JsonAST._
 import org.json4s.native.JsonMethods.parse
 import org.json4s.string2JsonInput
-import OrderForm.FormField
-import OrderForm.OrderItems
-import net.shift.common.Path
-import net.shift.common.ShiftFailure
-import net.shift.common.TraversingSpec
-import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http.HttpPredicates
-import net.shift.io.IO
-import net.shift.js.JsDsl
-import net.shift.js.JsStatement
-import net.shift.loc.Language
-import net.shift.loc.Loc
-import net.shop.api.Company
-import net.shop.api.Formatter
-import net.shop.api.Person
-import net.shop.api.ShopError
-import net.shop.messaging.Messaging
-import net.shop.messaging.OrderDocument
-import net.shop.model.Formatters.ErrorJsonWriter
-import net.shop.model.Formatters.JsonOrdersWriter
-import net.shop.web.ShopApplication
-import net.shop.web.pages.OrderPage
-import net.shop.web.pages.OrderState
-import net.shift.common.Config
-import net.shift.common.Valid
-import net.shift.common.Invalid
-import net.shift.engine.http.HttpPredicates
-import net.shift.io.LocalFileSystem
-import net.shift.engine.http.HttpPredicates._
-import net.shift.server.http.Param
-import net.shift.server.http.Responses
-import net.shift.server.http.ContentType
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 trait OrderService extends FormValidation with TraversingSpec with ServiceDependencies { self =>
+
+  private val log = Logger.getLogger(classOf[OrderService])
 
   private def extractOrder(json: String) = {
     def extractItems(items: List[JValue]): (String, OrderForm.EnvValue) = listTraverse.sequence(for {
@@ -83,7 +56,7 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
 
       val norms = json.map { extractOrder }
 
-      import JsDsl._
+      log.debug("Order " + norms)
 
       norms match {
         case Success(norm) =>
@@ -101,6 +74,7 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
                   val store = self.store
                 }
                 order.orderTemplate(OrderState(o.toOrderLog, r.language)) map { n =>
+                  log.debug("Sending order message")
                   Messaging.send(OrderDocument(r.language, o, n toString))
                 }
               }
