@@ -88,6 +88,7 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices {
       logout |
       page("/", Path("web/index.html"), pages.catPage) |
       page("/terms", Path("web/terms.html"), pages.termsPage) |
+      page("/order_done", Path("web/order_done.html"), pages.termsPage) |
       page("/dataprotection", Path("web/dataprotection.html"), pages.dataProtectionPage) |
       page("/returnpolicy", Path("web/returnpolicy.html"), pages.returnPolicyPage) |
       page("/cookies", Path("web/cookies.html"), pages.cookiesPage) |

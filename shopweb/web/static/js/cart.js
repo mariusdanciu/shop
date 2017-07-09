@@ -21,10 +21,9 @@
 
 		
 		$("#buy").click(function(e) {
-			window.cart.buy(function(){
+			window.cart.buy(function() {
 				window.cart.clear();
-				$(".intro-cat h2").html("<h2>Mulțumim pentru comanda efectuată !</h2>");
-				$(".content").remove();
+				window.location = "/order_done";
 			});
 			e.preventDefault();
 			e.stopPropagation();
