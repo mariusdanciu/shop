@@ -1502,3 +1502,8 @@ label img {
 	color: #f00;
 	left: 0;
 }
+
+#search:focus {
+    outline: none;
+    color: #000;
+}
