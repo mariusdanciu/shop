@@ -1,19 +1,23 @@
 package net.shop
 package web
 
+import java.util.concurrent.Executors
+
 import net.shift.common.{Config, DefaultLog, Path}
 import net.shift.engine.http.HttpPredicates._
 import net.shift.engine.{Attempt, ShiftApplication}
 import net.shift.io.LocalFileSystem
 import net.shift.loc.{Language, Loc}
 import net.shift.security.{Permission, User}
+import net.shift.server.{HttpServer, HttpsServer, Server}
 import net.shift.server.http.{HttpProtocolBuilder, Request, TextHeader}
-import net.shift.server.{Server, ServerConfig}
 import net.shop.api.persistence.Persistence
 import net.shop.mongodb.MongoDBPersistence
 import net.shop.web.pages._
 import net.shop.web.services._
 import org.apache.log4j.PropertyConfigurator
+
+import scala.concurrent.ExecutionContext
 
 object StartShop extends App with DefaultLog {
 
@@ -22,16 +26,24 @@ object StartShop extends App with DefaultLog {
 
   for {cfg <- Config.load(profile)} yield {
 
-    val port = cfg.int("server.port")
     val dbPass = args.apply(0)
 
     implicit val c = cfg + Config("db.pwd" -> dbPass)
 
     log.info("Configs " + c.configs)
 
-    Server(ServerConfig.fromConfig(c)).start(HttpProtocolBuilder(ShopApplication().shiftService))
+    HttpServer(c, ShopApplication().shiftService).start()
 
-    println("Server started on port " + port)
+    println("Server started on port " + cfg.int("server.port"))
+
+    implicit val ctx = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(3))
+
+    HttpsServer(c, ShopApplication().shiftService).start().onFailure{
+      case f => f.printStackTrace()
+    }
+
+    println("SSL server started on port " + cfg.int("server.ssl.port"))
+
   }
 
   def profile = {
@@ -128,9 +140,13 @@ class ShopApplication(c: Config) extends ShiftApplication with ShopServices {
   def commonMeta(req: Request, a: Attempt): Attempt = {
     import net.shift.engine._
 
-    a.map{_.withResponse { r => r.withHeaders(
-      TextHeader("Content-Language", req.language.toHttpString)
-    )}}
+    a.map {
+      _.withResponse { r =>
+        r.withHeaders(
+          TextHeader("Content-Language", req.language.toHttpString)
+        )
+      }
+    }
   }
 
   def saveProduct(req: Request, u: Option[User]) = pageWithRules(Path("web/saveproduct.html"), pages.saveProductPage,
