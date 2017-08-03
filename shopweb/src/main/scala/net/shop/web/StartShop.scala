@@ -32,17 +32,20 @@ object StartShop extends App with DefaultLog {
 
     log.info("Configs " + c.configs)
 
-    HttpServer(c, ShopApplication().shiftService).start()
+    implicit val ctx = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(2))
 
-    println("Server started on port " + cfg.int("server.port"))
-
-    implicit val ctx = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(3))
-
-    HttpsServer(c, ShopApplication().shiftService).start().onFailure{
+    HttpServer(c, ShopApplication().shiftService).start().onFailure {
       case f => f.printStackTrace()
     }
 
-    println("SSL server started on port " + cfg.int("server.ssl.port"))
+    println("Server started on port " + cfg.int("server.port"))
+
+
+    //HttpsServer(c, ShopApplication().shiftService).start().onFailure{
+    //  case f => f.printStackTrace()
+    //}
+
+    //println("SSL server started on port " + cfg.int("server.ssl.port"))
 
   }
 
