@@ -38,7 +38,7 @@ object StartShop extends App with DefaultLog {
       case f => f.printStackTrace()
     }
 
-    println("Server started on port " + cfg.int("server.port"))
+    println("Server started.")
 
 
     //HttpsServer(c, ShopApplication().shiftService).start().onFailure{
