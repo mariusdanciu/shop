@@ -1,29 +1,15 @@
 package net.shop.web.services
 
-import net.shift.common.FileSplit
-import net.shift.common.Semigroup
+import net.shift.common.{FileSplit, Invalid, Valid, Validation}
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.http.BinaryPart
-import net.shift.engine.http.MultiPart
-import net.shift.engine.http.TextPart
-import net.shift.io.IODefaults
-import net.shift.loc.Language
-import net.shift.loc.Loc
+import net.shift.engine.http.{BinaryPart, ContentDisposition, MultiPart, TextPart}
+import net.shift.io.FileSystem
+import net.shift.loc.{Language, Loc}
+import net.shift.server.http.{ResponseFunc, Responses}
 import net.shop.api.Formatter
+import net.shop.api.persistence.Persistence
 import net.shop.model.FieldError
 import net.shop.model.Formatters.ValidationErrorWriter
-import net.shop.web.ShopApplication
-import net.shift.io.FileSystem
-import net.shop.model.ValidationFail
-import net.shift.common.Valid
-import net.shift.common.Validation
-import net.shift.common.Invalid
-import net.shift.engine.http.ContentDisposition
-import IODefaults._
-import net.shift.server.http.AsyncResponse
-import net.shift.server.http.Responses
-import net.shift.server.http.ContentType
-import net.shop.api.persistence.Persistence
 import net.shop.utils.ShopUtils
 
 import scala.util.Success
@@ -185,7 +171,7 @@ trait FormValidation extends ServiceDependencies {
       r(Responses.forbidden.withJsonBody(Formatter.format(msgs)))
     })
 
-  def respValidationFail(resp: AsyncResponse, msgs: List[FieldError])(implicit lang: Language, fs: FileSystem) =
+  def respValidationFail(resp: ResponseFunc, msgs: List[FieldError])(implicit lang: Language, fs: FileSystem) =
     resp(Responses.forbidden.withJsonBody(Formatter.format(msgs)))
 
 }
