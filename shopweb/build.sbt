@@ -20,3 +20,6 @@ libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.2"
  
 libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.3"
 
+libraryDependencies += "io.netty" % "netty-all" % "4.1.17.Final"
+
+libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.2.0"
