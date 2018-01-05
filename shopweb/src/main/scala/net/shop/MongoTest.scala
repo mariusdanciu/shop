@@ -2,8 +2,9 @@ package net.shop
 
 import java.util.Date
 
+import org.bson.BsonValue
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
-import org.mongodb.scala.bson.{Document, ObjectId}
+import org.mongodb.scala.bson.{BsonDocument, Document, ObjectId}
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
 import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.{MongoClient, MongoDatabase, Observer}
@@ -51,7 +52,7 @@ object ProductDetail {
     )
 }
 
-case class ProductDetail(_id: Option[ObjectId],
+case class ProductDetail(id: Option[String] = None,
                          name: String,
                          title: Map[String, String],
                          description: Map[String, String],
@@ -98,7 +99,7 @@ case class ProductLog(id: String, price: Double, quantity: Int)
 // OrderLog(4773878,Sat Feb 21 16:02:40 EET 2015,None,None,Address(destination,Romania,qweqwe,qwe,qweq,123123),marius.danciu@gmail.com,234235423,None,List(ProductLog(54e05a94e4b0643b17db7365,65.0,1)),2)
 // Document((_id,BsonObjectId{value=54e89000e4b08d558b437933}), (id,BsonString{value='4773878'}), (time,BsonDateTime{value=1424527360656}), (submitter,{ "firstName" : "asdihoih", "lastName" : "oioij", "cnp" : "23423423423" }), (address,{ "name" : "destination", "country" : "Romania", "region" : "qweqwe", "city" : "qwe", "address" : "qweq", "zipCode" : "123123" }), (email,BsonString{value='marius.danciu@gmail.com'}), (phone,BsonString{value='234235423'}), (items,BsonArray{values=[{ "id" : "54e05a94e4b0643b17db7365", "price" : 65.0, "quantity" : 1 }]}), (status,BsonInt32{value=2}))
 
-case class OrderLog(id: String,
+case class OrderLog(_id: ObjectId,
                     time: Date,
                     person: Option[Person],
                     company: Option[Company],
@@ -134,43 +135,7 @@ object MongoTest extends App {
     .withCodecRegistry(codecRegistry)
 
   db.listCollectionNames().subscribe(new Observer[String]() {
-    override def onNext(result: String): Unit = println(result)
-
-    override def onError(e: Throwable): Unit = e.printStackTrace()
-
-    override def onComplete(): Unit = println("completed")
-  })
-
-  val categories = db.getCollection[Category]("categories")
-
-  categories.find().subscribe(new Observer[Category]() {
-    override def onNext(result: Category): Unit = {
-      println(result)
-    }
-
-    override def onError(e: Throwable): Unit = e.printStackTrace()
-
-    override def onComplete(): Unit = println("completed")
-  })
-
-  val products = db.getCollection[ProductDetail]("products")
-
-
-  products.find().first().subscribe(new Observer[ProductDetail]() {
-    override def onNext(result: ProductDetail): Unit = {
-      println(result)
-    }
-
-    override def onError(e: Throwable): Unit = e.printStackTrace()
-
-    override def onComplete(): Unit = println("completed")
-  })
-
-  val users = db.getCollection[UserDetail]("users")
-
-
-  users.find().first().subscribe(new Observer[UserDetail]() {
-    override def onNext(result: UserDetail): Unit = {
+    override def onNext(result: String): Unit = {
       println(result)
     }
 
@@ -180,13 +145,16 @@ object MongoTest extends App {
   })
 
 
-  val orders = db.getCollection("orders")
+  val products = db.getCollection("products")
 
 
-  orders.find().first().subscribe(new Observer[Document]() {
+  products.find().first().subscribe(new Observer[Document]() {
+
     override def onNext(result: Document): Unit = {
-      result.foreach{ case (id, bson) => println(id + " - " + bson)}
       println(result)
+      val title = MongoConvert.getMap("title", result)
+
+      println(title)
     }
 
     override def onError(e: Throwable): Unit = e.printStackTrace()
