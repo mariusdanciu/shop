@@ -1,5 +1,5 @@
 import net.shop.api._
-import net.shop.api.persistence.SortSpec
+import net.shop.api.persistence.{SortByName, SortSpec}
 import org.bson.BsonNull
 import org.mongodb.scala.MongoClient
 import org.mongodb.scala.bson.collection.immutable.Document
@@ -22,7 +22,11 @@ object MongoTest extends App {
   //  s => println(s)
   //}
 
-  p.productByName("ceas spiderman").map(println)
+  // p.productByName("ceas spiderman").map(println)
+
+
+  p.allCategories.map(println)
+  p.categoryProducts("corpuri de iluminat", SortByName(true, "ro")).map(println)
 
   Console.in.readLine()
 
@@ -156,7 +160,19 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) {
     }
   }
 
-  def categoryProducts(cat: String, spec: SortSpec): Try[Iterator[ProductDetail]] = ???
+  def categoryProducts(cat: String, spec: SortSpec): Future[Seq[ProductDetail]] = {
+
+    for {
+      cat <- categories.find(equal("name", cat)).first().toFuture()
+      prods <- {
+        val c: Category = cat
+        println(c)
+        products.find(in("categories", List(c.stringId))).toFuture()
+      }
+    } yield {
+      prods.map { p => (p: ProductDetail) }
+    }
+  }
 
   def searchProducts(text: String, spec: SortSpec): Try[Iterator[ProductDetail]] = ???
 
@@ -164,7 +180,11 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) {
 
   def categoryById(id: String): Try[Category] = ???
 
-  def allCategories: Try[Iterator[Category]] = ???
+  def allCategories: Future[Seq[Category]] = {
+    categories.find().toFuture().map {
+      _.map { e => (e: Category) }
+    }
+  }
 
   def createProducts(prod: ProductDetail*): Try[Seq[String]] = ???
 
