@@ -59,13 +59,12 @@ trait CategoryService extends TraversingSpec
     extract(r.language, "update_", None, mp) match {
       case (file, Valid(o)) =>
         val cpy = o.copy(
-          id = Some(id),
           name = normalizeName(o.title_?(r.language.name))
         )
         store.updateCategories(cpy) match {
           case scala.util.Success(p) =>
             file.map { f =>
-              IO.arrayProducer(f._2)(LocalFileSystem.writer(Path(s"${dataPath}/categories/${cpy.id.getOrElse("")}.png")))
+              IO.arrayProducer(f._2)(LocalFileSystem.writer(Path(s"${dataPath}/categories/${cpy.id}.png")))
             }
             service(_(Responses.created))
 

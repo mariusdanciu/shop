@@ -173,12 +173,11 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
 
     val ids = for {
       p <- prod
-      id <- p.id
     } yield {
-      builder.find(MongoDBObject("_id" -> new ObjectId(id))).update(MongoDBObject {
+      builder.find(MongoDBObject("_id" -> new ObjectId(p.id))).update(MongoDBObject {
         "$set" -> productToMongo(p)
       })
-      id
+      p.id
     }
 
     builder.execute()
@@ -200,12 +199,11 @@ class MongoDBPersistence(implicit val cfg: Config) extends Persistence with Mong
 
     val ids = for {
       p <- c
-      id <- p.id
     } yield {
-      builder.find(MongoDBObject("_id" -> new ObjectId(id))).update(MongoDBObject {
+      builder.find(MongoDBObject("_id" -> new ObjectId(p.id))).update(MongoDBObject {
         "$set" -> categoryToMongo(p)
       })
-      id
+      p.id
     }
 
     builder.execute()

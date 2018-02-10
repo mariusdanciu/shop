@@ -72,7 +72,7 @@ trait ProductsPage extends PageCommon[Request] {
         case Success(list) =>
           s.node match {
             case e: Elem =>
-              val v = list.map(c => <option value={c.id getOrElse "?"}>
+              val v = list.map(c => <option value={c.id}>
                 {c.title_?(s.state.lang.name)}
               </option>).toSeq
               Success((s.state.initialState, e / NodeSeq.fromSeq(v)))

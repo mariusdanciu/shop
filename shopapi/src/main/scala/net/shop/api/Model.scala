@@ -10,6 +10,7 @@ import net.shift.security.{Permission, User}
 import scala.util.Failure
 
 case class UserInfo(firstName: String, lastName: String, cnp: String, phone: String)
+
 case class CompanyInfo(name: String, cif: String, regCom: String, bank: String, bankAccount: String, phone: String)
 
 case class UserDetail(id: Option[String] = None,
@@ -29,11 +30,48 @@ case class Address(id: Option[String] = None,
                    address: String,
                    zipCode: String)
 
-trait NamedItem {
-  def name: String
+object UUID {
+  def makeId = java.util.UUID.randomUUID().toString
 }
 
-case class ProductDetail(id: Option[String] = None,
+trait NamedItem {
+  def name: String
+
+}
+
+object ProductDetail {
+  def apply(name: String,
+            title: Map[String, String],
+            description: Map[String, String],
+            properties: Map[String, String],
+            price: Double,
+            discountPrice: Option[Double],
+            soldCount: Int,
+            position: Option[Int],
+            presentationPosition: Option[Int],
+            unique: Boolean,
+            stock: Option[Int],
+            categories: List[String],
+            keyWords: List[String]): ProductDetail = ProductDetail(
+    UUID.makeId,
+    name,
+    title,
+    description,
+    properties,
+    price,
+    discountPrice,
+    soldCount,
+    position,
+    presentationPosition,
+    unique,
+    stock,
+    categories,
+    keyWords
+  )
+
+}
+
+case class ProductDetail(id: String,
                          name: String,
                          title: Map[String, String],
                          description: Map[String, String],
@@ -54,7 +92,7 @@ case class ProductDetail(id: Option[String] = None,
 
   def toProductLog(quantity: Int) = ProductLog(stringId, actualPrice, quantity)
 
-  def stringId = id getOrElse "?"
+  def stringId = id
 
   def actualPrice = discountPrice getOrElse price
 }
@@ -63,17 +101,30 @@ case class CartItem(id: String, count: Int)
 
 case class Cart(items: List[CartItem])
 
-case class Category(id: Option[String] = None,
+object Category {
+  def apply(name: String,
+            position: Int,
+            title: Map[String, String]): Category = Category(
+    UUID.makeId,
+    name,
+    position,
+    title
+  )
+}
+
+case class Category(id: String,
                     name: String,
                     position: Int,
                     title: Map[String, String]) extends NamedItem {
   def title_?(l: String) = title.getOrElse(l, "???")
-  def stringId = id getOrElse "?"
+
+  def stringId = id
 }
 
 sealed trait Submitter
 
 case class Person(firstName: String, lastName: String, cnp: String) extends Submitter
+
 case class Company(companyName: String, cif: String, regCom: String, bank: String, bankAccount: String) extends Submitter
 
 case class Order(id: String,
@@ -98,19 +149,22 @@ object OrderStatus {
 }
 
 
-
 sealed trait OrderStatus {
   def index: Int
 }
+
 case object OrderReceived extends OrderStatus {
   def index = 0
 }
+
 case object OrderPending extends OrderStatus {
   def index = 1
 }
+
 case object OrderFinalized extends OrderStatus {
   def index = 2
 }
+
 case object OrderCanceled extends OrderStatus {
   def index = -1
 }
@@ -127,7 +181,7 @@ case class OrderLog(id: String,
                     items: List[ProductLog],
                     status: OrderStatus = OrderReceived) {
 
-  lazy val total = (0.0 /: items)((a, i) => a + i.price * i.quantity)
+  lazy val total = (0.0 /: items) ((a, i) => a + i.price * i.quantity)
 }
 
 case class ProductLog(id: String, price: Double, quantity: Int)
@@ -144,11 +198,13 @@ trait Formatter[T] {
 
 object ShopError {
   def fail(msg: String) = Failure(new ShopError(msg))
+
   def fail(msg: String, e: Throwable) = Failure(new ShopError(msg, e))
 }
 
 case class ShopError(msg: String, e: Throwable) extends RuntimeException(msg, e) {
   def this(msg: String) = this(msg, null)
+
   def this(e: Throwable) = this(e.getMessage(), e)
 }
 

@@ -3,7 +3,7 @@ import net.shop.api.persistence.{SortByName, SortSpec}
 import org.bson.BsonNull
 import org.mongodb.scala.MongoClient
 import org.mongodb.scala.bson.collection.immutable.Document
-import org.mongodb.scala.bson.{BsonDocument, BsonValue, DefaultBsonTransformers, ObjectId}
+import org.mongodb.scala.bson.{BsonDocument, BsonObjectId, BsonValue, DefaultBsonTransformers, ObjectId}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,7 +51,7 @@ object MongoImplicits extends DefaultBsonTransformers {
 
   implicit def productToDocument(p: ProductDetail): Document = {
     Document(
-      "_id" -> new ObjectId(),
+      "_id" -> p.id,
       "name" -> p.name,
       "title" -> Document(p.title),
       "description" -> Document(p.description),
@@ -87,10 +87,13 @@ object MongoImplicits extends DefaultBsonTransformers {
 
   implicit def documentToProductFuture(d: Future[Document]): Future[ProductDetail] = d.map { e => e }
 
+  implicit def documentToCategoryFuture(d: Future[Document]): Future[Category] = d.map { e => e }
+
+
   implicit def documentToProduct(d: Document): ProductDetail =
 
     ProductDetail(
-      id = Some(d.getObjectId("_id").toHexString),
+      id = d.getObjectId("_id").toHexString,
       name = d.getString("name"),
       title = d.getOrElse("title", BsonDocument()).asDocument(),
       description = d.getOrElse("description", BsonDocument()).asDocument(),
@@ -118,7 +121,7 @@ object MongoImplicits extends DefaultBsonTransformers {
 
   implicit def documentToCategory(d: Document): Category =
     Category(
-      id = Some(d.getObjectId("_id").toHexString),
+      id = d.getObjectId("_id").toHexString,
       name = d.getString("name"),
       position = d.getOrElse("position", 0).asInt32().getValue,
       title = d.getOrElse("title", BsonDocument()).asDocument()
@@ -145,6 +148,8 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) {
 
   products.createIndex(Document("title.ro" -> "text", "description.ro" -> "text", "keywords" -> "text"))
 
+
+  private def makeId: String = java.util.UUID.randomUUID().toString
 
   def productById(id: String): Future[ProductDetail] = {
     products.find(equal("_id", new ObjectId(id))).first().toFuture()
@@ -176,7 +181,8 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) {
 
   def searchProducts(text: String, spec: SortSpec): Try[Iterator[ProductDetail]] = ???
 
-  def categoryByName(name: String): Try[Category] = ???
+  def categoryByName(name: String): Future[Category] =
+    categories.find(equal("name", name)).first().toFuture()
 
   def categoryById(id: String): Try[Category] = ???
 
@@ -186,7 +192,9 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) {
     }
   }
 
-  def createProducts(prod: ProductDetail*): Try[Seq[String]] = ???
+  def createProduct(prod: ProductDetail): Future[String] = {
+    products.insertOne(prod).toFuture.map { _ => prod.id }
+  }
 
   def updateProducts(prod: ProductDetail*): Try[Seq[String]] = ???
 

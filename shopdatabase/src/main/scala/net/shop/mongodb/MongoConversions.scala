@@ -162,7 +162,7 @@ trait MongoConversions {
   def mongoToProduct(obj: DBObject): ProductDetail = {
 
     try {
-      ProductDetail(id = obj.getAs[ObjectId]("_id").map(_.toString),
+      ProductDetail(id = obj.getAs[ObjectId]("_id").map(_.toString).get,
         name = obj.getAsOrElse[String]("name", ""),
         title = obj.getAsOrElse[Map[String, String]]("title", Map.empty),
         description = obj.getAsOrElse[Map[String, String]]("description", Map.empty),
@@ -183,7 +183,7 @@ trait MongoConversions {
     }
   }
   def mongoToCategory(obj: DBObject): Category =
-    Category(id = obj.getAs[ObjectId]("_id").map(_.toString),
+    Category(id = obj.getAs[ObjectId]("_id").map(_.toString).get,
       name = obj.getAsOrElse[String]("name", ""),
       position = obj.getAsOrElse[Int]("position", 0),
       title = obj.getAsOrElse[Map[String, String]]("title", Map.empty))

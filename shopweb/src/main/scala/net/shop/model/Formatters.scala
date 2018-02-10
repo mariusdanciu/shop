@@ -95,7 +95,7 @@ object Formatters {
 
     def write(c: Category)(implicit lang: Language, fs: FileSystem): String = {
       import org.json4s.native.Serialization.writePretty
-      writePretty(CategoryJson(c.id, c.title.getOrElse(lang.name, "ro"), c.position))
+      writePretty(CategoryJson(Some(c.id), c.title.getOrElse(lang.name, "ro"), c.position))
     }
 
     case class CategoryJson(id: Option[String], title: String, position: Int)
