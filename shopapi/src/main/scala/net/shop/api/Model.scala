@@ -40,19 +40,19 @@ trait NamedItem {
 }
 
 object ProductDetail {
-  def apply(name: String,
-            title: Map[String, String],
-            description: Map[String, String],
-            properties: Map[String, String],
-            price: Double,
-            discountPrice: Option[Double],
-            soldCount: Int,
-            position: Option[Int],
-            presentationPosition: Option[Int],
-            unique: Boolean,
-            stock: Option[Int],
-            categories: List[String],
-            keyWords: List[String]): ProductDetail = ProductDetail(
+  def create(name: String,
+             title: Map[String, String],
+             description: Map[String, String],
+             properties: Map[String, String],
+             price: Double,
+             discountPrice: Option[Double],
+             soldCount: Int,
+             position: Option[Int],
+             presentationPosition: Option[Int],
+             unique: Boolean,
+             stock: Option[Int],
+             categories: List[String],
+             keyWords: List[String]): ProductDetail = ProductDetail(
     UUID.makeId,
     name,
     title,
@@ -102,9 +102,9 @@ case class CartItem(id: String, count: Int)
 case class Cart(items: List[CartItem])
 
 object Category {
-  def apply(name: String,
-            position: Int,
-            title: Map[String, String]): Category = Category(
+  def create(name: String,
+             position: Int,
+             title: Map[String, String]): Category = Category(
     UUID.makeId,
     name,
     position,

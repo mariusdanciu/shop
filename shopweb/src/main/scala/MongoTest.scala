@@ -1,10 +1,11 @@
 import net.shop.api._
-import net.shop.api.persistence.{SortByName, SortSpec}
+import net.shop.api.persistence.{SortByName, SortByPrice, SortSpec}
 import org.bson.BsonNull
-import org.mongodb.scala.MongoClient
+import org.mongodb.scala.{FindObservable, MongoClient, Observable}
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.{BsonDocument, BsonObjectId, BsonValue, DefaultBsonTransformers, ObjectId}
-
+import org.mongodb.scala.model.TextSearchOptions
+import org.mongodb.scala.model.Sorts._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -26,7 +27,9 @@ object MongoTest extends App {
 
 
   p.allCategories.map(println)
-  p.categoryProducts("corpuri de iluminat", SortByName(true, "ro")).map(println)
+  //p.categoryProducts("corpuri de iluminat", SortByName(true, "ro")).map(println)
+
+  p.searchProducts("spalare", SortByName(true, "ro")).map(println)
 
   Console.in.readLine()
 
@@ -149,7 +152,16 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) {
   products.createIndex(Document("title.ro" -> "text", "description.ro" -> "text", "keywords" -> "text"))
 
 
-  private def makeId: String = java.util.UUID.randomUUID().toString
+  private def sort[T](f: FindObservable[T], spec: SortSpec): Observable[T] = {
+    spec match {
+      case SortByName(true, _) => f.sort(ascending("name"))
+      case SortByName(false, _) => f.sort(descending("name"))
+      case SortByPrice(true, _) => f.sort(ascending("price"))
+      case SortByPrice(false, _) => f.sort(descending("price"))
+      case _ => f
+    }
+  }
+
 
   def productById(id: String): Future[ProductDetail] = {
     products.find(equal("_id", new ObjectId(id))).first().toFuture()
@@ -171,20 +183,25 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) {
       cat <- categories.find(equal("name", cat)).first().toFuture()
       prods <- {
         val c: Category = cat
-        println(c)
-        products.find(in("categories", List(c.stringId))).toFuture()
+        sort(products.find(in("categories", List(c.id))), spec).toFuture()
       }
     } yield {
       prods.map { p => (p: ProductDetail) }
     }
   }
 
-  def searchProducts(text: String, spec: SortSpec): Try[Iterator[ProductDetail]] = ???
+  def searchProducts(s: String, spec: SortSpec): Future[Seq[ProductDetail]] = {
+    sort(products.find(text(s, TextSearchOptions()
+      .caseSensitive(false)
+      .diacriticSensitive(false)
+      .language("english"))), spec).toFuture().map { s => s.map { e => (e: ProductDetail) } }
+  }
 
   def categoryByName(name: String): Future[Category] =
     categories.find(equal("name", name)).first().toFuture()
 
-  def categoryById(id: String): Try[Category] = ???
+  def categoryById(id: String): Future[Category] =
+    categories.find(equal("_id", id)).first().toFuture()
 
   def allCategories: Future[Seq[Category]] = {
     categories.find().toFuture().map {
@@ -196,9 +213,13 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) {
     products.insertOne(prod).toFuture.map { _ => prod.id }
   }
 
-  def updateProducts(prod: ProductDetail*): Try[Seq[String]] = ???
+  def updateProduct(prod: ProductDetail): Future[String] = {
+    products.updateOne(equal("_id", prod.id), prod).toFuture().map { _ => prod.id }
+  }
 
-  def deleteProducts(prod: String*): Try[Int] = ???
+  def deleteProduct(id: String): Future[Boolean] = {
+    products.deleteOne(equal("_is", id)).toFuture().map{_ => true}
+  }
 
   def presentationProducts: Try[Seq[ProductDetail]] = ???
 

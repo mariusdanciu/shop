@@ -10,7 +10,7 @@ import net.shift.io.{FileSystem, IO, LocalFileSystem}
 import net.shift.loc.{Language, Loc}
 import net.shift.security.Permission
 import net.shift.server.http.Responses._
-import net.shop.api.{ProductDetail, ShopError}
+import net.shop.api.{ProductDetail, ShopError, UUID}
 import net.shop.model.FieldError
 import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils.dataPath
@@ -139,7 +139,7 @@ trait ProductService extends TraversingSpec
     val params = extractParams(text)
     val files = extractProductBins(bins)
 
-    val product = ((ProductDetail.apply _).curried) (id)
+    val product = ((ProductDetail.apply _).curried) (id getOrElse UUID.makeId)
     val ? = Loc.loc0(loc) _
 
     val productFormlet = Validator(product) <*>

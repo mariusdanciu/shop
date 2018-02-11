@@ -9,17 +9,17 @@ import net.shift.io.{FileSystem, IO, LocalFileSystem}
 import net.shift.loc.{Language, Loc}
 import net.shift.server.http.Responses
 import net.shift.server.http.Responses.created
-import net.shop.api.{Category, Formatter, ShopError}
+import net.shop.api.{Category, Formatter, ShopError, UUID}
 import net.shop.model.FieldError
 import net.shop.model.Formatters.CategoryWriter
 import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils._
 
 trait CategoryService extends TraversingSpec
-    with DefaultLog
-    with FormValidation
-    with SecuredService
-    with ServiceDependencies {
+  with DefaultLog
+  with FormValidation
+  with SecuredService
+  with ServiceDependencies {
 
   def getCategory(implicit fs: FileSystem) = for {
     r <- get
@@ -30,9 +30,9 @@ trait CategoryService extends TraversingSpec
       case scala.util.Success(cat) =>
         fs.deletePath(Path(s"${dataPath}/categories/$id"))
         implicit val l = r.language
-        service(_(Responses.ok.withJsonBody(Formatter.format(cat))))
-      case scala.util.Failure(ShopError(msg, _)) => service(_(Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
-      case scala.util.Failure(t)                 => service(_(Responses.notFound))
+        service(_ (Responses.ok.withJsonBody(Formatter.format(cat))))
+      case scala.util.Failure(ShopError(msg, _)) => service(_ (Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+      case scala.util.Failure(t) => service(_ (Responses.notFound))
     }
   }
 
@@ -44,9 +44,9 @@ trait CategoryService extends TraversingSpec
     store.deleteCategories(id) match {
       case scala.util.Success(num) =>
         fs.deletePath(Path(s"${dataPath}/categories/$id"));
-        service(_(Responses.ok))
-      case scala.util.Failure(ShopError(msg, _)) => service(_(Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
-      case scala.util.Failure(t)                 => service(_(Responses.notFound))
+        service(_ (Responses.ok))
+      case scala.util.Failure(ShopError(msg, _)) => service(_ (Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+      case scala.util.Failure(t) => service(_ (Responses.notFound))
     }
   }
 
@@ -56,7 +56,7 @@ trait CategoryService extends TraversingSpec
     user <- auth
     mp <- multipartForm
   } yield {
-    extract(r.language, "update_", None, mp) match {
+    extract(r.language, "update_", Some(id), mp) match {
       case (file, Valid(o)) =>
         val cpy = o.copy(
           name = normalizeName(o.title_?(r.language.name))
@@ -66,11 +66,11 @@ trait CategoryService extends TraversingSpec
             file.map { f =>
               IO.arrayProducer(f._2)(LocalFileSystem.writer(Path(s"${dataPath}/categories/${cpy.id}.png")))
             }
-            service(_(Responses.created))
+            service(_ (Responses.created))
 
-          case scala.util.Failure(ShopError(msg, _)) => service(_(Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+          case scala.util.Failure(ShopError(msg, _)) => service(_ (Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
-            service(_(Responses.serverError.withTextBody(Loc.loc0(r.language)("category.create.fail").text)))
+            service(_ (Responses.serverError.withTextBody(Loc.loc0(r.language)("category.create.fail").text)))
         }
 
       case (_, Invalid(msgs)) =>
@@ -99,10 +99,10 @@ trait CategoryService extends TraversingSpec
             }
             service(_ (created.withJsonBody("{\"href\": \"/\"}")))
 
-          case scala.util.Failure(ShopError(msg, _)) => service(_(Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+          case scala.util.Failure(ShopError(msg, _)) => service(_ (Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case scala.util.Failure(t) =>
             error("Cannot create category ", t)
-            service(_(Responses.serverError))
+            service(_ (Responses.serverError))
         }
 
       case (_, Invalid(msgs)) =>
@@ -117,13 +117,13 @@ trait CategoryService extends TraversingSpec
 
     val (bins, text) = multipart.parts partition {
       case BinaryPart(h, content) => true
-      case _                      => false
+      case _ => false
     }
 
     val params = extractParams(text)
     val file = extractCategoryBin(bins.head)
 
-    val category = ((net.shop.api.Category.apply _).curried)(id)
+    val category = ((net.shop.api.Category.apply _).curried) (id getOrElse UUID.makeId)
     val ? = Loc.loc0(loc) _
 
     val categoryFormlet = Validator(category) <*>
