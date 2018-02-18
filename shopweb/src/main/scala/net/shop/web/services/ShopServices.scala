@@ -23,6 +23,7 @@ import org.json4s.native.Serialization.write
 import org.json4s.{DefaultFormats, jvalue2extractable, string2JsonInput}
 
 import scala.Option.option2Iterable
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 trait ShopServices extends TraversingSpec
@@ -156,15 +157,21 @@ trait ShopServices extends TraversingSpec
 
     r.uri.param("cart") match {
       case Some(Param(_, enc :: _)) => {
+
+
         implicit val formats = DefaultFormats
         val dec = Base64.decodeString(enc)
         log.debug(s"Cart content $dec")
         listTraverse.sequence(for {
           (item, index) <- readCart(dec).items.zipWithIndex
-          prod <- store.productById(item.id).toOption
         } yield {
-          Html5.runPageFromFile(PageState(CartState(index, item, prod), r.language), Path("web/templates/cartitem.html"), cartItemNode).map(_._2 toString)
-        }) match {
+          store.productById(item.id).flatMap { prod =>
+            Html5.runPageFromFile(PageState(CartState(index, item, prod), r.language), Path("web/templates/cartitem.html"), cartItemNode).map(_._2 toString) match {
+              case Success(s) => Future.successful(s)
+              case Failure(t) => Future.failed(t)
+            }
+          }
+        }).onComplete {
           case Success(list) => resp(ok.withJsonBody(write(list)))
           case scala.util.Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
           case Failure(t) =>

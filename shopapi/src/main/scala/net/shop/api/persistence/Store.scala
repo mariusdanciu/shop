@@ -1,40 +1,40 @@
 package net.shop.api
 package persistence
 
-import scala.util.Try
+import scala.concurrent.Future
 
 trait Persistence {
-  def productById(id: String): Try[ProductDetail]
+  def productById(id: String): Future[ProductDetail]
 
-  def productByName(name: String): Try[ProductDetail]
-  def allProducts: Try[Iterator[ProductDetail]]
-  def categoryProducts(cat: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]]
-  def searchProducts(text: String, spec: SortSpec = NoSort): Try[Iterator[ProductDetail]]
+  def productByName(name: String): Future[ProductDetail]
+  def allProducts: Future[Iterator[ProductDetail]]
+  def categoryProducts(cat: String, spec: SortSpec = NoSort): Future[Seq[ProductDetail]]
+  def searchProducts(text: String, spec: SortSpec = NoSort): Future[Seq[ProductDetail]]
 
-  def categoryByName(name: String): Try[Category]
-  def categoryById(id: String): Try[Category]
-  def allCategories: Try[Iterator[Category]]
+  def categoryByName(name: String): Future[Category]
+  def categoryById(id: String): Future[Category]
+  def allCategories: Future[Seq[Category]]
 
-  def createProducts(prod: ProductDetail*): Try[Seq[String]]
-  def updateProducts(prod: ProductDetail*): Try[Seq[String]]
-  def deleteProducts(prod: String*): Try[Int]
+  def createProduct(prod: ProductDetail): Future[Seq[String]]
+  def updateProduct(prod: ProductDetail): Future[Seq[String]]
+  def deleteProduct(id: String): Future[Boolean]
 
-  def createCategories(prod: Category*): Try[Seq[String]]
-  def updateCategories(prod: Category*): Try[Seq[String]]
-  def deleteCategories(prod: String*): Try[Int]
+  def createCategory(prod: Category): Future[Seq[String]]
+  def updateCategory(prod: Category): Future[Seq[String]]
+  def deleteCategory(prod: String): Future[Boolean]
 
-  def createUsers(user: UserDetail*): Try[Seq[String]]
-  def updateUsers(user: UserDetail*): Try[Seq[String]]
-  def deleteUserByEmail(email: String): Try[Int]
-  def deleteUsers(userId: String*): Try[Int]
-  def allUsers: Try[Iterator[UserDetail]]
-  def userByEmail(email: String): Try[Option[UserDetail]]
+  def createUsers(user: UserDetail*): Future[Seq[String]]
+  def updateUsers(user: UserDetail*): Future[Seq[String]]
+  def deleteUserByEmail(email: String): Future[Int]
+  def deleteUsers(userId: String*): Future[Int]
+  def allUsers: Future[Iterator[UserDetail]]
+  def userByEmail(email: String): Future[Option[UserDetail]]
 
-  def createOrder(order: OrderLog*): Try[Seq[String]]
-  def ordersByEmail(email: String): Try[Iterator[OrderLog]]
-  def ordersByStatus(status: OrderStatus): Try[Iterator[OrderLog]]
-  def ordersByProduct(productId: String): Try[Iterator[OrderLog]]
-  def updateOrderStatus(orderId: String, status: OrderStatus): Try[Boolean]
+  def createOrder(order: OrderLog): Future[String]
+  def ordersByEmail(email: String): Future[Iterator[OrderLog]]
+  def ordersByStatus(status: OrderStatus): Future[Iterator[OrderLog]]
+  def ordersByProduct(productId: String): Future[Iterator[OrderLog]]
+  def updateOrderStatus(orderId: String, status: OrderStatus): Future[Boolean]
 
 }
 

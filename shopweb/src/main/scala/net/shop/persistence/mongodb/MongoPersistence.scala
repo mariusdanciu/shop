@@ -1,33 +1,16 @@
+package net.shop.persistence.mongodb
+
 import net.shop.api._
-import net.shop.api.persistence.{SortByName, SortByPrice, SortSpec}
+import net.shop.api.persistence.{Persistence, SortByName, SortByPrice, SortSpec}
 import org.bson.BsonNull
 import org.mongodb.scala.{FindObservable, MongoClient, Observable}
+import org.mongodb.scala.bson.{BsonDocument, BsonValue, DefaultBsonTransformers, ObjectId}
 import org.mongodb.scala.bson.collection.immutable.Document
-import org.mongodb.scala.bson.{BsonDocument, BsonObjectId, BsonValue, DefaultBsonTransformers, ObjectId}
+import org.mongodb.scala.model.Sorts.{ascending, descending}
 import org.mongodb.scala.model.TextSearchOptions
-import org.mongodb.scala.model.Sorts._
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
-
-object MongoTest extends App {
-
-  println("Here")
-
-  System.setProperty("org.mongodb.async.type", "netty")
-  val uri = "mongodb://idid:qwer1234@idid-shard-00-00-ksqgy.mongodb.net:27017,idid-shard-00-01-ksqgy.mongodb.net:27017,idid-shard-00-02-ksqgy.mongodb.net:27017/?ssl=true&replicaSet=idid-shard-0&authSource=admin"
-
-  val p = MongoPersistence(uri)
-
-  p.allCategories.map(println)
-  //p.categoryProducts("corpuri de iluminat", SortByName(true, "ro")).map(println)
-
-  p.searchProducts("spalare", SortByName(true, "ro")).map(println)
-
-  Console.in.readLine()
-
-
-}
 
 object MongoImplicits extends DefaultBsonTransformers {
 
@@ -81,9 +64,9 @@ object MongoImplicits extends DefaultBsonTransformers {
     }
   }
 
-  implicit def documentToProductFuture(d: Future[Document]): Future[ProductDetail] = d.map { e => e }
+  implicit def documentToProductFuture(d: Future[Document])(implicit cts: ExecutionContext): Future[ProductDetail] = d.map { e => e }
 
-  implicit def documentToCategoryFuture(d: Future[Document]): Future[Category] = d.map { e => e }
+  implicit def documentToCategoryFuture(d: Future[Document])(implicit cts: ExecutionContext): Future[Category] = d.map { e => e }
 
 
   implicit def documentToProduct(d: Document): ProductDetail =
@@ -127,7 +110,7 @@ object MongoImplicits extends DefaultBsonTransformers {
 }
 
 
-case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) {
+case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends Persistence {
 
   import MongoImplicits._
   import org.mongodb.scala.model.Filters._

@@ -12,7 +12,7 @@ import net.shift.security.{Permission, User}
 import net.shift.server.{HttpServer, HttpsServer, Server}
 import net.shift.server.http.{HttpProtocolBuilder, Request, TextHeader}
 import net.shop.api.persistence.Persistence
-import net.shop.mongodb.MongoDBPersistence
+import net.shop.persistence.mongodb.MongoPersistence
 import net.shop.web.pages._
 import net.shop.web.services._
 import org.apache.log4j.PropertyConfigurator
@@ -61,14 +61,14 @@ object StartShop extends App with DefaultLog {
 }
 
 object ShopApplication {
-  def apply()(implicit cfg: Config) = new ShopApplication(cfg)
+  def apply()(implicit cfg: Config, ctx: ExecutionContext) = new ShopApplication(cfg)
 }
 
-class ShopApplication(c: Config) extends ShiftApplication with ShopServices {
+class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftApplication with ShopServices {
   self =>
 
   implicit val cfg = c
-  implicit val store: Persistence = new MongoDBPersistence
+  implicit val store: Persistence = MongoPersistence(c.string("db.url", ""))
 
   val orderService = new OrderService {
     val cfg = self.cfg

@@ -1,25 +1,12 @@
 package net.shop
 package web.services
 
-import scala.xml.NodeSeq
-import net.shift.loc.Language
-import net.shift.loc.Loc
-import net.shop.utils.ShopUtils._
-import net.shop.api.ProductDetail
-import net.shop.api.Person
-import net.shop.api.Company
-import net.shop.api.Order
-import net.shop.api.Address
-import net.shop.model.ValidationFail
-import net.shop.model.FieldError
-import net.shop.api.Transport
-import net.shift.io.IODefaults
-import net.shift.common.Validation
-import net.shift.common.Valid
-import net.shift.common.Invalid
-import net.shift.common.Validator
-import net.shift.io.IODefaults
+import net.shift.common.{Invalid, Valid, Validation, Validator}
 import net.shift.io.LocalFileSystem
+import net.shift.loc.{Language, Loc}
+import net.shop.api._
+import net.shop.model.FieldError
+import net.shop.utils.ShopUtils._
 
 object OrderForm {
 
@@ -27,8 +14,11 @@ object OrderForm {
   type ValidationFunc[T] = ValidationInput => Validation[T, FieldError]
 
   sealed trait EnvValue
+
   case class FormField(value: String) extends EnvValue
+
   case class OrderItems(l: List[(ProductDetail, Int)]) extends EnvValue
+
   case object NotFound extends EnvValue
 
   implicit val fs = LocalFileSystem
@@ -39,7 +29,7 @@ object OrderForm {
 
       env.get(name) match {
         case Some(FormField(e)) if (!e.isEmpty()) => f(e)
-        case _                                    => failed
+        case _ => failed
       }
     }
 
@@ -72,20 +62,20 @@ object OrderForm {
   def validItems(implicit lang: Language): ValidationFunc[List[(ProductDetail, Int)]] =
     env => env.get("items") match {
       case Some(OrderItems(l)) => Valid(l)
-      case _                   => Invalid(List(FieldError("items", Loc.loc0(lang)("order.items.required").text)))
+      case _ => Invalid(List(FieldError("items", Loc.loc0(lang)("order.items.required").text)))
     }
 
   def validTerms(id: String)(implicit lang: Language): ValidationFunc[Boolean] =
     env => env.get("terms") match {
       case Some(FormField("on")) => Valid(true)
-      case _                     => Invalid(List(FieldError(id, Loc.loc0(lang)("terms.and.conds.err").text)))
+      case _ => Invalid(List(FieldError(id, Loc.loc0(lang)("terms.and.conds.err").text)))
     }
 
   def validTransport(id: String)(implicit lang: Language): ValidationFunc[Transport] =
     env => env.get("transport") match {
       case Some(FormField("19.99")) => Valid(Transport(Loc.loc0(lang)("transport.1").text, 19.99f))
-      case Some(FormField("9.99"))  => Valid(Transport(Loc.loc0(lang)("transport.2").text, 9.99f))
-      case _                        => Invalid(List(FieldError(id, "error")))
+      case Some(FormField("9.99")) => Valid(Transport(Loc.loc0(lang)("transport.2").text, 9.99f))
+      case _ => Invalid(List(FieldError(id, "error")))
     }
 
   def inputItems(name: String)(f: ValidationInput => Validation[List[(ProductDetail, Int)], FieldError]) =
@@ -94,11 +84,11 @@ object OrderForm {
     }
 
   def form(implicit lang: Language) = {
-    val order = ((Order.apply _).curried)(uuid)
+    val order = ((Order.apply _).curried) (uuid)
     val ? = Loc.loc0(lang) _
 
     val person = (Person.apply _).curried
-    val address = ((Address.apply _).curried)(None)("destination")("Romania")
+    val address = ((Address.apply _).curried) (None)("destination")("Romania")
 
     val personFormlet = (Validator(person) <*>
       Validator(reqStr("fname", ?("first.name").text, Valid(_)))) <*>

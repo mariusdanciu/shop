@@ -56,7 +56,7 @@ trait ProductService extends TraversingSpec
 
         (for {
           p <- store.productById(pid)
-          u <- store.updateProducts(cpy)
+          u <- store.updateProduct(cpy)
         } yield {
           files.map { f =>
             IO.arrayProducer(f._3)(fs.writer(Path(s"$dataPath/products/${u.head}/${f._1}")))
@@ -96,7 +96,7 @@ trait ProductService extends TraversingSpec
       case (files, params, Valid(o)) =>
         val cpy = o.copy(
           name = normalizeName(o.title_?(r.language.name)))
-        val create = duration(store.createProducts(cpy)) { d =>
+        val create = duration(store.createProduct(cpy)) { d =>
           log.debug("Persist : " + d)
         }
 

@@ -17,35 +17,39 @@ import org.json4s.string2JsonInput
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
-trait OrderService extends FormValidation with TraversingSpec with ServiceDependencies { self =>
+trait OrderService extends FormValidation with TraversingSpec with ServiceDependencies {
+  self =>
 
   private val log = Logger.getLogger(classOf[OrderService])
 
-  private def extractOrder(json: String) = {
-    def extractItems(items: List[JValue]): (String, OrderForm.EnvValue) = listTraverse.sequence(for {
+  private def extractOrder(json: String): Future[Map[String, OrderForm.EnvValue]] = {
+    def extractItems(items: List[JValue]): Future[(String, OrderForm.OrderItems)] = listTraverse.sequence(for {
       JObject(o) <- items
     } yield {
       o match {
         case ("name", JString(id)) :: ("value", JInt(count)) :: Nil =>
           store.productById(id) map { prod => (prod, count toInt) }
       }
-    }).map(m => ("items", OrderForm.OrderItems(m))) getOrElse (("items", OrderForm.NotFound))
+    }).map(m => ("items", OrderForm.OrderItems(m)))
 
-    val list = for {
+    val list: Future[List[(String, OrderForm.EnvValue)]] = listTraverse.sequence(for {
       JObject(child) <- parse(json)
       JField(k, value) <- child if (k != "name" && k != "value")
     } yield {
       value match {
-        case JString(str)  => (k, OrderForm.FormField(str))
+        case JString(str) => Future.successful((k, OrderForm.FormField(str)))
         case JArray(items) => extractItems(items)
-        case JInt(v)       => (k, OrderForm.FormField(v toString))
+        case JInt(v) => Future.successful((k, OrderForm.FormField(v toString)))
       }
-    }
+    })
 
-    list toMap
+    list map {
+      _ toMap
+    }
   }
+
 
   def order = {
     for {
@@ -54,11 +58,13 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
     } yield service(resp => {
       val json = IO.producerToString(r.body)
 
-      val norms = json.map { extractOrder }
+      val norms: Future[Map[String, OrderForm.EnvValue]] = try2Future(json.map {
+        extractOrder
+      }).flatMap( a => a)
 
       log.debug("Order " + norms)
 
-      norms match {
+      norms.onComplete {
         case Success(norm) =>
 
           val v = OrderForm.form(r.language)
