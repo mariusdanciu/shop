@@ -14,7 +14,9 @@
 			js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8&appId=915281988516999";
 			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
-	</script>
+
+
+    </script>
 
     <div class="container">
         <nav class="navbar navbar-default">
@@ -38,10 +40,15 @@
                         <!-- end -->
                         <li><a id="search-icon" href="#"><span
                                 class="icon-search2"></span></a></li>
+                        <!-- snip:logged_user -->
+                        <li><a id="logout-icon" href="/logout">
+                            <span class="icon-exit"></span></a>
+                        </li>
+                        <!-- end -->
                     </ul>
                     <!-- snip:logged_user -->
                     <div class="welcome">
-                        Bine ai venit <span></span>
+                        Bine ai venit  <b><!-- inline:user_name --></b>
                     </div>
                     <!-- end -->
                 </div>
@@ -76,5 +83,6 @@
         </div>
 
     </div>
-    <div class="fb-like" data-href="https://www.facebook.com/idid.ro/" data-layout="box_count" data-action="like" data-size="small" data-show-faces="false" data-share="true"></div>
+    <div class="fb-like" data-href="https://www.facebook.com/idid.ro/" data-layout="box_count" data-action="like"
+         data-size="small" data-show-faces="false" data-share="true"></div>
 </header>

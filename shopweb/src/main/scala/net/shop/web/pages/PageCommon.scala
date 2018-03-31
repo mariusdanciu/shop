@@ -18,7 +18,10 @@ import scala.xml.{Elem, NodeSeq, Text}
 trait PageCommon[T] extends DynamicContent[T] with ServiceDependencies {
 
   val connectError = snip[T]("connect_error") {
-    s => Success((s.state.initialState, <div id="notice_connect_e">{ Loc.loc0(s.state.lang)("connect.fail").text }</div>))
+    s =>
+      Success((s.state.initialState, <div id="notice_connect_e">
+        {Loc.loc0(s.state.lang)("connect.fail").text}
+      </div>))
   }
   val user = snip[T]("user") {
     s =>
@@ -49,11 +52,31 @@ trait PageCommon[T] extends DynamicContent[T] with ServiceDependencies {
       val perms = s.params.map(Permission(_))
       s.state.user match {
         case Some(u) => u.requireAll(perms: _*)((s.state.initialState, s.node)).recover { case t => (s.state.initialState, NodeSeq.Empty) }
-        case _       => Success((s.state.initialState, NodeSeq.Empty))
+        case _ => Success((s.state.initialState, NodeSeq.Empty))
       }
 
   }
+
+
   val loggedUser = snip[T]("logged_user") {
+    s =>
+      s.state.user match {
+        case Some(u) => Success(s.state.initialState, s.node)
+        case _ => Success((s.state.initialState, NodeSeq.Empty))
+      }
+  }
+
+  val userName = inline[T]("user_name") {
+    s =>
+      s.state.user match {
+        case Some(u) =>
+          Success((s.state.initialState, u.name))
+        case _ =>
+          Success((s.state.initialState, ""))
+      }
+  }
+
+  snip[T]("user_name") {
     s =>
       s.state.user match {
         case Some(u) =>
@@ -61,10 +84,14 @@ trait PageCommon[T] extends DynamicContent[T] with ServiceDependencies {
             case Xml("span", a, c) =>
               Xml("span", a, Text(u.name))
           }
-          res map { (s.state.initialState, _) }
+          res map {
+            (s.state.initialState, _)
+          }
         case _ => Success((s.state.initialState, NodeSeq.Empty))
       }
   }
+
+
   val catMenu = reqSnip("catmenu") {
     s => {
       store.allCategories match {
@@ -86,7 +113,7 @@ trait PageCommon[T] extends DynamicContent[T] with ServiceDependencies {
     }
   }
 
-  override def inlines = List(authClass, logout)
+  override def inlines = List(authClass, logout, userName)
 
   def snippets = List(connectError, user, permissions, loggedUser, catMenu)
 
