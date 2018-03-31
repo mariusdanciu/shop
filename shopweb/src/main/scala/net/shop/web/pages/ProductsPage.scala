@@ -127,12 +127,12 @@ trait ProductsPage extends PageCommon[Request] {
 }
 
 object ProductsQuery {
-  def fetch(r: Request, store: Persistence): Try[Iterator[ProductDetail]] = {
+  def fetch(r: Request, store: Persistence): Try[Seq[ProductDetail]] = {
     lazy val spec = toSortSpec(r)
     (ProductsPage.extractCat(r), r.uri.paramValue("search")) match {
       case (Success(name), None) => store.categoryProducts(extractName(name), spec)
       case (_, Some(search :: _)) => store.searchProducts(search, spec)
-      case _ => Success(Iterator.empty)
+      case _ => Success(Seq.empty)
     }
   }
 

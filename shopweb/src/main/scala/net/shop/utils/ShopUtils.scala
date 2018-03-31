@@ -8,8 +8,9 @@ import net.shift.io.FileSystem
 import net.shop.api.persistence.Persistence
 import net.shop.api.{Category, NamedItem, ProductDetail}
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Random, Try}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.util.{Random, Success, Try}
 
 trait ProductImageVariant {
   val name: String
@@ -36,7 +37,7 @@ object ShopUtils {
 
   def categoryImagePath(cat: Category): String = s"/data/categories/${cat.stringId}.png"
 
-  def productPage(id: String)(implicit p: Persistence, ctx: ExecutionContext): Future[String] =
+  def productPage(id: String)(implicit p: Persistence): Try[String] =
     p.productById(id) map { p => s"/product/${nameToPath(p)}" }
 
   def productPage(p: ProductDetail): String = s"/product/${nameToPath(p)}"

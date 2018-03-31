@@ -13,6 +13,8 @@ import net.shop.utils.ShopUtils._
 import org.json4s.native.JsonMethods.parse
 import org.json4s.{DefaultFormats, string2JsonInput}
 
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 import scala.util.Success
 import scala.xml.{NodeSeq, Text}
 
@@ -30,9 +32,8 @@ trait CartPage extends PageCommon[CartInfo] {
       val info = for {
         c <- ci.toSeq
         item <- c.items
-        p <- store.productById(item.id).toOption
       } yield {
-        (item.id, item.count, p)
+        (item.id, item.count, Await.result(store.productById(item.id), Duration.Inf))
       }
 
       val emptyMsg = Loc.loc0(s.state.lang)("cart.empty").text
@@ -62,7 +63,8 @@ trait CartPage extends PageCommon[CartInfo] {
       val res = for {(id, count, prod) <- c.items} yield {
         bind(s.node) {
           case Xml("a", HasClass("hover", a), childs) =>
-            Xml("a", a + ("href", ShopUtils.productPage(prod.stringId)), childs)
+            Xml("a", a + ("href", ShopUtils.productPage(prod.stringId) getOrElse "#"), childs)
+
           case Xml("img", a, _) => Xml("img", a +
             ("src", ShopUtils.imagePath(ThumbPic, prod.stringId)) +
             ("alt", prod.title_?(s.state.lang.name) + ShopUtils.OBJECT_SUFFIX))
@@ -89,40 +91,10 @@ trait CartPage extends PageCommon[CartInfo] {
       }
       Success((s.state.initialState, nodes))
   }
-  val userInfo = reqSnip("userInfo") {
-    s =>
-      s.state.user match {
-        case Some(user) =>
-          store.userByEmail(user.name) match {
-            case scala.util.Success(Some(ud)) =>
-              val addr = ud.addresses match {
-                case Nil => Address(None, "", "", "", "", "", "")
-                case h :: _ => h
-              }
-
-              bind(s.node) {
-                case HasName("fname", a) => Xml("input", a + ("value", ud.userInfo.firstName))
-                case HasName("lname", a) => Xml("input", a + ("value", ud.userInfo.lastName))
-                case HasName("email", a) => Xml("input", a + ("value", user.name))
-                case HasName("phone", a) => Xml("input", a + ("value", ud.userInfo.phone))
-                case HasName("cnp", a) => Xml("input", a + ("value", ud.userInfo.cnp))
-                case HasName("region", a) => Xml("input", a + ("value", addr.region))
-                case HasName("city", a) => Xml("input", a + ("value", addr.city))
-                case HasName("address", a) => Xml("input", a + ("value", addr.address))
-                case HasName("zip", a) => Xml("input", a + ("value", addr.zipCode))
-              } map {
-                (s.state.initialState, _)
-              }
-            case _ => Success((s.state.initialState, s.node))
-          }
-        case _ => Success((s.state.initialState, s.node))
-      }
-
-  }
 
   override def inlines = List(emptyMsg, total) ++ super.inlines
 
-  override def snippets = List(cartProds, quantities, empty, userInfo) ++ super.snippets
+  override def snippets = List(cartProds, quantities, empty) ++ super.snippets
 
   private def getCart(r: Request): Option[Cart] = {
     for {

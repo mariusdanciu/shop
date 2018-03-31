@@ -28,11 +28,6 @@ case class Pages(cfg: Config, store: Persistence) extends ServiceDependencies {
     val store = pages.store
   }
 
-  val accPage = new AccountSettingsPage {
-    val cfg = pages.cfg
-    val store = pages.store
-  }
-
   val cartPage = new CartPage {
     val cfg = pages.cfg
     val store = pages.store

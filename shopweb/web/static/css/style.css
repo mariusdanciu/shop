@@ -1329,10 +1329,16 @@ form .row {
 }
 
 .login {
-    padding-bottom: 10px;
+	text-align: center;
 }
 
-.login, .search {
+.login .box {
+    position: relative;
+    padding-top: 30px;
+}
+
+
+.search {
 	display: none;
 	text-align: center;
 }
@@ -1343,10 +1349,6 @@ form .row {
 
 .search input {
 	width: 100%;
-}
-
-.login .row * {
-	padding: 10px 10px;
 }
 
 .transport {

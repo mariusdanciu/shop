@@ -1,6 +1,7 @@
 package net.shop.web.services
 
 import net.shift.common.{FileSplit, Invalid, Valid, Validation}
+import net.shift.engine.Attempt
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.{BinaryPart, ContentDisposition, MultiPart, TextPart}
 import net.shift.io.FileSystem
@@ -111,12 +112,6 @@ trait FormValidation extends ServiceDependencies {
   def validateText(name: String)(implicit lang: Language): ValidationInput => Validation[String, FieldError] =
     optional(name, "", Valid(_))
 
-  def validateCreateUser(name: String, title: String)(implicit lang: Language): ValidationInput => Validation[String, FieldError] =
-    required(name, title, s => store.userByEmail(s) match {
-      case scala.util.Success(Some(email)) => Invalid(List(FieldError(name, Loc.loc0(lang)("user.already.exists").text)))
-      case _ => Valid(s)
-    })
-
   def validateOptional[T](name: String, f: String => Option[T])(implicit lang: Language): ValidationInput => Validation[Option[T], FieldError] = env => {
     env.get(name) match {
       case Some(n :: _) if !n.isEmpty => Valid(f(n))
@@ -157,16 +152,16 @@ trait FormValidation extends ServiceDependencies {
 
   def extractCategoryBin(bins: MultiPart): Option[(String, Array[Byte])] = bins match {
     case BinaryPart(h, content) =>
-      (for {
+      for {
         ContentDisposition(v, params) <- h.get("Content-Disposition")
         FileSplit(n, ext) <- params.get("filename")
       } yield {
         (s"$n.$ext", content)
-      })
+      }
     case _ => None
   }
 
-  def validationFail(msgs: List[FieldError])(implicit lang: Language, fs: FileSystem) =
+  def validationFail(msgs: List[FieldError])(implicit lang: Language, fs: FileSystem): Attempt =
     service(r => {
       r(Responses.forbidden.withJsonBody(Formatter.format(msgs)))
     })

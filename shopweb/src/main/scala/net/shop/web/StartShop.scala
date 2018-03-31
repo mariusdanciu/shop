@@ -3,7 +3,7 @@ package web
 
 import java.util.concurrent.Executors
 
-import net.shift.common.{Config, DefaultLog, Path}
+import net.shift.common.{Config, DefaultLog, Path, State}
 import net.shift.engine.http.HttpPredicates._
 import net.shift.engine.{Attempt, ShiftApplication}
 import net.shift.io.LocalFileSystem
@@ -21,14 +21,13 @@ import scala.concurrent.ExecutionContext
 
 object StartShop extends App with DefaultLog {
 
+  System.setProperty("org.mongodb.async.type", "netty")
+
   implicit val fs = LocalFileSystem
   PropertyConfigurator.configure("config/log4j.properties")
 
-  for {cfg <- Config.load(profile)} yield {
-
-    val dbPass = args.apply(0)
-
-    implicit val c = cfg + Config("db.pwd" -> dbPass)
+  val s = for {cfg <- Config.load(profile)} yield {
+    implicit val c = cfg
 
     log.info("Configs " + c.configs)
 
@@ -47,6 +46,10 @@ object StartShop extends App with DefaultLog {
 
     //println("SSL server started on port " + cfg.int("server.ssl.port"))
 
+  }
+
+  s recover {
+    case t => t.printStackTrace()
   }
 
   def profile = {
@@ -82,18 +85,12 @@ class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftAp
     val cfg = self.cfg
     val store = self.store
   }
-  val userService = new UserService {
-    val cfg = self.cfg
-    val store = self.store
-  }
-  val settingsService = new SettingsService {
-    val cfg = self.cfg
-    val store = self.store
-  }
+
 
   val pages = Pages(cfg, store)
 
   def servingRule = for {
+    _ <- logRequest
     r <- withLanguage(Language("ro"))
     u <- user
     c <- staticFiles(Path("web/static")) |
@@ -101,6 +98,7 @@ class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftAp
       productsVariantImages |
       categoriesImages |
       logout |
+      page("/login", Path("web/auth.html"), pages.catPage) |
       page("/", Path("web/index.html"), pages.catPage) |
       page("/terms", Path("web/terms.html"), pages.termsPage) |
       page("/order_done", Path("web/order_done.html"), pages.termsPage) |
@@ -111,7 +109,6 @@ class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftAp
       page("/cart", Path("web/cart.html"), pages.cartPage, CartInfo(r, Nil)) |
       page("/newuser", Path("web/newuser.html"), pages.newUserPage) |
       xmlPage("/sitemap.xml", Path("web/sitemap.xml"), pages.siteMapPage) |
-      settingsPage("/accountsettings", Path("web/accountsettings.html"), pages.accPage) |
       products(r) |
       product(r, u) |
       saveProduct(r, u) |
@@ -125,13 +122,7 @@ class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftAp
       categoryService.deleteCategory |
       categoryService.updateCategory |
       categoryService.getCategory |
-      userService.createUser |
-      userService.userInfo |
-      userService.deleteThisUser |
-      userService.forgotPassword |
-      settingsService.updateSettings |
-      settingsService.updateOrderStatus |
-      orderService.orderByEmail |
+      orderService.orderById |
       orderService.orderByProduct |
       staticFile(Path("/google339a4b5281321c21.html"), "./web") |
       staticFile(Path("/googlef5775953f22a747b.html"), "./web") |
@@ -152,7 +143,7 @@ class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftAp
     }
   }
 
-  def saveProduct(req: Request, u: Option[User]) = pageWithRules(Path("web/saveproduct.html"), pages.saveProductPage,
+  def saveProduct(req: Request, u: Option[User]): State[Request, Attempt] = pageWithRules(Path("web/saveproduct.html"), pages.saveProductPage,
     for {
       _ <- get
       Path(_, _ :: "saveproduct" :: _) <- path
@@ -160,7 +151,7 @@ class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftAp
       r <- permissions("Unauthorized", Permission("write"))
     } yield r, ProductPageState.build(req))
 
-  def saveCategory(req: Request, u: Option[User]) = pageWithRules(Path("web/savecategory.html"), pages.saveCategoryPage,
+  def saveCategory(req: Request, u: Option[User]): State[Request, Attempt] = pageWithRules(Path("web/savecategory.html"), pages.saveCategoryPage,
     for {
       _ <- get
       Path(_, _ :: "savecategory" :: _) <- path
@@ -169,13 +160,13 @@ class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftAp
     } yield r, CategoryPageState.build(req))
 
 
-  def product(req: Request, u: Option[User]) = pageWithRules(Path("web/product.html"), pages.prodDetailPage,
+  def product(req: Request, u: Option[User]): State[Request, Attempt] = pageWithRules(Path("web/product.html"), pages.prodDetailPage,
     for {
       _ <- get
       Path(_, _ :: "product" :: _) <- path
     } yield (), ProductPageState.build(req))
 
-  def products(req: Request) = pageWithRules(Path("web/products.html"), pages.productsPage,
+  def products(req: Request): State[Request, Attempt] = pageWithRules(Path("web/products.html"), pages.productsPage,
     for {
       _ <- get
       Path(_, _ :: "products" :: _) <- path

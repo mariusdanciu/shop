@@ -1,12 +1,13 @@
 package net.shop
 package web.services
 
-import net.shift.common.{Invalid, Path, TraversingSpec, Valid}
+import net.shift.common._
+import net.shift.engine.Attempt
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.HttpPredicates._
 import net.shift.io.IO
 import net.shift.loc.Loc
-import net.shift.server.http.Responses
+import net.shift.server.http.{Request, Responses}
 import net.shop.api.{Formatter, ShopError}
 import net.shop.messaging.{Messaging, OrderDocument}
 import net.shop.web.pages.{OrderPage, OrderState}
@@ -24,8 +25,8 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
 
   private val log = Logger.getLogger(classOf[OrderService])
 
-  private def extractOrder(json: String): Future[Map[String, OrderForm.EnvValue]] = {
-    def extractItems(items: List[JValue]): Future[(String, OrderForm.OrderItems)] = listTraverse.sequence(for {
+  private def extractOrder(json: String): Try[Map[String, OrderForm.EnvValue]] = {
+    def extractItems(items: List[JValue]): Try[(String, OrderForm.OrderItems)] = listTraverse.sequence(for {
       JObject(o) <- items
     } yield {
       o match {
@@ -34,14 +35,14 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
       }
     }).map(m => ("items", OrderForm.OrderItems(m)))
 
-    val list: Future[List[(String, OrderForm.EnvValue)]] = listTraverse.sequence(for {
+    val list = listTraverse.sequence(for {
       JObject(child) <- parse(json)
-      JField(k, value) <- child if (k != "name" && k != "value")
+      JField(k, value) <- child if k != "name" && k != "value"
     } yield {
       value match {
-        case JString(str) => Future.successful((k, OrderForm.FormField(str)))
+        case JString(str) => Success((k, OrderForm.FormField(str)))
         case JArray(items) => extractItems(items)
-        case JInt(v) => Future.successful((k, OrderForm.FormField(v toString)))
+        case JInt(v) => Success((k, OrderForm.FormField(v toString)))
       }
     })
 
@@ -51,20 +52,20 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
   }
 
 
-  def order = {
+  def order: State[Request, Attempt] = {
     for {
       r <- post
       Path(_, _ :: "order" :: Nil) <- path
     } yield service(resp => {
       val json = IO.producerToString(r.body)
 
-      val norms: Future[Map[String, OrderForm.EnvValue]] = try2Future(json.map {
+      val norms = json flatMap {
         extractOrder
-      }).flatMap( a => a)
+      }
 
       log.debug("Order " + norms)
 
-      norms.onComplete {
+      norms match {
         case Success(norm) =>
 
           val v = OrderForm.form(r.language)
@@ -95,7 +96,7 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
     })
   }
 
-  def orderByEmail = for {
+  def orderById: State[Request, Attempt] = for {
     r <- get
     Path(_, _ :: "orders" :: Nil) <- path
     email <- param("email")
@@ -104,28 +105,30 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
     import model.Formatters._
 
     implicit val l = r.language
-    store.ordersByEmail(email) match {
-      case Success(orders) =>
+    store.ordersById(email) map {
+      orders =>
         resp(Responses.ok.withJsonBody(Formatter.format(orders.toList)))
-      case Failure(t) =>
+    } recover {
+      case t =>
         resp(Responses.ok.withJsonBody(Formatter.format(ShopError(Loc.loc(r.language)("orders.not.found.for.email", List(email)).text, t))))
     }
 
   })
 
-  def orderByProduct = for {
+  def orderByProduct: State[Request, Attempt] = for {
     r <- get
     Path(_, _ :: "orders" :: Nil) <- path
     id <- param("productid")
   } yield service(resp => {
     import model.Formatters._
     implicit val l = r.language
-    store.ordersByProduct(id) match {
-      case Success(orders) =>
+    store.ordersByProduct(id) map {
+      orders =>
         resp(Responses.ok.withJsonBody(Formatter.format(orders.toList)))
-      case Failure(t: ShopError) =>
+    } recover {
+      case t: ShopError =>
         resp(Responses.serverError.withJsonBody(Formatter.format(t)))
-      case Failure(t) =>
+      case t =>
         resp(Responses.serverError.withJsonBody(Formatter.format(ShopError(t.getMessage, t))))
     }
 

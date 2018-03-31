@@ -3,18 +3,22 @@ package web.services
 
 import net.shift.common.TimeUtils.duration
 import net.shift.common._
+import net.shift.engine.Attempt
 import net.shift.engine.ShiftApplication.service
 import net.shift.engine.http.HttpPredicates._
 import net.shift.engine.http.{BinaryPart, MultiPartBody}
 import net.shift.io.{FileSystem, IO, LocalFileSystem}
 import net.shift.loc.{Language, Loc}
 import net.shift.security.Permission
+import net.shift.server.http.Request
 import net.shift.server.http.Responses._
 import net.shop.api.{ProductDetail, ShopError, UUID}
 import net.shop.model.FieldError
 import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils.dataPath
 import net.shop.utils.ShopUtils._
+
+import scala.util.{Failure, Success, Try}
 
 
 trait ProductService extends TraversingSpec
@@ -23,22 +27,22 @@ trait ProductService extends TraversingSpec
   with SecuredService
   with ServiceDependencies {
 
-  def deleteProduct(implicit fs: FileSystem) = for {
+  def deleteProduct(implicit fs: FileSystem): State[Request, Attempt] = for {
     r <- delete
     Path(_, _ :: "product" :: id :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
     _ <- permissions("Unauthorized", Permission("write"))
   } yield {
-    store.deleteProducts(id) match {
-      case scala.util.Success(num) =>
+    store.deleteProduct(id) match {
+      case Success(num) =>
         fs.deletePath(Path(s"${dataPath}/products/$id"))
         service(_ (ok.withJsonBody("{\"href\": \"/\"}")))
-      case scala.util.Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
-      case scala.util.Failure(t) => service(_ (notFound))
+      case Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+      case Failure(t) => service(_ (notFound))
     }
   }
 
-  def updateProduct(implicit fs: FileSystem) = for {
+  def updateProduct(implicit fs: FileSystem): State[Request, Attempt] = for {
     r <- post
     Path(_, _ :: "product" :: "update" :: pid :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
@@ -49,10 +53,10 @@ trait ProductService extends TraversingSpec
       case (files, params, Valid(o)) =>
         val cpy = o.copy(name = normalizeName(o.title_?(r.language.name)))
 
-          val delImages = params.get("delimg") match {
-            case Some(list) => list
-            case _ => Nil
-          }
+        val delImages = params.get("delimg") match {
+          case Some(list) => list
+          case _ => Nil
+        }
 
         (for {
           p <- store.productById(pid)
@@ -70,9 +74,11 @@ trait ProductService extends TraversingSpec
 
           service(_ (ok.withJsonBody("{\"href\": \"" + ShopUtils.productPage(pid) + "\"}")))
         }) match {
-          case scala.util.Success(s) => s
-          case scala.util.Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
-          case scala.util.Failure(t) => service(_ (serverError))
+          case Success(s) => s
+          case Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+          case Failure(t) =>
+            log.error("Error", t)
+            service(_ (serverError))
         }
 
       case (_, _, Invalid(msgs)) =>
@@ -81,7 +87,7 @@ trait ProductService extends TraversingSpec
     }
   }
 
-  def createProduct(implicit fs: FileSystem) = for {
+  def createProduct(implicit fs: FileSystem): State[Request, Attempt] = for {
     r <- post
     Path(_, _ :: "product" :: "create" :: Nil) <- path
     user <- userRequired(Loc.loc0(r.language)("login.fail").text)
@@ -96,19 +102,20 @@ trait ProductService extends TraversingSpec
       case (files, params, Valid(o)) =>
         val cpy = o.copy(
           name = normalizeName(o.title_?(r.language.name)))
-        val create = duration(store.createProduct(cpy)) { d =>
+        val create: Try[String] = duration(store.createProduct(cpy)) { d =>
           log.debug("Persist : " + d)
         }
 
         create match {
-          case scala.util.Success(p) =>
+          case Success(p) =>
             duration(
               files.map { f =>
-                IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p.head}/${f._1}")))
+                IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p}/${f._1}")))
               }) { d => log.debug("Write files: " + d) }
             service(_ (created.withJsonBody("{\"href\": \"" + ShopUtils.productPage(cpy) + "\"}")))
-          case scala.util.Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
-          case scala.util.Failure(t) =>
+          case Failure(ShopError(msg, _)) =>
+            service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+          case Failure(t) =>
             error("Cannot create product ", t)
             service(_ (serverError))
         }
@@ -119,7 +126,6 @@ trait ProductService extends TraversingSpec
         validationFail(msgs)
 
     }
-
   }
 
   private def extract(implicit loc: Language,

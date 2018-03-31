@@ -9,8 +9,9 @@ import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.model.Sorts.{ascending, descending}
 import org.mongodb.scala.model.TextSearchOptions
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 object MongoImplicits extends DefaultBsonTransformers {
 
@@ -127,6 +128,11 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
 
   products.createIndex(Document("title.ro" -> "text", "description.ro" -> "text", "keywords" -> "text"))
 
+  private implicit def toTry[T](f: Future[T]): Try[T] = try {
+    Success(Await.result(f, Duration.Inf))
+  } catch {
+    case e: Throwable => Failure(e)
+  }
 
   private def sort[T](f: FindObservable[T], spec: SortSpec): Observable[T] = {
     spec match {
@@ -139,21 +145,23 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
   }
 
 
-  def productById(id: String): Future[ProductDetail] = {
-    products.find(equal("_id", new ObjectId(id))).first().toFuture()
+  def productById(id: String): Try[ProductDetail] = toTry {
+    (products.find(equal("_id", new ObjectId(id))).first().toFuture())
   }
 
-  def productByName(name: String): Future[ProductDetail] = {
-    products.find(equal("name", name)).first().toFuture()
+  def productByName(name: String): Try[ProductDetail] = toTry {
+    products.find(equal("name", name)).first().toFuture().map {
+      c => c
+    }
   }
 
-  def allProducts: Future[Seq[ProductDetail]] = {
+  def allProducts: Try[Seq[ProductDetail]] = toTry {
     products.find().toFuture().map {
       _.map { e => (e: ProductDetail) }
     }
   }
 
-  def categoryProducts(cat: String, spec: SortSpec): Future[Seq[ProductDetail]] = {
+  def categoryProducts(cat: String, spec: SortSpec): Try[Seq[ProductDetail]] = toTry {
 
     for {
       cat <- categories.find(equal("name", cat)).first().toFuture()
@@ -166,47 +174,49 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
     }
   }
 
-  def searchProducts(s: String, spec: SortSpec): Future[Seq[ProductDetail]] = {
+  def searchProducts(s: String, spec: SortSpec): Try[Seq[ProductDetail]] = toTry {
     sort(products.find(text(s, TextSearchOptions()
       .caseSensitive(false)
       .diacriticSensitive(false)
       .language("english"))), spec).toFuture().map { s => s.map { e => (e: ProductDetail) } }
   }
 
-  def categoryByName(name: String): Future[Category] =
+  def categoryByName(name: String): Try[Category] = toTry {
     categories.find(equal("name", name)).first().toFuture()
+  }
 
-  def categoryById(id: String): Future[Category] =
+  def categoryById(id: String): Try[Category] = toTry {
     categories.find(equal("_id", id)).first().toFuture()
+  }
 
-  def allCategories: Future[Seq[Category]] = {
+  def allCategories: Try[Seq[Category]] = toTry {
     categories.find().toFuture().map {
       _.map { e => (e: Category) }
     }
   }
 
-  def createProduct(prod: ProductDetail): Future[String] = {
+  def createProduct(prod: ProductDetail): Try[String] = toTry  {
     products.insertOne(prod).toFuture.map { _ => prod.id }
   }
 
-  def updateProduct(prod: ProductDetail): Future[String] = {
+  def updateProduct(prod: ProductDetail): Try[String] = toTry  {
     products.updateOne(equal("_id", prod.id), prod).toFuture().map { _ => prod.id }
   }
 
-  def deleteProduct(id: String): Future[Boolean] = {
-    products.deleteOne(equal("_id", id)).toFuture().map{_ => true}
+  def deleteProduct(id: String): Try[String] = toTry {
+    products.deleteOne(equal("_id", id)).toFuture().map { _ => id }
   }
 
-  def createCategory(cat: Category): Future[String] = {
+  def createCategory(cat: Category): Try[String] = toTry {
     categories.insertOne(cat).toFuture.map { _ => cat.id }
   }
 
-  def updateCategory(cat: Category): Future[Boolean] = {
-    categories.updateOne(equal("_id", cat.id), cat).toFuture().map{_ => true}
+  def updateCategory(cat: Category): Try[String] = toTry {
+    categories.updateOne(equal("_id", cat.id), cat).toFuture().map { _ => cat.id}
   }
 
-  def deleteCategory(id: String): Future[Boolean] =  {
-    categories.deleteOne(equal("_is", id)).toFuture().map{_ => true}
+  def deleteCategory(id: String): Try[String] = toTry {
+    categories.deleteOne(equal("_is", id)).toFuture().map { _ => id }
   }
 
   def createUsers(user: UserDetail*): Try[Seq[String]] = ???
@@ -221,15 +231,15 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
 
   def userByEmail(email: String): Try[Option[UserDetail]] = ???
 
-  def createOrder(order: OrderLog): Future[String] = {
+  def createOrder(order: OrderLog): Try[String] = {
     Future.successful("")
   }
 
-  def ordersByEmail(email: String): Try[Iterator[OrderLog]] = ???
+  def ordersById(email: String): Try[Seq[OrderLog]] = ???
 
-  def ordersByStatus(status: OrderStatus): Try[Iterator[OrderLog]] = ???
+  def ordersByStatus(status: OrderStatus): Try[Seq[OrderLog]] = ???
 
-  def ordersByProduct(productId: String): Try[Iterator[OrderLog]] = ???
+  def ordersByProduct(productId: String): Try[Seq[OrderLog]] = ???
 
-  def updateOrderStatus(orderId: String, status: OrderStatus): Try[Boolean] = ???
+  def updateOrderStatus(orderId: String, status: OrderStatus): Try[String] = ???
 }

@@ -1,19 +1,12 @@
 package net.shop
 package web.services
 
-import net.shift.security.BasicCredentials
-import net.shift.security.User
-import net.shift.security.Permission
-import net.shift.security.Credentials
-import net.shift.loc.Loc
-import net.shop.web.ShopApplication
-import scala.util.Success
-import net.shift.common.Config
-import net.shift.io.IODefaults
-import net.shift.engine.http.HttpPredicates._
-import scala.util.Try
-import scala.util.Failure
 import net.shift.common.ShiftFailure
+import net.shift.engine.http.HttpPredicates._
+import net.shift.loc.Loc
+import net.shift.security._
+
+import scala.util.{Success, Try}
 
 trait SecuredService extends ServiceDependencies {
 
@@ -21,11 +14,12 @@ trait SecuredService extends ServiceDependencies {
     creds match {
       case BasicCredentials(email, password) =>
 
-        store.userByEmail(email) match {
-          case Success(Some(ud)) if (ud.password == password) =>
-            Success(User(ud.email, None, ud.permissions.map(Permission(_)).toSet))
-          case _ =>
-            ShiftFailure("Invalid credentials").toTry
+        val admins = cfg.list("admin.users") toSet
+
+        if (admins.contains(email)) {
+          Success(User(email, Some(Organization("idid")), Set(Permission("write"))))
+        } else {
+          ShiftFailure("Invalid credentials").toTry
         }
       case _ => ShiftFailure("Invalid authentication scheme").toTry
     }

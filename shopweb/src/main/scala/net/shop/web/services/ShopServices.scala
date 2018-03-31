@@ -3,28 +3,26 @@ package web.services
 
 import net.shift.common._
 import net.shift.engine.ShiftApplication.service
-import net.shift.engine.{Attempt, _}
 import net.shift.engine.http.HttpPredicates._
 import net.shift.engine.page.Html5
+import net.shift.engine.{Attempt, _}
 import net.shift.loc.Loc
 import net.shift.security.User
 import net.shift.server.http.ContentType._
 import net.shift.server.http.Responses._
-import net.shift.server.http.{ContentType, Param, Request, TextHeader}
-import net.shift.template.{DynamicContent, PageState}
+import net.shift.server.http.{ContentType, Param, Request, ResponseFunc, TextHeader}
 import net.shift.template.Template._
-import net.shop.api.{Cart, ShopError}
+import net.shift.template.{DynamicContent, PageState}
 import net.shop.api.persistence.Persistence
-import net.shop.tryApplicative
+import net.shop.api.{Cart, ShopError}
 import net.shop.utils.ShopUtils
-import net.shop.web.pages.{CartItemNode, CartState, SettingsPageState}
+import net.shop.web.pages.{CartItemNode, CartState}
 import org.json4s.native.JsonMethods.parse
 import org.json4s.native.Serialization.write
 import org.json4s.{DefaultFormats, jvalue2extractable, string2JsonInput}
 
-import scala.Option.option2Iterable
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 trait ShopServices extends TraversingSpec
   with DefaultLog
@@ -38,7 +36,7 @@ trait ShopServices extends TraversingSpec
     val cfg = self.cfg
   }
 
-  def notFoundService = for {
+  def notFoundService: State[Request, Attempt] = for {
     r <- req
   } yield {
     r.header("X-Requested-With") match {
@@ -52,31 +50,43 @@ trait ShopServices extends TraversingSpec
     }
   }
 
-  def ajaxLogin = for {
+  def ajaxLogin: State[Request, Attempt] = for {
+    r <- req
     _ <- ajax
     r <- path("/auth")
     u <- authenticate(Loc.loc0(r.language)("login.fail").text, 406)
   } yield service(_ (ok.withSecurityCookies(u)))
 
-  def logout = for {
+  def logRequest: State[Request, Request] = for {
+    r <- req
+  } yield {
+    log.debug(s"Request ${r.method} ${r.uri.path}")
+    r
+  }
+
+
+  def logout: State[Request, Attempt] = for {
     r <- path("/logout")
   } yield service(_ (redirect("/").dropSecurityCookies))
 
-  def refresh(attempt: Attempt) = for {
-    r <- req
-    u <- user
-    serv <- State.put[Request, Attempt](attempt)
-  } yield {
-    u match {
-      case Some(usr) => serv.map(_.withResponse { r =>
-        val isLogout = r.cookie("identity").map { c => c.maxAge == Some(0) } getOrElse false
+  def refresh(attempt: Attempt): State[Request, Attempt] = {
+    for {
+      r <- req
+      u <- user
+      serv <- State.put[Request, Attempt](attempt)
+    } yield {
+      u match {
+        case Some(usr) =>
+          serv.map(_.withResponse { r =>
+            val isLogout = r.cookie("identity").map { c => c.maxAge == Some(0) } getOrElse false
 
-        if (isLogout)
-          r
-        else
-          r.withSecurityCookies(usr)
-      })
-      case _ => serv
+            if (isLogout)
+              r
+            else
+              r.withSecurityCookies(usr)
+          })
+        case _ => serv
+      }
     }
   }
 
@@ -94,7 +104,7 @@ trait ShopServices extends TraversingSpec
 
   }
 
-  def xmlPage(uri: String, filePath: Path, snippets: DynamicContent[Request]) = for {
+  def xmlPage(uri: String, filePath: Path, snippets: DynamicContent[Request]): State[Request, Try[(ResponseFunc) => Unit]] = for {
     attempt <- page(uri, filePath, snippets)
   } yield {
     attempt.map(_.withResponse { r => r.withMime(ContentType.TextXml) })
@@ -114,22 +124,6 @@ trait ShopServices extends TraversingSpec
     Html5.pageFromFile(PageState(initialState, r.language, u), filePath, snipets)
   }
 
-  def settingsPage(uri: String, filePath: Path, snipets: DynamicContent[SettingsPageState]) = for {
-    r <- req
-    _ <- startsWith(Path(uri))
-    u <- userRequired(Loc.loc0(r.language)("login.fail").text)
-  } yield {
-    Html5.pageFromFile(PageState(SettingsPageState(r, None), r.language, Some(u)), filePath, snipets)
-  }
-
-  def usersPage(uri: String, filePath: Path, snipets: DynamicContent[SettingsPageState]) = for {
-    r <- req
-    _ <- path(uri)
-    u <- userRequired(Loc.loc0(r.language)("login.fail").text)
-  } yield {
-    Html5.pageFromFile(PageState(SettingsPageState(r, None), r.language, Some(u)), filePath, snipets)
-  }
-
   def page[T](f: (Request, Option[User]) => T, uri: String, filePath: Path, snipets: DynamicContent[T]) = for {
     r <- path(uri)
     u <- user
@@ -137,19 +131,19 @@ trait ShopServices extends TraversingSpec
     Html5.pageFromFile(PageState(f(r, u), r.language, u), filePath, snipets)
   }
 
-  def productsVariantImages = for {
+  def productsVariantImages: State[Request, Attempt] = for {
     Path(_, _ :: "data" :: "products" :: id :: variant :: file :: Nil) <- path
     r <- fileAsResponse(Path(s"${ShopUtils.dataPath}/products/$id/$variant/$file"), ImagePng)
   } yield service(resp =>
     resp(r.withHeaders(TextHeader("cache-control", "max-age=86400"))))
 
-  def categoriesImages = for {
+  def categoriesImages: State[Request, Attempt] = for {
     Path(_, _ :: "data" :: "categories" :: file :: Nil) <- path
     r <- fileAsResponse(Path(s"${ShopUtils.dataPath}/categories/$file"), ImagePng)
   } yield service(resp =>
     resp(r.withHeaders(TextHeader("cache-control", "max-age=86400"))))
 
-  def getCart() = for {
+  def getCart(): State[Request, Attempt] = for {
     r <- req
     lang <- language
     Path(_, _ :: "getcart" :: Nil) <- path
@@ -162,19 +156,18 @@ trait ShopServices extends TraversingSpec
         implicit val formats = DefaultFormats
         val dec = Base64.decodeString(enc)
         log.debug(s"Cart content $dec")
+
         listTraverse.sequence(for {
           (item, index) <- readCart(dec).items.zipWithIndex
         } yield {
           store.productById(item.id).flatMap { prod =>
-            Html5.runPageFromFile(PageState(CartState(index, item, prod), r.language), Path("web/templates/cartitem.html"), cartItemNode).map(_._2 toString) match {
-              case Success(s) => Future.successful(s)
-              case Failure(t) => Future.failed(t)
-            }
+            Html5.runPageFromFile(PageState(CartState(index, item, prod), r.language), Path("web/templates/cartitem.html"), cartItemNode).map(_._2 toString)
           }
-        }).onComplete {
-          case Success(list) => resp(ok.withJsonBody(write(list)))
-          case scala.util.Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
-          case Failure(t) =>
+        }).map {
+          list => resp(ok.withJsonBody(write(list)))
+        } recover {
+          case ShopError(msg, _) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+          case t =>
             log.error("Failed processing cart ", t)
             resp(ok.withJsonBody(write(Nil)))
         }

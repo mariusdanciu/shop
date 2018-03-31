@@ -10,5 +10,4 @@ trait ServiceDependencies {
   implicit val cfg: Config
   implicit val store: Persistence
   implicit val fs: FileSystem = LocalFileSystem
-  implicit val ec: ExecutionContext
 }
