@@ -51,19 +51,19 @@ object MongoImplicits extends DefaultBsonTransformers {
     )
   }
 
-  def productToDocumentForUpdate(p: ProductDetail): Document = {
+  def productToDocumentForUpdate(p: ProductDetail): Bson = {
 
     combine(
       set("name", p.name),
-      set("title",, Document(p.title)),
+      set("title", Document(p.title)),
       set("description", Document(p.description)),
       set("properties", Document(p.properties)),
       set("price", p.price),
-      set("discountPrice", p.discountPrice),
+      set("discountPrice", p.discountPrice getOrElse null),
       set("soldCount", p.soldCount),
-      set("stock", p.stock),
-      set("position", p.position),
-      set("presentationPosition", p.presentationPosition),
+      set("stock", p.stock getOrElse null),
+      set("position", p.position getOrElse null),
+      set("presentationPosition", p.presentationPosition getOrElse null),
       set("unique", p.unique),
       set("categories", p.categories),
       set("keywords", p.keyWords)
@@ -94,6 +94,7 @@ object MongoImplicits extends DefaultBsonTransformers {
 
 
   implicit def documentToProduct(d: Document): ProductDetail = {
+    println(d)
     ProductDetail(
       id = d.getObjectId("_id").toHexString,
       name = d.getString("name"),
@@ -211,7 +212,7 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
   }
 
   def categoryById(id: String): Try[Category] = toTry {
-    categories.find(equal("_id", id)).first().toFuture()
+    categories.find(equal("_id", new ObjectId(id))).first().toFuture()
   }
 
   def allCategories: Try[Seq[Category]] = toTry {

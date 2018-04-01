@@ -17,7 +17,7 @@ object MongoTest extends App {
 
 
   p.categoryProducts("ceasuri") match {
-    case Success(s) => println (s)
+    case Success(s) => println (s.mkString("\n"))
     case Failure(t) => t.printStackTrace
   }
   // p.categoryProducts("corpuri de iluminat", SortByName(true, "ro")).map(println)

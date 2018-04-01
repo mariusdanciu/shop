@@ -72,7 +72,7 @@ trait ProductService extends TraversingSpec
             fs.deletePath(Path(s"$dataPath/products/${u.head}/large/$img"))
           }
 
-          service(_ (ok.withJsonBody("{\"href\": \"" + ShopUtils.productPage(pid) + "\"}")))
+          service(_ (ok.withJsonBody("{\"href\": \"" + ShopUtils.productPage(cpy) + "\"}")))
         }) match {
           case Success(s) => s
           case Failure(ShopError(msg, _)) => service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
