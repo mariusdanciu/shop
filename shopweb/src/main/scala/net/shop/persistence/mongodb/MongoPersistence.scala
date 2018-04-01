@@ -6,8 +6,10 @@ import org.bson.BsonNull
 import org.mongodb.scala.{FindObservable, MongoClient, Observable}
 import org.mongodb.scala.bson.{BsonDocument, BsonValue, DefaultBsonTransformers, ObjectId}
 import org.mongodb.scala.bson.collection.immutable.Document
+import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Sorts.{ascending, descending}
 import org.mongodb.scala.model.TextSearchOptions
+import org.mongodb.scala.model.Updates._
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -30,8 +32,9 @@ object MongoImplicits extends DefaultBsonTransformers {
   }
 
   implicit def productToDocument(p: ProductDetail): Document = {
+
     Document(
-      "_id" -> p.id,
+      "_id" -> new ObjectId(p.id),
       "name" -> p.name,
       "title" -> Document(p.title),
       "description" -> Document(p.description),
@@ -46,6 +49,26 @@ object MongoImplicits extends DefaultBsonTransformers {
       "categories" -> p.categories,
       "keywords" -> p.keyWords
     )
+  }
+
+  def productToDocumentForUpdate(p: ProductDetail): Document = {
+
+    combine(
+      set("name", p.name),
+      set("title",, Document(p.title)),
+      set("description", Document(p.description)),
+      set("properties", Document(p.properties)),
+      set("price", p.price),
+      set("discountPrice", p.discountPrice),
+      set("soldCount", p.soldCount),
+      set("stock", p.stock),
+      set("position", p.position),
+      set("presentationPosition", p.presentationPosition),
+      set("unique", p.unique),
+      set("categories", p.categories),
+      set("keywords", p.keyWords)
+    )
+
   }
 
   def optionalInt(d: Document, name: String): Option[Int] = {
@@ -70,8 +93,7 @@ object MongoImplicits extends DefaultBsonTransformers {
   implicit def documentToCategoryFuture(d: Future[Document])(implicit cts: ExecutionContext): Future[Category] = d.map { e => e }
 
 
-  implicit def documentToProduct(d: Document): ProductDetail =
-
+  implicit def documentToProduct(d: Document): ProductDetail = {
     ProductDetail(
       id = d.getObjectId("_id").toHexString,
       name = d.getString("name"),
@@ -88,6 +110,7 @@ object MongoImplicits extends DefaultBsonTransformers {
       categories = d.get("categories").map(_.asArray().getValues.asScala).getOrElse(Nil),
       keyWords = d.get("keywords").map(_.asArray().getValues.asScala).getOrElse(Nil)
     )
+  }
 
   implicit def categoryToDocument(p: Category): Document = {
     Document(
@@ -145,6 +168,8 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
   }
 
 
+  override def makeID: String = new ObjectId().toHexString
+
   def productById(id: String): Try[ProductDetail] = toTry {
     (products.find(equal("_id", new ObjectId(id))).first().toFuture())
   }
@@ -164,7 +189,7 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
   def categoryProducts(cat: String, spec: SortSpec): Try[Seq[ProductDetail]] = toTry {
 
     for {
-      cat <- categories.find(equal("name", cat)).first().toFuture()
+      cat <- categories.find(equal("name", cat.toLowerCase())).first().toFuture()
       prods <- {
         val c: Category = cat
         sort(products.find(in("categories", List(c.id))), spec).toFuture()
@@ -182,7 +207,7 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
   }
 
   def categoryByName(name: String): Try[Category] = toTry {
-    categories.find(equal("name", name)).first().toFuture()
+    categories.find(equal("name", name.toLowerCase())).first().toFuture()
   }
 
   def categoryById(id: String): Try[Category] = toTry {
@@ -195,16 +220,17 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
     }
   }
 
-  def createProduct(prod: ProductDetail): Try[String] = toTry  {
+  def createProduct(prod: ProductDetail): Try[String] = toTry {
     products.insertOne(prod).toFuture.map { _ => prod.id }
   }
 
-  def updateProduct(prod: ProductDetail): Try[String] = toTry  {
-    products.updateOne(equal("_id", prod.id), prod).toFuture().map { _ => prod.id }
+  def updateProduct(prod: ProductDetail): Try[String] = toTry {
+    products.updateOne(equal("_id", new ObjectId(prod.id)),
+      productToDocumentForUpdate(prod)).toFuture().map { _ => prod.id }
   }
 
   def deleteProduct(id: String): Try[String] = toTry {
-    products.deleteOne(equal("_id", id)).toFuture().map { _ => id }
+    products.deleteOne(equal("_id", new ObjectId(id))).toFuture().map { _ => id }
   }
 
   def createCategory(cat: Category): Try[String] = toTry {
@@ -212,11 +238,11 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
   }
 
   def updateCategory(cat: Category): Try[String] = toTry {
-    categories.updateOne(equal("_id", cat.id), cat).toFuture().map { _ => cat.id}
+    categories.updateOne(equal("_id", new ObjectId(cat.id)), cat).toFuture().map { _ => cat.id }
   }
 
   def deleteCategory(id: String): Try[String] = toTry {
-    categories.deleteOne(equal("_is", id)).toFuture().map { _ => id }
+    categories.deleteOne(equal("_is", new ObjectId(id))).toFuture().map { _ => id }
   }
 
   def createUsers(user: UserDetail*): Try[Seq[String]] = ???

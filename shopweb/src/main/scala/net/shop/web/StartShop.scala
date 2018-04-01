@@ -98,7 +98,7 @@ class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftAp
       productsVariantImages |
       categoriesImages |
       logout |
-      page("/login", Path("web/auth.html"), pages.catPage) |
+      page("/login", Path("web/login.html"), pages.catPage) |
       page("/", Path("web/index.html"), pages.catPage) |
       page("/terms", Path("web/terms.html"), pages.termsPage) |
       page("/order_done", Path("web/order_done.html"), pages.termsPage) |

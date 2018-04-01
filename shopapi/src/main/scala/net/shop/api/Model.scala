@@ -39,38 +39,6 @@ trait NamedItem {
 
 }
 
-object ProductDetail {
-  def create(name: String,
-             title: Map[String, String],
-             description: Map[String, String],
-             properties: Map[String, String],
-             price: Double,
-             discountPrice: Option[Double],
-             soldCount: Int,
-             position: Option[Int],
-             presentationPosition: Option[Int],
-             unique: Boolean,
-             stock: Option[Int],
-             categories: List[String],
-             keyWords: List[String]): ProductDetail = ProductDetail(
-    UUID.makeId,
-    name,
-    title,
-    description,
-    properties,
-    price,
-    discountPrice,
-    soldCount,
-    position,
-    presentationPosition,
-    unique,
-    stock,
-    categories,
-    keyWords
-  )
-
-}
-
 case class ProductDetail(id: String,
                          name: String,
                          title: Map[String, String],

@@ -5,6 +5,8 @@ import scala.concurrent.Future
 import scala.util.Try
 
 trait Persistence {
+
+  def makeID: String
   def productById(id: String): Try[ProductDetail]
 
   def productByName(name: String): Try[ProductDetail]

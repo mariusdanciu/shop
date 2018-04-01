@@ -1337,6 +1337,19 @@ form .row {
     padding-top: 30px;
 }
 
+.login .box div form div {
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.login .box div form input {
+    width: 300px;
+}
+
+
+.login .box div form label {
+    padding-right: 20px;
+}
 
 .search {
 	display: none;

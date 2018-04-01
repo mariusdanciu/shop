@@ -100,22 +100,31 @@ trait ProductService extends TraversingSpec
 
     extracted match {
       case (files, params, Valid(o)) =>
-        val cpy = o.copy(
-          name = normalizeName(o.title_?(r.language.name)))
-        val create: Try[String] = duration(store.createProduct(cpy)) { d =>
-          log.debug("Persist : " + d)
-        }
+        try {
 
-        create match {
-          case Success(p) =>
-            duration(
-              files.map { f =>
-                IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p}/${f._1}")))
-              }) { d => log.debug("Write files: " + d) }
-            service(_ (created.withJsonBody("{\"href\": \"" + ShopUtils.productPage(cpy) + "\"}")))
-          case Failure(ShopError(msg, _)) =>
-            service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
-          case Failure(t) =>
+          val cpy = o.copy(
+            name = normalizeName(o.title_?(r.language.name)))
+
+
+          val create: Try[String] = duration(store.createProduct(cpy)) { d =>
+            log.debug("Persist : " + d)
+          }
+
+          create match {
+            case Success(p) =>
+              duration(
+                files.map { f =>
+                  IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p}/${f._1}")))
+                }) { d => log.debug("Write files: " + d) }
+              service(_ (created.withJsonBody("{\"href\": \"" + ShopUtils.productPage(cpy) + "\"}")))
+            case Failure(ShopError(msg, _)) =>
+              service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+            case Failure(t) =>
+              error("Cannot create product ", t)
+              service(_ (serverError))
+          }
+        } catch {
+          case t: Throwable => t.printStackTrace()
             error("Cannot create product ", t)
             service(_ (serverError))
         }
@@ -145,7 +154,7 @@ trait ProductService extends TraversingSpec
     val params = extractParams(text)
     val files = extractProductBins(bins)
 
-    val product = ((ProductDetail.apply _).curried) (id getOrElse UUID.makeId)
+    val product = ((ProductDetail.apply _).curried) (id getOrElse store.makeID)
     val ? = Loc.loc0(loc) _
 
     val productFormlet = Validator(product) <*>
