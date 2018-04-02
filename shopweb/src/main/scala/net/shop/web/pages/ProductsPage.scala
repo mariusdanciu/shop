@@ -55,7 +55,7 @@ trait ProductsPage extends PageCommon[Request] {
           val nodes = (pos flatMap { (p: ProductDetail) => render(s, p) }) ++
             (nopos flatMap { (p: ProductDetail) => render(s, p) })
 
-          nodes.grouped(4).map { l =>
+          nodes.grouped(3).map { l =>
             <div class="row hover01">
               {NodeSeq.fromSeq(l)}
             </div>
