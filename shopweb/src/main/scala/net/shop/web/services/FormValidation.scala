@@ -137,8 +137,7 @@ trait FormValidation extends ServiceDependencies {
     case (acc, BinaryPart(h, content)) =>
       (for {
         ContentDisposition(v, params) <- h.get("Content-Disposition")
-        FileSplit(n, ext) <- params.get("filename")
-        FileSplit(name, _) <- Some(n)
+        FileSplit(name, ext) <- params.get("filename")
       } yield {
         acc ++ List((s"$name.$ext", content))
       }) getOrElse acc

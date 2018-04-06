@@ -63,13 +63,13 @@ trait ProductService extends TraversingSpec
           u <- store.updateProduct(cpy)
         } yield {
           files.map { f =>
-            writeImages(f._1, f._2)
+            writeImages(u, f._1, f._2)
           }
 
           delImages.map { img =>
-            fs.deletePath(Path(s"$dataPath/products/${u.head}/thumb/$img"))
-            fs.deletePath(Path(s"$dataPath/products/${u.head}/normal/$img"))
-            fs.deletePath(Path(s"$dataPath/products/${u.head}/large/$img"))
+            fs.deletePath(Path(s"$dataPath/products/$u/thumb/$img"))
+            fs.deletePath(Path(s"$dataPath/products/$u/normal/$img"))
+            fs.deletePath(Path(s"$dataPath/products/$u/large/$img"))
           }
 
           service(_ (ok.withJsonBody("{\"href\": \"" + ShopUtils.productPage(cpy) + "\"}")))
@@ -87,10 +87,10 @@ trait ProductService extends TraversingSpec
     }
   }
 
-  private def writeImages(fileName: String, content: Array[Byte]) = {
-    ImageUtils.resizeImage(104, content, s"${dataPath}/products/thumb/$fileName")
-    ImageUtils.resizeImage(290, content, s"${dataPath}/products/normal/$fileName")
-    IO.arrayProducer(content)(LocalFileSystem.writer(Path(s"${dataPath}/products/large/${fileName}")))
+  private def writeImages(id: String, fileName: String, content: Array[Byte]) = {
+    ImageUtils.resizeImage(104, content, s"${dataPath}/products/$id/thumb/$fileName")
+    ImageUtils.resizeImage(290, content, s"${dataPath}/products/$id/normal/$fileName")
+    IO.arrayProducer(content)(LocalFileSystem.writer(Path(s"${dataPath}/products/$id/large/${fileName}")))
   }
 
   def createProduct(implicit fs: FileSystem): State[Request, Attempt] = for {
@@ -119,7 +119,7 @@ trait ProductService extends TraversingSpec
           create match {
             case Success(p) =>
               duration(
-                files.map { f => writeImages(f._1, f._2) }) { d => log.debug("Write files: " + d) }
+                files.map { f => writeImages(p, f._1, f._2) }) { d => log.debug("Write files: " + d) }
               service(_ (created.withJsonBody("{\"href\": \"" + ShopUtils.productPage(cpy) + "\"}")))
             case Failure(ShopError(msg, _)) =>
               service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
