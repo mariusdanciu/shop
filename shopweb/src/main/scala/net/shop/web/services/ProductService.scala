@@ -63,7 +63,7 @@ trait ProductService extends TraversingSpec
           u <- store.updateProduct(cpy)
         } yield {
           files.map { f =>
-            IO.arrayProducer(f._3)(fs.writer(Path(s"$dataPath/products/${u.head}/${f._1}")))
+            writeImages(f._1, f._2)
           }
 
           delImages.map { img =>
@@ -85,6 +85,12 @@ trait ProductService extends TraversingSpec
         implicit val l = r.language
         validationFail(msgs)
     }
+  }
+
+  private def writeImages(fileName: String, content: Array[Byte]) = {
+    ImageUtils.resizeImage(104, content, s"${dataPath}/products/thumb/$fileName")
+    ImageUtils.resizeImage(290, content, s"${dataPath}/products/normal/$fileName")
+    IO.arrayProducer(content)(LocalFileSystem.writer(Path(s"${dataPath}/products/large/${fileName}")))
   }
 
   def createProduct(implicit fs: FileSystem): State[Request, Attempt] = for {
@@ -113,9 +119,7 @@ trait ProductService extends TraversingSpec
           create match {
             case Success(p) =>
               duration(
-                files.map { f =>
-                  IO.arrayProducer(f._3)(LocalFileSystem.writer(Path(s"${dataPath}/products/${p}/${f._1}")))
-                }) { d => log.debug("Write files: " + d) }
+                files.map { f => writeImages(f._1, f._2) }) { d => log.debug("Write files: " + d) }
               service(_ (created.withJsonBody("{\"href\": \"" + ShopUtils.productPage(cpy) + "\"}")))
             case Failure(ShopError(msg, _)) =>
               service(_ (ok.withTextBody(Loc.loc0(r.language)(msg).text)))
@@ -142,7 +146,7 @@ trait ProductService extends TraversingSpec
                       fieldPrefix: String,
                       multipart: MultiPartBody,
                       checkExists: Boolean
-                     ): (List[(String, String, Array[Byte])], Map[String, List[String]], Validation[ProductDetail, FieldError]) = {
+                     ): (List[(String, Array[Byte])], Map[String, List[String]], Validation[ProductDetail, FieldError]) = {
 
     val (bins, text) = multipart.parts partition {
       case BinaryPart(h, content) => true
@@ -152,7 +156,7 @@ trait ProductService extends TraversingSpec
     def stockFunc(in: String) = if (in.isEmpty()) None else Option(in.toInt)
 
     val params = extractParams(text)
-    val files = extractProductBins(bins)
+    val files = extractProductFiles(bins)
 
     val product = ((ProductDetail.apply _).curried) (id getOrElse store.makeID)
     val ? = Loc.loc0(loc) _

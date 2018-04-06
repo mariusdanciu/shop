@@ -32,6 +32,7 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
       o match {
         case ("name", JString(id)) :: ("value", JInt(count)) :: Nil =>
           store.productById(id) map { prod => (prod, count toInt) }
+        case _ => ShiftFailure("Cannot extract parameter").toTry
       }
     }).map(m => ("items", OrderForm.OrderItems(m)))
 
@@ -43,6 +44,7 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
         case JString(str) => Success((k, OrderForm.FormField(str)))
         case JArray(items) => extractItems(items)
         case JInt(v) => Success((k, OrderForm.FormField(v toString)))
+        case e => ShiftFailure(s"Cannot extract $e").toTry
       }
     })
 

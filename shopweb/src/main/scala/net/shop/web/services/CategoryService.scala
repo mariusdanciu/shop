@@ -127,7 +127,7 @@ trait CategoryService extends TraversingSpec
     }
 
     val params = extractParams(text)
-    val file = extractCategoryBin(bins.head)
+    val file = extractCategoryFile(bins.head)
 
     val category = ((net.shop.api.Category.apply _).curried) (id getOrElse UUID.makeId)
     val ? = Loc.loc0(loc) _

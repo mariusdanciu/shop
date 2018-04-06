@@ -71,7 +71,7 @@ trait FormValidation extends ServiceDependencies {
   def checkNameExists(f: ValidationFunc[ValidationMap], fieldName: String, store: Persistence)(implicit lang: Language): ValidationFunc[ValidationMap] = {
     env =>
       f(env) match {
-        case r @ Valid(v) => (env.get(fieldName).map { n =>
+        case r@Valid(v) => (env.get(fieldName).map { n =>
           store.productByName(ShopUtils.normalizeName(n.head)) match {
             case Success(r) => Invalid(List(FieldError(fieldName, Loc.loc0(lang)("name_in_use").text)))
             case _ => r
@@ -133,24 +133,19 @@ trait FormValidation extends ServiceDependencies {
     case (acc, _) => acc
   }
 
-  def extractProductBins(bins: List[MultiPart]) = ((Nil: List[(String, String, Array[Byte])]) /: bins) {
+  def extractProductFiles(bins: List[MultiPart]) = ((Nil: List[(String, Array[Byte])]) /: bins) {
     case (acc, BinaryPart(h, content)) =>
       (for {
         ContentDisposition(v, params) <- h.get("Content-Disposition")
         FileSplit(n, ext) <- params.get("filename")
         FileSplit(name, _) <- Some(n)
       } yield {
-        acc ++ List(if (n.endsWith(".thumb"))
-          (s"thumb/$name.$ext", s"$name.$ext", content)
-        else if (n.endsWith(".normal"))
-          (s"normal/$name.$ext", s"$name.$ext", content)
-        else
-          (s"large/$name.$ext", s"$name.$ext", content))
+        acc ++ List((s"$name.$ext", content))
       }) getOrElse acc
     case (acc, _) => acc
   }
 
-  def extractCategoryBin(bins: MultiPart): Option[(String, Array[Byte])] = bins match {
+  def extractCategoryFile(bins: MultiPart): Option[(String, Array[Byte])] = bins match {
     case BinaryPart(h, content) =>
       for {
         ContentDisposition(v, params) <- h.get("Content-Disposition")
