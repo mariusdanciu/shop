@@ -288,49 +288,6 @@ var user = {
 		});
 	},
 
-	createUser : function(formId) {
-		$(formId).each(function() {
-			var frm = this;
-
-			$(formId + ' label').css("color", "#555555").removeAttr("title");
-			$.ajax({
-				url : $(formId).attr('action'),
-				type : "POST",
-				cache : false,
-				timeout : 3000,
-				data : $(formId).serialize(),
-				statusCode : {
-					201 : function() {
-						window.location.href = "/";
-					},
-					403 : function(msg) {
-						var data = JSON.parse(msg.responseText);
-						if (data.errors) {
-							window.common.showFormErrors(data.errors);
-						}
-					}
-				}
-			});
-		});
-	},
-
-	forgotPassword : function(frmId) {
-		var email = $.base64.encode($(frmId + " #username").val());
-		$.ajax({
-			url : "/forgotpassword/" + email,
-			type : "POST",
-			timeout : 3000,
-			cache : false,
-			statusCode : {
-				404 : function(m) {
-					common.showNotice(m.responseText);
-				}
-			}
-		}).success(function(m) {
-			common.showNotice(m);
-		});
-	},
-
 };
 
 var common = {
@@ -368,9 +325,9 @@ var common = {
 		}
 	},
 
-	showFormErrors : function(errors) {
+	showFormErrors : function(errors, title) {
 	    $(".cart_errors ul").html("");
-	    $(".cart_errors ul").append("<li> <b>Comanda nu a fost trimisă. Vă rugăm corectați următoarele erori.</b> </li>");
+	    $(".cart_errors ul").append("<li> <b>" + title + "</b> </li>");
 
 		$.each(errors, function() {
 			$(".cart_errors ul").append("<li>" + this.error + "</li>");
@@ -401,8 +358,9 @@ var common = {
 					},
 					403 : function(msg) {
 						var data = JSON.parse(msg.responseText);
+												console.log(data);
 						if (data.errors) {
-							window.common.showFormErrors(data.errors);
+							window.common.showFormErrors(data.errors, "Produsul nu a fost salvat.");
 						}
 						return false;
 					}

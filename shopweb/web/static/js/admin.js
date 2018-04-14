@@ -7,27 +7,6 @@
 
 var admin = {
 
-	deleteUser : function(email, okFunc) {
-		$.ajax({
-			url : "delete/user/" + email,
-			type : "DELETE",
-			cache : false,
-			timeout : 3000,
-			statusCode : {
-				200 : function(msg) {
-					okFunc();
-				},
-
-				403 : function(msg) {
-					var data = JSON.parse(msg.responseText);
-					if (data.errors) {
-						window.common.showFormErrors(data.errors);
-					}
-				}
-			}
-		});
-	},
-
 	deleteProduct : function(id, f) {
 		$.ajax({
 			cache : false,

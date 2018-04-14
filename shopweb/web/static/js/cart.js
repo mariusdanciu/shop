@@ -67,7 +67,7 @@ var cart = {
 				403 : function(msg) {
 					var data = JSON.parse(msg.responseText);
 					if (data.errors) {
-						window.common.showFormErrors(data.errors);
+						window.common.showFormErrors(data.errors, "Comanda nu a fost trimisă. Vă rugăm corectați următoarele erori.");
 					}
 				},
 
