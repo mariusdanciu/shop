@@ -358,7 +358,6 @@ var common = {
 					},
 					403 : function(msg) {
 						var data = JSON.parse(msg.responseText);
-												console.log(data);
 						if (data.errors) {
 							window.common.showFormErrors(data.errors, "Produsul nu a fost salvat.");
 						}
