@@ -115,7 +115,7 @@ object MongoImplicits extends DefaultBsonTransformers {
 
   implicit def categoryToDocument(p: Category): Document = {
     Document(
-      "_id" -> new ObjectId(),
+      "_id" -> new ObjectId(p.id),
       "name" -> p.name,
       "position" -> p.position,
       "title" -> Document(p.title)
