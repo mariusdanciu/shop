@@ -34,7 +34,7 @@ var admin = {
 	deleteCategory : function(id, f) {
 		$.ajax({
 			cache : false,
-			url : "/category/delete/" + id,
+			url : "/categories/" + id,
 			timeout : 3000,
 			type : "DELETE",
 		}).success(f());

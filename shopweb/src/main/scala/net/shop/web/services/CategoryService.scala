@@ -42,7 +42,7 @@ trait CategoryService extends TraversingSpec
 
   def deleteCategory(implicit fs: FileSystem): State[Request, Attempt] = for {
     r <- delete
-    Path(_, _ :: "category" :: "delete" :: id :: Nil) <- path
+    Path(_, _ :: "categories" :: id :: Nil) <- path
     user <- auth
   } yield {
     store.deleteCategory(id) match {
@@ -55,8 +55,8 @@ trait CategoryService extends TraversingSpec
   }
 
   def updateCategory(implicit fs: FileSystem): State[Request, Attempt] = for {
-    r <- post
-    Path(_, _ :: "category" :: "update" :: id :: Nil) <- path
+    r <- put
+    Path(_, _ :: "categories" :: id :: Nil) <- path
     user <- auth
     mp <- multipartForm
   } yield {
@@ -87,7 +87,7 @@ trait CategoryService extends TraversingSpec
 
   def createCategory: State[Request, Attempt] = for {
     r <- post
-    Path(_, _ :: "category" :: "create" :: Nil) <- path
+    Path(_, _ :: "categories" :: Nil) <- path
     user <- auth
     mp <- multipartForm
   } yield {

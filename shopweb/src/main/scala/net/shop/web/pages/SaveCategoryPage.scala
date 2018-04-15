@@ -15,7 +15,7 @@ import scala.util.{Failure, Success, Try}
 trait SaveCategoryPage extends PageCommon[CategoryPageState] {
   self =>
 
-  override def inlines = List(cat, path, fieldPrefix) ++ super.inlines
+  override def inlines = List(cat, path, fieldPrefix, method) ++ super.inlines
 
   val cat = inline[CategoryPageState]("cat") {
     s =>
@@ -32,11 +32,19 @@ trait SaveCategoryPage extends PageCommon[CategoryPageState] {
 
   }
 
+  val method = inline[CategoryPageState]("method") {
+    s =>
+      cateogry(s) match {
+        case Success(p) => Success(s.state.initialState -> "PUT")
+        case _ => Success(s.state.initialState -> "POST")
+      }
+  }
+
   val path = inline[CategoryPageState]("path") {
     s =>
       cateogry(s) match {
-        case Success(p) => Success(s.state.initialState -> s"/category/update/${p.stringId}")
-        case _ => Success(s.state.initialState -> "/category/create")
+        case Success(p) => Success(s.state.initialState -> s"/categories/${p.stringId}")
+        case _ => Success(s.state.initialState -> "/categories")
       }
   }
   val fieldPrefix = inline[CategoryPageState]("field_prefix") {
