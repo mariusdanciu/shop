@@ -9,7 +9,7 @@ object MongoTest extends App {
   println("Here")
 
   System.setProperty("org.mongodb.async.type", "netty")
-  val uri = "mongodb://idid:qwer1234@idid-shard-00-00-ksqgy.mongodb.net:27017,idid-shard-00-01-ksqgy.mongodb.net:27017,idid-shard-00-02-ksqgy.mongodb.net:27017/?ssl=true&replicaSet=idid-shard-0&authSource=admin"
+  val uri = "mongodb://idid:al1mar@idid-shard-00-00-ksqgy.mongodb.net:27017,idid-shard-00-01-ksqgy.mongodb.net:27017,idid-shard-00-02-ksqgy.mongodb.net:27017/test?ssl=true&replicaSet=idid-shard-0&authSource=admin"
 
   val p = MongoPersistence(uri)
 

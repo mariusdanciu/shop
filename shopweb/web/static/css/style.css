@@ -1505,12 +1505,12 @@ label img {
     opacity : 0.3;
 }
 
-.cart_errors ul {
+.form_errors ul {
 	padding: 0px;
 	margin-left: 10px;
 }
 
-.cart_errors ul li {
+.form_errors ul li {
 	list-style-type: none;
 	padding: 0px;
 	margin: 0px;

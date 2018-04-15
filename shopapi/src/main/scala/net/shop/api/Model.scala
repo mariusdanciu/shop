@@ -30,9 +30,6 @@ case class Address(id: Option[String] = None,
                    address: String,
                    zipCode: String)
 
-object UUID {
-  def makeId = java.util.UUID.randomUUID().toString
-}
 
 trait NamedItem {
   def name: String
@@ -68,17 +65,6 @@ case class ProductDetail(id: String,
 case class CartItem(id: String, count: Int)
 
 case class Cart(items: List[CartItem])
-
-object Category {
-  def create(name: String,
-             position: Int,
-             title: Map[String, String]): Category = Category(
-    UUID.makeId,
-    name,
-    position,
-    title
-  )
-}
 
 case class Category(id: String,
                     name: String,

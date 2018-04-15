@@ -326,11 +326,11 @@ var common = {
 	},
 
 	showFormErrors : function(errors, title) {
-	    $(".cart_errors ul").html("");
-	    $(".cart_errors ul").append("<li> <b>" + title + "</b> </li>");
+	    $(".form_errors ul").html("");
+	    $(".form_errors ul").append("<li> <b>" + title + "</b> </li>");
 
 		$.each(errors, function() {
-			$(".cart_errors ul").append("<li>" + this.error + "</li>");
+			$(".form_errors ul").append("<li>" + this.error + "</li>");
 		});
 	},
 

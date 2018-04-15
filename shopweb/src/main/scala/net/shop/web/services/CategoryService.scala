@@ -8,15 +8,14 @@ import net.shift.engine.http.HttpPredicates._
 import net.shift.engine.http.{BinaryPart, MultiPartBody}
 import net.shift.io.{FileSystem, IO, LocalFileSystem}
 import net.shift.loc.{Language, Loc}
-import net.shift.server.http.{Request, Responses}
 import net.shift.server.http.Responses.created
-import net.shop.api.{Category, Formatter, ShopError, UUID}
+import net.shift.server.http.{Request, Responses}
+import net.shop.api.{Category, Formatter, ShopError}
 import net.shop.model.FieldError
 import net.shop.model.Formatters.CategoryWriter
-import net.shop.utils.ShopUtils
 import net.shop.utils.ShopUtils._
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 trait CategoryService extends TraversingSpec
   with DefaultLog
@@ -101,7 +100,7 @@ trait CategoryService extends TraversingSpec
         store.createCategory(o) match {
           case Success(p) =>
             file.map { f =>
-              IO.arrayProducer(f._2)(LocalFileSystem.writer(Path(s"${dataPath}/categories/${p.head}.png")))
+              ImageUtils.resizeImage(234, f._2, s"${dataPath}/categories/${p}.png")
             }
             service(_ (created.withJsonBody("{\"href\": \"/\"}")))
           case Failure(ShopError(msg, _)) =>
@@ -129,7 +128,7 @@ trait CategoryService extends TraversingSpec
     val params = extractParams(text)
     val file = extractCategoryFile(bins.head)
 
-    val category = ((net.shop.api.Category.apply _).curried) (id getOrElse UUID.makeId)
+    val category = ((net.shop.api.Category.apply _).curried) (id getOrElse store.makeID)
     val ? = Loc.loc0(loc) _
 
     val categoryFormlet = Validator(category) <*>
