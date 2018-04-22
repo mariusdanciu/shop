@@ -16,7 +16,7 @@ lazy val buildProps = {
 lazy val commonSettings = Seq(
   organization := "com.idid",
   version := buildProps.getProperty("version") + "." + buildProps.getProperty("build"),
-  scalaVersion := "2.12.4",
+  scalaVersion := "2.11.2",
   resolvers ++= List(
     "mvnrepository" at "http://mvnrepository.com/artifact/",
     "akka" at "http://repo.akka.io/snapshots"
@@ -25,6 +25,9 @@ lazy val commonSettings = Seq(
 
 lazy val root = (project in file("."))
   .aggregate(shopweb)
+
+lazy val dep = TaskKey[Unit]("dep")
+
 
 lazy val shopweb = (project in file("shopweb")).settings(
   commonSettings,
@@ -35,15 +38,88 @@ lazy val shopweb = (project in file("shopweb")).settings(
   libraryDependencies += "org.apache.commons" % "commons-email" % "1.3.2",
   libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.3",
   libraryDependencies += "io.netty" % "netty-all" % "4.1.17.Final",
-  libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.2.0"
+  libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.2.0",
+  dep := {
+    println("In dep")
+
+    IO.delete(distDir)
+    IO.createDirectory(distDir)
+    IO.createDirectory(libDir)
+
+
+    println(target value)
+
+    val projectJar = packageBin in Compile value
+
+    val cp = (managedClasspath in Runtime value).map {
+      _.data
+    } :+ projectJar
+
+    for {jar <- cp} {
+      println(s"Copying $jar")
+      println("\tto: " + libDir / s"${jar.name}")
+      IO.copyFile(jar, libDir / s"${jar.name}")
+    }
+
+    val showWebDir = new File("shopweb")
+
+    IO.copyDirectory(showWebDir / "web", distDir / "web")
+    IO.copyDirectory(showWebDir / "config", distDir / "config")
+    IO.copyDirectory(showWebDir / "localization", distDir / "localization")
+
+    IO.copyFile(scriptsDir / "start.sh", distDir / "start.sh")
+    IO.copyFile(scriptsDir / "stop.sh", distDir / "stop.sh")
+
+    val sv = scalaVersion value
+    val v = version value
+
+    makeTarGZ("target/idid_" + sv + "_" + v + "_.tar.gz", "idid_" + sv + "_" + v)
+  }
 )
 
-val distShopWeb = TaskKey[File]("dist", "")
 
-val distShopApiSetting = distShopWeb <<= (target, managedClasspath in Runtime, publishLocal, packageBin in Compile) map {
-  (target, cp, _, pack) => {
-    println(pack)
-    println(cp)
-    pack
+
+val distDir = new File("./dist")
+val libDir = distDir / "lib"
+val scriptsDir = new File("./scripts")
+
+
+import java.io._
+import org.apache.commons.compress.archivers.tar._
+import org.apache.commons.compress.compressors.gzip._
+
+
+def makeTarGZ(name: String, folder: String) {
+  val tOut = new TarArchiveOutputStream(new GzipCompressorOutputStream(new BufferedOutputStream(new FileOutputStream(new File(name)))))
+  try {
+    populateTarGz(tOut, folder, "./dist")
+  } finally {
+    tOut.close()
+  }
+}
+
+
+def populateTarGz(tOut: TarArchiveOutputStream, folder: String, path: String, base: String = null) {
+  val f = new File(path);
+  val entryName = if (base == null) folder else (base + f.getName())
+  val tarEntry = new TarArchiveEntry(f, entryName)
+
+  if (entryName.endsWith(".sh"))
+    tarEntry.setMode(484)
+
+
+  tOut.putArchiveEntry(tarEntry)
+
+  if (f.isFile()) {
+    IO.transfer(f, tOut)
+    tOut.closeArchiveEntry()
+  } else {
+    tOut.closeArchiveEntry()
+    val children = f.listFiles()
+    if (children != null) {
+      for (child <- children) {
+        populateTarGz(tOut, folder, child.getAbsolutePath(), entryName + "/")
+      }
+    }
   }
 }
