@@ -26,7 +26,7 @@ lazy val commonSettings = Seq(
 lazy val root = (project in file("."))
   .aggregate(shopweb)
 
-lazy val dep = TaskKey[Unit]("dep")
+lazy val pack = TaskKey[Unit]("pack")
 
 
 lazy val shopweb = (project in file("shopweb")).settings(
@@ -39,15 +39,12 @@ lazy val shopweb = (project in file("shopweb")).settings(
   libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.3",
   libraryDependencies += "io.netty" % "netty-all" % "4.1.17.Final",
   libraryDependencies += "org.mongodb.scala" %% "mongo-scala-driver" % "2.2.0",
-  dep := {
-    println("In dep")
+  pack := {
+    println("Packing ... ")
 
     IO.delete(distDir)
     IO.createDirectory(distDir)
     IO.createDirectory(libDir)
-
-
-    println(target value)
 
     val projectJar = packageBin in Compile value
 
