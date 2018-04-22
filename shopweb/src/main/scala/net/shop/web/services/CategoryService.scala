@@ -10,10 +10,9 @@ import net.shift.io.{FileSystem, IO, LocalFileSystem}
 import net.shift.loc.{Language, Loc}
 import net.shift.server.http.Responses.created
 import net.shift.server.http.{Request, Responses}
-import net.shop.api.{Category, Formatter, ShopError}
-import net.shop.model.FieldError
-import net.shop.model.Formatters.CategoryWriter
+import net.shop.model.{Category, FieldError, Formatter, ShopError}
 import net.shop.utils.ShopUtils._
+import net.shop.model.Formatters._
 
 import scala.util.{Failure, Success}
 
@@ -49,8 +48,12 @@ trait CategoryService extends TraversingSpec
       case Success(num) =>
         fs.deletePath(Path(s"${dataPath}/categories/$id"));
         service(_ (Responses.ok))
-      case Failure(ShopError(msg, _)) => service(_ (Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
-      case Failure(t) => service(_ (Responses.notFound))
+      case Failure(ShopError(msg, _)) =>
+        log.error(msg)
+        service(_ (Responses.ok.withTextBody(Loc.loc0(r.language)(msg).text)))
+      case Failure(t) =>
+        log.error(t)
+        service(_ (Responses.notFound))
     }
   }
 
@@ -128,7 +131,7 @@ trait CategoryService extends TraversingSpec
     val params = extractParams(text)
     val file = extractCategoryFile(bins.head)
 
-    val category = ((net.shop.api.Category.apply _).curried) (id getOrElse store.makeID)
+    val category = ((net.shop.model.Category.apply _).curried) (id getOrElse store.makeID)
     val ? = Loc.loc0(loc) _
 
     val categoryFormlet = Validator(category) <*>

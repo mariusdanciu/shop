@@ -5,7 +5,7 @@ import net.shift.loc.Loc
 import net.shift.server.http.Request
 import net.shift.template.SnipState
 import net.shift.template.Snippet.inline
-import net.shop.api.{Category, ShopError}
+import net.shop.model.{Category, ShopError}
 
 import scala.util.{Failure, Success, Try}
 

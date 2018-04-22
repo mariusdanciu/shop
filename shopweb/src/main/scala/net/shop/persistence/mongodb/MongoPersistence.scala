@@ -1,7 +1,8 @@
 package net.shop.persistence.mongodb
 
-import net.shop.api._
-import net.shop.api.persistence.{Persistence, SortByName, SortByPrice, SortSpec}
+import net.shop
+import net.shop.model._
+import net.shop.persistence.{SortByName, SortByPrice, SortSpec}
 import org.bson.BsonNull
 import org.mongodb.scala.{FindObservable, MongoClient, Observable}
 import org.mongodb.scala.bson.{BsonDocument, BsonValue, DefaultBsonTransformers, ObjectId}
@@ -135,7 +136,7 @@ object MongoImplicits extends DefaultBsonTransformers {
 }
 
 
-case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends Persistence {
+case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends shop.persistence.Persistence {
 
   import MongoImplicits._
   import org.mongodb.scala.model.Filters._
@@ -243,20 +244,8 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
   }
 
   def deleteCategory(id: String): Try[String] = toTry {
-    categories.deleteOne(equal("_is", new ObjectId(id))).toFuture().map { _ => id }
+    categories.deleteOne(equal("_id", new ObjectId(id))).toFuture().map { _ => id }
   }
-
-  def createUsers(user: UserDetail*): Try[Seq[String]] = ???
-
-  def updateUsers(user: UserDetail*): Try[Seq[String]] = ???
-
-  def deleteUserByEmail(email: String): Try[Int] = ???
-
-  def deleteUsers(userId: String*): Try[Int] = ???
-
-  def allUsers: Try[Iterator[UserDetail]] = ???
-
-  def userByEmail(email: String): Try[Option[UserDetail]] = ???
 
   def createOrder(order: OrderLog): Try[String] = {
     Future.successful("")
@@ -264,9 +253,4 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
 
   def ordersById(email: String): Try[Seq[OrderLog]] = ???
 
-  def ordersByStatus(status: OrderStatus): Try[Seq[OrderLog]] = ???
-
-  def ordersByProduct(productId: String): Try[Seq[OrderLog]] = ???
-
-  def updateOrderStatus(orderId: String, status: OrderStatus): Try[String] = ???
 }

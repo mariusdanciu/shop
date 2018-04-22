@@ -4,8 +4,7 @@ package web.services
 import net.shift.common.{Invalid, Valid, Validation, Validator}
 import net.shift.io.LocalFileSystem
 import net.shift.loc.{Language, Loc}
-import net.shop.api._
-import net.shop.model.FieldError
+import net.shop.model._
 import net.shop.utils.ShopUtils._
 
 object OrderForm {

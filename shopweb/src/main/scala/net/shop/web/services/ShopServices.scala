@@ -13,8 +13,8 @@ import net.shift.server.http.Responses._
 import net.shift.server.http.{ContentType, Param, Request, ResponseFunc, TextHeader}
 import net.shift.template.Template._
 import net.shift.template.{DynamicContent, PageState}
-import net.shop.api.persistence.Persistence
-import net.shop.api.{Cart, ShopError}
+import net.shop.persistence.Persistence
+import net.shop.model.{Cart, ShopError}
 import net.shop.utils.ShopUtils
 import net.shop.web.pages.{CartItemNode, CartState}
 import org.json4s.native.JsonMethods.parse

@@ -2,8 +2,7 @@ package net.shop.web
 
 import net.shift.common.Config
 import net.shift.server.http.Request
-import net.shift.template.DynamicContent
-import net.shop.api.persistence.Persistence
+import net.shop.persistence.Persistence
 import net.shop.web.pages._
 import net.shop.web.services.ServiceDependencies
 
@@ -13,7 +12,7 @@ import net.shop.web.services.ServiceDependencies
 case class Pages(cfg: Config, store: Persistence) extends ServiceDependencies {
   pages =>
 
-  val catPage = new CategoryPage {
+  val catPage = new CategoriesPage {
     val cfg = pages.cfg
     val store = pages.store
   }
@@ -23,7 +22,7 @@ case class Pages(cfg: Config, store: Persistence) extends ServiceDependencies {
     val store = pages.store
   }
 
-  val productsPage = new ProductsPage {
+  val categoryPage = new CategoryPage {
     val cfg = pages.cfg
     val store = pages.store
   }

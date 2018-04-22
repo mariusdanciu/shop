@@ -6,7 +6,7 @@ import net.shift.common.XmlImplicits._
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shift.template._
-import net.shop.api.{CartItem, ProductDetail}
+import net.shop.model.{CartItem, ProductDetail}
 import net.shop.utils.ShopUtils._
 import net.shop.utils.ThumbPic
 import net.shop.web.services.ServiceDependencies

@@ -1,15 +1,15 @@
 package net.shop.web.pages
 
-import net.shift.common.{Base64, Xml}
 import net.shift.common.XmlImplicits._
+import net.shift.common.{Base64, Xml}
 import net.shift.loc.Loc
 import net.shift.server.http.Request
 import net.shift.template.Binds._
+import net.shift.template.HasClass
 import net.shift.template.Snippet._
-import net.shift.template.{HasClass, HasName}
-import net.shop.api.{Address, Cart, CartItem, ProductDetail}
-import net.shop.utils.{ShopUtils, ThumbPic}
+import net.shop.model.{Cart, CartItem, ProductDetail}
 import net.shop.utils.ShopUtils._
+import net.shop.utils.{ShopUtils, ThumbPic}
 import org.json4s.native.JsonMethods.parse
 import org.json4s.{DefaultFormats, string2JsonInput}
 
@@ -102,7 +102,7 @@ trait CartPage extends PageCommon[CartInfo] {
     } yield {
       val enc = java.net.URLDecoder.decode(json.value.head, "UTF-8")
       val dec = Base64.decodeString(enc)
-      val cart = parse(dec).extract[net.shop.api.Cart]
+      val cart = parse(dec).extract[net.shop.model.Cart]
       cart
     }
   }
@@ -114,7 +114,7 @@ object SSS extends App {
 
   val json = """[{"id":"55fce5a3e4b0aa0fae6d3553","count":1}]"""
 
-  println(parse(json).extract[net.shop.api.Cart])
+  println(parse(json).extract[net.shop.model.Cart])
 
   val str = write(Cart(List(CartItem("55fce5a3e4b0aa0fae6d3553", 1))))
 

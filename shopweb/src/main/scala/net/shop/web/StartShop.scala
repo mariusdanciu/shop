@@ -9,9 +9,9 @@ import net.shift.engine.{Attempt, ShiftApplication}
 import net.shift.io.LocalFileSystem
 import net.shift.loc.{Language, Loc}
 import net.shift.security.{Permission, User}
-import net.shift.server.{HttpServer, HttpsServer, Server}
-import net.shift.server.http.{HttpProtocolBuilder, Request, TextHeader}
-import net.shop.api.persistence.Persistence
+import net.shift.server.HttpServer
+import net.shift.server.http.{Request, TextHeader}
+import net.shop.persistence.Persistence
 import net.shop.persistence.mongodb.MongoPersistence
 import net.shop.web.pages._
 import net.shop.web.services._
@@ -123,7 +123,6 @@ class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftAp
       categoryService.updateCategory |
       categoryService.getCategory |
       orderService.orderById |
-      orderService.orderByProduct |
       staticFile(Path("/google339a4b5281321c21.html"), "./web") |
       staticFile(Path("/googlef5775953f22a747b.html"), "./web") |
       notFoundService
@@ -166,11 +165,11 @@ class ShopApplication(c: Config)(implicit ctx: ExecutionContext) extends ShiftAp
       Path(_, _ :: "product" :: _) <- path
     } yield (), ProductPageState.build(req))
 
-  def products(req: Request): State[Request, Attempt] = pageWithRules(Path("web/products.html"), pages.productsPage,
+  def products(req: Request): State[Request, Attempt] = pageWithRules(Path("web/products.html"), pages.categoryPage,
     for {
       _ <- get
       Path(_, _ :: "products" :: _) <- path
-    } yield (), req)
+    } yield (), CategoryState(req))
 
 }
 

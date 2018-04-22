@@ -1,5 +1,4 @@
-package net.shop
-package api
+package net.shop.model
 
 import java.util.Date
 

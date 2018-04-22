@@ -27,5 +27,14 @@
 			return false;
 		});
 
+		$(".delete_category").click(function(event) {
+        	var id = $(this).attr("data_cat");
+        	window.admin.deleteCategory(id, function() {
+        	  window.location.href = "/"
+        	});
+        	event.stopPropagation();
+        	return false;
+        });
+
 	});
 })();

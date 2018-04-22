@@ -12,11 +12,9 @@ import net.shift.loc.{Language, Loc}
 import net.shift.security.Permission
 import net.shift.server.http.Request
 import net.shift.server.http.Responses._
-import net.shop.api.{ProductDetail, ShopError, UUID}
-import net.shop.model.FieldError
+import net.shop.model.{FieldError, ShopError, _}
 import net.shop.utils.ShopUtils
-import net.shop.utils.ShopUtils.dataPath
-import net.shop.utils.ShopUtils._
+import net.shop.utils.ShopUtils.{dataPath, _}
 
 import scala.util.{Failure, Success, Try}
 

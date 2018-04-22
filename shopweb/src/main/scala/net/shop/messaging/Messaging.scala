@@ -1,23 +1,11 @@
 package net.shop.messaging
 
-import net.shop.api.Order
-import net.shift.loc.Language
-import akka.actor.Props
-import net.shift.common.DefaultLog
-import net.shop.api.Formatter
-import net.shift.common.Config
-import akka.actor.Actor
-import akka.actor.ActorSystem
-import net.shift.common.Log
-import net.shop.model.Formatters._
-import net.shift.loc.Loc
-import net.shop.web.ShopApplication
-import net.shift.io.IODefaults
-import java.util.Date
-import net.shop.web.services.ServiceDependencies
-import net.shop.api.persistence.Persistence
-import net.shift.io.IODefaults
+import akka.actor.{Actor, ActorSystem, Props}
+import net.shift.common.{Config, DefaultLog}
 import net.shift.io.LocalFileSystem
+import net.shift.loc.{Language, Loc}
+import net.shop.model._
+import net.shop.persistence.Persistence
 
 sealed trait Message
 case class OrderDocument(l: Language, o: Order, doc: String) extends Message

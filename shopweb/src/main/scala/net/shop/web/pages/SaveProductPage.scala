@@ -6,7 +6,7 @@ import net.shift.loc.Loc
 import net.shift.template.Binds.bind
 import net.shift.template.SnipState
 import net.shift.template.Snippet._
-import net.shop.api.{ProductDetail, ShopError}
+import net.shop.model.{ProductDetail, ShopError}
 import net.shop.utils.{ShopUtils, ThumbPic}
 
 import scala.util.{Failure, Success, Try}

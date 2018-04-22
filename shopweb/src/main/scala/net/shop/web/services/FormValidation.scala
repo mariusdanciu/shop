@@ -7,10 +7,9 @@ import net.shift.engine.http.{BinaryPart, ContentDisposition, MultiPart, TextPar
 import net.shift.io.FileSystem
 import net.shift.loc.{Language, Loc}
 import net.shift.server.http.{ResponseFunc, Responses}
-import net.shop.api.Formatter
-import net.shop.api.persistence.Persistence
-import net.shop.model.FieldError
+import net.shop.model.{FieldError, Formatter}
 import net.shop.model.Formatters.ValidationErrorWriter
+import net.shop.persistence.Persistence
 import net.shop.utils.ShopUtils
 
 import scala.util.Success

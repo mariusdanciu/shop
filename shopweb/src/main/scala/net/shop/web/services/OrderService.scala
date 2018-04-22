@@ -8,8 +8,8 @@ import net.shift.engine.http.HttpPredicates._
 import net.shift.io.IO
 import net.shift.loc.Loc
 import net.shift.server.http.{Request, Responses}
-import net.shop.api.{Formatter, ShopError}
 import net.shop.messaging.{Messaging, OrderDocument}
+import net.shop.model.{Formatter, ShopError}
 import net.shop.web.pages.{OrderPage, OrderState}
 import org.apache.log4j.Logger
 import org.json4s.JsonAST._
@@ -117,23 +117,5 @@ trait OrderService extends FormValidation with TraversingSpec with ServiceDepend
 
   })
 
-  def orderByProduct: State[Request, Attempt] = for {
-    r <- get
-    Path(_, _ :: "orders" :: Nil) <- path
-    id <- param("productid")
-  } yield service(resp => {
-    import model.Formatters._
-    implicit val l = r.language
-    store.ordersByProduct(id) map {
-      orders =>
-        resp(Responses.ok.withJsonBody(Formatter.format(orders.toList)))
-    } recover {
-      case t: ShopError =>
-        resp(Responses.serverError.withJsonBody(Formatter.format(t)))
-      case t =>
-        resp(Responses.serverError.withJsonBody(Formatter.format(ShopError(t.getMessage, t))))
-    }
-
-  })
 
 }

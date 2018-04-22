@@ -40,18 +40,25 @@
 
         <div id="fh5co-media-section">
             <div class="container">
+                <div class="form_errors">
+                    <ul></ul>
+                </div>
+
                 <!-- snip:permissions(write) -->
                 <div class="row">
-                    <div class="col-md-3">
-                        <a href="#">
-                            <div class="btn">Șterge categorie</div>
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="#">
-                            <div class="btn">Editează categorie</div>
-                        </a>
-                    </div>
+                    <ul class="list-inline">
+                        <li>
+                            <a href="#">
+                                <div data_cat="<!--inline:cat_id-->" class="btn delete_category">Șterge categoria</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <div data_cat="<!--inline:cat_id-->" class="btn update_category">Editează categoria</div>
+                            </a>
+                        </li>
+
+                    </ul>
                 </div>
                 <!-- end -->
                 <div class="row animate-box">
@@ -64,7 +71,8 @@
                                 <!-- end --></span> lucrate manual. Comanda online produse handmade atent
                             selectionate, in asa fel incat calitatea materialelor, atentia la detalii in prelucrare
                             si talentul, sa fie cele care creeaza diferenta.</p>
-                        <p class="mic">Livrarea produselor din categoria: <span class="numeprodus"><!-- snip:cat_name --><span></span>
+                        <p class="mic">Livrarea produselor din categoria: <span
+                                class="numeprodus"><!-- snip:cat_name --><span></span>
                             <!-- end --></span> - lucrate manual se face de catre o societate de curierat, la
                             domiciliul clientului, in termen de 2 zile de la expedierea comenzii, si poate ajunge la
                             destinatie dupa maxim 48 ore.</p>
@@ -114,6 +122,7 @@
 
 <!-- template:endscripts -->
 <script src="/static/js/products.js"></script>
+<script src="/static/js/admin.js"></script>
 </body>
 </html>
 

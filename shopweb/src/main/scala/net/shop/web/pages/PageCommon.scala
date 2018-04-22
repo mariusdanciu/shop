@@ -8,7 +8,7 @@ import net.shift.security.Permission
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shift.template._
-import net.shop.api.ProductDetail
+import net.shop.model.ProductDetail
 import net.shop.utils.ShopUtils._
 import net.shop.web.services.ServiceDependencies
 

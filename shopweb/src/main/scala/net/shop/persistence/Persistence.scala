@@ -1,7 +1,7 @@
-package net.shop.api
-package persistence
+package net.shop.persistence
 
-import scala.concurrent.Future
+import net.shop.model._
+
 import scala.util.Try
 
 trait Persistence {
@@ -28,9 +28,6 @@ trait Persistence {
 
   def createOrder(order: OrderLog): Try[String]
   def ordersById(id: String): Try[Seq[OrderLog]]
-  def ordersByStatus(status: OrderStatus): Try[Seq[OrderLog]]
-  def ordersByProduct(productId: String): Try[Seq[OrderLog]]
-  def updateOrderStatus(orderId: String, status: OrderStatus): Try[String]
 
 }
 

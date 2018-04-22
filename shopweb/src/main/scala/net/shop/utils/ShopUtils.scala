@@ -5,12 +5,10 @@ import java.text.Normalizer
 
 import net.shift.common.{Config, Path}
 import net.shift.io.FileSystem
-import net.shop.api.persistence.Persistence
-import net.shop.api.{Category, NamedItem, ProductDetail}
+import net.shop.model.{Category, NamedItem, ProductDetail}
+import net.shop.persistence.Persistence
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.util.{Random, Success, Try}
+import scala.util.{Random, Try}
 
 trait ProductImageVariant {
   val name: String

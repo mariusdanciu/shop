@@ -1,8 +1,6 @@
 package net.shop
 package model
 
-import api._
-import net.shop.api.ShopError
 import net.shift.loc.Loc
 import net.shift.loc.Language
 import net.shift.io.FileSystem

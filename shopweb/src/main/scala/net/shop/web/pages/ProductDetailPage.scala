@@ -8,7 +8,7 @@ import net.shift.server.http.Request
 import net.shift.template.Binds._
 import net.shift.template.Snippet._
 import net.shift.template._
-import net.shop.api.{ProductDetail, ShopError}
+import net.shop.model.{ProductDetail, ShopError}
 import net.shop.utils.{LargePic, NormalPic, ShopUtils, ThumbPic}
 import net.shop.utils.ShopUtils._
 
