@@ -107,16 +107,3 @@ trait CartPage extends PageCommon[CartInfo] {
     }
   }
 }
-
-object SSS extends App {
-  implicit val formats = DefaultFormats
-  import org.json4s.native.Serialization._
-
-  val json = """[{"id":"55fce5a3e4b0aa0fae6d3553","count":1}]"""
-
-  println(parse(json).extract[net.shop.model.Cart])
-
-  val str = write(Cart(List(CartItem("55fce5a3e4b0aa0fae6d3553", 1))))
-
-  println(str)
-}
