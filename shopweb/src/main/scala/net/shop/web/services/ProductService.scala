@@ -88,7 +88,7 @@ trait ProductService extends TraversingSpec
   private def writeImages(id: String, fileName: String, content: Array[Byte]) = {
     ImageUtils.resizeImage(104, content, s"${dataPath}/products/$id/thumb/$fileName")
     ImageUtils.resizeImage(290, content, s"${dataPath}/products/$id/normal/$fileName")
-    IO.arrayProducer(content)(LocalFileSystem.writer(Path(s"${dataPath}/products/$id/large/${fileName}")))
+    ImageUtils.resizeImage(1000, content, s"${dataPath}/products/$id/large/$fileName")
   }
 
   def createProduct(implicit fs: FileSystem): State[Request, Attempt] = for {
