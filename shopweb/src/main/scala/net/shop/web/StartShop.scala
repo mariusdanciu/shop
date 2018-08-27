@@ -31,7 +31,7 @@ object StartShop extends App with DefaultLog {
 
     log.info("Configs " + c.configs)
 
-    implicit val ctx = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(2))
+    implicit val ctx = ExecutionContext.fromExecutor(Executors.newFixedThreadPool(c.int("server.numThreads", 10)))
 
     HttpServer(c, ShopApplication().shiftService).start().onFailure {
       case f => f.printStackTrace()

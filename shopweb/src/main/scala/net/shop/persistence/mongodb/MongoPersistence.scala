@@ -3,6 +3,7 @@ package net.shop.persistence.mongodb
 import net.shop
 import net.shop.model._
 import net.shop.persistence.{SortByName, SortByPrice, SortSpec}
+import org.apache.log4j.Logger
 import org.bson.BsonNull
 import org.mongodb.scala.{FindObservable, MongoClient, Observable}
 import org.mongodb.scala.bson.{BsonDocument, BsonValue, DefaultBsonTransformers, ObjectId}
@@ -95,7 +96,6 @@ object MongoImplicits extends DefaultBsonTransformers {
 
 
   implicit def documentToProduct(d: Document): ProductDetail = {
-    println(d)
     ProductDetail(
       id = d.getObjectId("_id").toHexString,
       name = d.getString("name"),
@@ -141,6 +141,8 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
   import MongoImplicits._
   import org.mongodb.scala.model.Filters._
 
+  val log = Logger.getLogger(classOf[MongoPersistence])
+
   val client = MongoClient(uri)
 
   val db = client.getDatabase("idid")
@@ -154,7 +156,11 @@ case class MongoPersistence(uri: String)(implicit ctx: ExecutionContext) extends
   products.createIndex(Document("title.ro" -> "text", "description.ro" -> "text", "keywords" -> "text"))
 
   private implicit def toTry[T](f: Future[T]): Try[T] = try {
-    Success(Await.result(f, Duration.Inf))
+    val start = System.currentTimeMillis()
+    val res = Success(Await.result(f, Duration.Inf))
+    val end = System.currentTimeMillis()
+    log.debug(s"Persistence duration ${end - start}")
+    res
   } catch {
     case e: Throwable => Failure(e)
   }
